@@ -1,9 +1,24 @@
+import { codeToHtml } from "shiki";
+
 /**
- * A code block. Deliberately not syntax highlighted: a highlighter is one of
- * the heavier dependencies people ask this tool about, and shipping one here
- * to render CSS would be a poor look.
+ * A code block, syntax highlighted at build time. This runs in a Server
+ * Component and never ships to the browser: every rule page is static
+ * (generateStaticParams), so the highlighted markup is plain HTML by the
+ * time it reaches a visitor. Shiki itself never enters the client bundle.
  */
-export function Snippet({ code, label }: { code: string; label?: string }) {
+export async function Snippet({
+  code,
+  label,
+}: {
+  code: string;
+  label?: string;
+}) {
+  const lang = code.trimStart().startsWith("<") ? "html" : "css";
+  const html = await codeToHtml(code, {
+    lang,
+    theme: "github-dark-default",
+  });
+
   return (
     <figure className="overflow-hidden rounded-lg border border-border bg-bg-subtle">
       {label === undefined ? null : (
@@ -11,9 +26,11 @@ export function Snippet({ code, label }: { code: string; label?: string }) {
           {label}
         </figcaption>
       )}
-      <pre className="overflow-x-auto p-4 text-compact leading-relaxed">
-        <code className="font-mono">{code}</code>
-      </pre>
+      <div
+        className="snippet-shiki overflow-x-auto p-4 text-compact leading-relaxed"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki output, generated at build time from our own rule data, never from user input.
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </figure>
   );
 }
