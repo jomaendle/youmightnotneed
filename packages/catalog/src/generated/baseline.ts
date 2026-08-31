@@ -125,6 +125,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-color-5/#light-dark"
     },
+    "loading-lazy": {
+      "name": "Lazy-loading images and iframes",
+      "baseline": "high",
+      "lowDate": "2023-12-19",
+      "highDate": "2026-06-19",
+      "spec": "https://html.spec.whatwg.org/multipage/urls-and-fetching.html#lazy-loading-attributes"
+    },
     "masonry": {
       "name": "Masonry",
       "baseline": false,
