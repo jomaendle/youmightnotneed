@@ -4,12 +4,51 @@ import type { PackageJsonLike } from "@youmightnotneed/catalog";
  * Turns whatever the user pasted into something detect() can read.
  *
  * Two accepted inputs in v1: a package.json, and a public GitHub repository
- * URL. Both are unauthenticated, and nothing is stored.
+ * reference. Both are unauthenticated, and nothing is stored.
  */
 
 export type ParseResult =
   | { ok: true; pkg: PackageJsonLike }
   | { ok: false; error: string };
+
+const MAX_INPUT_BYTES = 500_000;
+
+/** npm package names: optionally scoped, lowercase. */
+const NPM_NAME = /^(?:@[a-z0-9][a-z0-9-._]*\/)?[a-z0-9][a-z0-9-._]*$/;
+
+/**
+ * Anything npm accepts on the right-hand side of a dependency: a semver range,
+ * a tag, or one of the protocol forms.
+ */
+const VERSION_RANGE =
+  /^(?:\*|latest|next|workspace:|npm:|file:|link:|portal:|catalog:|git|https?:|[\^~><=v\s]*\d)/i;
+
+const DEPENDENCY_BLOCKS = [
+  "dependencies",
+  "devDependencies",
+  "peerDependencies",
+] as const;
+
+/**
+ * Decides whether a bare object is a dependency map rather than a package.json
+ * that simply has no dependencies.
+ *
+ * Checking only that every value is a string is not enough: `{"name": "x",
+ * "version": "1.0.0"}` passes that and would be analysed as two dependencies,
+ * reporting nothing found instead of saying the file has no dependencies. So
+ * the values have to look like version ranges too.
+ */
+function looksLikeDependencyMap(record: Record<string, unknown>): boolean {
+  const entries = Object.entries(record);
+  if (entries.length === 0) return false;
+
+  return entries.every(
+    ([name, range]) =>
+      typeof range === "string" &&
+      NPM_NAME.test(name.toLowerCase()) &&
+      VERSION_RANGE.test(range),
+  );
+}
 
 /** Accepts a full package.json, or a bare dependency block. */
 export function parsePackageJson(input: string): ParseResult {
@@ -17,7 +56,7 @@ export function parsePackageJson(input: string): ParseResult {
   if (trimmed.length === 0) {
     return { ok: false, error: "Paste a package.json to get started." };
   }
-  if (trimmed.length > 500_000) {
+  if (trimmed.length > MAX_INPUT_BYTES) {
     return { ok: false, error: "That file is too large to be a package.json." };
   }
 
@@ -37,49 +76,55 @@ export function parsePackageJson(input: string): ParseResult {
   }
 
   const record = parsed as Record<string, unknown>;
-  const hasAnyBlock = [
-    "dependencies",
-    "devDependencies",
-    "peerDependencies",
-  ].some((key) => typeof record[key] === "object" && record[key] !== null);
+  const hasBlock = DEPENDENCY_BLOCKS.some(
+    (key) => typeof record[key] === "object" && record[key] !== null,
+  );
+  if (hasBlock) return { ok: true, pkg: record as PackageJsonLike };
 
   // A bare dependency map is a reasonable thing to paste, so accept it.
-  if (!hasAnyBlock) {
-    const looksLikeDeps = Object.values(record).every(
-      (v) => typeof v === "string",
-    );
-    if (looksLikeDeps && Object.keys(record).length > 0) {
-      return {
-        ok: true,
-        pkg: { dependencies: record as Record<string, string> },
-      };
-    }
+  if (looksLikeDependencyMap(record)) {
     return {
-      ok: false,
-      error: "No dependencies, devDependencies or peerDependencies found.",
+      ok: true,
+      pkg: { dependencies: record as Record<string, string> },
     };
   }
 
-  return { ok: true, pkg: record as PackageJsonLike };
+  return {
+    ok: false,
+    error: "No dependencies, devDependencies or peerDependencies found.",
+  };
 }
-
-const GIT_SUFFIX = /\.git$/;
-const TRAILING_SLASHES = /\/+$/;
-const OWNER_REPO = /^([\w.-]+)\/([\w.-]+)$/;
 
 export interface RepoRef {
   owner: string;
   repo: string;
-  /** Branch, tag or commit. Defaults to the repo's default branch. */
-  ref?: string | undefined;
+  /**
+   * Everything after `/tree/` or `/blob/` in the URL: a ref, optionally
+   * followed by the subdirectory holding the package.json. The two cannot be
+   * told apart without asking GitHub, because a branch name may contain a
+   * slash, so this is passed through verbatim and the raw CDN resolves the
+   * split itself. Absent means the default branch.
+   */
+  path?: string | undefined;
 }
 
-/** github.com, with or without a scheme or www. */
+const TRAILING_SLASHES = /\/+$/;
+const GIT_SUFFIX = /\.git$/;
+
+/**
+ * GitHub owner names are alphanumeric with inner hyphens, so no dots. That is
+ * what keeps `github.com/vercel` from parsing as owner `github.com`.
+ */
+const SHORTHAND = /^([a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\/([\w.-]+)$/i;
+
+/** A bare github.com host prefix, with or without www. */
+const GITHUB_PREFIX = /^(?:www\.)?github\.com\//i;
+
 function isGitHubHost(hostname: string): boolean {
   return hostname === "github.com" || hostname === "www.github.com";
 }
 
-/** Reads owner and repo, plus a ref when the URL carries /tree/ or /blob/. */
+/** Reads owner, repo and any ref or subdirectory out of a github.com URL. */
 function fromGitHubUrl(input: string): RepoRef | null {
   let url: URL;
   try {
@@ -90,24 +135,37 @@ function fromGitHubUrl(input: string): RepoRef | null {
   if (!isGitHubHost(url.hostname)) return null;
 
   const parts = url.pathname.split("/").filter(Boolean);
-  const [owner, repo, marker, maybeRef] = parts;
+  const [owner, repo, marker, ...rest] = parts;
   if (!(owner && repo)) return null;
 
-  const carriesRef = marker === "tree" || marker === "blob";
-  return carriesRef && maybeRef
-    ? { owner, repo, ref: maybeRef }
-    : { owner, repo };
+  const carriesPath = marker === "tree" || marker === "blob";
+  if (!carriesPath || rest.length === 0) return { owner, repo };
+
+  // A /blob/ URL usually points straight at the file. Drop it so the fetcher
+  // can append package.json itself.
+  const segments = rest.at(-1) === "package.json" ? rest.slice(0, -1) : rest;
+  if (segments.length === 0) return { owner, repo };
+
+  return { owner, repo, path: segments.join("/") };
 }
 
 /** Pulls owner/repo out of a GitHub URL, or an "owner/repo" shorthand. */
 export function parseRepoInput(input: string): RepoRef | null {
+  // Order matters: strip the trailing slash first, or a URL ending `.git/`
+  // keeps its `.git` and the repo name is wrong.
   const trimmed = input
     .trim()
-    .replace(GIT_SUFFIX, "")
-    .replace(TRAILING_SLASHES, "");
+    .replace(TRAILING_SLASHES, "")
+    .replace(GIT_SUFFIX, "");
   if (trimmed.length === 0) return null;
 
-  const shorthand = OWNER_REPO.exec(trimmed);
+  // Try the URL form first. `github.com/vercel` looks like a shorthand but is
+  // a host and a single path segment, which is not a repository.
+  if (trimmed.includes("://") || GITHUB_PREFIX.test(trimmed)) {
+    return fromGitHubUrl(trimmed);
+  }
+
+  const shorthand = SHORTHAND.exec(trimmed);
   if (shorthand?.[1] && shorthand[2]) {
     return { owner: shorthand[1], repo: shorthand[2] };
   }
@@ -115,21 +173,23 @@ export function parseRepoInput(input: string): RepoRef | null {
   return fromGitHubUrl(trimmed);
 }
 
+/** The raw CDN path for a reference's package.json. */
+export function rawPackageJsonUrl(ref: RepoRef): string {
+  // `HEAD` resolves whatever the default branch is, so there is no need to
+  // guess between main and master.
+  const path = ref.path ?? "HEAD";
+  return `https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/${path}/package.json`;
+}
+
 /**
- * Fetches a public repository's package.json over the raw CDN. Unauthenticated
- * and rate limited, which is acceptable for v1 because paste is the primary
- * input.
- *
- * `HEAD` resolves whatever the default branch is, so there is no need to guess
- * between main and master.
+ * Fetches a public repository's package.json over the raw CDN.
+ * Unauthenticated and rate limited, which is acceptable for v1 because paste
+ * is the primary input.
  */
 export async function fetchRepoPackageJson(ref: RepoRef): Promise<ParseResult> {
-  const branch = ref.ref ?? "HEAD";
-  const url = `https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/${branch}/package.json`;
-
   let response: Response;
   try {
-    response = await fetch(url, {
+    response = await fetch(rawPackageJsonUrl(ref), {
       headers: { Accept: "text/plain" },
       // Cache briefly so a shared link does not re-fetch on every view.
       next: { revalidate: 600 },
@@ -150,8 +210,9 @@ export async function fetchRepoPackageJson(ref: RepoRef): Promise<ParseResult> {
     };
   }
 
+  const where = ref.path === undefined ? "" : ` at ${ref.path}`;
   return {
     ok: false,
-    error: `No package.json found in ${ref.owner}/${ref.repo}. It may be private, in a subdirectory, or on a branch you need to name.`,
+    error: `No package.json found in ${ref.owner}/${ref.repo}${where}. It may be private, or on a different branch.`,
   };
 }

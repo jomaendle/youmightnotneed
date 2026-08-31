@@ -19,7 +19,7 @@
     "build:web": "pnpm --filter @youmightnotneed/web build",
     "dev": "pnpm --filter @youmightnotneed/web dev",
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck",
+    "typecheck": "tsc -p tsconfig.scripts.json && pnpm -r typecheck",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",

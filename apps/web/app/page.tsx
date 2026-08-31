@@ -26,12 +26,14 @@ function featured() {
 
 export default function HomePage() {
   const packageCount = new Set(rules.flatMap((r) => r.replaces)).size;
+  // Only count what a status actually says. An unknown rule is a data error
+  // the catalog tests fail on, and it is not the same as needing a fallback.
   const tally = { widely: 0, newly: 0, limited: 0 };
   for (const rule of rules) {
     const status = resolveBaseline(rule).status;
     if (status === "widely") tally.widely += 1;
     else if (status === "newly") tally.newly += 1;
-    else tally.limited += 1;
+    else if (status === "limited") tally.limited += 1;
   }
 
   return (
@@ -138,14 +140,16 @@ function Stat({
   tier?: string;
 }) {
   return (
-    <div className={tier}>
+    // dt before dd is the order HTML requires and the order a screen reader
+    // announces it. column-reverse keeps the number on top visually.
+    <div className={`flex flex-col-reverse ${tier ?? ""}`}>
+      <dt className="mt-0.5 text-fg-faint text-metadata">{label}</dt>
       <dd
         className="text-page-title tabular-nums"
         style={tier === undefined ? undefined : { color: "var(--tier)" }}
       >
         {value}
       </dd>
-      <dt className="mt-0.5 text-fg-faint text-metadata">{label}</dt>
     </div>
   );
 }

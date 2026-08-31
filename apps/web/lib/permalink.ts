@@ -11,11 +11,36 @@
 
 const VERSION = "1";
 
+/**
+ * A report link is untrusted input: anyone can craft a `?d=` and share it. The
+ * package list is bounded already, so the label needs the same treatment, or a
+ * crafted link puts arbitrary text in the report header, the meta description
+ * and the OG card.
+ */
+const MAX_PROJECT_NAME = 80;
+const MAX_PACKAGES = 200;
+const MAX_PACKAGE_NAME = 214;
+
 const PLUS = /\+/g;
 const SLASH = /\//g;
 const TRAILING_EQUALS = /[=]+$/;
 const DASH = /-/g;
 const UNDERSCORE = /_/g;
+
+/**
+ * Control characters have no business in a displayed label. Filtering by code
+ * point avoids putting them inside a character class, which is both harder to
+ * read and something Biome flags.
+ */
+function stripControlChars(value: string): string {
+  let out = "";
+  for (const char of value) {
+    const code = char.codePointAt(0) ?? 0;
+    const isControl = code <= 0x1f || (code >= 0x7f && code <= 0x9f);
+    if (!isControl) out += char;
+  }
+  return out;
+}
 
 /** Base64url, without Buffer, so this works in Node and on the edge. */
 function toBase64Url(input: string): string {
@@ -72,12 +97,17 @@ export function decodeReport(value: string | undefined): ReportPayload | null {
     const packages = names
       .split(",")
       .map((n) => n.trim().toLowerCase())
-      .filter((n) => n.length > 0 && n.length < 215)
-      .slice(0, 200);
+      .filter((n) => n.length > 0 && n.length <= MAX_PACKAGE_NAME)
+      .slice(0, MAX_PACKAGES);
+
+    const label =
+      projectName === undefined
+        ? undefined
+        : stripControlChars(projectName).trim().slice(0, MAX_PROJECT_NAME);
 
     // An empty list is valid: it is the "nothing matched" report, which is a
     // real result worth having a shareable link for.
-    return projectName ? { packages, projectName } : { packages };
+    return label ? { packages, projectName: label } : { packages };
   } catch {
     return null;
   }

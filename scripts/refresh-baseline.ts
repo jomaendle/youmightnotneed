@@ -13,6 +13,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
 
 const require = createRequire(import.meta.url);
@@ -52,8 +53,16 @@ function readWebFeaturesVersion(): string {
 
 const webFeaturesVersion = readWebFeaturesVersion();
 
+/*
+ * Rules are the main source, but the site also uses features no rule
+ * references (:has(), invoker commands, light-dark()). Those need to be in the
+ * snapshot too, or /native renders them as "Unverified" with a raw ID.
+ */
 const referenced = [
-  ...new Set(rules.flatMap((rule) => rule.featureIds)),
+  ...new Set([
+    ...rules.flatMap((rule) => rule.featureIds),
+    ...NATIVE_FEATURE_IDS,
+  ]),
 ].sort();
 
 const missing = referenced.filter((id) => !features[id]);

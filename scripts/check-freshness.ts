@@ -15,6 +15,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 
+import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
 import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
@@ -56,7 +57,17 @@ for (const rule of rules) {
   }
 }
 
-// 3. Snapshot age and version drift are warnings, not failures.
+// 3. Features the site itself uses must resolve, or /native claims a feature
+// is widely available while its badge reads "Unverified".
+for (const id of NATIVE_FEATURE_IDS) {
+  if (!baselineSnapshot.features[id]) {
+    errors.push(
+      `The site uses web-features ID "${id}" but it is not in the snapshot. Run \`pnpm refresh:baseline\`.`,
+    );
+  }
+}
+
+// 4. Snapshot age and version drift are warnings, not failures.
 const snapshotAge = daysSince(baselineSnapshot.generatedOn);
 if (snapshotAge > SNAPSHOT_WARN_AGE_DAYS) {
   warnings.push(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { type ScanState, scan } from "@/app/actions";
 
 const EXAMPLE = `{
@@ -26,6 +26,12 @@ export function ScanForm() {
     scan,
     {},
   );
+  /*
+   * Controlled on purpose. React resets an uncontrolled field once a form
+   * action completes, so returning an error from scan() would throw away
+   * whatever the user had pasted.
+   */
+  const [pasted, setPasted] = useState("");
 
   return (
     <form action={formAction} className="scan-form space-y-3">
@@ -36,6 +42,8 @@ export function ScanForm() {
         id="packageJson"
         name="packageJson"
         spellCheck={false}
+        value={pasted}
+        onChange={(event) => setPasted(event.target.value)}
         placeholder={EXAMPLE}
         className="paste-area w-full rounded-lg border border-border bg-bg-subtle px-4 py-3.5 font-mono text-compact outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint"
       />

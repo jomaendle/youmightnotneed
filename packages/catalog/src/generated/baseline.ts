@@ -83,6 +83,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "highDate": "2024-09-14",
       "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element"
     },
+    "dialog-closedby": {
+      "name": "<dialog closedby>",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#attr-dialog-closedby"
+    },
     "field-sizing": {
       "name": "field-sizing",
       "baseline": "low",
@@ -90,12 +97,33 @@ export const baselineSnapshot: BaselineSnapshot = {
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-forms-1/#field-sizing"
     },
+    "has": {
+      "name": ":has()",
+      "baseline": "high",
+      "lowDate": "2023-12-19",
+      "highDate": "2026-06-19",
+      "spec": "https://drafts.csswg.org/selectors-4/#relational"
+    },
     "interpolate-size": {
       "name": "interpolate-size",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-values-5/#interpolate-size"
+    },
+    "invoker-commands": {
+      "name": "Invoker commands",
+      "baseline": "low",
+      "lowDate": "2025-12-12",
+      "highDate": null,
+      "spec": "https://html.spec.whatwg.org/multipage/form-elements.html#attr-button-command"
+    },
+    "light-dark": {
+      "name": "light-dark()",
+      "baseline": "low",
+      "lowDate": "2024-05-13",
+      "highDate": null,
+      "spec": "https://drafts.csswg.org/css-color-5/#light-dark"
     },
     "masonry": {
       "name": "Masonry",
