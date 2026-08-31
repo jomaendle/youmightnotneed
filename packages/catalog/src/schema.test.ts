@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { catalogSchema, ruleSchema } from "./schema.ts";
+import { catalogSchema, parseCatalog, ruleSchema } from "./schema.ts";
 
 /** A rule that passes, used as the base for each failure case. */
 function validRule() {
@@ -119,5 +119,19 @@ describe("catalogSchema", () => {
     const result = catalogSchema.safeParse([validRule(), second]);
     expect(result.success).toBe(false);
     expect(JSON.stringify(result.error?.issues)).toContain("already claimed");
+  });
+});
+
+describe("parseCatalog", () => {
+  it("returns the parsed rules when they are valid", () => {
+    const parsed = parseCatalog([validRule()]);
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0]?.id).toBe("example-rule");
+  });
+
+  it("throws with a readable message when a rule is malformed", () => {
+    const broken = validRule();
+    broken.agent.unless = [];
+    expect(() => parseCatalog([broken])).toThrow();
   });
 });

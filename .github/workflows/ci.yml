@@ -31,8 +31,14 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Test
-        run: pnpm test
+      - name: Test with coverage thresholds
+        run: pnpm test:coverage
+
+      - name: Dead code, unused exports and unused dependencies
+        run: pnpm knip
+
+      - name: Copy quality
+        run: pnpm check:copy
 
       # Fails when a hand-verified support claim is more than 90 days old, or a
       # rule points at a web-features ID the snapshot does not have.

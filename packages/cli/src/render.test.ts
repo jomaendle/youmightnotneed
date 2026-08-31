@@ -104,3 +104,20 @@ describe("renderJson", () => {
     expect(parsed.findings[0]?.baseline.status).toBe("limited");
   });
 });
+
+describe("unmeasured packages", () => {
+  it("says the real figure is higher when a size is missing", () => {
+    // sticky-kit is a real package the catalog covers, but it is old enough
+    // that bundlephobia cannot build it, so it has no measurement.
+    const output = render({
+      dependencies: { "sticky-kit": "^1.1.3", "react-modal": "^3.16.1" },
+    });
+    expect(output).toContain("the real figure is higher");
+  });
+
+  it("prints 'size unknown' rather than 0 kB for an unmeasured rule", () => {
+    const output = render({ dependencies: { "sticky-kit": "^1.1.3" } });
+    expect(output).toContain("size unknown");
+    expect(output).not.toContain("0 B");
+  });
+});

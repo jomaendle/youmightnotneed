@@ -8,67 +8,63 @@ import Link from "next/link";
 import { BaselineBadge } from "./baseline-badge";
 
 /**
- * One finding. Renders the Baseline badge and the `unless` conditions every
- * time, without a disclosure to hide them behind. A replacement shown without
- * its caveats is the thing most likely to make this tool wrong in public.
+ * One finding.
+ *
+ * The `unless` conditions are always present in the markup, inside a <details>
+ * so they do not drown the page. A replacement shown without its caveats is
+ * how a tool like this ends up wrong in public.
+ *
+ * The layout reflows on the container's width via a container query, not the
+ * viewport, so a finding reads correctly in a narrow column too.
  */
 export function FindingCard({ finding }: { finding: Finding }) {
   const { rule, baseline, matched, replaceableBytes } = finding;
   const names = matched.map((m) => m.name);
 
   return (
-    <article className="rounded-xl border border-border bg-surface p-5">
-      <header className="mb-3 flex flex-wrap items-start justify-between gap-3">
-        <h3 className="font-semibold text-lg">
+    <article className="finding-scope py-6">
+      <div className="finding-head mb-2.5">
+        <h3 className="text-subsection">
           <Link
             href={`/rules/${rule.id}`}
-            className="no-underline hover:underline"
+            className="plain no-underline hover:underline"
           >
             {rule.title}
           </Link>
         </h3>
-        <div className="flex items-center gap-2">
-          <BaselineBadge status={baseline.status} short />
-          <span className="font-mono text-faint text-xs">
+        <div className="finding-meta mt-1.5 flex items-center gap-3">
+          <BaselineBadge status={baseline.status} short={true} />
+          <span className="font-mono text-fg-faint text-metadata">
             {replaceableBytes === null
               ? "size unknown"
               : formatBytes(replaceableBytes)}
           </span>
         </div>
-      </header>
+      </div>
 
-      <p className="mb-3 text-muted text-sm leading-relaxed">
+      <p className="mb-3 max-w-[62ch] text-fg-muted">
         {formatConditional(names, rule.agent.when, rule.native)}
       </p>
 
-      <dl className="mb-4 grid gap-1 text-sm">
-        <div className="flex flex-wrap gap-2">
-          <dt className="text-faint">You have</dt>
-          <dd className="font-mono text-link">{formatList(names)}</dd>
+      <dl className="mb-3 space-y-1 text-compact">
+        <div className="flex flex-wrap gap-x-2">
+          <dt className="text-fg-faint">You have</dt>
+          <dd className="font-mono">{formatList(names)}</dd>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <dt className="text-faint">Native</dt>
-          <dd className="font-mono">{rule.native}</dd>
-        </div>
-        {baseline.limitedBy !== null && (
-          <div className="flex flex-wrap gap-2">
-            <dt className="text-faint">Capped by</dt>
-            <dd className="text-muted">
-              {baseline.limitedBy.name}, which is{" "}
-              {baseline.limitedBy.status === "limited"
-                ? "limited availability"
-                : "less widely supported than the rest"}
-            </dd>
+        {baseline.limitedBy === null ? null : (
+          <div className="flex flex-wrap gap-x-2">
+            <dt className="text-fg-faint">Held back by</dt>
+            <dd className="text-fg-muted">{baseline.limitedBy.name}</dd>
           </div>
         )}
       </dl>
 
-      <details className="group">
-        <summary className="cursor-pointer text-muted text-sm hover:text-text">
-          Keep {names.length === 1 ? "it" : "them"} if any of these apply (
-          {rule.agent.unless.length})
+      <details className="disclosure">
+        <summary className="text-fg-muted text-metadata">
+          Keep {names.length === 1 ? "it" : "them"} if any of these apply
+          <span className="text-fg-faint"> ({rule.agent.unless.length})</span>
         </summary>
-        <ul className="mt-3 space-y-2 border-border border-l-2 pl-4 text-faint text-sm leading-relaxed">
+        <ul className="mt-3 max-w-[68ch] space-y-2 border-border border-l pl-4 text-compact text-fg-muted">
           {rule.agent.unless.map((condition) => (
             <li key={condition}>{condition}</li>
           ))}

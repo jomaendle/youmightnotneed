@@ -15,7 +15,7 @@ export function formatBytes(bytes: number): string {
   return `${Math.round(kb)} kB`;
 }
 
-/** The honest headline. Never "you will save". */
+/** The honest headline. It hedges, and never promises a saving. */
 export function formatHeadline(bytes: number, packageCount: number): string {
   if (packageCount === 0) return "Nothing here that CSS covers yet";
   const deps = packageCount === 1 ? "dependency" : "dependencies";

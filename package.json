@@ -27,12 +27,16 @@
     "refresh:baseline": "node scripts/refresh-baseline.ts",
     "refresh:sizes": "node scripts/refresh-sizes.ts",
     "check:freshness": "node scripts/check-freshness.ts",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm check:freshness",
-    "cli": "node packages/cli/src/bin.ts"
+    "verify": "pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm knip && pnpm check:freshness && pnpm check:copy",
+    "cli": "node packages/cli/src/bin.ts",
+    "test:coverage": "pnpm -r test:coverage",
+    "knip": "knip",
+    "check:copy": "node scripts/check-copy.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.11",
     "@types/node": "^24.13.3",
+    "knip": "^6.33.0",
     "typescript": "^7.0.2",
     "web-features": "^3.36.0"
   }

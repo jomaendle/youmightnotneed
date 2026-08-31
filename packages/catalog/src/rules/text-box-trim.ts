@@ -29,6 +29,6 @@ export const textBoxTrim: Rule = {
       "You need the computed metrics as numbers at build time, for example to generate spacing tokens or to lay out text in a canvas or a PDF. Capsize gives you values; CSS only affects rendering.",
       "You need to support a font whose metrics are wrong or missing, which Capsize lets you override by hand.",
     ],
-    snippet: `h1 { text-box: trim-both cap alphabetic; }`,
+    snippet: "h1 { text-box: trim-both cap alphabetic; }",
   },
 };

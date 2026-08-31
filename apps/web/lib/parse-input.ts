@@ -74,6 +74,31 @@ export interface RepoRef {
   ref?: string | undefined;
 }
 
+/** github.com, with or without a scheme or www. */
+function isGitHubHost(hostname: string): boolean {
+  return hostname === "github.com" || hostname === "www.github.com";
+}
+
+/** Reads owner and repo, plus a ref when the URL carries /tree/ or /blob/. */
+function fromGitHubUrl(input: string): RepoRef | null {
+  let url: URL;
+  try {
+    url = new URL(input.includes("://") ? input : `https://${input}`);
+  } catch {
+    return null;
+  }
+  if (!isGitHubHost(url.hostname)) return null;
+
+  const parts = url.pathname.split("/").filter(Boolean);
+  const [owner, repo, marker, maybeRef] = parts;
+  if (!(owner && repo)) return null;
+
+  const carriesRef = marker === "tree" || marker === "blob";
+  return carriesRef && maybeRef
+    ? { owner, repo, ref: maybeRef }
+    : { owner, repo };
+}
+
 /** Pulls owner/repo out of a GitHub URL, or an "owner/repo" shorthand. */
 export function parseRepoInput(input: string): RepoRef | null {
   const trimmed = input
@@ -87,65 +112,46 @@ export function parseRepoInput(input: string): RepoRef | null {
     return { owner: shorthand[1], repo: shorthand[2] };
   }
 
-  let url: URL;
-  try {
-    url = new URL(trimmed.includes("://") ? trimmed : `https://${trimmed}`);
-  } catch {
-    return null;
-  }
-
-  if (url.hostname !== "github.com" && url.hostname !== "www.github.com") {
-    return null;
-  }
-
-  const parts = url.pathname.split("/").filter(Boolean);
-  const owner = parts[0];
-  const repo = parts[1];
-  if (!(owner && repo)) return null;
-
-  // .../tree/<ref> and .../blob/<ref> both carry a usable ref.
-  const marker = parts[2];
-  const ref =
-    (marker === "tree" || marker === "blob") && parts[3] ? parts[3] : undefined;
-
-  return ref ? { owner, repo, ref } : { owner, repo };
+  return fromGitHubUrl(trimmed);
 }
 
 /**
  * Fetches a public repository's package.json over the raw CDN. Unauthenticated
- * and rate limited, which is acceptable for v1: paste is the primary input.
+ * and rate limited, which is acceptable for v1 because paste is the primary
+ * input.
+ *
+ * `HEAD` resolves whatever the default branch is, so there is no need to guess
+ * between main and master.
  */
 export async function fetchRepoPackageJson(ref: RepoRef): Promise<ParseResult> {
-  const branches = ref.ref ? [ref.ref] : ["HEAD", "main", "master"];
+  const branch = ref.ref ?? "HEAD";
+  const url = `https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/${branch}/package.json`;
 
-  for (const branch of branches) {
-    const url = `https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/${branch}/package.json`;
-    try {
-      const response = await fetch(url, {
-        headers: { Accept: "text/plain" },
-        // Cache briefly so a shared link does not re-fetch on every view.
-        next: { revalidate: 600 },
-      });
-      if (response.ok) {
-        return parsePackageJson(await response.text());
-      }
-      if (response.status === 403 || response.status === 429) {
-        return {
-          ok: false,
-          error:
-            "GitHub is rate limiting this. Paste the package.json instead.",
-        };
-      }
-    } catch {
-      return {
-        ok: false,
-        error: "Could not reach GitHub. Paste the package.json instead.",
-      };
-    }
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      headers: { Accept: "text/plain" },
+      // Cache briefly so a shared link does not re-fetch on every view.
+      next: { revalidate: 600 },
+    });
+  } catch {
+    return {
+      ok: false,
+      error: "Could not reach GitHub. Paste the package.json instead.",
+    };
+  }
+
+  if (response.ok) return parsePackageJson(await response.text());
+
+  if (response.status === 403 || response.status === 429) {
+    return {
+      ok: false,
+      error: "GitHub is rate limiting this. Paste the package.json instead.",
+    };
   }
 
   return {
     ok: false,
-    error: `No package.json found in ${ref.owner}/${ref.repo}. It may be private, or in a subdirectory.`,
+    error: `No package.json found in ${ref.owner}/${ref.repo}. It may be private, in a subdirectory, or on a branch you need to name.`,
   };
 }

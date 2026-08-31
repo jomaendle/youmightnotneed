@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   return {
     title: rule.title,
-    description: `${rule.native}. Replaces ${rule.replaces.slice(0, 3).join(", ")}.`,
+    description: `${rule.native}. Covers ${rule.replaces.slice(0, 3).join(", ")}.`,
     openGraph: {
       title: `${rule.title}: ${rule.native}`,
       description: rule.agent.when,
@@ -43,140 +43,178 @@ export default async function RulePage({ params }: PageProps) {
   const baseline = resolveBaseline(rule);
 
   return (
-    <article className="space-y-8">
-      <header className="space-y-3">
-        <Link
-          href="/rules"
-          className="text-faint text-sm no-underline hover:text-link"
-        >
-          Back to the catalog
-        </Link>
-        <h1 className="font-semibold text-3xl tracking-tight">{rule.title}</h1>
-        <p className="font-mono text-lg text-link">{rule.native}</p>
-        <div className="flex flex-wrap items-center gap-3">
-          <BaselineBadge status={baseline.status} />
-          {baseline.source === "web-features" && (
-            <span className="text-faint text-xs">
-              derived from web-features, captured {baseline.dataDate}
-            </span>
-          )}
-        </div>
-      </header>
+    <>
+      {/* Driven by animation-timeline: scroll(), so no scroll listener. */}
+      <div className="progress-bar" aria-hidden="true" />
 
-      <section>
-        <p className="text-muted leading-relaxed">{rule.human.explainer}</p>
-      </section>
+      <article className="space-y-11">
+        <header>
+          <Link
+            href="/rules"
+            className="plain text-fg-faint text-metadata no-underline hover:text-fg"
+          >
+            Back to the catalog
+          </Link>
+          <h1 className="mt-4 mb-3 text-page-title">{rule.title}</h1>
+          <p className="mb-4 font-mono text-accent text-lede">{rule.native}</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <BaselineBadge status={baseline.status} />
+            {baseline.source === "web-features" ? (
+              <span className="text-fg-faint text-metadata">
+                derived from web-features, captured {baseline.dataDate}
+              </span>
+            ) : (
+              <span className="text-fg-faint text-metadata">
+                verified by hand on {baseline.dataDate}
+              </span>
+            )}
+          </div>
+        </header>
 
-      <section>
-        <h2 className="mb-2 font-semibold text-lg">When this applies</h2>
-        <p className="text-muted">
-          {rule.agent.when.charAt(0).toUpperCase() + rule.agent.when.slice(1)}.
-        </p>
-      </section>
-
-      <section>
-        <h2 className="mb-2 font-semibold text-lg">The native approach</h2>
-        <Snippet code={rule.human.snippet} label={rule.native} />
-        {rule.human.demoUrl !== undefined && (
-          <p className="text-sm">
-            <a href={rule.human.demoUrl} target="_blank" rel="noreferrer">
-              See it working, with an explanation
-            </a>
-          </p>
-        )}
-      </section>
-
-      <section>
-        <h2 className="mb-2 font-semibold text-lg">
-          When the dependency is still right
-        </h2>
-        <p className="mb-3 text-muted text-sm">
-          An answer that is always "use CSS" is worse than no answer. These are
-          the cases where it does not hold.
-        </p>
-        <ul className="space-y-2 border-border border-l-2 pl-4">
-          {rule.agent.unless.map((condition) => (
-            <li key={condition} className="text-muted text-sm leading-relaxed">
-              {condition}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section>
-        <h2 className="mb-3 font-semibold text-lg">Packages this covers</h2>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {[...rule.replaces]
-            .sort(
-              (a, b) =>
-                (packageSizes.sizes[b]?.gzip ?? 0) -
-                (packageSizes.sizes[a]?.gzip ?? 0),
-            )
-            .map((pkg) => {
-              const size = packageSizes.sizes[pkg];
-              return (
-                <li
-                  key={pkg}
-                  className="flex items-baseline justify-between gap-2 rounded-lg border border-border bg-surface px-3 py-2"
-                >
-                  <a
-                    href={`https://www.npmjs.com/package/${pkg}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-mono text-sm"
-                  >
-                    {pkg}
-                  </a>
-                  <span className="font-mono text-faint text-xs">
-                    {size ? formatBytes(size.gzip) : "unknown"}
-                  </span>
-                </li>
-              );
-            })}
-        </ul>
-        <p className="mt-2 text-faint text-xs">
-          Minified and gzipped, captured {packageSizes.fetchedOn}.
-        </p>
-      </section>
-
-      {baseline.features.length > 0 && (
         <section>
-          <h2 className="mb-3 font-semibold text-lg">Features it needs</h2>
-          <ul className="space-y-2">
-            {baseline.features.map((feature) => (
-              <li
-                key={feature.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 py-2"
-              >
-                <span className="text-sm">
-                  {feature.spec ? (
-                    <a href={feature.spec} target="_blank" rel="noreferrer">
-                      {feature.name}
-                    </a>
-                  ) : (
-                    feature.name
-                  )}
-                  {feature.since !== null && (
-                    <span className="ml-2 text-faint text-xs">
-                      since {feature.since}
-                    </span>
-                  )}
-                </span>
-                <span className="text-faint text-xs">
-                  {baselineLabel(feature.status)}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {baseline.limitedBy !== null && (
-            <p className="mt-2 text-faint text-sm">
-              This rule reads as {baselineLabel(baseline.status).toLowerCase()}{" "}
-              because of {baseline.limitedBy.name}. The other features are
-              better supported.
+          <p className="max-w-[64ch] text-fg-muted text-lede">
+            {rule.human.explainer}
+          </p>
+        </section>
+
+        <section className="hairline pt-8">
+          <h2 className="mb-2 text-section">When this applies</h2>
+          <p className="max-w-[62ch] text-fg-muted">
+            {rule.agent.when.charAt(0).toUpperCase() + rule.agent.when.slice(1)}
+            .
+          </p>
+        </section>
+
+        <section>
+          <h2 className="mb-3 text-section">The native approach</h2>
+          <Snippet code={rule.human.snippet} label={rule.native} />
+          {rule.human.demoUrl === undefined ? null : (
+            <p className="mt-3 text-compact">
+              <a href={rule.human.demoUrl} target="_blank" rel="noreferrer">
+                See it working, with an explanation
+              </a>
             </p>
           )}
         </section>
+
+        <section className="hairline pt-8">
+          <h2 className="mb-2 text-section">
+            When the dependency is still right
+          </h2>
+          <p className="mb-4 max-w-[62ch] text-compact text-fg-muted">
+            An answer that is always "use CSS" is worse than no answer. These
+            are the cases where this one does not hold.
+          </p>
+          <ul className="max-w-[68ch] space-y-2.5 border-border border-l pl-5">
+            {rule.agent.unless.map((condition) => (
+              <li key={condition} className="text-fg-muted">
+                {condition}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <PackageTable replaces={rule.replaces} />
+
+        {baseline.features.length === 0 ? null : (
+          <FeatureTable
+            features={baseline.features}
+            cappedBy={baseline.limitedBy?.name ?? null}
+            status={baseline.status}
+          />
+        )}
+      </article>
+    </>
+  );
+}
+
+function PackageTable({ replaces }: { replaces: readonly string[] }) {
+  const sorted = [...replaces].sort(
+    (a, b) =>
+      (packageSizes.sizes[b]?.gzip ?? 0) - (packageSizes.sizes[a]?.gzip ?? 0),
+  );
+
+  return (
+    <section className="hairline pt-8">
+      <h2 className="mb-3 text-section">Packages this covers</h2>
+      <ul className="rule-list">
+        {sorted.map((pkg) => {
+          const size = packageSizes.sizes[pkg];
+          return (
+            <li
+              key={pkg}
+              className="flex items-baseline justify-between gap-4 py-2.5"
+            >
+              <a
+                href={`https://www.npmjs.com/package/${pkg}`}
+                target="_blank"
+                rel="noreferrer"
+                className="font-mono text-compact"
+              >
+                {pkg}
+              </a>
+              <span className="text-fg-faint text-metadata tabular-nums">
+                {size ? formatBytes(size.gzip) : "unknown"}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-3 text-fg-faint text-metadata">
+        Minified and gzipped, captured {packageSizes.fetchedOn}.
+      </p>
+    </section>
+  );
+}
+
+function FeatureTable({
+  features,
+  cappedBy,
+  status,
+}: {
+  features: readonly {
+    id: string;
+    name: string;
+    status: Parameters<typeof baselineLabel>[0];
+    since: string | null;
+    spec: string | null;
+  }[];
+  cappedBy: string | null;
+  status: Parameters<typeof baselineLabel>[0];
+}) {
+  return (
+    <section className="hairline pt-8">
+      <h2 className="mb-3 text-section">Features it needs</h2>
+      <ul className="rule-list">
+        {features.map((feature) => (
+          <li
+            key={feature.id}
+            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2.5"
+          >
+            <span className="text-compact">
+              {feature.spec === null ? (
+                feature.name
+              ) : (
+                <a href={feature.spec} target="_blank" rel="noreferrer">
+                  {feature.name}
+                </a>
+              )}
+              {feature.since === null ? null : (
+                <span className="ml-2 text-fg-faint text-metadata">
+                  since {feature.since}
+                </span>
+              )}
+            </span>
+            <BaselineBadge status={feature.status} short={true} />
+          </li>
+        ))}
+      </ul>
+      {cappedBy === null ? null : (
+        <p className="mt-3 max-w-[62ch] text-fg-muted text-metadata">
+          This rule reads as {baselineLabel(status).toLowerCase()} because of{" "}
+          {cappedBy}. The other features are better supported.
+        </p>
       )}
-    </article>
+    </section>
   );
 }

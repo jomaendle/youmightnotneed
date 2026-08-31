@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { site } from "@/lib/site";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -21,66 +28,76 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+const NAV = [
+  { href: "/rules", label: "Rules" },
+  { href: "/native", label: "This site" },
+] as const;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-dvh antialiased">
-        <header className="border-border/60 border-b">
-          <nav className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-4">
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-dvh">
+        <header className="sticky top-0 z-40 border-border border-b bg-bg/85 backdrop-blur-sm">
+          <nav className="mx-auto flex max-w-4xl items-center justify-between gap-6 px-6 py-3.5">
             <Link
               href="/"
-              className="font-mono font-semibold text-sm text-text no-underline hover:text-link"
+              className="plain font-medium text-[0.9375rem] tracking-tight no-underline"
             >
-              {site.name}
+              youmightnotneed
             </Link>
-            <div className="flex items-center gap-5 text-sm">
-              <Link
-                href="/rules"
-                className="text-muted no-underline hover:text-link"
-              >
-                Rules
-              </Link>
-              <a
-                href={site.repo}
-                className="text-muted no-underline hover:text-link"
-                target="_blank"
-                rel="noreferrer"
-              >
-                GitHub
-              </a>
-            </div>
+            <ul className="flex items-center gap-5 text-metadata">
+              {NAV.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="plain text-fg-muted no-underline hover:text-fg"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <a
+                  href={site.repo}
+                  className="plain text-fg-muted no-underline hover:text-fg"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub
+                </a>
+              </li>
+            </ul>
           </nav>
         </header>
 
-        <main className="mx-auto max-w-3xl px-5 py-10">{children}</main>
+        <main className="mx-auto max-w-4xl px-6 py-14">{children}</main>
 
-        <footer className="mx-auto max-w-3xl px-5 pt-8 pb-14 text-faint text-sm">
-          <p className="mb-2">
-            Baseline data comes from{" "}
-            <a
-              href="https://github.com/web-platform-dx/web-features"
-              target="_blank"
-              rel="noreferrer"
-            >
-              web-features
-            </a>
-            , the dataset behind Baseline. Support status is never hardcoded.
-          </p>
-          <p>
-            Built by{" "}
-            <a
-              href="https://www.jomaendle.com"
-              target="_blank"
-              rel="noreferrer"
-            >
-              {site.author}
-            </a>
-            . The rule catalog is MIT licensed and{" "}
-            <a href={site.repo} target="_blank" rel="noreferrer">
-              open to pull requests
-            </a>
-            .
-          </p>
+        <footer className="mx-auto max-w-4xl px-6 pt-10 pb-16">
+          <div className="hairline space-y-2 pt-6 text-fg-faint text-metadata">
+            <p>
+              Support data comes from{" "}
+              <a
+                href="https://github.com/web-platform-dx/web-features"
+                target="_blank"
+                rel="noreferrer"
+              >
+                web-features
+              </a>
+              , the dataset behind Baseline. It is resolved at build time, never
+              written by hand.
+            </p>
+            <p>
+              Built by{" "}
+              <a href={site.authorUrl} target="_blank" rel="noreferrer">
+                {site.author}
+              </a>
+              . The catalog is MIT and{" "}
+              <a href={site.repo} target="_blank" rel="noreferrer">
+                takes pull requests
+              </a>
+              .
+            </p>
+          </div>
         </footer>
       </body>
     </html>

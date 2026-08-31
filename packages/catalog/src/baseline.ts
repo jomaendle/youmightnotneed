@@ -81,6 +81,20 @@ function toStatus(baseline: "high" | "low" | false): BaselineStatus {
 }
 
 /**
+ * The date a feature reached its current tier. Widely available features report
+ * when they crossed into widely; newly available ones when they crossed into
+ * newly. A limited feature has not reached either, so it has no date.
+ */
+function sinceDate(
+  status: BaselineStatus,
+  entry: { lowDate: string | null; highDate: string | null },
+): string | null {
+  if (status === "widely") return entry.highDate;
+  if (status === "newly") return entry.lowDate;
+  return null;
+}
+
+/**
  * Resolves one web-features ID against the snapshot. An unknown ID resolves to
  * `unknown` rather than throwing, so a stale snapshot degrades into a visible
  * "unverified" badge instead of a crash. The catalog tests fail on any
@@ -92,13 +106,13 @@ export function resolveFeature(id: string): ResolvedFeature {
     return { id, name: id, status: "unknown", since: null, spec: null };
   }
   const status = toStatus(entry.baseline);
-  const since =
-    status === "widely"
-      ? entry.highDate
-      : status === "newly"
-        ? entry.lowDate
-        : null;
-  return { id, name: entry.name, status, since, spec: entry.spec };
+  return {
+    id,
+    name: entry.name,
+    status,
+    since: sinceDate(status, entry),
+    spec: entry.spec,
+  };
 }
 
 /**
@@ -136,10 +150,15 @@ export function resolveBaseline(rule: Rule): BaselineInfo {
     if (RANK[feature.status] < RANK[weakest.status]) weakest = feature;
   }
 
+  // Only name a capping feature when one actually caps the rule. Pointing at
+  // a feature that matches every other one would read as a warning where
+  // there is nothing to warn about.
+  const isCapped = features.some((f) => f.status !== weakest.status);
+
   return {
     status: weakest.status,
     features,
-    limitedBy: features.length > 1 ? weakest : null,
+    limitedBy: isCapped ? weakest : null,
     source: "web-features",
     dataDate: BASELINE_DATA_DATE,
     note: null,

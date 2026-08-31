@@ -29,62 +29,25 @@
     "enabled": true,
     "actions": {
       "source": {
-        "organizeImports": "on"
+        "organizeImports": "on",
+        "useSortedKeys": "off"
       }
     }
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended",
+      "recommended": true,
       "a11y": "on",
       "complexity": "on",
-      "correctness": {
-        "noUnusedImports": "error",
-        "noUnusedVariables": "error",
-        "noUnusedFunctionParameters": "error",
-        "noProcessGlobal": "off",
-        "noNodejsModules": "off",
-        "noUnknownPseudoElement": "off",
-        "noUnknownPseudoClass": "off"
-      },
-      "performance": {
-        "noAccumulatingSpread": "error",
-        "noDelete": "error",
-        "useTopLevelRegex": "warn",
-        "noNamespaceImport": "off",
-        "noBarrelFile": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "error",
-        "noSecrets": "off"
-      },
-      "suspicious": {
-        "noArrayIndexKey": "error",
-        "noConsole": {
-          "level": "error",
-          "options": {
-            "allow": ["error", "warn", "info"]
-          }
-        },
-        "noUnknownAtRules": "off"
-      },
-      "style": {
-        "noNegationElse": "on",
-        "noParameterAssign": "on",
-        "noShoutyConstants": "off",
-        "noUselessElse": "on",
-        "useAtIndex": "on",
-        "useCollapsedElseIf": "on",
-        "useConst": "on",
-        "useDefaultSwitchClause": "on",
-        "useForOf": "on",
-        "useShorthandAssign": "on",
-        "useTemplate": "on"
-      },
+      "correctness": "on",
+      "performance": "on",
+      "security": "on",
+      "style": "on",
+      "suspicious": "on",
       "nursery": {
         "useSortedClasses": {
-          "level": "warn",
+          "level": "error",
           "fix": "safe",
           "options": {
             "functions": ["cn", "clsx", "cva"]
@@ -102,6 +65,69 @@
   },
   "overrides": [
     {
+      "includes": ["**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": {
+              "level": "error",
+              "options": {
+                "maxLines": 60,
+                "skipBlankLines": true
+              }
+            },
+            "noExcessiveCognitiveComplexity": {
+              "level": "error",
+              "options": {
+                "maxAllowedComplexity": 12
+              }
+            },
+            "noUselessUndefined": "off"
+          },
+          "style": {
+            "noShoutyConstants": "off",
+            "useNamingConvention": "off",
+            "noDefaultExport": "off",
+            "noMagicNumbers": "off",
+            "useComponentExportOnlyModules": "off",
+            "useConsistentArrayType": "off",
+            "noJsxLiterals": "off",
+            "noTernary": "off",
+            "useBlockStatements": "off",
+            "useExportsLast": "off",
+            "noContinue": "off",
+            "useDestructuring": "off",
+            "noNestedTernary": "error",
+            "useNumericSeparators": "error"
+          },
+          "correctness": {
+            "noNodejsModules": "off",
+            "noProcessGlobal": "off",
+            "noUnknownPseudoElement": "off",
+            "noUnknownPseudoClass": "off",
+            "noUndeclaredDependencies": "off",
+            "noSolidDestructuredProps": "off",
+            "useQwikValidLexicalScope": "off"
+          },
+          "suspicious": {
+            "noConsole": {
+              "level": "error",
+              "options": {
+                "allow": ["error", "warn", "info"]
+              }
+            },
+            "noUnknownAtRules": "off",
+            "noReactSpecificProps": "off"
+          },
+          "performance": {
+            "noBarrelFile": "off",
+            "noNamespaceImport": "off",
+            "useSolidForComponent": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["apps/web/**"],
       "linter": {
         "domains": {
@@ -110,55 +136,25 @@
         },
         "rules": {
           "correctness": {
-            "useExhaustiveDependencies": "error",
-            "useHookAtTopLevel": "error",
             "useUniqueElementIds": "off"
           },
-          "suspicious": {
-            "noLeakedRender": "error",
-            "noReactForwardRef": "error"
-          },
-          "style": {
-            "useFragmentSyntax": "on",
-            "useComponentExportOnlyModules": "off"
+          "complexity": {
+            "noExcessiveLinesPerFunction": {
+              "level": "error",
+              "options": {
+                "maxLines": 110,
+                "skipBlankLines": true
+              }
+            }
           },
           "performance": {
             "noJsxPropsBind": "off"
-          },
-          "complexity": {
-            "noExcessiveLinesPerFunction": "off"
           }
         }
       }
     },
     {
-      "includes": ["packages/cli/**", "scripts/**"],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noConsole": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": ["**"],
-      "linter": {
-        "rules": {
-          "complexity": {
-            "noUselessUndefined": "off",
-            "noUselessReturn": "off"
-          }
-        }
-      }
-    },
-    {
-      "includes": [
-        "**/*.test.ts",
-        "**/*.test.tsx",
-        "scripts/**",
-        "packages/cli/src/render.ts"
-      ],
+      "includes": ["**/*.test.ts", "**/*.test.tsx"],
       "linter": {
         "rules": {
           "complexity": {
@@ -166,6 +162,26 @@
           },
           "performance": {
             "useTopLevelRegex": "off"
+          },
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**", "packages/cli/src/bin.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          },
+          "performance": {
+            "useTopLevelRegex": "off",
+            "noAwaitInLoops": "off"
+          },
+          "style": {
+            "noProcessEnv": "off"
           }
         }
       }

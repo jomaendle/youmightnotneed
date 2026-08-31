@@ -1,4 +1,4 @@
-/** Single source of truth for site identity and copy that appears in metadata. */
+/** Single source of truth for site identity and metadata copy. */
 export const site = {
   name: "youmightnotneed",
   domain: "youmightnotneed.dev",
@@ -8,4 +8,5 @@ export const site = {
     "Find the modern CSS and HTML that replaces your JavaScript dependencies. Paste a package.json and see what the platform now does natively.",
   repo: "https://github.com/jomaendle/youmightnotneed",
   author: "Johannes Maendle",
+  authorUrl: "https://www.jomaendle.com",
 } as const;

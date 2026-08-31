@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { analyze, detect, summarize } from "./detect.ts";
+import {
+  analyze,
+  detect,
+  type Finding,
+  sortFindings,
+  summarize,
+} from "./detect.ts";
 import type { Rule } from "./schema.ts";
 
 const testRules: Rule[] = [
@@ -174,5 +180,67 @@ describe("summarize", () => {
     );
     expect(summary.byStatus.widely).toBe(1);
     expect(summary.byStatus.limited).toBe(1);
+  });
+});
+
+describe("sortFindings tie-breaking", () => {
+  function finding(
+    title: string,
+    replaceableBytes: number | null,
+    status: "widely" | "newly" | "limited",
+  ): Finding {
+    return {
+      rule: { ...(testRules[0] as Rule), id: title.toLowerCase(), title },
+      baseline: {
+        status,
+        features: [],
+        limitedBy: null,
+        source: "manual",
+        dataDate: "2026-08-31",
+        note: null,
+      },
+      matched: [],
+      replaceableBytes,
+      hasUnknownSizes: false,
+    };
+  }
+
+  it("puts the heaviest first", () => {
+    const sorted = sortFindings([
+      finding("Small", 100, "widely"),
+      finding("Large", 900, "widely"),
+    ]);
+    expect(sorted.map((f) => f.rule.title)).toEqual(["Large", "Small"]);
+  });
+
+  it("breaks a size tie on support, best first", () => {
+    const sorted = sortFindings([
+      finding("Risky", 500, "limited"),
+      finding("Safe", 500, "widely"),
+    ]);
+    expect(sorted.map((f) => f.rule.title)).toEqual(["Safe", "Risky"]);
+  });
+
+  it("breaks a full tie alphabetically, so the order is stable", () => {
+    const sorted = sortFindings([
+      finding("Zebra", 500, "widely"),
+      finding("Alpha", 500, "widely"),
+    ]);
+    expect(sorted.map((f) => f.rule.title)).toEqual(["Alpha", "Zebra"]);
+  });
+
+  it("treats an unknown size as the lightest", () => {
+    const sorted = sortFindings([
+      finding("Unknown", null, "widely"),
+      finding("Known", 10, "widely"),
+    ]);
+    expect(sorted.map((f) => f.rule.title)).toEqual(["Known", "Unknown"]);
+  });
+
+  it("does not mutate the array it was given", () => {
+    const input = [finding("B", 1, "widely"), finding("A", 9, "widely")];
+    const before = input.map((f) => f.rule.title);
+    sortFindings(input);
+    expect(input.map((f) => f.rule.title)).toEqual(before);
   });
 });

@@ -4,7 +4,6 @@ import {
   type Finding,
   formatBytes,
   formatHeadline,
-  formatList,
   type Report,
 } from "@youmightnotneed/catalog";
 import type { ColorName, Palette } from "./colors.ts";
@@ -215,9 +214,4 @@ export function renderJson(report: Report): string {
     null,
     2,
   );
-}
-
-/** Handy for tests and for a one-line summary. */
-export function describeMatched(finding: Finding): string {
-  return formatList(finding.matched.map((m) => m.name));
 }

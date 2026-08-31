@@ -81,16 +81,71 @@ function collectDependencies(
     const block = pkg[field];
     if (!block || typeof block !== "object") continue;
     for (const rawName of Object.keys(block)) {
-      const name = rawName.toLowerCase();
-      const fields = found.get(name);
-      if (fields) {
-        if (!fields.includes(field)) fields.push(field);
-      } else {
-        found.set(name, [field]);
-      }
+      remember(found, rawName.toLowerCase(), field);
     }
   }
   return found;
+}
+
+/** Notes that `name` appeared in `field`, without duplicating the field. */
+function remember(
+  found: Map<string, DependencyField[]>,
+  name: string,
+  field: DependencyField,
+): void {
+  const fields = found.get(name);
+  if (!fields) {
+    found.set(name, [field]);
+    return;
+  }
+  if (!fields.includes(field)) fields.push(field);
+}
+
+/**
+ * Maps a dependency list to the rules that cover it.
+ *
+ * A dependency in package.json is not proof of what it is used for, so a
+ * finding is a "this may apply" and every surface renders it with its Baseline
+ * badge and its `unless` conditions.
+ */
+/**
+ * Finds the packages from one rule that appear in a dependency list. Returns an
+ * empty array when the rule does not apply.
+ */
+function matchRule(
+  rule: Rule,
+  installed: ReadonlyMap<string, DependencyField[]>,
+): MatchedPackage[] {
+  const matched: MatchedPackage[] = [];
+
+  for (const candidate of rule.replaces) {
+    const fields = installed.get(candidate.toLowerCase());
+    if (!fields) continue;
+    const { gzip, version } = readSize(candidate);
+    matched.push({
+      name: candidate,
+      fields: [...fields],
+      gzip,
+      measuredVersion: version,
+    });
+  }
+
+  return matched;
+}
+
+/** Sums the sizes we know, and reports whether any were missing. */
+function weigh(matched: readonly MatchedPackage[]): {
+  replaceableBytes: number | null;
+  hasUnknownSizes: boolean;
+} {
+  const known = matched.filter((m) => m.gzip !== null);
+  return {
+    replaceableBytes:
+      known.length > 0
+        ? known.reduce((total, m) => total + (m.gzip ?? 0), 0)
+        : null,
+    hasUnknownSizes: known.length !== matched.length,
+  };
 }
 
 /**
@@ -109,32 +164,14 @@ export function detect(
   const findings: Finding[] = [];
 
   for (const rule of rules) {
-    const matched: MatchedPackage[] = [];
-
-    for (const candidate of rule.replaces) {
-      const fields = installed.get(candidate.toLowerCase());
-      if (!fields) continue;
-      const { gzip, version } = readSize(candidate);
-      matched.push({
-        name: candidate,
-        fields: [...fields],
-        gzip,
-        measuredVersion: version,
-      });
-    }
-
+    const matched = matchRule(rule, installed);
     if (matched.length === 0) continue;
 
-    const known = matched.filter((m) => m.gzip !== null);
     findings.push({
       rule,
       baseline: resolveBaseline(rule),
       matched,
-      replaceableBytes:
-        known.length > 0
-          ? known.reduce((total, m) => total + (m.gzip ?? 0), 0)
-          : null,
-      hasUnknownSizes: known.length !== matched.length,
+      ...weigh(matched),
     });
   }
 

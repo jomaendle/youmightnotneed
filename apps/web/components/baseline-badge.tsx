@@ -1,34 +1,39 @@
 import type { BaselineStatus } from "@youmightnotneed/catalog";
 
 /**
- * The support badge. Every finding renders one, always. The first reply to any
- * post about this tool will be "but Safari", so the answer sits next to the
- * claim rather than in a footnote.
+ * The support badge. Every finding renders one.
+ *
+ * Colour is never the only cue: each tier also gets a different glyph shape
+ * from the .badge rules in globals.css, and the label is always spelled out.
  */
 
-const STYLES: Record<
+const TIERS: Record<
   BaselineStatus,
-  { label: string; short: string; className: string }
+  { label: string; short: string; tier: string; glyph: string }
 > = {
   widely: {
     label: "Baseline widely available",
     short: "Widely available",
-    className: "bg-widely-dim text-widely",
+    tier: "tier-widely",
+    glyph: "is-widely",
   },
   newly: {
     label: "Baseline newly available",
     short: "Newly available",
-    className: "bg-newly-dim text-newly",
+    tier: "tier-newly",
+    glyph: "is-newly",
   },
   limited: {
     label: "Limited availability",
-    short: "Limited",
-    className: "bg-limited-dim text-limited",
+    short: "Limited availability",
+    tier: "tier-limited",
+    glyph: "is-limited",
   },
   unknown: {
     label: "Support unverified",
     short: "Unverified",
-    className: "bg-unknown-dim text-unknown",
+    tier: "tier-unknown",
+    glyph: "is-unknown",
   },
 };
 
@@ -39,17 +44,10 @@ export function BaselineBadge({
   status: BaselineStatus;
   short?: boolean;
 }) {
-  const style = STYLES[status];
+  const tier = TIERS[status];
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-medium text-xs ${style.className}`}
-    >
-      <span aria-hidden="true" className="size-1.5 rounded-full bg-current" />
-      {short ? style.short : style.label}
+    <span className={`badge ${tier.tier} ${tier.glyph}`}>
+      {short ? tier.short : tier.label}
     </span>
   );
-}
-
-export function baselineTierLabel(status: BaselineStatus): string {
-  return STYLES[status].label;
 }

@@ -14,11 +14,11 @@ describe("formatBytes", () => {
 
   it("uses one decimal place up to 100 kB", () => {
     expect(formatBytes(1000)).toBe("1.0 kB");
-    expect(formatBytes(20076)).toBe("20.1 kB");
+    expect(formatBytes(20_076)).toBe("20.1 kB");
   });
 
   it("drops the decimal above 100 kB", () => {
-    expect(formatBytes(142000)).toBe("142 kB");
+    expect(formatBytes(142_000)).toBe("142 kB");
   });
 });
 
@@ -28,7 +28,7 @@ describe("formatHeadline", () => {
   });
 
   it("hedges with 'up to' rather than promising a saving", () => {
-    const headline = formatHeadline(214000, 6);
+    const headline = formatHeadline(214_000, 6);
     expect(headline).toContain("Up to");
     expect(headline).toContain("214 kB");
     expect(headline).not.toMatch(/save/i);
