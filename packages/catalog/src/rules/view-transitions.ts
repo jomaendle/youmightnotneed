@@ -35,6 +35,8 @@ document.startViewTransition(() => {
     animation: none;
   }
 }`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API",
   },
   agent: {
     when: "cross-fading between two states, or growing a thumbnail into a hero image across a navigation",

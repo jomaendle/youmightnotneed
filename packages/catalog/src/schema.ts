@@ -80,6 +80,8 @@ export const ruleSchema = z
       snippet: z.string().min(1),
       /** A live demo or a post that walks through it. */
       demoUrl: z.url().optional(),
+      /** The MDN reference page for the native feature. */
+      mdnUrl: z.url().optional(),
     }),
 
     /** Terse projection for LLM surfaces. Budget roughly 200 tokens. */

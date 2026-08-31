@@ -18,6 +18,7 @@ export const fluidType: Rule = {
 .card h2 {
   font-size: clamp(1.25rem, 0.9rem + 2cqi, 2rem);
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/clamp",
   },
   agent: {
     when: "a heading or display type should scale between a minimum and maximum size with the viewport",

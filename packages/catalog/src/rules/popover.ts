@@ -39,6 +39,7 @@ export const popover: Rule = {
   }
 </style>`,
     demoUrl: "https://www.jomaendle.com/blog/html-popover",
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/API/Popover_API",
   },
   agent: {
     when: "building a tooltip, dropdown menu or popover anchored to a trigger",

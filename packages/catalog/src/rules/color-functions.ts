@@ -27,6 +27,8 @@ export const colorFunctions: Rule = {
   background: oklch(from var(--brand) l c h / 0.15);
   border: 1px solid color-mix(in oklch, var(--brand) 40%, transparent);
 }`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch",
   },
   agent: {
     when: "deriving hover, border or muted shades from a single brand colour",

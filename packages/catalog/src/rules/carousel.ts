@@ -57,6 +57,7 @@ export const carousel: Rule = {
   opacity: 1;
 }`,
     demoUrl: "https://www.jomaendle.com/blog/css-carousel",
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap",
   },
   agent: {
     when: "building a horizontal gallery with prev/next buttons and dot indicators",

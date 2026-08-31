@@ -38,6 +38,8 @@ export const scrollAnimations: Rule = {
   animation-timeline: scroll(root block);
   transform-origin: left;
 }`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline",
   },
   agent: {
     when: "fading or moving elements in as they scroll into view, or driving a reading-progress bar",

@@ -21,6 +21,7 @@ export const aspectRatio: Rule = {
   width: 100%;
   object-fit: cover;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio",
   },
   agent: {
     when: "keeping a box at a fixed ratio, such as a 16/9 video wrapper or a square thumbnail",

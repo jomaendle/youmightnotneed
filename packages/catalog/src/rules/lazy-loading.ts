@@ -18,6 +18,8 @@ export const lazyLoading: Rule = {
       "These libraries watch the viewport with an IntersectionObserver and swap a placeholder for the real src once an image or iframe scrolls close enough. The loading attribute does the same deferral without the observer, the placeholder markup, or the script that has to run before it can start. The browser decides how far ahead to fetch, so there is no distance threshold to tune.",
     snippet: `<img src="/hero.jpg" alt="" loading="lazy" width="1200" height="630" />
 <iframe src="https://example.com/embed" loading="lazy"></iframe>`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#loading",
   },
   agent: {
     when: "deferring offscreen images or iframes so they load as the user scrolls to them",
