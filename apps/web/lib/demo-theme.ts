@@ -39,6 +39,30 @@ const BASE_CSS = `
     cursor: pointer;
   }
   button:hover { border-color: var(--c-accent); }
+
+  /* Shared shapes several demos reuse. Each demo still sets its own size
+     (width, height) since that varies per demo; only the repeated visual
+     treatment lives here. */
+  .demo-scroll {
+    overflow-y: auto;
+    border: 1px solid var(--c-border);
+    border-radius: 0.5rem;
+  }
+  .demo-resizer {
+    resize: horizontal;
+    overflow: auto;
+    container-type: inline-size;
+    border: 1px dashed var(--c-border);
+    border-radius: 0.375rem;
+  }
+  .demo-swatch {
+    background: linear-gradient(135deg, var(--c-accent), var(--c-bg-subtle));
+  }
+  .demo-hint {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--c-fg-muted);
+  }
 `;
 
 /** Wraps a demo's body markup and CSS into a full document for iframe srcdoc. */

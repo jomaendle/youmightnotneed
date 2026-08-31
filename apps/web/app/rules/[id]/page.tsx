@@ -74,6 +74,14 @@ export default async function RulePage({ params }: PageProps) {
           </div>
         </header>
 
+        {baseline.features.length === 0 ? null : (
+          <FeatureTable
+            features={baseline.features}
+            cappedBy={baseline.limitedBy?.name ?? null}
+            status={baseline.status}
+          />
+        )}
+
         <section>
           <p className="max-w-[64ch] text-fg-muted text-lede">
             {rule.human.explainer}
@@ -131,14 +139,6 @@ export default async function RulePage({ params }: PageProps) {
         </section>
 
         <PackageTable replaces={rule.replaces} />
-
-        {baseline.features.length === 0 ? null : (
-          <FeatureTable
-            features={baseline.features}
-            cappedBy={baseline.limitedBy?.name ?? null}
-            status={baseline.status}
-          />
-        )}
       </article>
     </>
   );
