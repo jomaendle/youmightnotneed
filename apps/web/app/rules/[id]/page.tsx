@@ -10,7 +10,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BaselineBadge } from "@/components/baseline-badge";
+import { LiveDemo } from "@/components/live-demo";
 import { Snippet } from "@/components/snippet";
+import { demos } from "@/lib/demos";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -41,6 +43,7 @@ export default async function RulePage({ params }: PageProps) {
   if (!rule) notFound();
 
   const baseline = resolveBaseline(rule);
+  const demo = demos[rule.id];
 
   return (
     <>
@@ -88,6 +91,11 @@ export default async function RulePage({ params }: PageProps) {
         <section>
           <h2 className="mb-3 text-section">The native approach</h2>
           <Snippet code={rule.human.snippet} label={rule.native} />
+          {demo === undefined ? null : (
+            <div className="mt-4">
+              <LiveDemo demo={demo} title={rule.title} />
+            </div>
+          )}
           {rule.human.mdnUrl === undefined &&
           rule.human.demoUrl === undefined ? null : (
             <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-compact">
