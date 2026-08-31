@@ -9,6 +9,7 @@ import { discreteTransitions } from "./discrete-transitions.ts";
 import { fieldSizing } from "./field-sizing.ts";
 import { fluidType } from "./fluid-type.ts";
 import { heightAnimation } from "./height-animation.ts";
+import { lazyLoading } from "./lazy-loading.ts";
 import { masonry } from "./masonry.ts";
 import { popover } from "./popover.ts";
 import { scrollAnimations } from "./scroll-animations.ts";
@@ -36,6 +37,7 @@ export const rules: readonly Rule[] = [
   fieldSizing,
   fluidType,
   heightAnimation,
+  lazyLoading,
   masonry,
   popover,
   scrollAnimations,

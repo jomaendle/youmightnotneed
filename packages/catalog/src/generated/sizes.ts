@@ -168,6 +168,16 @@ export const packageSizes: SizeSnapshot = {
       "raw": 14232,
       "version": "6.8.6"
     },
+    "lazysizes": {
+      "gzip": 2695,
+      "raw": 7523,
+      "version": "5.3.2"
+    },
+    "lozad": {
+      "gzip": 1293,
+      "raw": 2854,
+      "version": "1.16.0"
+    },
     "masonry-layout": {
       "gzip": 6870,
       "raw": 22162,
@@ -272,6 +282,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 6238,
       "raw": 23758,
       "version": "4.5.0"
+    },
+    "react-lazy-load-image-component": {
+      "gzip": 6046,
+      "raw": 26819,
+      "version": "1.6.3"
+    },
+    "react-lazyload": {
+      "gzip": 2792,
+      "raw": 7657,
+      "version": "3.2.1"
     },
     "react-masonry-component": {
       "gzip": 16156,
@@ -478,6 +498,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 55175,
       "version": "2.6.2"
     },
+    "vanilla-lazyload": {
+      "gzip": 2695,
+      "raw": 6794,
+      "version": "19.1.3"
+    },
     "wow.js": {
       "gzip": 2739,
       "raw": 7930,
@@ -487,6 +512,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2753,
       "raw": 8417,
       "version": "1.1.3"
+    },
+    "yall-js": {
+      "gzip": 869,
+      "raw": 1728,
+      "version": "4.0.2"
     }
   }
 };
