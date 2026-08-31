@@ -60,7 +60,7 @@ pnpm refresh:sizes       # fetches bundlephobia sizes for every claimed package
 
 Both are safe to run even when nothing else changed: existing entries survive
 a failed fetch. Check the output of `refresh:sizes` for "No size for N
-package(s)" — that means a typo in `replaces`, since the rule can never match
+package(s)". That means a typo in `replaces`, since the rule can never match
 a package that doesn't exist on npm.
 
 ## 5. Verify
