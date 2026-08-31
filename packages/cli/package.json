@@ -1,0 +1,47 @@
+{
+  "name": "youmightnotneed",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Find the modern CSS and HTML that replaces your JavaScript dependencies.",
+  "license": "MIT",
+  "author": "Johannes Maendle",
+  "homepage": "https://youmightnotneed.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jomaendle/youmightnotneed.git",
+    "directory": "packages/cli"
+  },
+  "keywords": [
+    "css",
+    "baseline",
+    "bundle-size",
+    "dependencies",
+    "cli"
+  ],
+  "bin": {
+    "youmightnotneed": "./dist/bin.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node src/bin.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@youmightnotneed/catalog": "workspace:*"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.11",
+    "@types/node": "^24.13.3"
+  }
+}

@@ -1,0 +1,40 @@
+name: Refresh Baseline data
+
+# Browser support moves monthly, so the snapshot is regenerated on a schedule
+# and opened as a pull request. Nothing lands without a human reading the diff:
+# a support change is exactly the kind of thing worth seeing before it ships.
+on:
+  schedule:
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm update web-features --latest
+      - run: pnpm refresh:baseline
+      - run: pnpm refresh:sizes
+      - run: pnpm test
+
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          title: "Refresh Baseline and bundle size snapshots"
+          commit-message: "chore: refresh Baseline and bundle size snapshots"
+          branch: chore/refresh-data
+          body: |
+            Regenerated from the latest `web-features` and bundlephobia.
+
+            Check the diff for rules that changed tier. A rule moving from
+            limited to newly available is worth a post.
