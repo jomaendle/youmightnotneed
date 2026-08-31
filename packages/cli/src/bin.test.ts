@@ -1,9 +1,21 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { findPackageJson, resolveTarget } from "./bin.ts";
+
+const ownVersion = (
+  JSON.parse(
+    readFileSync(resolve(import.meta.dirname, "../package.json"), "utf8"),
+  ) as { version: string }
+).version;
 
 let dir: string;
 
@@ -55,22 +67,23 @@ describe("entry point detection through a symlink", () => {
   // while argv[1] stays the symlink path. Comparing the two without
   // realpathSync() makes the CLI silently no-op under every real npm/npx
   // invocation, which is exactly how this regressed once already.
-  it("runs main() when invoked through a node_modules/.bin-style symlink", () => {
-    const link = join(dir, "youmightnotneed");
-    symlinkSync(resolve(import.meta.dirname, "bin.ts"), link);
+  let link: string;
 
+  beforeEach(() => {
+    link = join(dir, "youmightnotneed");
+    symlinkSync(resolve(import.meta.dirname, "bin.ts"), link);
+  });
+
+  it("runs main() when invoked through a node_modules/.bin-style symlink", () => {
     const result = spawnSync(process.execPath, [link, "--version"], {
       encoding: "utf8",
     });
 
     expect(result.status).toBe(0);
-    expect(result.stdout.trim().length).toBeGreaterThan(0);
+    expect(result.stdout.trim()).toBe(ownVersion);
   });
 
   it("still exits non-zero for an unknown option through the symlink", () => {
-    const link = join(dir, "youmightnotneed");
-    symlinkSync(resolve(import.meta.dirname, "bin.ts"), link);
-
     const result = spawnSync(process.execPath, [link, "--bogus"], {
       encoding: "utf8",
     });
