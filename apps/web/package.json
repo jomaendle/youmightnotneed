@@ -12,9 +12,9 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@jomae/catalog": "workspace:*",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "@jomae/catalog": "workspace:*",
     "next": "^16.3.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
@@ -26,6 +26,7 @@
     "@types/react-dom": "^19.2.4",
     "@vitest/coverage-v8": "^4.1.11",
     "postcss": "^8.5.26",
+    "shiki": "^4.4.3",
     "tailwindcss": "^4.3.3",
     "vitest": "^4.1.11"
   }

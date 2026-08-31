@@ -244,6 +244,14 @@ a.plain {
   border-block-start: 1px solid var(--c-border);
 }
 
+/* Shiki ships its own background and font on every <pre>. The figure around
+   it already supplies both, so only the token colors should show through. */
+.snippet-shiki pre {
+  background: transparent !important;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  margin: 0;
+}
+
 /* ---------------------------------------------------------------------------
    Findings adapt to their container, not the viewport.
 --------------------------------------------------------------------------- */
