@@ -116,7 +116,7 @@ export default async function ReportPage({ searchParams }: PageProps) {
           This report is encoded entirely in its URL. Copy the address bar to
           share it. Nothing was stored.
         </p>
-        <p className="flex flex-wrap gap-x-4 pt-1">
+        <div className="flex flex-wrap gap-x-4 pt-1">
           <MethodologyDialog
             baselineOn={BASELINE_DATA_DATE}
             webFeaturesVersion={WEB_FEATURES_VERSION}
@@ -125,7 +125,7 @@ export default async function ReportPage({ searchParams }: PageProps) {
           <Link href="/" className="text-metadata">
             Check another package.json
           </Link>
-        </p>
+        </div>
       </footer>
     </div>
   );
