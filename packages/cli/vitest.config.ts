@@ -6,8 +6,9 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text-summary", "lcov"],
-      // bin.ts is the I/O shell: argument parsing and process exits. It is
-      // exercised end to end by the CLI smoke test in CI, not by unit tests.
+      // bin.ts is mostly argument parsing and process.exit() calls. Its pure
+      // path-resolution helpers have their own tests in bin.test.ts; the rest
+      // is left out of the threshold rather than chased for coverage.
       include: ["src/render.ts", "src/colors.ts"],
       thresholds: {
         lines: 90,
