@@ -200,7 +200,7 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
   <div class="resizer demo-resizer">
     <div class="card">Card content</div>
   </div>
-  <p class="demo-hint" style="margin-top:0.5rem;">Drag the bottom-right corner &#8600;</p>
+  <p class="demo-hint" style="margin-top:0.5rem;">Drag the corner to resize &#8600;</p>
 </div>
 `,
       `
@@ -498,13 +498,13 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
     html: wrapDemo(
       `
 <div class="scroller demo-scroll">
-  <p class="demo-hint" style="margin-bottom:0.75rem;">Scroll down. Each image below really carries loading="lazy".</p>
+  <p class="demo-hint" style="margin-bottom:0.75rem;">Scroll down. Each image below carries loading="lazy".</p>
   <img class="ph" loading="eager" src="${SOLID}" alt="Above the fold, loads eagerly" />
   <img class="ph" loading="lazy" src="${SOLID}" alt="Deferred" />
   <img class="ph" loading="lazy" src="${SOLID}" alt="Deferred" />
   <img class="ph" loading="lazy" src="${SOLID}" alt="Deferred" />
-  <p class="demo-hint" style="margin-bottom:0.75rem;">A tiny embedded frame has no real network to defer against.
-  Open devtools on a real page to see the fetch itself wait for scroll.</p>
+  <p class="demo-hint" style="margin-bottom:0.75rem;">This frame is too small to show a fetch deferring.
+  Open devtools on a live page to see it wait.</p>
 </div>
 `,
       `

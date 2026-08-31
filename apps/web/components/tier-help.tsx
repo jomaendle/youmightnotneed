@@ -1,5 +1,9 @@
+import { TIERS } from "@/lib/tiers";
+
 /**
- * Explains the three support tiers.
+ * Explains the three support tiers a visitor can actually choose between.
+ * "unknown" is a catalog data gap, not a tier a reader picks, so it is left
+ * out here even though TIERS carries it for the report and the badge.
  *
  * Uses the Popover API for the top layer, light dismiss and Escape handling,
  * with CSS anchor positioning to tether it to the trigger. No JavaScript, and
@@ -19,30 +23,16 @@ export function TierHelp() {
 
       <div id="tier-help" popover="auto" className="anchor-popover">
         <dl className="space-y-2.5">
-          <div>
-            <dt className="badge tier-widely is-widely font-medium">
-              Baseline widely available
-            </dt>
-            <dd className="mt-1 text-fg-muted">
-              In every major engine for at least two and a half years. Safe.
-            </dd>
-          </div>
-          <div>
-            <dt className="badge tier-newly is-newly font-medium">
-              Baseline newly available
-            </dt>
-            <dd className="mt-1 text-fg-muted">
-              In every major engine, but recently. Check your support target.
-            </dd>
-          </div>
-          <div>
-            <dt className="badge tier-limited is-limited font-medium">
-              Limited availability
-            </dt>
-            <dd className="mt-1 text-fg-muted">
-              Missing from at least one engine. Needs a fallback.
-            </dd>
-          </div>
+          {TIERS.filter((tier) => tier.status !== "unknown").map((tier) => (
+            <div key={tier.status}>
+              <dt
+                className={`badge ${tier.cssTier} ${tier.cssGlyph} font-medium`}
+              >
+                {tier.formal}
+              </dt>
+              <dd className="mt-1 text-fg-muted">{tier.note}</dd>
+            </div>
+          ))}
         </dl>
       </div>
     </>
