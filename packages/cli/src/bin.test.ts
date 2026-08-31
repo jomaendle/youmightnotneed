@@ -1,6 +1,7 @@
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { findPackageJson, resolveTarget } from "./bin.ts";
 
@@ -45,5 +46,35 @@ describe("findPackageJson", () => {
   it("returns null when nothing is found before the filesystem root", () => {
     // A directory with no package.json anywhere above it in this sandbox.
     expect(findPackageJson("/")).toBeNull();
+  });
+});
+
+describe("entry point detection through a symlink", () => {
+  // npm and npx never invoke a package's bin directly. They run it through a
+  // symlink in node_modules/.bin, which import.meta.url reports dereferenced
+  // while argv[1] stays the symlink path. Comparing the two without
+  // realpathSync() makes the CLI silently no-op under every real npm/npx
+  // invocation, which is exactly how this regressed once already.
+  it("runs main() when invoked through a node_modules/.bin-style symlink", () => {
+    const link = join(dir, "youmightnotneed");
+    symlinkSync(resolve(import.meta.dirname, "bin.ts"), link);
+
+    const result = spawnSync(process.execPath, [link, "--version"], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(0);
+    expect(result.stdout.trim().length).toBeGreaterThan(0);
+  });
+
+  it("still exits non-zero for an unknown option through the symlink", () => {
+    const link = join(dir, "youmightnotneed");
+    symlinkSync(resolve(import.meta.dirname, "bin.ts"), link);
+
+    const result = spawnSync(process.execPath, [link, "--bogus"], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(2);
   });
 });

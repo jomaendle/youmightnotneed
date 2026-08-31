@@ -9,6 +9,10 @@ Website, CLI, and one rule catalog underneath both.
 npx youmightnotneed
 ```
 
+`npx` works whether or not the package is installed. It resolves a local
+`node_modules/.bin` copy first. The bare `youmightnotneed` command only
+works after a global install.
+
 Point it at a repo and it reads `package.json`, matches your dependencies
 against the catalog, and prints what the platform now does natively, how much
 each library weighs, and how well the replacement is supported.

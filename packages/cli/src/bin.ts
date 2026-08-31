@@ -5,7 +5,7 @@
  * Reads a package.json, runs the catalog's detect(), prints a report. All the
  * I/O lives here; the rendering and the detection are both pure.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import {
   analyze,
@@ -40,6 +40,8 @@ Options
 Notes
   A dependency in package.json is not proof of what it is used for, so every
   finding is a "this may apply", not an instruction. Read the conditions.
+  npx youmightnotneed works with or without an install. The bare
+  youmightnotneed command only works after a global install.
 `;
 
 interface Args {
@@ -222,6 +224,6 @@ function main(): void {
 // when a test imports it to exercise resolveTarget() or findPackageJson().
 const isEntryPoint =
   process.argv[1] !== undefined &&
-  import.meta.url === `file://${resolve(process.argv[1])}`;
+  import.meta.url === `file://${realpathSync(process.argv[1])}`;
 
 if (isEntryPoint) main();

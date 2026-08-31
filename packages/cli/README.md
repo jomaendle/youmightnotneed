@@ -6,6 +6,10 @@ Find the modern CSS and HTML that replaces your JavaScript dependencies.
 npx youmightnotneed
 ```
 
+`npx` works whether or not the package is installed. It resolves a local
+`node_modules/.bin` copy first. The bare `youmightnotneed` command only
+works after a global install.
+
 Reads the nearest `package.json` and prints what the platform now covers,
 grouped by how well supported the replacement is.
 
