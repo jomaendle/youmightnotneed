@@ -10,18 +10,27 @@ import { FeaturedCarousel } from "@/components/featured-carousel";
 import { MethodologyDialog } from "@/components/methodology-dialog";
 import { ScanForm } from "@/components/scan-form";
 import { TierHelp } from "@/components/tier-help";
+import { demos } from "@/lib/demos";
 
-/** The rules with a demo behind them read best as the first impression. */
+function weight(rule: (typeof rules)[number]): number {
+  return rule.replaces.reduce(
+    (total, pkg) => total + (packageSizes.sizes[pkg]?.gzip ?? 0),
+    0,
+  );
+}
+
+/**
+ * The rules with a live example behind them read best as the first
+ * impression. rule.human.demoUrl is a different, almost-unused field (an
+ * external write-up), not the interactive iframe in lib/demos.ts: checking
+ * that instead would feature 2 rules out of 22 rather than the 21 that
+ * actually have one.
+ */
 function featured() {
-  const withDemo = rules.filter((rule) => rule.human.demoUrl !== undefined);
-  const heaviest = [...rules]
-    .filter((rule) => !withDemo.includes(rule))
-    .sort(
-      (a, b) =>
-        b.replaces.reduce((t, p) => t + (packageSizes.sizes[p]?.gzip ?? 0), 0) -
-        a.replaces.reduce((t, p) => t + (packageSizes.sizes[p]?.gzip ?? 0), 0),
-    );
-  return [...withDemo, ...heaviest].slice(0, 6);
+  return [...rules]
+    .filter((rule) => demos[rule.id] !== undefined)
+    .sort((a, b) => weight(b) - weight(a))
+    .slice(0, 6);
 }
 
 export default function HomePage() {
