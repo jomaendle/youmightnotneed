@@ -170,9 +170,8 @@ function EmptyHeadline() {
         Nothing here that CSS covers yet
       </h1>
       <p className="max-w-[58ch] text-fg-muted text-lede">
-        None of these dependencies matched a rule. That is a real result, not a
-        failure: the catalog only covers cases where CSS or HTML genuinely
-        replaces a library.
+        None of these dependencies matched a rule. The catalog only covers cases
+        where CSS or HTML replaces a library outright.
       </p>
     </>
   );
