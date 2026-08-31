@@ -25,6 +25,8 @@ export const scrollLock: Rule = {
 body {
   overscroll-behavior-y: contain;
 }`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/CSS/overscroll-behavior",
   },
   agent: {
     when: "stopping the page behind a modal or drawer from scrolling when the overlay reaches its end",

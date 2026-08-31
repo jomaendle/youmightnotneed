@@ -38,6 +38,8 @@ export const containerQueries: Rule = {
     font-size: clamp(1rem, 4cqi, 1.5rem);
   }
 }`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries",
   },
   agent: {
     when: "a component needs to change layout based on its own width rather than the viewport",

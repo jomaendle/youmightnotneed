@@ -36,6 +36,8 @@ export const masonry: Rule = {
     margin-bottom: 1rem;
   }
 }`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Masonry_layout",
   },
   agent: {
     when: "laying out a gallery of items with varying heights into columns with no vertical gaps",

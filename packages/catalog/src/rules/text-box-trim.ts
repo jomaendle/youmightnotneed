@@ -21,6 +21,7 @@ export const textBoxTrim: Rule = {
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/text-box-trim",
   },
   agent: {
     when: "removing a font's built-in leading so text sits flush in its box",

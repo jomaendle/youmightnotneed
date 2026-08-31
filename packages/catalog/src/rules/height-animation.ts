@@ -32,6 +32,7 @@ export const heightAnimation: Rule = {
 .panel-alt[data-open] {
   height: calc-size(auto, size);
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/calc-size",
   },
   agent: {
     when: "animating a collapsible panel open and closed to its natural height",

@@ -26,6 +26,7 @@ export const smoothScroll: Rule = {
 [id] {
   scroll-margin-top: 5rem;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior",
   },
   agent: {
     when: "making in-page anchor links scroll smoothly to their target",

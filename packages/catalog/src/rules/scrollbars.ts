@@ -28,6 +28,7 @@ html {
   scrollbar-color: #666 transparent;
   overflow-y: auto;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color",
   },
   agent: {
     when: "restyling a scrollbar to match a dark theme, or stopping layout shift when a scrollbar appears",

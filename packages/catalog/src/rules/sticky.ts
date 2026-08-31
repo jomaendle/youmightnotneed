@@ -27,6 +27,7 @@ export const sticky: Rule = {
   top: 5rem;
   align-self: start;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/position#sticky",
   },
   agent: {
     when: "a header, sidebar or table head should stick while its container scrolls",

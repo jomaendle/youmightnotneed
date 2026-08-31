@@ -88,11 +88,19 @@ export default async function RulePage({ params }: PageProps) {
         <section>
           <h2 className="mb-3 text-section">The native approach</h2>
           <Snippet code={rule.human.snippet} label={rule.native} />
-          {rule.human.demoUrl === undefined ? null : (
-            <p className="mt-3 text-compact">
-              <a href={rule.human.demoUrl} target="_blank" rel="noreferrer">
-                See it working, with an explanation
-              </a>
+          {rule.human.mdnUrl === undefined &&
+          rule.human.demoUrl === undefined ? null : (
+            <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-compact">
+              {rule.human.mdnUrl === undefined ? null : (
+                <a href={rule.human.mdnUrl} target="_blank" rel="noreferrer">
+                  MDN reference
+                </a>
+              )}
+              {rule.human.demoUrl === undefined ? null : (
+                <a href={rule.human.demoUrl} target="_blank" rel="noreferrer">
+                  See it working, with an explanation
+                </a>
+              )}
             </p>
           )}
         </section>

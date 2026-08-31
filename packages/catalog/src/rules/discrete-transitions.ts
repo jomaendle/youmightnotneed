@@ -37,6 +37,7 @@ export const discreteTransitions: Rule = {
   opacity: 0;
   translate: 0 1rem;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/@starting-style",
   },
   agent: {
     when: "fading or sliding an element in and out as it is added to or removed from the DOM",

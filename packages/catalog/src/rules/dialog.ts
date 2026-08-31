@@ -34,6 +34,8 @@ export const dialog: Rule = {
     backdrop-filter: blur(2px);
   }
 </style>`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal",
   },
   agent: {
     when: "building a modal dialog, confirmation prompt or alert",

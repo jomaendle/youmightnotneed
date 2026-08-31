@@ -36,6 +36,7 @@ export const select: Rule = {
     font-weight: 600;
   }
 </style>`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/appearance",
   },
   agent: {
     when: "styling a select's options with markup, such as a flag or a two-line label",

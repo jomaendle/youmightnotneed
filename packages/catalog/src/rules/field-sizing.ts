@@ -22,6 +22,7 @@ input[type="text"] {
   field-sizing: content;
   min-width: 8ch;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/field-sizing",
   },
   agent: {
     when: "a textarea or input should grow to fit what the user has typed",

@@ -21,6 +21,7 @@ blockquote {
 p {
   text-wrap: pretty;
 }`,
+    mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap",
   },
   agent: {
     when: "stopping a heading or short blurb from breaking with one word on the last line",

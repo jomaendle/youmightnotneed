@@ -31,6 +31,8 @@ export const accordion: Rule = {
     content: "";
   }
 </style>`,
+    mdnUrl:
+      "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details#name",
   },
   agent: {
     when: "building an FAQ or accordion where opening one panel should close the others",
