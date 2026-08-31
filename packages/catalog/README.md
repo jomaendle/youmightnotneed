@@ -1,14 +1,14 @@
-# @youmightnotneed/catalog
+# @jomae/catalog
 
 The rule catalog behind [youmightnotneed.dev](https://youmightnotneed.dev).
 Maps npm packages to the modern CSS and HTML that replaces them.
 
 ```
-npm install @youmightnotneed/catalog
+npm install @jomae/catalog
 ```
 
 ```ts
-import { analyze, baselineLabel } from "@youmightnotneed/catalog";
+import { analyze, baselineLabel } from "@jomae/catalog";
 
 const { findings, summary } = analyze({
   dependencies: { swiper: "^11.0.0", "react-wrap-balancer": "^1.1.1" },
@@ -30,7 +30,7 @@ returns findings, which is what lets a website, a CLI and an agent share one
 implementation.
 
 ```ts
-import { detect, summarize } from "@youmightnotneed/catalog";
+import { detect, summarize } from "@jomae/catalog";
 
 const findings = detect(packageJson); // Finding[]
 const summary = summarize(findings);

@@ -4,7 +4,7 @@ import {
   resolveBaseline,
   rules,
   WEB_FEATURES_VERSION,
-} from "@youmightnotneed/catalog";
+} from "@jomae/catalog";
 import Link from "next/link";
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { MethodologyDialog } from "@/components/methodology-dialog";

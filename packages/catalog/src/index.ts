@@ -1,5 +1,5 @@
 /**
- * @youmightnotneed/catalog
+ * @jomae/catalog
  *
  * The rule catalog, the pure detection function, and the Baseline resolution
  * that sits between them. Every surface is a thin adapter over this package.

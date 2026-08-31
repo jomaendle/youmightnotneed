@@ -3,7 +3,7 @@ import {
   formatBytes,
   formatConditional,
   formatList,
-} from "@youmightnotneed/catalog";
+} from "@jomae/catalog";
 import Link from "next/link";
 import { BaselineBadge } from "./baseline-badge";
 
