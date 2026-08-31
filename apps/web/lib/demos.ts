@@ -7,24 +7,33 @@ export interface Demo {
   height: number;
 }
 
+/** A small solid placeholder image, so lazy-loading has something real to defer. */
+const SOLID =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%233b6ea5'/%3E%3C/svg%3E";
+
 /**
  * Hand-authored live demos, keyed by rule id. Not every rule has one: a demo
  * is only worth writing when seeing it beats reading the snippet. Most are
  * genuinely interactive (click, type, drag-resize, scroll); a few (masonry,
- * text-box-trim) are a static before/after because the feature is a layout
- * effect, not something a visitor operates. lazy-loading has none: an
- * embedded iframe can't fake a real scroll distance in a way that reads
- * as honest.
+ * text-box-trim, lazy-loading) are a static before/after or an honest label
+ * rather than a faked effect, because the payoff (a layout algorithm, a
+ * deferred network fetch) is not something a visitor operates or a tiny
+ * frame can show truthfully.
  */
 export const demos: Partial<Record<string, Demo>> = {
   "aspect-ratio": {
     height: 180,
-    html: wrapDemo(`
+    html: wrapDemo(
+      `
 <div style="display:flex; gap:1.25rem; flex-wrap:wrap; justify-content:center;">
-  <div style="width:180px; aspect-ratio:16/9; background:linear-gradient(135deg, var(--c-accent), var(--c-bg-subtle)); border-radius:0.5rem; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:var(--c-fg-muted);">16 / 9</div>
-  <div style="width:110px; aspect-ratio:1; background:linear-gradient(135deg, var(--c-accent), var(--c-bg-subtle)); border-radius:0.5rem; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:var(--c-fg-muted);">1 / 1</div>
+  <div class="box demo-swatch" style="width:180px; aspect-ratio:16/9;">16 / 9</div>
+  <div class="box demo-swatch" style="width:110px; aspect-ratio:1;">1 / 1</div>
 </div>
-`),
+`,
+      `
+.box { border-radius:0.5rem; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:var(--c-fg-muted); }
+`,
+    ),
   },
 
   "dialog-element": {
@@ -90,7 +99,7 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     height: 220,
     html: wrapDemo(
       `
-<div class="scroller">
+<div class="scroller demo-scroll">
   <div class="sticky-header">Scroll me &darr;</div>
   <div style="padding:0.75rem; display:flex; flex-direction:column; gap:0.75rem; color:var(--c-fg-muted); font-size:0.875rem;">
     <p style="margin:0;">Row one</p>
@@ -104,7 +113,7 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
 </div>
 `,
       `
-.scroller { width:240px; height:180px; overflow-y:auto; border:1px solid var(--c-border); border-radius:0.5rem; }
+.scroller { width:240px; height:180px; }
 .sticky-header { position:sticky; top:0; background:var(--c-accent); color:var(--c-bg); padding:0.5rem 0.75rem; font-size:0.8125rem; font-weight:600; }
 `,
     ),
@@ -115,11 +124,11 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     html: wrapDemo(`
 <div style="display:flex; gap:2rem; flex-wrap:wrap; justify-content:center; max-width:480px;">
   <div style="width:200px;">
-    <p style="font-size:0.75rem; color:var(--c-fg-muted); margin:0 0 0.5rem;">default wrapping</p>
+    <p class="demo-hint" style="margin-bottom:0.5rem;">default wrapping</p>
     <h3 style="margin:0; font-size:1.25rem; line-height:1.25;">Find the CSS that replaces your JavaScript dependency</h3>
   </div>
   <div style="width:200px;">
-    <p style="font-size:0.75rem; color:var(--c-fg-muted); margin:0 0 0.5rem;">text-wrap: balance</p>
+    <p class="demo-hint" style="margin-bottom:0.5rem;">text-wrap: balance</p>
     <h3 style="margin:0; font-size:1.25rem; line-height:1.25; text-wrap:balance;">Find the CSS that replaces your JavaScript dependency</h3>
   </div>
 </div>
@@ -132,17 +141,17 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
       `
 <div>
   <div class="carousel">
-    <div class="slide">1</div>
-    <div class="slide">2</div>
-    <div class="slide">3</div>
-    <div class="slide">4</div>
+    <div class="slide demo-swatch">1</div>
+    <div class="slide demo-swatch">2</div>
+    <div class="slide demo-swatch">3</div>
+    <div class="slide demo-swatch">4</div>
   </div>
-  <p style="margin:0.5rem 0 0; font-size:0.75rem; color:var(--c-fg-muted); text-align:center;">Drag or scroll horizontally &rarr;</p>
+  <p class="demo-hint" style="margin-top:0.5rem; text-align:center;">Drag or scroll horizontally &rarr;</p>
 </div>
 `,
       `
 .carousel { display:flex; gap:0.75rem; overflow-x:auto; scroll-snap-type:x mandatory; width:240px; padding-bottom:0.25rem; }
-.slide { flex:0 0 200px; height:110px; border-radius:0.5rem; scroll-snap-align:center; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:var(--c-fg); background:linear-gradient(135deg, var(--c-accent), var(--c-bg-subtle)); }
+.slide { flex:0 0 200px; height:110px; border-radius:0.5rem; scroll-snap-align:center; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:var(--c-fg); }
 `,
     ),
   },
@@ -163,7 +172,7 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     </label>
   </div>
   <div id="mix" class="swatch"></div>
-  <p style="margin:0; font-size:0.75rem; color:var(--c-fg-muted); font-family:var(--font-mono, monospace);">color-mix(in oklch, A 50%, B)</p>
+  <p class="demo-hint" style="font-family:var(--font-mono, monospace);">color-mix(in oklch, A 50%, B)</p>
 </div>
 <script>
   const a = document.getElementById("color-a");
@@ -188,14 +197,14 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     html: wrapDemo(
       `
 <div>
-  <div class="resizer">
+  <div class="resizer demo-resizer">
     <div class="card">Card content</div>
   </div>
-  <p style="margin:0.5rem 0 0; font-size:0.75rem; color:var(--c-fg-muted);">Drag the bottom-right corner &#8600;</p>
+  <p class="demo-hint" style="margin-top:0.5rem;">Drag the bottom-right corner &#8600;</p>
 </div>
 `,
       `
-.resizer { resize:horizontal; overflow:auto; container-type:inline-size; width:150px; min-width:110px; max-width:280px; height:70px; border:1px dashed var(--c-border); border-radius:0.375rem; padding:0.5rem; }
+.resizer { width:150px; min-width:110px; max-width:280px; height:70px; padding:0.5rem; }
 .card { background:var(--c-bg); border:1px solid var(--c-border); border-radius:0.375rem; padding:0.5rem; font-size:0.8125rem; height:100%; box-sizing:border-box; display:flex; align-items:center; }
 @container (min-width: 220px) { .card { background:var(--c-accent); color:var(--c-bg); font-weight:600; border-color:var(--c-accent); } }
 `,
@@ -242,14 +251,14 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     html: wrapDemo(
       `
 <div>
-  <div class="resizer">
+  <div class="resizer demo-resizer">
     <p class="fluid">Fluid headline</p>
   </div>
-  <p style="margin:0.5rem 0 0; font-size:0.75rem; color:var(--c-fg-muted);">Drag the corner to resize &#8600;</p>
+  <p class="demo-hint" style="margin-top:0.5rem;">Drag the corner to resize &#8600;</p>
 </div>
 `,
       `
-.resizer { resize:horizontal; overflow:auto; container-type:inline-size; width:260px; min-width:140px; max-width:360px; height:70px; border:1px dashed var(--c-border); border-radius:0.375rem; padding:0.5rem 0.75rem; display:flex; align-items:center; }
+.resizer { width:260px; min-width:140px; max-width:360px; height:70px; padding:0.5rem 0.75rem; display:flex; align-items:center; }
 .fluid { margin:0; font-size:clamp(1.1rem, 0.85rem + 2cqi, 2.25rem); font-weight:700; line-height:1.15; }
 `,
     ),
@@ -285,15 +294,15 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     html: wrapDemo(
       `
 <div class="masonry">
-  <div class="item" style="height:50px;"></div>
-  <div class="item" style="height:85px;"></div>
-  <div class="item" style="height:40px;"></div>
-  <div class="item" style="height:70px;"></div>
+  <div class="item demo-swatch" style="height:50px;"></div>
+  <div class="item demo-swatch" style="height:85px;"></div>
+  <div class="item demo-swatch" style="height:40px;"></div>
+  <div class="item demo-swatch" style="height:70px;"></div>
 </div>
 `,
       `
 .masonry { display:grid; grid-template-columns:repeat(2, 100px); grid-template-rows:masonry; gap:0.625rem; }
-.item { background:linear-gradient(135deg, var(--c-accent), var(--c-bg-subtle)); border-radius:0.375rem; }
+.item { border-radius:0.375rem; }
 `,
     ),
   },
@@ -330,14 +339,14 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     height: 220,
     html: wrapDemo(
       `
-<div class="scroller">
+<div class="scroller demo-scroll">
   <div class="spacer-top">Scroll down &darr;</div>
   <div class="reveal">I fade and rise as I enter view</div>
   <div class="spacer-bottom"></div>
 </div>
 `,
       `
-.scroller { width:240px; height:180px; overflow-y:auto; border:1px solid var(--c-border); border-radius:0.5rem; }
+.scroller { width:240px; height:180px; }
 .spacer-top { height:130px; display:flex; align-items:center; justify-content:center; color:var(--c-fg-faint); font-size:0.8125rem; }
 .reveal { margin:1rem; padding:1rem; background:var(--c-accent); color:var(--c-bg); border-radius:0.5rem; text-align:center; font-size:0.8125rem; animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }
 .spacer-bottom { height:120px; }
@@ -351,15 +360,15 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
     html: wrapDemo(
       `
 <div>
-  <div class="drawer">
+  <div class="drawer demo-scroll">
     <p style="margin:0 0 0.5rem;">Scroll to the end</p>
     <p>Row one</p><p>Row two</p><p>Row three</p><p>Row four</p><p>Row five</p>
   </div>
-  <p style="margin:0.5rem 0 0; font-size:0.75rem; color:var(--c-fg-muted);">overscroll-behavior: contain stops the scroll chaining to the page behind</p>
+  <p class="demo-hint" style="margin-top:0.5rem;">overscroll-behavior: contain stops the scroll chaining to the page behind</p>
 </div>
 `,
       `
-.drawer { width:220px; height:120px; overflow-y:auto; overscroll-behavior:contain; border:1px solid var(--c-border); border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.8125rem; color:var(--c-fg-muted); }
+.drawer { width:220px; height:120px; overscroll-behavior:contain; padding:0.5rem 0.75rem; font-size:0.8125rem; color:var(--c-fg-muted); }
 .drawer p { margin:0.5rem 0; }
 `,
     ),
@@ -392,12 +401,12 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
     height: 200,
     html: wrapDemo(
       `
-<div class="scroller">
+<div class="scroller demo-scroll">
   <p>Row one</p><p>Row two</p><p>Row three</p><p>Row four</p><p>Row five</p><p>Row six</p><p>Row seven</p>
 </div>
 `,
       `
-.scroller { width:200px; height:160px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--c-accent) var(--c-bg-subtle); border:1px solid var(--c-border); border-radius:0.5rem; padding:0.5rem 0.75rem; font-size:0.8125rem; color:var(--c-fg-muted); }
+.scroller { width:200px; height:160px; scrollbar-width:thin; scrollbar-color:var(--c-accent) var(--c-bg-subtle); padding:0.5rem 0.75rem; font-size:0.8125rem; color:var(--c-fg-muted); }
 .scroller p { margin:0.5rem 0; }
 `,
     ),
@@ -413,7 +422,7 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
     <a href="#s2">Two</a>
     <a href="#s3">Three</a>
   </nav>
-  <div class="scroller">
+  <div class="scroller demo-scroll">
     <section id="s1">Section one</section>
     <section id="s2">Section two</section>
     <section id="s3">Section three</section>
@@ -424,7 +433,7 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
 .tabs { display:flex; gap:0.5rem; margin-bottom:0.5rem; }
 .tabs a { padding:0.25rem 0.625rem; border:1px solid var(--c-border); border-radius:999px; font-size:0.75rem; text-decoration:none; color:var(--c-fg-muted); }
 .tabs a:hover { color:var(--c-fg); border-color:var(--c-accent); }
-.scroller { height:120px; overflow-y:auto; scroll-behavior:smooth; border:1px solid var(--c-border); border-radius:0.5rem; }
+.scroller { height:120px; scroll-behavior:smooth; }
 .scroller section { height:120px; scroll-margin-top:0.5rem; display:flex; align-items:center; justify-content:center; font-size:0.8125rem; color:var(--c-fg-muted); }
 .scroller section:nth-child(odd) { background:var(--c-bg-subtle); }
 `,
@@ -436,11 +445,11 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
     html: wrapDemo(`
 <div style="display:flex; gap:2rem; flex-wrap:wrap; justify-content:center;">
   <div style="width:170px;">
-    <p style="font-size:0.75rem; color:var(--c-fg-muted); margin:0 0 0.5rem;">default leading</p>
+    <p class="demo-hint" style="margin-bottom:0.5rem;">default leading</p>
     <h3 style="margin:0; padding:0.5rem; background:var(--c-bg); outline:1px dashed var(--c-border); font-size:1.5rem; line-height:1.2;">Fixed aspect ratios</h3>
   </div>
   <div style="width:170px;">
-    <p style="font-size:0.75rem; color:var(--c-fg-muted); margin:0 0 0.5rem;">text-box-trim: both</p>
+    <p class="demo-hint" style="margin-bottom:0.5rem;">text-box-trim: both</p>
     <h3 style="margin:0; padding:0.5rem; background:var(--c-bg); outline:1px dashed var(--c-border); font-size:1.5rem; line-height:1.2; text-box-trim:both; text-box-edge:cap alphabetic;">Fixed aspect ratios</h3>
   </div>
 </div>
@@ -480,6 +489,27 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
 .tile { width:120px; height:80px; border-radius:0.5rem; display:flex; align-items:center; justify-content:center; font-size:1.25rem; color:var(--c-fg); view-transition-name:tile; }
 .tile-a { background:linear-gradient(135deg, var(--c-accent), var(--c-bg-subtle)); }
 .tile-b { background:linear-gradient(135deg, var(--c-bg-subtle), var(--c-accent)); }
+`,
+    ),
+  },
+
+  "lazy-loading": {
+    height: 220,
+    html: wrapDemo(
+      `
+<div class="scroller demo-scroll">
+  <p class="demo-hint" style="margin-bottom:0.75rem;">Scroll down. Each image below really carries loading="lazy".</p>
+  <img class="ph" loading="eager" src="${SOLID}" alt="Above the fold, loads eagerly" />
+  <img class="ph" loading="lazy" src="${SOLID}" alt="Deferred" />
+  <img class="ph" loading="lazy" src="${SOLID}" alt="Deferred" />
+  <img class="ph" loading="lazy" src="${SOLID}" alt="Deferred" />
+  <p class="demo-hint" style="margin-bottom:0.75rem;">A tiny embedded frame has no real network to defer against.
+  Open devtools on a real page to see the fetch itself wait for scroll.</p>
+</div>
+`,
+      `
+.scroller { width:240px; height:180px; padding:0.75rem; }
+.ph { display:block; width:100%; height:70px; border-radius:0.375rem; margin-bottom:0.75rem; }
 `,
     ),
   },
