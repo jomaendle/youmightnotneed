@@ -107,13 +107,13 @@ export default function HomePage() {
             says "up to".
           </p>
         </div>
-        <p className="mt-4">
+        <div className="mt-4">
           <MethodologyDialog
             baselineOn={BASELINE_DATA_DATE}
             webFeaturesVersion={WEB_FEATURES_VERSION}
             sizesOn={packageSizes.fetchedOn}
           />
-        </p>
+        </div>
       </section>
 
       <section className="hairline pt-10">
