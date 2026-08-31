@@ -23,5 +23,5 @@ Run it with `--verbose` before you change anything. The conditions are the
 point: a dependency in `package.json` is not proof of what it is used for, so
 every finding is a "this may apply", and the report says when it does not.
 
-Powered by [`@youmightnotneed/catalog`](https://www.npmjs.com/package/@youmightnotneed/catalog).
+Powered by [`@jomae/catalog`](https://www.npmjs.com/package/@jomae/catalog).
 MIT.

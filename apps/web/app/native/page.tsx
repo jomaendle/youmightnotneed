@@ -1,4 +1,4 @@
-import { resolveFeature, rulesById } from "@youmightnotneed/catalog";
+import { resolveFeature, rulesById } from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";

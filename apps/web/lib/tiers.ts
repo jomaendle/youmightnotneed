@@ -1,4 +1,4 @@
-import type { BaselineStatus } from "@youmightnotneed/catalog";
+import type { BaselineStatus } from "@jomae/catalog";
 
 /** Tier presentation, shared by the report and the catalog index. */
 export interface TierMeta {

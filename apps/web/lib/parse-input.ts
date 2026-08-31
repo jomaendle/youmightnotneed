@@ -1,4 +1,4 @@
-import type { PackageJsonLike } from "@youmightnotneed/catalog";
+import type { PackageJsonLike } from "@jomae/catalog";
 
 /**
  * Turns whatever the user pasted into something detect() can read.

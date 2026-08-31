@@ -48,7 +48,7 @@ Where a feature has no `web-features` ID yet, a rule may carry a
 ## Layout
 
 ```
-packages/catalog   @youmightnotneed/catalog, MIT, published to npm
+packages/catalog   @jomae/catalog, MIT, published to npm
 packages/cli       npx youmightnotneed
 apps/web           youmightnotneed.dev
 scripts            snapshot generators and the freshness check

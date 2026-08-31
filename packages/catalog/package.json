@@ -1,5 +1,5 @@
 {
-  "name": "@youmightnotneed/catalog",
+  "name": "@jomae/catalog",
   "version": "0.1.0",
   "type": "module",
   "description": "The rule catalog behind youmightnotneed.dev. Maps npm packages to the modern CSS and HTML that replaces them.",

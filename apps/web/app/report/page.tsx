@@ -4,7 +4,7 @@ import {
   formatBytes,
   packageSizes,
   WEB_FEATURES_VERSION,
-} from "@youmightnotneed/catalog";
+} from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FindingCard } from "@/components/finding-card";

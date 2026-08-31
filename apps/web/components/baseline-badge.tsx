@@ -1,4 +1,4 @@
-import type { BaselineStatus } from "@youmightnotneed/catalog";
+import type { BaselineStatus } from "@jomae/catalog";
 
 /**
  * The support badge. Every finding renders one.

@@ -1,4 +1,4 @@
-import { formatBytes, packageSizes, type Rule } from "@youmightnotneed/catalog";
+import { formatBytes, packageSizes, type Rule } from "@jomae/catalog";
 import Link from "next/link";
 
 /**

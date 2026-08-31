@@ -1,4 +1,4 @@
-import { formatBytes } from "@youmightnotneed/catalog";
+import { formatBytes } from "@jomae/catalog";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
 

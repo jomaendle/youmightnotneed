@@ -13,7 +13,7 @@ import {
   type PackageJsonLike,
   packageSizes,
   WEB_FEATURES_VERSION,
-} from "@youmightnotneed/catalog";
+} from "@jomae/catalog";
 import { createPalette } from "./colors.ts";
 import { renderJson, renderReport } from "./render.ts";
 

@@ -36,7 +36,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@youmightnotneed/catalog": "workspace:*"
+    "@jomae/catalog": "workspace:*"
   },
   "engines": {
     "node": ">=22.18.0"

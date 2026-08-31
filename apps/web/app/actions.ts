@@ -1,6 +1,6 @@
 "use server";
 
-import { detect } from "@youmightnotneed/catalog";
+import { detect } from "@jomae/catalog";
 import { redirect } from "next/navigation";
 import {
   fetchRepoPackageJson,

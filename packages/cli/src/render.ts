@@ -5,7 +5,7 @@ import {
   formatBytes,
   formatHeadline,
   type Report,
-} from "@youmightnotneed/catalog";
+} from "@jomae/catalog";
 import type { ColorName, Palette } from "./colors.ts";
 
 /**

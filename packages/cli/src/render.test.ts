@@ -1,4 +1,4 @@
-import { analyze } from "@youmightnotneed/catalog";
+import { analyze } from "@jomae/catalog";
 import { describe, expect, it } from "vitest";
 import { createPalette } from "./colors.ts";
 import { renderJson, renderReport } from "./render.ts";

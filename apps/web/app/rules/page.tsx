@@ -3,7 +3,7 @@ import {
   packageSizes,
   resolveBaseline,
   rules,
-} from "@youmightnotneed/catalog";
+} from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
