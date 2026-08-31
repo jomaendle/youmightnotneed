@@ -1,0 +1,618 @@
+@import "tailwindcss";
+
+/*
+ * The design language.
+ *
+ * Hierarchy comes from type and space first. Surfaces and borders are earned:
+ * a box appears only where something is genuinely grouped or interactive, not
+ * as default decoration. No gradients, no glows, no icons used as ornament.
+ *
+ * This file also dogfoods the catalog. Where a feature is not Baseline yet it
+ * sits behind @supports with the un-enhanced state as the fallback, which is
+ * the same thing the rules tell you to do.
+ */
+
+/* ---------------------------------------------------------------------------
+   Palette
+   Dark is the default. `color-scheme: dark light` means a reader who has asked
+   their OS for light gets light, and everyone else gets dark.
+   light-dark() is the feature the `light-dark` rule describes.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: dark light;
+
+  --c-accent: light-dark(oklch(52% 0.2 258), oklch(70% 0.16 250));
+  --c-bg: light-dark(oklch(99% 0 0), oklch(15% 0.005 260));
+  --c-bg-subtle: light-dark(oklch(97.5% 0.002 260), oklch(18% 0.006 260));
+  --c-fg: light-dark(oklch(21% 0.006 260), oklch(96% 0.002 260));
+  --c-fg-muted: light-dark(oklch(48% 0.008 260), oklch(74% 0.008 260));
+  --c-fg-faint: light-dark(oklch(60% 0.008 260), oklch(58% 0.008 260));
+  --c-border: light-dark(oklch(92% 0.003 260), oklch(26% 0.008 260));
+  --c-border-strong: light-dark(oklch(85% 0.004 260), oklch(34% 0.009 260));
+
+  --c-widely: light-dark(oklch(48% 0.13 155), oklch(78% 0.15 155));
+  --c-newly: light-dark(oklch(52% 0.12 75), oklch(82% 0.13 80));
+  --c-limited: light-dark(oklch(53% 0.17 28), oklch(74% 0.15 28));
+}
+
+/*
+ * light-dark() reached Baseline newly available, so old browsers get an
+ * explicit dark palette instead. The site still works, it just stops
+ * following the OS preference.
+ */
+@supports not (color: light-dark(white, black)) {
+  :root {
+    --c-accent: oklch(70% 0.16 250);
+    --c-bg: oklch(15% 0.005 260);
+    --c-bg-subtle: oklch(18% 0.006 260);
+    --c-fg: oklch(96% 0.002 260);
+    --c-fg-muted: oklch(74% 0.008 260);
+    --c-fg-faint: oklch(58% 0.008 260);
+    --c-border: oklch(26% 0.008 260);
+    --c-border-strong: oklch(34% 0.009 260);
+    --c-widely: oklch(78% 0.15 155);
+    --c-newly: oklch(82% 0.13 80);
+    --c-limited: oklch(74% 0.15 28);
+  }
+}
+
+/* `inline` keeps the var() reference in the utility, so the token stays live. */
+@theme inline {
+  --color-bg: var(--c-bg);
+  --color-bg-subtle: var(--c-bg-subtle);
+  --color-fg: var(--c-fg);
+  --color-fg-muted: var(--c-fg-muted);
+  --color-fg-faint: var(--c-fg-faint);
+  --color-border: var(--c-border);
+  --color-border-strong: var(--c-border-strong);
+  --color-accent: var(--c-accent);
+  --color-widely: var(--c-widely);
+  --color-newly: var(--c-newly);
+  --color-limited: var(--c-limited);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+
+  /* Type roles, not arbitrary sizes. Every heading picks one of these. */
+  --text-hero: clamp(3rem, 1.5rem + 6vw, 5.75rem);
+  --text-hero--line-height: 0.98;
+  --text-hero--letter-spacing: -0.045em;
+  --text-display: clamp(2.25rem, 1.4rem + 3.2vw, 3.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.035em;
+  --text-page-title: 2.25rem;
+  --text-page-title--line-height: 1.1;
+  --text-page-title--letter-spacing: -0.028em;
+  --text-section: 1.375rem;
+  --text-section--line-height: 1.25;
+  --text-section--letter-spacing: -0.018em;
+  --text-subsection: 1.0625rem;
+  --text-subsection--line-height: 1.4;
+  --text-subsection--letter-spacing: -0.011em;
+  --text-lede: 1.0625rem;
+  --text-lede--line-height: 1.6;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.65;
+  --text-compact: 0.875rem;
+  --text-compact--line-height: 1.5;
+  --text-metadata: 0.8125rem;
+  --text-metadata--line-height: 1.45;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+html {
+  /* Reserve the gutter so the page does not shift sideways. */
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Anything linked to clears the sticky masthead. */
+[id] {
+  scroll-margin-top: 6rem;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  font-weight: 560;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/*
+ * text-box-trim removes the font's built-in leading so a heading sits flush
+ * against the space above it. Limited availability, and the fallback is simply
+ * the untrimmed spacing, so it is safe to opt into.
+ */
+@supports (text-box: trim-both cap alphabetic) {
+  h1,
+  h2,
+  h3 {
+    text-box: trim-both cap alphabetic;
+  }
+}
+
+a {
+  color: var(--c-accent);
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in oklch, currentColor 35%, transparent);
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Links that are part of a larger block, where accent colour would be noise. */
+a.plain {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: color-mix(in oklch, var(--c-accent) 28%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Support tiers
+   Colour never carries the meaning alone: each tier also has a distinct glyph
+   and its full label in text.
+--------------------------------------------------------------------------- */
+
+.tier-widely {
+  --tier: var(--c-widely);
+}
+.tier-newly {
+  --tier: var(--c-newly);
+}
+.tier-limited {
+  --tier: var(--c-limited);
+}
+.tier-unknown {
+  --tier: var(--c-fg-faint);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--tier, var(--c-fg-muted));
+  font-size: var(--text-metadata);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: "";
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+/* A ring rather than a filled dot, so the tiers differ by shape too. */
+.badge.is-newly::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}
+
+.badge.is-limited::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px currentColor;
+  border-radius: 1px;
+  rotate: 45deg;
+}
+
+/* ---------------------------------------------------------------------------
+   Rules and structure
+   Hairlines carry the structure. Cards are used sparingly, and never nested.
+--------------------------------------------------------------------------- */
+
+.rule-list > li + li {
+  border-block-start: 1px solid var(--c-border);
+}
+
+.hairline {
+  border-block-start: 1px solid var(--c-border);
+}
+
+/* ---------------------------------------------------------------------------
+   Findings adapt to their container, not the viewport.
+--------------------------------------------------------------------------- */
+
+.finding-scope {
+  container-type: inline-size;
+  container-name: finding;
+}
+
+@container finding (width >= 34rem) {
+  .finding-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .finding-meta {
+    text-align: end;
+    flex: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Disclosure
+   interpolate-size lets height: auto animate. Chromium only for now, and the
+   fallback is an instant open, which is what you get today anyway.
+--------------------------------------------------------------------------- */
+
+@supports (interpolate-size: allow-keywords) {
+  @media (prefers-reduced-motion: no-preference) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+
+    .disclosure::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 0.24s ease,
+        content-visibility 0.24s allow-discrete;
+    }
+
+    .disclosure[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+.disclosure > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary::before {
+  content: "";
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-inline-end: 1.5px solid currentColor;
+  border-block-end: 1.5px solid currentColor;
+  rotate: -45deg;
+  transition: rotate 0.2s ease;
+  flex: none;
+}
+
+.disclosure[open] > summary::before {
+  rotate: 45deg;
+}
+
+/* ---------------------------------------------------------------------------
+   Dialog and popover
+   @starting-style plus transition-behavior: allow-discrete gives both an
+   enter and an exit transition with no JavaScript.
+--------------------------------------------------------------------------- */
+
+dialog {
+  margin: auto;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 12px;
+  background: var(--c-bg);
+  color: var(--c-fg);
+  padding: 0;
+  max-inline-size: min(34rem, calc(100vw - 2rem));
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 0.2s ease,
+    translate 0.2s ease,
+    overlay 0.2s allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+dialog[open] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@starting-style {
+  dialog[open] {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+dialog::backdrop {
+  background: oklch(0% 0 0 / 0.5);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    overlay 0.2s allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+[popover] {
+  margin: 0;
+  border: 1px solid var(--c-border-strong);
+  border-radius: 10px;
+  background: var(--c-bg);
+  color: var(--c-fg);
+  padding: 0.875rem 1rem;
+  inline-size: min(20rem, calc(100vw - 2rem));
+  font-size: var(--text-metadata);
+  line-height: 1.5;
+  box-shadow: 0 8px 24px oklch(0% 0 0 / 0.18);
+}
+
+/*
+ * Anchor positioning is not Baseline. Without it the popover falls back to the
+ * top layer's default centring, which is still usable, just not tethered.
+ */
+@supports (anchor-name: --a) {
+  .anchor-trigger {
+    anchor-name: --tier-help;
+  }
+
+  .anchor-popover {
+    position: absolute;
+    position-anchor: --tier-help;
+    inset: auto;
+    inset-block-start: anchor(bottom);
+    inset-inline-start: anchor(start);
+    margin-block-start: 0.5rem;
+    position-try-fallbacks: flip-block, flip-inline;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Carousel
+   scroll-snap everywhere, with browser-generated buttons and dots where
+   ::scroll-button() and ::scroll-marker() are supported.
+--------------------------------------------------------------------------- */
+
+.carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(19rem, 78%);
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-block-end: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border-strong) transparent;
+}
+
+.carousel-item {
+  scroll-snap-align: start;
+}
+
+/*
+ * Browser-generated prev/next buttons. The browser handles the scrolling, the
+ * disabled state at each end, the focus order and the accessible names.
+ */
+@supports selector(::scroll-button(*)) {
+  .carousel-frame {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas:
+      "strip strip strip"
+      ".     prev  next";
+    gap: 0.5rem;
+  }
+
+  .carousel {
+    grid-area: strip;
+  }
+
+  .carousel::scroll-button(inline-start),
+  .carousel::scroll-button(inline-end) {
+    grid-area: prev;
+    inline-size: 2rem;
+    block-size: 2rem;
+    border: 1px solid var(--c-border);
+    border-radius: 50%;
+    background: var(--c-bg-subtle);
+    color: var(--c-fg-muted);
+    cursor: pointer;
+    font-size: 0.75rem;
+    line-height: 1;
+    transition:
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .carousel::scroll-button(inline-end) {
+    grid-area: next;
+  }
+
+  .carousel::scroll-button(inline-start) {
+    content: "\2190" / "Previous";
+  }
+
+  .carousel::scroll-button(inline-end) {
+    content: "\2192" / "Next";
+  }
+
+  .carousel::scroll-button(*):hover {
+    border-color: var(--c-border-strong);
+    color: var(--c-fg);
+  }
+
+  .carousel::scroll-button(*):disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+@supports selector(::scroll-marker) {
+  .carousel {
+    scroll-marker-group: after;
+    scrollbar-width: none;
+  }
+
+  .carousel::scroll-marker-group {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    padding-block-start: 1rem;
+  }
+
+  .carousel-item::scroll-marker {
+    content: "";
+    inline-size: 0.4rem;
+    block-size: 0.4rem;
+    border-radius: 50%;
+    background: var(--c-border-strong);
+    transition: background 0.15s ease;
+  }
+
+  .carousel-item::scroll-marker:target-current {
+    background: var(--c-fg-muted);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reading progress, driven by scroll rather than by a listener.
+--------------------------------------------------------------------------- */
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progress-bar {
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline: 0;
+      block-size: 2px;
+      background: var(--c-accent);
+      transform-origin: 0 50%;
+      z-index: 50;
+      animation: progress-grow linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    @keyframes progress-grow {
+      from {
+        scale: 0 1;
+      }
+      to {
+        scale: 1 1;
+      }
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The scan form
+   field-sizing grows the textarea as you paste. :has() styles the form from
+   its own contents, with no state in JavaScript.
+--------------------------------------------------------------------------- */
+
+.paste-area {
+  field-sizing: content;
+  min-block-size: 7.5lh;
+  max-block-size: 22lh;
+}
+
+/* The submit button dims until there is something to submit. */
+.scan-form:has(.paste-area:placeholder-shown) .submit-hint {
+  opacity: 1;
+}
+
+.scan-form:not(:has(.paste-area:placeholder-shown)) .submit-hint {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   CSS-only tier filter on the rules index.
+   Radios plus :has() do the whole thing. No JavaScript is loaded for it.
+--------------------------------------------------------------------------- */
+
+.filter-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filter-label {
+  cursor: pointer;
+  border: 1px solid var(--c-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-size: var(--text-metadata);
+  color: var(--c-fg-muted);
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.filter-label:hover {
+  color: var(--c-fg);
+  border-color: var(--c-border-strong);
+}
+
+.filter-input:checked + .filter-label {
+  color: var(--c-fg);
+  border-color: var(--c-fg-muted);
+  background: color-mix(in oklch, var(--c-fg) 6%, transparent);
+}
+
+.filter-input:focus-visible + .filter-label {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.catalog:has(#filter-widely:checked) [data-tier]:not([data-tier="widely"]),
+.catalog:has(#filter-newly:checked) [data-tier]:not([data-tier="newly"]),
+.catalog:has(#filter-limited:checked) [data-tier]:not([data-tier="limited"]) {
+  display: none;
+}
+
+/* Hide a section heading whose rules were all filtered out. */
+.catalog:has(#filter-widely:checked) [data-tier-group]:not([data-tier-group="widely"]),
+.catalog:has(#filter-newly:checked) [data-tier-group]:not([data-tier-group="newly"]),
+.catalog:has(#filter-limited:checked)
+  [data-tier-group]:not([data-tier-group="limited"]) {
+  display: none;
+}

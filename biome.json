@@ -1,0 +1,190 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.11/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/.next",
+      "!**/out",
+      "!**/coverage",
+      "!pnpm-lock.yaml",
+      "!**/*.css",
+      "!**/*.svg",
+      "!packages/catalog/src/generated"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedKeys": "off"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "a11y": "on",
+      "complexity": "on",
+      "correctness": "on",
+      "performance": "on",
+      "security": "on",
+      "style": "on",
+      "suspicious": "on",
+      "nursery": {
+        "useSortedClasses": {
+          "level": "error",
+          "fix": "safe",
+          "options": {
+            "functions": ["cn", "clsx", "cva"]
+          }
+        }
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": {
+              "level": "error",
+              "options": {
+                "maxLines": 60,
+                "skipBlankLines": true
+              }
+            },
+            "noExcessiveCognitiveComplexity": {
+              "level": "error",
+              "options": {
+                "maxAllowedComplexity": 12
+              }
+            },
+            "noUselessUndefined": "off"
+          },
+          "style": {
+            "noShoutyConstants": "off",
+            "useNamingConvention": "off",
+            "noDefaultExport": "off",
+            "noMagicNumbers": "off",
+            "useComponentExportOnlyModules": "off",
+            "useConsistentArrayType": "off",
+            "noJsxLiterals": "off",
+            "noTernary": "off",
+            "useBlockStatements": "off",
+            "useExportsLast": "off",
+            "noContinue": "off",
+            "useDestructuring": "off",
+            "noNestedTernary": "error",
+            "useNumericSeparators": "error"
+          },
+          "correctness": {
+            "noNodejsModules": "off",
+            "noProcessGlobal": "off",
+            "noUnknownPseudoElement": "off",
+            "noUnknownPseudoClass": "off",
+            "noUndeclaredDependencies": "off",
+            "noSolidDestructuredProps": "off",
+            "useQwikValidLexicalScope": "off"
+          },
+          "suspicious": {
+            "noConsole": {
+              "level": "error",
+              "options": {
+                "allow": ["error", "warn", "info"]
+              }
+            },
+            "noUnknownAtRules": "off",
+            "noReactSpecificProps": "off"
+          },
+          "performance": {
+            "noBarrelFile": "off",
+            "noNamespaceImport": "off",
+            "useSolidForComponent": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["apps/web/**"],
+      "linter": {
+        "domains": {
+          "react": "all",
+          "next": "all"
+        },
+        "rules": {
+          "correctness": {
+            "useUniqueElementIds": "off"
+          },
+          "complexity": {
+            "noExcessiveLinesPerFunction": {
+              "level": "error",
+              "options": {
+                "maxLines": 110,
+                "skipBlankLines": true
+              }
+            }
+          },
+          "performance": {
+            "noJsxPropsBind": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.test.ts", "**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveLinesPerFunction": "off"
+          },
+          "performance": {
+            "useTopLevelRegex": "off"
+          },
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**", "packages/cli/src/bin.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          },
+          "performance": {
+            "useTopLevelRegex": "off",
+            "noAwaitInLoops": "off"
+          },
+          "style": {
+            "noProcessEnv": "off"
+          }
+        }
+      }
+    }
+  ]
+}

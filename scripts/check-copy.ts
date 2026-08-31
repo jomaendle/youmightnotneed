@@ -1,0 +1,139 @@
+/**
+ * Enforces the house writing voice across every surface, not just the rules.
+ *
+ * `packages/catalog/src/catalog.test.ts` already checks rule data. This covers
+ * the rest: site copy, CLI strings, READMEs. The point is to catch generic,
+ * inflated, AI-sounding prose in review rather than after it ships.
+ *
+ * The rules come from .claude/skills/writing-voice/SKILL.md.
+ *
+ * Run: pnpm check:copy
+ */
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { dirname, extname, join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
+
+const SCANNED_EXTENSIONS = new Set([".ts", ".tsx", ".md", ".css"]);
+
+const SKIPPED_DIRECTORIES = new Set([
+  "node_modules",
+  ".next",
+  ".git",
+  "dist",
+  "out",
+  "coverage",
+  "generated",
+]);
+
+/**
+ * Files that legitimately contain the banned patterns because they define or
+ * test them. Everything else is fair game.
+ */
+const ALLOWLIST = new Set([
+  ".claude/skills/writing-voice/SKILL.md",
+  "packages/catalog/src/catalog.test.ts",
+  "packages/cli/src/render.test.ts",
+  "scripts/check-copy.ts",
+]);
+
+interface Check {
+  name: string;
+  pattern: RegExp;
+  hint: string;
+}
+
+const CHECKS: Check[] = [
+  {
+    name: "em dash",
+    pattern: /—/g,
+    hint: "Restructure the sentence. An em dash almost always joins two things that want to be separate sentences.",
+  },
+  {
+    name: "antithesis cadence",
+    pattern:
+      /\b(?:not|isn't|aren't|is not)\b[^.!?\n]{3,40}?,\s*(?:but|it's|they're)\b/gi,
+    hint: "'Not X, but Y' is the most recognisable AI tell. Break it into two sentences.",
+  },
+  {
+    name: "inflated vocabulary",
+    pattern:
+      /\b(?:supercharge[ds]?|unlocks?|unlocking|elevates?|empowers?|seamless(?:ly)?|robust|delve[sd]?|showcase[sd]?|harnesses?|game[- ]chang(?:er|ing)|cutting[- ]edge|best[- ]in[- ]class|effortless(?:ly)?)\b/gi,
+    hint: "Promises more than the sentence delivers. Name the actual thing instead.",
+  },
+  {
+    name: "filler opener",
+    pattern:
+      /\b(?:in today's [a-z-]+ world|it's worth noting that|it is worth noting that|needless to say|at the end of the day|when it comes to)\b/gi,
+    hint: "Filler. Cut it and start with the claim.",
+  },
+  {
+    name: "overstated finding",
+    pattern:
+      /\b(?:you will save|you'll save|simply replace|just replace|delete (?:this|your) depend)/gi,
+    hint: "A dependency being installed is not proof of how it is used. Phrase findings as conditionals.",
+  },
+];
+
+interface Violation {
+  file: string;
+  line: number;
+  check: string;
+  text: string;
+  hint: string;
+}
+
+function walk(dir: string, files: string[] = []): string[] {
+  for (const entry of readdirSync(dir)) {
+    if (SKIPPED_DIRECTORIES.has(entry)) continue;
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) {
+      walk(full, files);
+    } else if (SCANNED_EXTENSIONS.has(extname(entry))) {
+      files.push(full);
+    }
+  }
+  return files;
+}
+
+function inspect(file: string): Violation[] {
+  const rel = relative(repoRoot, file);
+  if (ALLOWLIST.has(rel)) return [];
+
+  const violations: Violation[] = [];
+  const lines = readFileSync(file, "utf8").split("\n");
+
+  for (const [index, line] of lines.entries()) {
+    for (const check of CHECKS) {
+      check.pattern.lastIndex = 0;
+      const match = check.pattern.exec(line);
+      if (!match) continue;
+      violations.push({
+        file: rel,
+        line: index + 1,
+        check: check.name,
+        text: match[0].trim(),
+        hint: check.hint,
+      });
+    }
+  }
+
+  return violations;
+}
+
+const violations = walk(repoRoot).flatMap(inspect);
+
+if (violations.length > 0) {
+  console.error(`Copy check failed. ${violations.length} issue(s):\n`);
+  for (const v of violations) {
+    console.error(`  ${v.file}:${v.line}  ${v.check}: "${v.text}"`);
+    console.error(`    ${v.hint}\n`);
+  }
+  console.error(
+    "These come from .claude/skills/writing-voice/SKILL.md. Read it before rewording.",
+  );
+  process.exit(1);
+}
+
+console.info("Copy check passed.");

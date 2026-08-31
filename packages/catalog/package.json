@@ -1,0 +1,61 @@
+{
+  "name": "@youmightnotneed/catalog",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "The rule catalog behind youmightnotneed.dev. Maps npm packages to the modern CSS and HTML that replaces them.",
+  "license": "MIT",
+  "author": "Johannes Maendle",
+  "homepage": "https://youmightnotneed.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jomaendle/youmightnotneed.git",
+    "directory": "packages/catalog"
+  },
+  "keywords": [
+    "css",
+    "baseline",
+    "bundle-size",
+    "web-platform",
+    "dependencies"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "pnpm build"
+  },
+  "dependencies": {
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.11",
+    "@types/node": "^24.13.3",
+    "@vitest/coverage-v8": "^4.1.11"
+  }
+}

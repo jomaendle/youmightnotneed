@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint and format
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test with coverage thresholds
+        run: pnpm test:coverage
+
+      - name: Dead code, unused exports and unused dependencies
+        run: pnpm knip
+
+      - name: Copy quality
+        run: pnpm check:copy
+
+      # Fails when a hand-verified support claim is more than 90 days old, or a
+      # rule points at a web-features ID the snapshot does not have.
+      - name: Check data freshness
+        run: pnpm check:freshness
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Build website
+        run: pnpm build:web
