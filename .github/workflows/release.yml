@@ -17,6 +17,9 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    # NPM_TOKEN lives in the "Production" GitHub environment (the one the
+    # Vercel integration created), not a plain repo secret.
+    environment: Production
     permissions:
       contents: write
       pull-requests: write
