@@ -5,7 +5,7 @@
   "description": "Find the modern CSS and HTML that replaces your JavaScript dependencies.",
   "license": "MIT",
   "author": "Johannes Maendle",
-  "homepage": "https://youmightnotneed.dev",
+  "homepage": "https://youmightnotneed-web.vercel.app",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jomaendle/youmightnotneed.git",

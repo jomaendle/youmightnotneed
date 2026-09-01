@@ -1,6 +1,6 @@
 # @jomae/catalog
 
-The rule catalog behind [youmightnotneed.dev](https://youmightnotneed.dev).
+The rule catalog behind [youmightnotneed](https://youmightnotneed-web.vercel.app).
 Maps npm packages to the modern CSS and HTML that replaces them.
 
 ```
