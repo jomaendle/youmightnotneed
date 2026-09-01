@@ -20,7 +20,7 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-08-31",
+  "fetchedOn": "2026-09-01",
   "source": "bundlephobia.com",
   "sizes": {
     "@capsizecss/core": {
