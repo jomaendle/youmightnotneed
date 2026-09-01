@@ -5,7 +5,9 @@
  *
  * Hierarchy comes from type and space first. Surfaces and borders are earned:
  * a box appears only where something is genuinely grouped or interactive, not
- * as default decoration. No gradients, no glows, no icons used as ornament.
+ * as default decoration. No gradients, no glows. Icons are allowed only as
+ * wayfinding, one small monoline mark per primary nav link, never as
+ * ornament layered onto something that already reads fine without one.
  *
  * This file also dogfoods the catalog. Where a feature is not Baseline yet it
  * sits behind @supports with the un-enhanced state as the fallback, which is

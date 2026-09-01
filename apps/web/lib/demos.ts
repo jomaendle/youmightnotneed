@@ -303,6 +303,13 @@ details p { margin: 0.5rem 0 0; color: var(--c-fg-muted); font-size: 0.875rem; }
       `
 .masonry { display:grid; grid-template-columns:repeat(2, 100px); grid-template-rows:masonry; gap:0.625rem; }
 .item { border-radius:0.375rem; }
+/* Masonry has near-zero browser support today, so without this fallback
+   the live example renders as a plain grid with dead space under the
+   shorter item in each row, which reads as a bug rather than a demo. */
+@supports not (grid-template-rows: masonry) {
+  .masonry { display:block; columns:100px 2; column-gap:0.625rem; }
+  .item { break-inside:avoid; margin-bottom:0.625rem; }
+}
 `,
     ),
   },
