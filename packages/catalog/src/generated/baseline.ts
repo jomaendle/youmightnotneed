@@ -24,7 +24,7 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-08-31",
+  "generatedOn": "2026-09-01",
   "webFeaturesVersion": "3.36.0",
   "features": {
     "anchor-positioning": {
