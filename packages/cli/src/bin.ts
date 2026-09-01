@@ -5,8 +5,9 @@
  * Reads a package.json, runs the catalog's detect(), prints a report. All the
  * I/O lives here; the rendering and the detection are both pure.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, realpathSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import {
   analyze,
   BASELINE_DATA_DATE,
@@ -40,6 +41,8 @@ Options
 Notes
   A dependency in package.json is not proof of what it is used for, so every
   finding is a "this may apply", not an instruction. Read the conditions.
+  npx youmightnotneed works with or without an install. The bare
+  youmightnotneed command only works after a global install.
 `;
 
 interface Args {
@@ -220,8 +223,20 @@ function main(): void {
 
 // Only run as a side effect when this file is the process entry point, not
 // when a test imports it to exercise resolveTarget() or findPackageJson().
-const isEntryPoint =
-  process.argv[1] !== undefined &&
-  import.meta.url === `file://${resolve(process.argv[1])}`;
+// import.meta.url is a properly percent-encoded file:// URL, so argv[1] is
+// resolved through realpathSync (npm/npx invoke through a node_modules/.bin
+// symlink) and converted with pathToFileURL rather than plain string
+// concatenation, or a path containing a space never matches. A missing
+// argv[1] target (a broken symlink) means this isn't the entry point either,
+// not an uncaught crash.
+function isEntryPoint(): boolean {
+  const argv1 = process.argv[1];
+  if (argv1 === undefined) return false;
+  try {
+    return import.meta.url === pathToFileURL(realpathSync(argv1)).href;
+  } catch {
+    return false;
+  }
+}
 
-if (isEntryPoint) main();
+if (isEntryPoint()) main();
