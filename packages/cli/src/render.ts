@@ -119,7 +119,7 @@ function footer(options: RenderOptions): string {
   return [
     `Baseline from web-features@${provenance.webFeaturesVersion}, captured ${provenance.baselineOn}.`,
     `Sizes from bundlephobia, captured ${provenance.sizesOn}.`,
-    "Details and live demos: https://youmightnotneed.dev",
+    "Details and live demos: https://youmightnotneed-web.vercel.app",
   ].join("\n");
 }
 
