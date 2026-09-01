@@ -17,6 +17,26 @@ const ownVersion = (
   ) as { version: string }
 ).version;
 
+const binPath = resolve(import.meta.dirname, "bin.ts");
+
+// Creating a symlink needs no special privilege on POSIX, but does on
+// Windows without Developer Mode or an elevated shell. Probed once at
+// module load so the symlink describe block below can skip cleanly there
+// instead of failing every contributor's local run on that platform.
+const canSymlink = (() => {
+  const probeDir = mkdtempSync(
+    join(tmpdir(), "youmightnotneed-symlink-probe-"),
+  );
+  try {
+    symlinkSync(join(probeDir, "target"), join(probeDir, "link"));
+    return true;
+  } catch {
+    return false;
+  } finally {
+    rmSync(probeDir, { recursive: true, force: true });
+  }
+})();
+
 let dir: string;
 
 beforeEach(() => {
@@ -61,7 +81,22 @@ describe("findPackageJson", () => {
   });
 });
 
-describe("entry point detection through a symlink", () => {
+describe("entry point detection via direct invocation", () => {
+  // The ordinary, non-symlinked path: `node bin.ts` directly, the way
+  // pnpm's own "start" script runs it. Guards the pathToFileURL()
+  // rewrite against a regression on the common case, not just the
+  // symlink case below.
+  it("runs main() when invoked directly", () => {
+    const result = spawnSync(process.execPath, [binPath, "--version"], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(0);
+    expect(result.stdout.trim()).toBe(ownVersion);
+  });
+});
+
+describe.skipIf(!canSymlink)("entry point detection through a symlink", () => {
   // npm and npx never invoke a package's bin directly. They run it through a
   // symlink in node_modules/.bin, which import.meta.url reports dereferenced
   // while argv[1] stays the symlink path. Comparing the two without
@@ -71,7 +106,7 @@ describe("entry point detection through a symlink", () => {
 
   beforeEach(() => {
     link = join(dir, "youmightnotneed");
-    symlinkSync(resolve(import.meta.dirname, "bin.ts"), link);
+    symlinkSync(binPath, link);
   });
 
   it("runs main() when invoked through a node_modules/.bin-style symlink", () => {

@@ -23,8 +23,7 @@
   },
   "files": [
     "dist",
-    "README.md",
-    "scripts/postinstall.mjs"
+    "README.md"
   ],
   "publishConfig": {
     "access": "public"
@@ -34,8 +33,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "start": "node src/bin.ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "postinstall": "node scripts/postinstall.mjs"
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@jomae/catalog": "workspace:*"
