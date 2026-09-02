@@ -20,7 +20,7 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-09-01",
+  "fetchedOn": "2026-09-02",
   "source": "bundlephobia.com",
   "sizes": {
     "@capsizecss/core": {
@@ -148,6 +148,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3596,
       "version": "2.4.2"
     },
+    "flatpickr": {
+      "gzip": 14362,
+      "raw": 50265,
+      "version": "4.6.13"
+    },
     "flickity": {
       "gzip": 11563,
       "raw": 42515,
@@ -233,6 +238,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 20652,
       "version": "1.16.1"
     },
+    "re-resizable": {
+      "gzip": 4998,
+      "raw": 16536,
+      "version": "6.11.2"
+    },
     "react-accessible-accordion": {
       "gzip": 4282,
       "raw": 13423,
@@ -283,6 +293,21 @@ export const packageSizes: SizeSnapshot = {
       "raw": 23758,
       "version": "4.5.0"
     },
+    "react-datepicker": {
+      "gzip": 44994,
+      "raw": 173474,
+      "version": "9.1.0"
+    },
+    "react-day-picker": {
+      "gzip": 19305,
+      "raw": 67045,
+      "version": "10.0.1"
+    },
+    "react-flatpickr": {
+      "gzip": 15069,
+      "raw": 52175,
+      "version": "4.0.11"
+    },
     "react-lazy-load-image-component": {
       "gzip": 6046,
       "raw": 26819,
@@ -317,6 +342,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2100,
       "raw": 5454,
       "version": "2.3.0"
+    },
+    "react-resizable-panels": {
+      "gzip": 11141,
+      "raw": 34377,
+      "version": "4.12.3"
     },
     "react-resize-detector": {
       "gzip": 1483,
@@ -358,6 +388,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 10157,
       "version": "2.1.2"
     },
+    "react-split-pane": {
+      "gzip": 3893,
+      "raw": 10021,
+      "version": "3.2.0"
+    },
     "react-spring": {
       "gzip": 19978,
       "raw": 52063,
@@ -392,6 +427,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1270,
       "raw": 3282,
       "version": "2.1.7"
+    },
+    "react-virtualized": {
+      "gzip": 27898,
+      "raw": 119157,
+      "version": "9.22.6"
+    },
+    "react-window": {
+      "gzip": 4475,
+      "raw": 12942,
+      "version": "2.3.0"
     },
     "react-wrap-balancer": {
       "gzip": 1183,
