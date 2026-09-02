@@ -51,12 +51,86 @@ interface CallThroughResult {
  * resolves once both id: 1 and id: 2 responses have arrived on stdout.
  *
  * Proves two different things depending on which test uses it: that
- * main() actually ran and connected the stdio transport at all (the
- * regression this file exists to catch — see packages/cli/src/bin.ts's
- * history), and separately, via the `extra` response, that server.ts's
+ * main() actually ran and connected the stdio transport at all. This is
+ * the regression this file exists to catch: see packages/cli/src/bin.ts's
+ * history. Separately, via the `extra` response, it proves that server.ts's
  * registerTool calls actually route each tool name to the intended
  * handler rather than to a copy-pasted wrong one.
  */
+
+type ParsedLine =
+  | { ok: true; message: JsonRpcResponse }
+  | { ok: false; error: Error };
+
+/**
+ * Parses one line of stdout as a JSON-RPC message. Returns a tagged
+ * result instead of throwing, so the `data` callback that calls this can
+ * stay a simple loop with no try/catch of its own.
+ */
+/**
+ * Pulls every complete (newline-terminated) line out of `buffer`, leaving
+ * a trailing partial line, if any, for the next chunk to complete.
+ */
+function splitCompleteLines(buffer: string): {
+  lines: string[];
+  remainder: string;
+} {
+  const lines: string[] = [];
+  let rest = buffer;
+  let newlineIndex = rest.indexOf("\n");
+  while (newlineIndex !== -1) {
+    lines.push(rest.slice(0, newlineIndex));
+    rest = rest.slice(newlineIndex + 1);
+    newlineIndex = rest.indexOf("\n");
+  }
+  return { lines, remainder: rest };
+}
+
+function parseJsonRpcLine(line: string): ParsedLine {
+  try {
+    return { ok: true, message: JSON.parse(line) as JsonRpcResponse };
+  } catch (error) {
+    return { ok: false, error: error as Error };
+  }
+}
+
+type LineResult =
+  | { kind: "continue" }
+  | { kind: "error"; error: Error }
+  | { kind: "done" };
+
+/**
+ * Parses one line and, if it is a valid JSON-RPC message with an id,
+ * records it in `responses`. Reports whether the caller should keep
+ * reading lines, stop because parsing failed, or stop because both
+ * expected responses are now in hand.
+ */
+function processLine(line: string, responses: JsonRpcResponse[]): LineResult {
+  const parsed = parseJsonRpcLine(line);
+  if (!parsed.ok) return { kind: "error", error: parsed.error };
+  if (parsed.message.id !== undefined) responses.push(parsed.message);
+  return responses.length === 2 ? { kind: "done" } : { kind: "continue" };
+}
+
+/**
+ * Settles the callThrough promise once both id: 1 and id: 2 responses are
+ * in hand: resolves with both, or rejects if one of the two ids never
+ * showed up among the two responses collected.
+ */
+function settleWithResponses(
+  responses: JsonRpcResponse[],
+  resolvePromise: (result: CallThroughResult) => void,
+  reject: (error: Error) => void,
+): void {
+  const init = responses.find((r) => r.id === 1);
+  const extra = responses.find((r) => r.id === 2);
+  if (!(init && extra)) {
+    reject(new Error("missing expected id: 1 or id: 2 response"));
+    return;
+  }
+  resolvePromise({ init, extra });
+}
+
 function callThrough(
   command: string,
   extraRequest: { method: string; params?: unknown },
@@ -75,35 +149,21 @@ function callThrough(
 
     child.stdout.on("data", (chunk: Buffer) => {
       buffer += chunk.toString("utf8");
-      let newlineIndex = buffer.indexOf("\n");
-      while (newlineIndex !== -1) {
-        const line = buffer.slice(0, newlineIndex);
-        buffer = buffer.slice(newlineIndex + 1);
-        newlineIndex = buffer.indexOf("\n");
+      const { lines, remainder } = splitCompleteLines(buffer);
+      buffer = remainder;
 
-        let message: JsonRpcResponse;
-        try {
-          message = JSON.parse(line) as JsonRpcResponse;
-        } catch (error) {
-          clearTimeout(timeout);
-          child.kill();
-          reject(error as Error);
+      for (const line of lines) {
+        const result = processLine(line, responses);
+        if (result.kind === "continue") continue;
+
+        clearTimeout(timeout);
+        child.kill();
+        if (result.kind === "error") {
+          reject(result.error);
           return;
         }
-        if (message.id !== undefined) responses.push(message);
-
-        if (responses.length === 2) {
-          clearTimeout(timeout);
-          child.kill();
-          const init = responses.find((r) => r.id === 1);
-          const extra = responses.find((r) => r.id === 2);
-          if (!init || !extra) {
-            reject(new Error("missing expected id: 1 or id: 2 response"));
-            return;
-          }
-          resolvePromise({ init, extra });
-          return;
-        }
+        settleWithResponses(responses, resolvePromise, reject);
+        return;
       }
     });
 

@@ -20,9 +20,9 @@ async function main(): Promise<void> {
 // Only run as a side effect when this file is the process entry point, not
 // when a test imports createServer() from server.ts directly. npm/npx
 // invoke a package's bin through a node_modules/.bin symlink, and
-// import.meta.url reports that symlink dereferenced while argv[1] does
-// not — the same bug packages/cli/src/bin.ts had this session, fixed here
-// from the start with the same realpathSync() + pathToFileURL() approach.
+// import.meta.url reports that symlink dereferenced while argv[1] does not.
+// packages/cli/src/bin.ts had this same bug this session, fixed here from
+// the start with the same realpathSync() + pathToFileURL() approach.
 function isEntryPoint(): boolean {
   const argv1 = process.argv[1];
   if (argv1 === undefined) return false;

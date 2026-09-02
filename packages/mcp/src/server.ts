@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { PackageJsonLike } from "@jomae/catalog";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { analyzeDependencies, getRule, listRules } from "./tools.ts";
 
@@ -33,10 +33,12 @@ export function createServer(): McpServer {
         peerDependencies: z.record(z.string(), z.string()).optional(),
       },
     },
-    async (input: PackageJsonLike) => {
+    (input: PackageJsonLike) => {
       const result = analyzeDependencies(input);
       return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
         structuredContent: result as unknown as Record<string, unknown>,
       };
     },
@@ -50,10 +52,12 @@ export function createServer(): McpServer {
         "Lists every rule in the youmightnotneed catalog: id, title, the npm packages it replaces, and the native approach in one line. Use get_rule for full detail on one rule.",
       inputSchema: {},
     },
-    async () => {
+    () => {
       const result = listRules();
       return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
         structuredContent: result as unknown as Record<string, unknown>,
       };
     },
@@ -70,7 +74,7 @@ export function createServer(): McpServer {
         package: z.string().optional(),
       },
     },
-    async (input: { id?: string; package?: string }) => {
+    (input: { id?: string; package?: string }) => {
       if (input.id === undefined && input.package === undefined) {
         return {
           content: [
@@ -84,10 +88,14 @@ export function createServer(): McpServer {
       }
 
       const result = getRule(
-        input.id !== undefined ? { id: input.id } : { package: input.package as string },
+        input.id === undefined
+          ? { package: input.package as string }
+          : { id: input.id },
       );
       return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+        content: [
+          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+        ],
         structuredContent: result as unknown as Record<string, unknown>,
       };
     },

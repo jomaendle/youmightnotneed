@@ -2,18 +2,18 @@ import {
   analyze,
   BASELINE_DATA_DATE,
   type BaselineInfo,
-  packageSizes,
   type PackageJsonLike,
+  packageSizes,
   type Report,
-  resolveBaseline,
   type Rule,
+  resolveBaseline,
   rules,
   rulesById,
   rulesByPackage,
   WEB_FEATURES_VERSION,
 } from "@jomae/catalog";
 
-export interface Provenance {
+interface Provenance {
   baselineOn: string;
   webFeaturesVersion: string;
   sizesOn: string;
@@ -74,9 +74,7 @@ export type GetRuleResult =
  */
 export function getRule(input: GetRuleInput): GetRuleResult {
   const rule =
-    "id" in input
-      ? rulesById.get(input.id)
-      : rulesByPackage.get(input.package);
+    "id" in input ? rulesById.get(input.id) : rulesByPackage.get(input.package);
 
   if (!rule) return { found: false };
   return { found: true, rule, baseline: resolveBaseline(rule) };
