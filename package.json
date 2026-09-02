@@ -29,6 +29,7 @@
     "check:freshness": "node scripts/check-freshness.ts",
     "verify": "pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm knip && pnpm check:freshness && pnpm check:copy",
     "cli": "node packages/cli/src/bin.ts",
+    "mcp": "node packages/mcp/src/bin.ts",
     "test:coverage": "pnpm -r test:coverage",
     "knip": "knip",
     "check:copy": "node scripts/check-copy.ts",

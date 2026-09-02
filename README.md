@@ -3,7 +3,7 @@
 Is it CSS yet?
 
 Find the modern CSS and HTML that replaces your JavaScript dependencies.
-Website, CLI, and one rule catalog underneath both.
+Website, CLI, MCP server, and one rule catalog underneath all three.
 
 ```
 npx youmightnotneed
@@ -54,14 +54,16 @@ Where a feature has no `web-features` ID yet, a rule may carry a
 ```
 packages/catalog   @jomae/catalog, MIT, published to npm
 packages/cli       npx youmightnotneed
+packages/mcp       npx youmightnotneed-mcp, an MCP server for agents
 apps/web           youmightnotneed.dev
 scripts            snapshot generators and the freshness check
 ```
 
 `detect()` is a pure function: a parsed dependency map in, findings out. No
 filesystem, no network, no clock. Every surface calls the same one, which is
-why the CLI and the website cannot disagree. A test asserts the purity by
-reading the source, so an accidental `node:fs` import fails the run.
+why the CLI, the website, and the MCP server cannot disagree. A test asserts
+the purity by reading the source, so an accidental `node:fs` import fails
+the run.
 
 ## Working on it
 
@@ -70,6 +72,7 @@ pnpm install
 pnpm verify          # lint, typecheck, test, freshness
 pnpm dev             # the website
 pnpm cli             # the CLI, against this repo
+pnpm mcp             # the MCP server, over stdio
 pnpm refresh         # re-snapshot Baseline data and bundle sizes
 ```
 
