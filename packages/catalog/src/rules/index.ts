@@ -4,6 +4,8 @@ import { aspectRatio } from "./aspect-ratio.ts";
 import { carousel } from "./carousel.ts";
 import { colorFunctions } from "./color-functions.ts";
 import { containerQueries } from "./container-queries.ts";
+import { contentVisibility } from "./content-visibility.ts";
+import { dateTimeInput } from "./date-time-input.ts";
 import { dialog } from "./dialog.ts";
 import { discreteTransitions } from "./discrete-transitions.ts";
 import { fieldSizing } from "./field-sizing.ts";
@@ -12,6 +14,7 @@ import { heightAnimation } from "./height-animation.ts";
 import { lazyLoading } from "./lazy-loading.ts";
 import { masonry } from "./masonry.ts";
 import { popover } from "./popover.ts";
+import { resizablePanels } from "./resizable-panels.ts";
 import { scrollAnimations } from "./scroll-animations.ts";
 import { scrollLock } from "./scroll-lock.ts";
 import { scrollbars } from "./scrollbars.ts";
@@ -32,6 +35,8 @@ export const rules: readonly Rule[] = [
   carousel,
   colorFunctions,
   containerQueries,
+  contentVisibility,
+  dateTimeInput,
   dialog,
   discreteTransitions,
   fieldSizing,
@@ -40,6 +45,7 @@ export const rules: readonly Rule[] = [
   lazyLoading,
   masonry,
   popover,
+  resizablePanels,
   scrollAnimations,
   scrollLock,
   scrollbars,

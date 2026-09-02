@@ -25,6 +25,11 @@ const SKIPPED_DIRECTORIES = new Set([
   "out",
   "coverage",
   "generated",
+  // Claude Code's local git worktrees, at .claude/worktrees/<name>. Locally
+  // gitignored via .git/info/exclude, which this filesystem walk cannot
+  // see, so it needs its own skip entry instead of silently scanning a
+  // nested repo checkout. .claude/skills/ still gets scanned normally.
+  "worktrees",
   // subagent-driven-development's scratch workspace: ledgers, task briefs,
   // review packages. Gitignored, not authored prose, not ours to copy-check.
   ".superpowers",

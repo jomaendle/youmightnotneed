@@ -24,7 +24,7 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-01",
+  "generatedOn": "2026-09-02",
   "webFeaturesVersion": "3.36.0",
   "features": {
     "anchor-positioning": {
@@ -61,6 +61,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": "2023-02-14",
       "highDate": "2025-08-14",
       "spec": "https://drafts.csswg.org/css-conditional-5/#container-queries"
+    },
+    "content-visibility": {
+      "name": "content-visibility",
+      "baseline": "low",
+      "lowDate": "2025-09-15",
+      "highDate": null,
+      "spec": "https://drafts.csswg.org/css-contain-2/#content-visibility"
     },
     "customizable-select": {
       "name": "Customizable <select>",
@@ -103,6 +110,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": "2023-12-19",
       "highDate": "2026-06-19",
       "spec": "https://drafts.csswg.org/selectors-4/#relational"
+    },
+    "input-date-time": {
+      "name": "Date and time <input> types",
+      "baseline": "high",
+      "lowDate": "2021-04-26",
+      "highDate": "2023-10-26",
+      "spec": "https://html.spec.whatwg.org/multipage/input.html#date-state-(type=date)"
     },
     "interpolate-size": {
       "name": "interpolate-size",
@@ -166,6 +180,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": "2025-01-27",
       "highDate": null,
       "spec": "https://html.spec.whatwg.org/multipage/popover.html"
+    },
+    "resize": {
+      "name": "resize (CSS property)",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://drafts.csswg.org/css-ui-4/#resize"
     },
     "scroll-behavior": {
       "name": "scroll-behavior",
