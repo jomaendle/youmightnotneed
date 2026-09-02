@@ -27,8 +27,8 @@ Code, Claude Desktop, or any other MCP client) as tools, so an agent can:
   `CLAUDE.md`'s existing "Not building: accounts, auth" line.
 - No live network calls (bundlephobia, npm registry, web-features). Uses the
   same committed snapshot the CLI and website already use.
-- No file-path input. The server never reads a `package.json` off disk itself
-  — the agent supplies the parsed dependency fields directly. Keeps the
+- No file-path input. The server never reads a `package.json` off disk
+  itself: the agent supplies the parsed dependency fields directly. Keeps the
   server's only dependency-facing surface identical to `detect()`'s own pure
   input shape, and avoids giving an MCP server filesystem access it doesn't
   need.
@@ -40,18 +40,18 @@ Code, Claude Desktop, or any other MCP client) as tools, so an agent can:
 New `packages/mcp`, following `packages/cli`'s conventions exactly:
 
 - Name: `youmightnotneed-mcp` (unscoped, matches the CLI's public-facing
-  naming — this ships as its own `npx`-run command, not an internal library).
+  naming: this ships as its own `npx`-run command, not an internal library).
 - `type: "module"`, `"engines": { "node": ">=22.18.0" }`.
 - `dependencies`: `"@jomae/catalog": "workspace:*"`, `"@modelcontextprotocol/sdk"`.
 - `bin: { "youmightnotneed-mcp": "./dist/bin.js" }`.
 - Source-first dev (`exports`/`main`/`types` → `./src/index.ts` isn't
-  applicable here since this package has no library export, only a bin —
+  applicable here since this package has no library export, only a bin:
   matches `cli`'s bin-only shape, no `exports` field needed), compiled for
   publish (`publishConfig` block pointing at `./dist/bin.js`, same pattern as
   `cli`'s `dist/bin.js`).
 - `files: ["dist", "README.md"]`.
 - Scripts: `build` (`tsc -p tsconfig.build.json`), `typecheck`, `start`
-  (`node src/bin.ts`), `test`, `test:coverage` — identical names to `cli` so
+  (`node src/bin.ts`), `test`, `test:coverage`. Identical names to `cli` so
   the root `verify` script picks them up via `pnpm -r` with no changes there.
 - `tsconfig.json`/`tsconfig.build.json` extending `tsconfig.base.json`, same
   as every other package.
@@ -65,18 +65,18 @@ Mirrors `bin.ts`'s separation of pure logic from I/O, the same shape
 `packages/cli/src/bin.ts` already uses and that this session's CLI fix
 depended on being testable in isolation:
 
-- `src/tools.ts` — pure handler functions, no MCP SDK import. Each takes a
+- `src/tools.ts`: pure handler functions, no MCP SDK import. Each takes a
   plain-JS input and returns a plain-JS output by calling straight into
   `@jomae/catalog`. Fully unit-testable with vitest without spinning up a
   server or transport.
-- `src/server.ts` — thin adapter: constructs the MCP `Server`, registers the
+- `src/server.ts`: thin adapter. Constructs the MCP `Server`, registers the
   three tools (name, JSON-schema `inputSchema`, handler that calls into
   `tools.ts` and wraps the result as the tool's structured output), wires
   stdio transport.
-- `src/bin.ts` — executable entry point. Shebang, imports `server.ts`, starts
+- `src/bin.ts`: executable entry point. Shebang, imports `server.ts`, starts
   it. Uses the **same entry-point guard** `packages/cli/src/bin.ts` just had
   fixed this session (`realpathSync()` + `pathToFileURL()` before comparing
-  to `import.meta.url`) — npx invokes this bin through the exact same
+  to `import.meta.url`). npx invokes this bin through the exact same
   `node_modules/.bin` symlink mechanism, so it needs the same fix from day
   one rather than reproducing the bug this session just spent two review
   rounds fixing.
@@ -113,7 +113,7 @@ Output: the catalog's `Report` shape verbatim (`findings`, `summary`), plus a
 Implementation: `analyzeDependencies(input)` in `tools.ts` calls
 `analyze(input)` from `@jomae/catalog` and appends the provenance block. No
 validation beyond what `detect()` itself does today (an empty/missing field
-is just treated as no dependencies in that field) — matches the CLI's own
+is just treated as no dependencies in that field). Matches the CLI's own
 lack of upfront validation.
 
 ### `list_rules`
@@ -145,31 +145,31 @@ Output:
 
 Implementation: looks up via the catalog's existing `rulesById` /
 `rulesByPackage` maps, then calls `resolveBaseline(rule)` for the matched
-rule. Returns `{ found: false }` on no match rather than throwing — matches
+rule. Returns `{ found: false }` on no match rather than throwing. Matches
 `resolveFeature()`'s existing no-throw-on-unknown-input philosophy elsewhere
 in the catalog, and gives the agent a value to branch on instead of a
 try/catch.
 
 If both `id` and `package` are supplied, `id` wins (documented in the tool's
-description, not enforced with an error — an agent supplying both is giving
+description, not enforced with an error: an agent supplying both is giving
 redundant, not conflicting, information in the common case where it already
 knows both for a rule it just got from `list_rules`).
 
 ## Error handling
 
-- Tool handlers in `tools.ts` never throw for "not found" or "no matches" —
-  they return a value describing that (`{ found: false }`, an empty
+- Tool handlers in `tools.ts` never throw for "not found" or "no matches."
+  They return a value describing that (`{ found: false }`, an empty
   `findings` array). Matches the catalog's own no-throw ethos for expected
   "nothing here" outcomes.
 - `server.ts`'s adapter layer catches any unexpected exception from a handler
   (a bug, not an expected empty result) and surfaces it as an MCP tool error
-  response rather than crashing the server process — one bad call shouldn't
+  response rather than crashing the server process. One bad call shouldn't
   take down the stdio connection for the rest of the session.
 
 ## Testing
 
 - `tools.test.ts`: unit tests for all three handlers against `tools.ts`
-  directly (no SDK, no transport) — same style as `packages/catalog`'s
+  directly (no SDK, no transport), same style as `packages/catalog`'s
   existing tests against `detect()`. Covers: a `package.json` with matches,
   one with none, `get_rule` by id, by package, by neither/unknown, and both
   provided at once.
@@ -177,7 +177,7 @@ knows both for a rule it just got from `list_rules`).
   `packages/cli/src/bin.test.ts` (invoke through a real
   `node_modules/.bin`-style symlink), since this package has the identical
   npx-invocation shape and the identical risk of the same regression.
-- No test spins up a real MCP client; `server.ts`'s tool registration is thin
+- No test spins up a real MCP client. `server.ts`'s tool registration is thin
   enough that testing `tools.ts` directly covers the actual logic, and a
   full client/server integration test would mostly be testing the SDK
   itself.
@@ -199,5 +199,5 @@ knows both for a rule it just got from `list_rules`).
 Same flow as every other change this session: branch, PR, CI green, merge,
 changeset-driven "Version Packages" PR, merge, publish (falling back to
 local `pnpm changeset publish` if the CI `NPM_TOKEN` issue from this session
-recurs — the token was fixed via `npm login` locally and re-publish
+recurs: the token was fixed via `npm login` locally and re-publish
 succeeded, but the CI secret itself was never rotated).

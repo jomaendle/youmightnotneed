@@ -13,10 +13,10 @@
 ## Global Constraints
 
 - Node `>=22.18.0` (matches `packages/cli`/`packages/catalog`).
-- `type: "module"` everywhere. Relative imports use the `.ts` extension in source (`rewriteRelativeImportExtensions` rewrites to `.js` on emit) — never write a bare `.js` import in source.
+- `type: "module"` everywhere. Relative imports use the `.ts` extension in source (`rewriteRelativeImportExtensions` rewrites to `.js` on emit). Never write a bare `.js` import in source.
 - No em dashes or banned vocabulary in any user-visible text (tool `description` strings, README, CLAUDE.md). `node scripts/check-copy.ts` enforces this at the repo root; load `.claude/skills/writing-voice/SKILL.md` before writing any of it.
 - `tools.ts` stays pure: it may only import from `@jomae/catalog` and use no I/O. All filesystem/process/network access lives in `server.ts` (reading the package's own version) or `bin.ts` (the transport).
-- Data is static (the committed `@jomae/catalog` snapshot). No network calls anywhere in this package — that was an explicit non-goal in the spec.
+- Data is static (the committed `@jomae/catalog` snapshot). No network calls anywhere in this package. That was an explicit non-goal in the spec.
 - `pnpm verify` (lint, typecheck, `test:coverage`, `knip`, `check:freshness`, `check:copy`) must pass at the repo root after every task that touches source, not just at the end.
 
 ---
@@ -199,7 +199,7 @@ describe("analyzeDependencies", () => {
 - [ ] **Step 5: Run the test to verify it fails**
 
 Run: `pnpm --filter youmightnotneed-mcp test`
-Expected: FAIL — `tools.ts` does not exist yet (module not found).
+Expected: FAIL. `tools.ts` does not exist yet (module not found).
 
 - [ ] **Step 6: Implement `analyzeDependencies`**
 
@@ -281,7 +281,7 @@ Append to `packages/mcp/src/tools.test.ts`:
 import { listRules } from "./tools.ts";
 ```
 
-(add `listRules` to the existing `import { analyzeDependencies } from "./tools.ts";` line instead of a new import line — the final import line reads `import { analyzeDependencies, listRules } from "./tools.ts";`)
+(add `listRules` to the existing `import { analyzeDependencies } from "./tools.ts";` line instead of a new import line. The final import line reads `import { analyzeDependencies, listRules } from "./tools.ts";`)
 
 ```ts
 describe("listRules", () => {
@@ -303,7 +303,7 @@ describe("listRules", () => {
 - [ ] **Step 2: Run the test to verify it fails**
 
 Run: `pnpm --filter youmightnotneed-mcp test`
-Expected: FAIL — `listRules` is not exported.
+Expected: FAIL. `listRules` is not exported.
 
 - [ ] **Step 3: Implement `listRules`**
 
@@ -404,7 +404,7 @@ describe("getRule", () => {
 - [ ] **Step 2: Run the test to verify it fails**
 
 Run: `pnpm --filter youmightnotneed-mcp test`
-Expected: FAIL — `getRule` is not exported.
+Expected: FAIL. `getRule` is not exported.
 
 - [ ] **Step 3: Implement `getRule`**
 
@@ -479,9 +479,9 @@ git commit -m "feat: add get_rule handler"
 - Consumes: `analyzeDependencies`, `listRules`, `getRule` from `./tools.ts` (Tasks 1-3), and `PackageJsonLike` from `@jomae/catalog`.
 - Produces: `createServer(): McpServer`. Task 5's `bin.ts` imports this by name.
 
-This task has no dedicated unit tests of its own — per the spec, `server.ts`'s tool registration is thin enough that `tools.ts`'s tests already cover the logic, and Task 5's regression test (spawning the real process and sending a live `initialize` request) is what proves the wiring in this file actually works end to end.
+This task has no dedicated unit tests of its own. Per the spec, `server.ts`'s tool registration is thin enough that `tools.ts`'s tests already cover the logic. Task 5's regression test (spawning the real process and sending a live `initialize` request) is what proves the wiring in this file actually works end to end.
 
-Note on the spec's error-handling requirement ("one bad call shouldn't take down the stdio connection"): verified directly against the installed `@modelcontextprotocol/sdk@1.30.0` source (`dist/esm/server/mcp.js`) that `McpServer` already wraps every tool callback in try/catch internally and converts a thrown error into a `CallToolResult` with `isError: true` via its own `createToolError()`. No additional try/catch is needed in this file for that requirement — it is already satisfied by the SDK.
+Note on the spec's error-handling requirement ("one bad call shouldn't take down the stdio connection"): verified directly against the installed `@modelcontextprotocol/sdk@1.30.0` source (`dist/esm/server/mcp.js`) that `McpServer` already wraps every tool callback in try/catch internally and converts a thrown error into a `CallToolResult` with `isError: true` via its own `createToolError()`. No additional try/catch is needed in this file for that requirement: it is already satisfied by the SDK.
 
 - [ ] **Step 1: Implement `server.ts`**
 
@@ -590,7 +590,7 @@ export function createServer(): McpServer {
 - [ ] **Step 2: Typecheck**
 
 Run: `pnpm --filter youmightnotneed-mcp typecheck`
-Expected: no errors. If `structuredContent` complains about a type mismatch (its declared type is `Record<string, unknown>` and `AnalyzeDependenciesResult`/`GetRuleResult` are interfaces/unions, not index signatures), cast at the call site: `structuredContent: result as unknown as Record<string, unknown>`. Apply the same cast to all three `structuredContent` lines if needed — do not change `tools.ts`'s return types to accommodate this; the cast belongs in the adapter layer, not the pure layer.
+Expected: no errors. If `structuredContent` complains about a type mismatch (its declared type is `Record<string, unknown>` and `AnalyzeDependenciesResult`/`GetRuleResult` are interfaces/unions, not index signatures), cast at the call site: `structuredContent: result as unknown as Record<string, unknown>`. Apply the same cast to all three `structuredContent` lines if needed. Do not change `tools.ts`'s return types to accommodate this; the cast belongs in the adapter layer, not the pure layer.
 
 - [ ] **Step 3: Commit**
 
@@ -639,7 +639,7 @@ async function main(): Promise<void> {
 // when a test imports createServer() from server.ts directly. npm/npx
 // invoke a package's bin through a node_modules/.bin symlink, and
 // import.meta.url reports that symlink dereferenced while argv[1] does
-// not — the same bug packages/cli/src/bin.ts had this session, fixed here
+// not. Same bug packages/cli/src/bin.ts had this session, fixed here
 // from the start with the same realpathSync() + pathToFileURL() approach.
 function isEntryPoint(): boolean {
   const argv1 = process.argv[1];
@@ -716,10 +716,10 @@ interface CallThroughResult {
  * `notifications/initialized` notification), sends one more request, and
  * resolves once both id: 1 and id: 2 responses have arrived on stdout.
  *
- * Proves two different things depending on which test uses it: that
- * main() actually ran and connected the stdio transport at all (the
- * regression this file exists to catch — see packages/cli/src/bin.ts's
- * history), and separately, via the `extra` response, that server.ts's
+ * Proves two different things depending on which test uses it. First,
+ * that main() actually ran and connected the stdio transport at all (see
+ * packages/cli/src/bin.ts's history for the regression this file exists
+ * to catch). Second, via the `extra` response, that server.ts's
  * registerTool calls actually route each tool name to the intended
  * handler rather than to a copy-pasted wrong one.
  */
@@ -877,7 +877,7 @@ git commit -m "feat: add MCP server entry point with symlink regression test"
 - Modify: `README.md:52-59` (Layout)
 - Create: `packages/mcp/README.md`
 
-**Interfaces:** none — this task only touches documentation and build output.
+**Interfaces:** none. This task only touches documentation and build output.
 
 - [ ] **Step 1: Build the package**
 
@@ -972,13 +972,13 @@ Add it to an MCP client's config:
 
 ## Tools
 
-- `analyze_dependencies` — matches a package.json's `dependencies`,
+- `analyze_dependencies`: matches a package.json's `dependencies`,
   `devDependencies` and `peerDependencies` against the catalog. Returns
   findings, a summary, and provenance for when the underlying data was
   captured.
-- `list_rules` — every rule's id, title, the npm packages it replaces, and
+- `list_rules`: every rule's id, title, the npm packages it replaces, and
   the native approach, in one line each.
-- `get_rule` — full detail on one rule, looked up by id or by an npm
+- `get_rule`: full detail on one rule, looked up by id or by an npm
   package name it replaces. Returns `{ found: false }` rather than an
   error when nothing matches.
 
@@ -989,7 +989,7 @@ Powered by [`@jomae/catalog`](https://www.npmjs.com/package/@jomae/catalog).
 MIT.
 ```
 
-(Write the file without the backslash-escapes shown above — those exist
+(Write the file without the backslash-escapes shown above. Those exist
 only to keep the code fence itself parseable inside this plan document.
 The actual `packages/mcp/README.md` file's own code fence around the JSON
 config block should be a plain triple-backtick fence with `json` after it,
@@ -1007,7 +1007,7 @@ Expected: lint, typecheck, `test:coverage`, `knip`, `check:freshness`, and `chec
 
 - [ ] **Step 8: Commit**
 
-`dist/` is gitignored repo-wide (`.gitignore:2`), matching `packages/cli/dist` — do not add it.
+`dist/` is gitignored repo-wide (`.gitignore:2`), matching `packages/cli/dist`. Do not add it.
 
 ```bash
 git add CLAUDE.md README.md packages/mcp/README.md

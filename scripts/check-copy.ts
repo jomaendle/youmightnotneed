@@ -25,6 +25,9 @@ const SKIPPED_DIRECTORIES = new Set([
   "out",
   "coverage",
   "generated",
+  // subagent-driven-development's scratch workspace: ledgers, task briefs,
+  // review packages. Gitignored, not authored prose, not ours to copy-check.
+  ".superpowers",
 ]);
 
 /**
