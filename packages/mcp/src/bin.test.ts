@@ -230,11 +230,12 @@ describe("entry point detection via direct invocation", () => {
   });
 });
 
-// Together with the two tests above, these prove that server.ts's
-// registerTool calls route each of the three tool names to the intended
-// handler rather than to a copy-pasted wrong one: tools/list proves all
-// three tools are registered under their own names, and get_rule below
-// proves the id/package precedence in its handler.
+// Together with the two tests above (which cover analyze_dependencies),
+// these prove that server.ts's registerTool calls route each of the three
+// tool names to the intended handler rather than to a copy-pasted wrong
+// one: tools/list proves all three are registered under their own names,
+// get_rule is called and checked against real catalog data, and so is
+// list_rules.
 describe("tool routing", () => {
   it("lists all three registered tools by name", async () => {
     const { extra } = await callThrough(binPath, { method: "tools/list" });
@@ -264,6 +265,20 @@ describe("tool routing", () => {
       result?: { structuredContent?: { rule?: { id?: string } } };
     };
     expect(response.result?.structuredContent?.rule?.id).toBe("css-masonry");
+  });
+
+  it("routes list_rules to the actual catalog handler", async () => {
+    const { extra } = await callThrough(binPath, {
+      method: "tools/call",
+      params: { name: "list_rules", arguments: {} },
+    });
+    const response = extra as {
+      result?: { structuredContent?: { rules?: Array<{ id?: string }> } };
+    };
+    const ids = response.result?.structuredContent?.rules?.map(
+      (rule) => rule.id,
+    );
+    expect(ids).toEqual(expect.arrayContaining(["css-masonry"]));
   });
 });
 

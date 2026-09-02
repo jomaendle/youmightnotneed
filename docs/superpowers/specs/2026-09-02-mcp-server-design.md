@@ -196,8 +196,6 @@ knows both for a rule it just got from `list_rules`).
 
 ## Release
 
-Same flow as every other change this session: branch, PR, CI green, merge,
-changeset-driven "Version Packages" PR, merge, publish (falling back to
-local `pnpm changeset publish` if the CI `NPM_TOKEN` issue from this session
-recurs: the token was fixed via `npm login` locally and re-publish
-succeeded, but the CI secret itself was never rotated).
+Same flow as every other change: branch, PR, CI green, merge,
+changeset-driven "Version Packages" PR, merge, publish. If the automated
+publish step fails, fall back to a local `pnpm changeset publish`.
