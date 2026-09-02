@@ -47,15 +47,13 @@ interface CallThroughResult {
 
 /**
  * Spawns `command`, performs a full MCP handshake (initialize, then the
- * `notifications/initialized` notification), sends one more request, and
- * resolves once both id: 1 and id: 2 responses have arrived on stdout.
+ * `notifications/initialized` notification), sends one more request (the
+ * `extraRequest` passed in), and resolves once both id: 1 and id: 2
+ * responses have arrived on stdout.
  *
- * Proves two different things depending on which test uses it: that
- * main() actually ran and connected the stdio transport at all. This is
- * the regression this file exists to catch: see packages/cli/src/bin.ts's
- * history. Separately, via the `extra` response, it proves that server.ts's
- * registerTool calls actually route each tool name to the intended
- * handler rather than to a copy-pasted wrong one.
+ * The `init` response proves main() actually ran and connected the stdio
+ * transport at all. This is the regression this file exists to catch: see
+ * packages/cli/src/bin.ts's history.
  */
 
 type ParsedLine =
@@ -141,11 +139,18 @@ function callThrough(
     });
     let buffer = "";
     const responses: JsonRpcResponse[] = [];
+    let stderrBuffer = "";
 
     const timeout = setTimeout(() => {
       child.kill();
-      reject(new Error("timed out waiting for responses"));
-    }, 10_000);
+      reject(
+        new Error(`timed out waiting for responses. stderr: ${stderrBuffer}`),
+      );
+    }, 4000);
+
+    child.stderr.on("data", (chunk: Buffer) => {
+      stderrBuffer += chunk.toString("utf8");
+    });
 
     child.stdout.on("data", (chunk: Buffer) => {
       buffer += chunk.toString("utf8");
@@ -159,7 +164,7 @@ function callThrough(
         clearTimeout(timeout);
         child.kill();
         if (result.kind === "error") {
-          reject(result.error);
+          reject(new Error(`${result.error.message}. stderr: ${stderrBuffer}`));
           return;
         }
         settleWithResponses(responses, resolvePromise, reject);
@@ -167,7 +172,10 @@ function callThrough(
       }
     });
 
-    child.on("error", reject);
+    child.on("error", (error) => {
+      clearTimeout(timeout);
+      reject(error);
+    });
 
     child.stdin.write(
       `${JSON.stringify({
@@ -219,6 +227,43 @@ describe("entry point detection via direct invocation", () => {
     expect(response.result?.structuredContent?.findings?.[0]?.rule?.id).toBe(
       "css-masonry",
     );
+  });
+});
+
+// Together with the two tests above, these prove that server.ts's
+// registerTool calls route each of the three tool names to the intended
+// handler rather than to a copy-pasted wrong one: tools/list proves all
+// three tools are registered under their own names, and get_rule below
+// proves the id/package precedence in its handler.
+describe("tool routing", () => {
+  it("lists all three registered tools by name", async () => {
+    const { extra } = await callThrough(binPath, { method: "tools/list" });
+    const response = extra as {
+      result?: { tools?: Array<{ name?: string }> };
+    };
+    const names = response.result?.tools?.map((tool) => tool.name);
+    expect(names).toEqual(
+      expect.arrayContaining([
+        "analyze_dependencies",
+        "list_rules",
+        "get_rule",
+      ]),
+    );
+    expect(names).toHaveLength(3);
+  });
+
+  it("routes get_rule to id over package when both are given", async () => {
+    const { extra } = await callThrough(binPath, {
+      method: "tools/call",
+      params: {
+        name: "get_rule",
+        arguments: { id: "css-masonry", package: "left-pad" },
+      },
+    });
+    const response = extra as {
+      result?: { structuredContent?: { rule?: { id?: string } } };
+    };
+    expect(response.result?.structuredContent?.rule?.id).toBe("css-masonry");
   });
 });
 

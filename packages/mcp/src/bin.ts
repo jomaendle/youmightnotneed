@@ -2,9 +2,10 @@
 /**
  * npx youmightnotneed-mcp
  *
- * Starts the MCP server over stdio. All I/O (reading this package's own
- * version, the stdio transport) lives here; tool logic in tools.ts stays
- * pure and server.ts's tool registration stays a thin adapter.
+ * Starts the MCP server over stdio. All process-level I/O (the stdio
+ * transport) lives here; server.ts additionally reads this package's own
+ * version from package.json. Tool logic in tools.ts stays pure and
+ * server.ts's tool registration stays a thin adapter.
  */
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";

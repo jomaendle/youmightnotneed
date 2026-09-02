@@ -1,5 +1,10 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { analyzeDependencies, getRule, listRules } from "./tools.ts";
+
+const srcDir = dirname(fileURLToPath(import.meta.url));
 
 describe("analyzeDependencies", () => {
   it("matches a known dependency and returns provenance", () => {
@@ -71,5 +76,20 @@ describe("getRule", () => {
 
   it("returns found: false for an unknown package", () => {
     expect(getRule({ package: "left-pad" })).toEqual({ found: false });
+  });
+});
+
+describe("tools.ts stays pure", () => {
+  // Mirrors packages/catalog's detect() purity test: tools.ts is a thin
+  // wrapper over @jomae/catalog and must stay free of I/O, so server.ts
+  // (not tools.ts) stays the only place doing filesystem or process work.
+  it("imports nothing impure", () => {
+    const source = readFileSync(join(srcDir, "tools.ts"), "utf8");
+    expect(source).not.toMatch(/from\s+["']node:/);
+    expect(source).not.toMatch(/require\(/);
+    expect(source).not.toMatch(/\bfetch\(/);
+    expect(source).not.toMatch(/\bprocess\./);
+    expect(source).not.toMatch(/\bDate\.now\(/);
+    expect(source).not.toMatch(/new Date\(/);
   });
 });

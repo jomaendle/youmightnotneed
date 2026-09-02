@@ -2,7 +2,20 @@ import { readFileSync } from "node:fs";
 import type { PackageJsonLike } from "@jomae/catalog";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { analyzeDependencies, getRule, listRules } from "./tools.ts";
+import {
+  analyzeDependencies,
+  type GetRuleResult,
+  getRule,
+  listRules,
+} from "./tools.ts";
+
+/** Wraps a getRule() result in the { content, structuredContent } shape every tool handler returns. */
+function toolResponse(result: GetRuleResult) {
+  return {
+    content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
+    structuredContent: result as unknown as Record<string, unknown>,
+  };
+}
 
 function readOwnVersion(): string {
   try {
@@ -75,28 +88,20 @@ export function createServer(): McpServer {
       },
     },
     (input: { id?: string; package?: string }) => {
-      if (input.id === undefined && input.package === undefined) {
-        return {
-          content: [
-            {
-              type: "text" as const,
-              text: "Provide either id or package.",
-            },
-          ],
-          isError: true,
-        };
+      if (input.id !== undefined) {
+        return toolResponse(getRule({ id: input.id }));
       }
-
-      const result = getRule(
-        input.id === undefined
-          ? { package: input.package as string }
-          : { id: input.id },
-      );
+      if (input.package !== undefined) {
+        return toolResponse(getRule({ package: input.package }));
+      }
       return {
         content: [
-          { type: "text" as const, text: JSON.stringify(result, null, 2) },
+          {
+            type: "text" as const,
+            text: "Provide either id or package.",
+          },
         ],
-        structuredContent: result as unknown as Record<string, unknown>,
+        isError: true,
       };
     },
   );
