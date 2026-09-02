@@ -1,0 +1,51 @@
+{
+  "name": "youmightnotneed-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server exposing the youmightnotneed rule catalog to AI agents.",
+  "license": "MIT",
+  "author": "Johannes Maendle",
+  "homepage": "https://youmightnotneed-web.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jomaendle/youmightnotneed.git",
+    "directory": "packages/mcp"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "css",
+    "baseline",
+    "agent"
+  ],
+  "bin": {
+    "youmightnotneed-mcp": "./dist/bin.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node src/bin.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@jomae/catalog": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.5.4"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.11",
+    "@types/node": "^24.13.3",
+    "@vitest/coverage-v8": "^4.1.11"
+  }
+}
