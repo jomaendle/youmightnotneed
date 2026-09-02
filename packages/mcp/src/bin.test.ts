@@ -63,11 +63,6 @@ type ParsedLine =
   | { ok: false; error: Error };
 
 /**
- * Parses one line of stdout as a JSON-RPC message. Returns a tagged
- * result instead of throwing, so the `data` callback that calls this can
- * stay a simple loop with no try/catch of its own.
- */
-/**
  * Pulls every complete (newline-terminated) line out of `buffer`, leaving
  * a trailing partial line, if any, for the next chunk to complete.
  */
@@ -86,6 +81,11 @@ function splitCompleteLines(buffer: string): {
   return { lines, remainder: rest };
 }
 
+/**
+ * Parses one line of stdout as a JSON-RPC message. Returns a tagged
+ * result instead of throwing, so the `data` callback that calls this can
+ * stay a simple loop with no try/catch of its own.
+ */
 function parseJsonRpcLine(line: string): ParsedLine {
   try {
     return { ok: true, message: JSON.parse(line) as JsonRpcResponse };
