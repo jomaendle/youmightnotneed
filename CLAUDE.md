@@ -31,6 +31,7 @@ Do not relitigate these. If one looks wrong, say so in a sentence and carry on.
 ```
 packages/catalog   the rules, schema, baseline resolution, detect()
 packages/cli       npx youmightnotneed
+packages/mcp       npx youmightnotneed-mcp
 apps/web           youmightnotneed.dev
 scripts            snapshot generators, freshness check
 ```
@@ -57,5 +58,5 @@ and the schema rejects an empty list. When adding a rule, write `unless` first.
 
 ## Not building
 
-VS Code extension, hosted playground, accounts, auth. The MCP server and the
-`modern-css` skill are Launch 2, and only if Launch 1 lands.
+VS Code extension, hosted playground, accounts, auth. The `modern-css`
+skill is Launch 2, and only if Launch 1 lands.

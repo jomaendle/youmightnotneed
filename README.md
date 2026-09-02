@@ -54,6 +54,7 @@ Where a feature has no `web-features` ID yet, a rule may carry a
 ```
 packages/catalog   @jomae/catalog, MIT, published to npm
 packages/cli       npx youmightnotneed
+packages/mcp       npx youmightnotneed-mcp, an MCP server for agents
 apps/web           youmightnotneed.dev
 scripts            snapshot generators and the freshness check
 ```
