@@ -4,6 +4,7 @@ import {
   type PackageJsonLike,
   packageSizes,
   type Report,
+  rules,
   WEB_FEATURES_VERSION,
 } from "@jomae/catalog";
 
@@ -32,5 +33,24 @@ export function analyzeDependencies(
       webFeaturesVersion: WEB_FEATURES_VERSION,
       sizesOn: packageSizes.fetchedOn,
     },
+  };
+}
+
+export interface RuleSummary {
+  id: string;
+  title: string;
+  replaces: string[];
+  native: string;
+}
+
+/** Every rule, four fields each. Pure. Use getRule() for full detail. */
+export function listRules(): { rules: RuleSummary[] } {
+  return {
+    rules: rules.map((rule) => ({
+      id: rule.id,
+      title: rule.title,
+      replaces: rule.replaces,
+      native: rule.native,
+    })),
   };
 }

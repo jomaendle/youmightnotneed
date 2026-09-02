@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeDependencies } from "./tools.ts";
+import { analyzeDependencies, listRules } from "./tools.ts";
 
 describe("analyzeDependencies", () => {
   it("matches a known dependency and returns provenance", () => {
@@ -27,5 +27,20 @@ describe("analyzeDependencies", () => {
   it("treats a missing dependency field as empty", () => {
     const result = analyzeDependencies({});
     expect(result.findings).toHaveLength(0);
+  });
+});
+
+describe("listRules", () => {
+  it("lists every rule with id, title, replaces, and native", () => {
+    const { rules } = listRules();
+
+    expect(rules.length).toBeGreaterThan(0);
+    const masonryEntry = rules.find((rule) => rule.id === "css-masonry");
+    expect(masonryEntry).toEqual({
+      id: "css-masonry",
+      title: "Masonry layouts",
+      replaces: expect.arrayContaining(["react-masonry-css"]),
+      native: "CSS masonry item placement",
+    });
   });
 });
