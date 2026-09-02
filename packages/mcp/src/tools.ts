@@ -1,10 +1,15 @@
 import {
   analyze,
   BASELINE_DATA_DATE,
-  type PackageJsonLike,
+  type BaselineInfo,
   packageSizes,
+  type PackageJsonLike,
   type Report,
+  resolveBaseline,
+  type Rule,
   rules,
+  rulesById,
+  rulesByPackage,
   WEB_FEATURES_VERSION,
 } from "@jomae/catalog";
 
@@ -53,4 +58,26 @@ export function listRules(): { rules: RuleSummary[] } {
       native: rule.native,
     })),
   };
+}
+
+export type GetRuleInput = { id: string } | { package: string };
+
+export type GetRuleResult =
+  | { found: true; rule: Rule; baseline: BaselineInfo }
+  | { found: false };
+
+/**
+ * Looks up one rule by its id or by an npm package name it replaces. Pure.
+ * Returns { found: false } rather than throwing, matching
+ * resolveFeature()'s no-throw-on-unknown-input behavior elsewhere in the
+ * catalog.
+ */
+export function getRule(input: GetRuleInput): GetRuleResult {
+  const rule =
+    "id" in input
+      ? rulesById.get(input.id)
+      : rulesByPackage.get(input.package);
+
+  if (!rule) return { found: false };
+  return { found: true, rule, baseline: resolveBaseline(rule) };
 }
