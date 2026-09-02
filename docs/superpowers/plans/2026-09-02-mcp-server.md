@@ -699,39 +699,77 @@ afterEach(() => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-interface InitializeResponse {
-  result?: { serverInfo?: { name?: string } };
+interface JsonRpcResponse {
+  id?: number;
+  result?: unknown;
+}
+
+interface CallThroughResult {
+  /** Response to the id: 1 `initialize` request. */
+  init: JsonRpcResponse;
+  /** Response to the id: 2 request passed as `extraRequest`. */
+  extra: JsonRpcResponse;
 }
 
 /**
- * Spawns `command`, sends one MCP `initialize` request over stdin, and
- * resolves with the first newline-delimited JSON-RPC response on stdout.
- * Proves main() actually ran and connected the stdio transport — the
- * regression this test exists to catch is main() silently never running.
+ * Spawns `command`, performs a full MCP handshake (initialize, then the
+ * `notifications/initialized` notification), sends one more request, and
+ * resolves once both id: 1 and id: 2 responses have arrived on stdout.
+ *
+ * Proves two different things depending on which test uses it: that
+ * main() actually ran and connected the stdio transport at all (the
+ * regression this file exists to catch — see packages/cli/src/bin.ts's
+ * history), and separately, via the `extra` response, that server.ts's
+ * registerTool calls actually route each tool name to the intended
+ * handler rather than to a copy-pasted wrong one.
  */
-function initializeThrough(command: string): Promise<InitializeResponse> {
+function callThrough(
+  command: string,
+  extraRequest: { method: string; params?: unknown },
+): Promise<CallThroughResult> {
   return new Promise((resolvePromise, reject) => {
     const child = spawn(process.execPath, [command], {
       stdio: ["pipe", "pipe", "pipe"],
     });
     let buffer = "";
+    const responses: JsonRpcResponse[] = [];
 
     const timeout = setTimeout(() => {
       child.kill();
-      reject(new Error("timed out waiting for a response"));
+      reject(new Error("timed out waiting for responses"));
     }, 10_000);
 
     child.stdout.on("data", (chunk: Buffer) => {
       buffer += chunk.toString("utf8");
-      const newlineIndex = buffer.indexOf("\n");
-      if (newlineIndex === -1) return;
-      clearTimeout(timeout);
-      const line = buffer.slice(0, newlineIndex);
-      child.kill();
-      try {
-        resolvePromise(JSON.parse(line) as InitializeResponse);
-      } catch (error) {
-        reject(error as Error);
+      let newlineIndex = buffer.indexOf("\n");
+      while (newlineIndex !== -1) {
+        const line = buffer.slice(0, newlineIndex);
+        buffer = buffer.slice(newlineIndex + 1);
+        newlineIndex = buffer.indexOf("\n");
+
+        let message: JsonRpcResponse;
+        try {
+          message = JSON.parse(line) as JsonRpcResponse;
+        } catch (error) {
+          clearTimeout(timeout);
+          child.kill();
+          reject(error as Error);
+          return;
+        }
+        if (message.id !== undefined) responses.push(message);
+
+        if (responses.length === 2) {
+          clearTimeout(timeout);
+          child.kill();
+          const init = responses.find((r) => r.id === 1);
+          const extra = responses.find((r) => r.id === 2);
+          if (!init || !extra) {
+            reject(new Error("missing expected id: 1 or id: 2 response"));
+            return;
+          }
+          resolvePromise({ init, extra });
+          return;
+        }
       }
     });
 
@@ -749,23 +787,61 @@ function initializeThrough(command: string): Promise<InitializeResponse> {
         },
       })}\n`,
     );
+    child.stdin.write(
+      `${JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized" })}\n`,
+    );
+    child.stdin.write(
+      `${JSON.stringify({ jsonrpc: "2.0", id: 2, ...extraRequest })}\n`,
+    );
   });
+}
+
+const analyzeMasonryRequest = {
+  method: "tools/call",
+  params: {
+    name: "analyze_dependencies",
+    arguments: { dependencies: { "react-masonry-css": "^1.0.0" } },
+  },
+};
+
+interface AnalyzeToolResponse {
+  result?: {
+    structuredContent?: { findings?: Array<{ rule?: { id?: string } }> };
+  };
 }
 
 describe("entry point detection via direct invocation", () => {
   it("starts the server and responds to initialize when invoked directly", async () => {
-    const response = await initializeThrough(binPath);
-    expect(response.result?.serverInfo?.name).toBe("youmightnotneed-mcp");
+    const { init } = await callThrough(binPath, analyzeMasonryRequest);
+    expect(
+      (init.result as { serverInfo?: { name?: string } } | undefined)
+        ?.serverInfo?.name,
+    ).toBe("youmightnotneed-mcp");
+  });
+
+  it("routes analyze_dependencies to the actual catalog handler when invoked directly", async () => {
+    const { extra } = await callThrough(binPath, analyzeMasonryRequest);
+    const response = extra as AnalyzeToolResponse;
+    expect(response.result?.structuredContent?.findings?.[0]?.rule?.id).toBe(
+      "css-masonry",
+    );
   });
 });
 
 describe.skipIf(!canSymlink)("entry point detection through a symlink", () => {
-  it("starts the server and responds to initialize through a node_modules/.bin-style symlink", async () => {
+  it("starts the server and routes tools correctly through a node_modules/.bin-style symlink", async () => {
     const link = join(dir, "youmightnotneed-mcp");
     symlinkSync(binPath, link);
 
-    const response = await initializeThrough(link);
-    expect(response.result?.serverInfo?.name).toBe("youmightnotneed-mcp");
+    const { init, extra } = await callThrough(link, analyzeMasonryRequest);
+    expect(
+      (init.result as { serverInfo?: { name?: string } } | undefined)
+        ?.serverInfo?.name,
+    ).toBe("youmightnotneed-mcp");
+    const response = extra as AnalyzeToolResponse;
+    expect(response.result?.structuredContent?.findings?.[0]?.rule?.id).toBe(
+      "css-masonry",
+    );
   });
 });
 ```
@@ -773,7 +849,7 @@ describe.skipIf(!canSymlink)("entry point detection through a symlink", () => {
 - [ ] **Step 3: Run the tests to verify they pass**
 
 Run: `pnpm --filter youmightnotneed-mcp test`
-Expected: PASS, 10 tests total (8 from `tools.test.ts` + 2 from `bin.test.ts`). These are not "failing then passing" in the usual TDD sense since `bin.ts` and the test were written together, but the run must be observed and confirmed green before moving on, same as every other step.
+Expected: PASS, 11 tests total (8 from `tools.test.ts` + 3 from `bin.test.ts`). These are not "failing then passing" in the usual TDD sense since `bin.ts` and the test were written together, but the run must be observed and confirmed green before moving on, same as every other step.
 
 - [ ] **Step 4: Typecheck**
 
