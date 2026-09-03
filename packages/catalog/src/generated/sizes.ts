@@ -20,9 +20,14 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-09-02",
+  "fetchedOn": "2026-09-03",
   "source": "bundlephobia.com",
   "sizes": {
+    "@capacitor-community/bluetooth-le": {
+      "gzip": 2659,
+      "raw": 9322,
+      "version": "8.3.0"
+    },
     "@capsizecss/core": {
       "gzip": 1706,
       "raw": 3818,
@@ -73,6 +78,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 7039,
       "version": "3.4.1"
     },
+    "annyang": {
+      "gzip": 1920,
+      "raw": 4030,
+      "version": "3.0.0"
+    },
     "aos": {
       "gzip": 4700,
       "raw": 14111,
@@ -98,6 +108,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3420,
       "version": "4.0.0-beta.0"
     },
+    "broadcast-channel": {
+      "gzip": 5293,
+      "raw": 16697,
+      "version": "7.4.0"
+    },
     "capsize": {
       "gzip": 771,
       "raw": 1639,
@@ -113,6 +128,26 @@ export const packageSizes: SizeSnapshot = {
       "raw": 41225,
       "version": "3.2.0"
     },
+    "clamp-js": {
+      "gzip": 1181,
+      "raw": 2528,
+      "version": "0.7.0"
+    },
+    "clipboard-copy": {
+      "gzip": 484,
+      "raw": 862,
+      "version": "4.0.1"
+    },
+    "clipboard.js": {
+      "gzip": 950,
+      "raw": 2084,
+      "version": "1.0.1"
+    },
+    "clone": {
+      "gzip": 1045,
+      "raw": 2443,
+      "version": "2.1.2"
+    },
     "color": {
       "gzip": 8386,
       "raw": 23680,
@@ -122,6 +157,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2891,
       "raw": 5564,
       "version": "2.0.4"
+    },
+    "copy-to-clipboard": {
+      "gzip": 1551,
+      "raw": 3299,
+      "version": "4.0.2"
     },
     "element-resize-detector": {
       "gzip": 5786,
@@ -178,6 +218,16 @@ export const packageSizes: SizeSnapshot = {
       "raw": 7523,
       "version": "5.3.2"
     },
+    "line-clamp": {
+      "gzip": 556,
+      "raw": 956,
+      "version": "1.0.0"
+    },
+    "lodash.clonedeep": {
+      "gzip": 3359,
+      "raw": 9124,
+      "version": "4.5.0"
+    },
     "lozad": {
       "gzip": 1293,
       "raw": 2854,
@@ -194,9 +244,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "0.7.0"
     },
     "motion": {
-      "gzip": 45319,
-      "raw": 135718,
-      "version": "13.1.1"
+      "gzip": 45560,
+      "raw": 136288,
+      "version": "13.2.0"
     },
     "muuri": {
       "gzip": 23075,
@@ -213,6 +263,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 1007,
       "version": "2.1.1"
     },
+    "nosleep.js": {
+      "gzip": 6559,
+      "raw": 15092,
+      "version": "0.12.0"
+    },
     "overlayscrollbars": {
       "gzip": 14636,
       "raw": 30351,
@@ -222,6 +277,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 868,
       "raw": 1937,
       "version": "0.5.6"
+    },
+    "p-cancelable": {
+      "gzip": 681,
+      "raw": 1404,
+      "version": "4.0.1"
     },
     "perfect-scrollbar": {
       "gzip": 5470,
@@ -268,6 +328,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 7937,
       "version": "7.1.0"
     },
+    "react-clamp-lines": {
+      "gzip": 2459,
+      "raw": 6543,
+      "version": "3.0.3"
+    },
     "react-collapse": {
       "gzip": 2423,
       "raw": 9052,
@@ -282,6 +347,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 6881,
       "raw": 21904,
       "version": "0.13.0"
+    },
+    "react-copy-to-clipboard": {
+      "gzip": 2525,
+      "raw": 6241,
+      "version": "5.1.1"
     },
     "react-custom-scrollbars": {
       "gzip": 5698,
@@ -308,6 +378,21 @@ export const packageSizes: SizeSnapshot = {
       "raw": 52175,
       "version": "4.0.11"
     },
+    "react-full-screen": {
+      "gzip": 1014,
+      "raw": 2921,
+      "version": "1.1.1"
+    },
+    "react-in-viewport": {
+      "gzip": 1638,
+      "raw": 4199,
+      "version": "1.0.0-beta.9"
+    },
+    "react-intersection-observer": {
+      "gzip": 2074,
+      "raw": 5614,
+      "version": "11.0.1"
+    },
     "react-lazy-load-image-component": {
       "gzip": 6046,
       "raw": 26819,
@@ -317,6 +402,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2792,
       "raw": 7657,
       "version": "3.2.1"
+    },
+    "react-line-clamp": {
+      "gzip": 9477,
+      "raw": 28440,
+      "version": "1.2.6"
     },
     "react-masonry-component": {
       "gzip": 16156,
@@ -332,6 +422,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 7467,
       "raw": 25033,
       "version": "3.16.3"
+    },
+    "react-page-visibility": {
+      "gzip": 1861,
+      "raw": 4564,
+      "version": "7.0.0"
     },
     "react-photo-gallery": {
       "gzip": 5322,
@@ -373,6 +468,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 85803,
       "version": "5.10.2"
     },
+    "react-share": {
+      "gzip": 19573,
+      "raw": 49997,
+      "version": "5.3.0"
+    },
     "react-sizeme": {
       "gzip": 8994,
       "raw": 26797,
@@ -387,6 +487,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 3190,
       "raw": 10157,
       "version": "2.1.2"
+    },
+    "react-speech-recognition": {
+      "gzip": 3734,
+      "raw": 11015,
+      "version": "4.0.1"
     },
     "react-split-pane": {
       "gzip": 3893,
@@ -428,10 +533,20 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3282,
       "version": "2.1.7"
     },
+    "react-use-wake-lock": {
+      "gzip": 817,
+      "raw": 1931,
+      "version": "1.0.1"
+    },
     "react-virtualized": {
       "gzip": 27898,
       "raw": 119157,
       "version": "9.22.6"
+    },
+    "react-visibility-sensor": {
+      "gzip": 3072,
+      "raw": 8297,
+      "version": "5.1.1"
     },
     "react-window": {
       "gzip": 4475,
@@ -447,6 +562,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2473,
       "raw": 7260,
       "version": "1.12.1"
+    },
+    "rfdc": {
+      "gzip": 876,
+      "raw": 3035,
+      "version": "1.4.1"
+    },
+    "screenfull": {
+      "gzip": 748,
+      "raw": 1961,
+      "version": "6.0.2"
     },
     "scroll-behavior-polyfill": {
       "gzip": 3620,
@@ -498,6 +623,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 4062,
       "version": "0.4.4"
     },
+    "speak-tts": {
+      "gzip": 2086,
+      "raw": 5746,
+      "version": "2.0.8"
+    },
     "sticky-js": {
       "gzip": 1917,
       "raw": 6977,
@@ -547,6 +677,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2695,
       "raw": 6794,
       "version": "19.1.3"
+    },
+    "visibilityjs": {
+      "gzip": 966,
+      "raw": 2336,
+      "version": "2.0.2"
     },
     "wow.js": {
       "gzip": 2739,
