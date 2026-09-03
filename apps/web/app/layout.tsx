@@ -92,19 +92,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <nav className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3.5 sm:gap-6 sm:px-6">
             <Link
               href="/"
-              className="plain flex shrink-0 items-center gap-2 font-medium font-mono text-[0.9375rem] tracking-tight no-underline"
+              className="plain flex shrink-0 items-center gap-2 whitespace-nowrap font-medium font-mono text-[0.9375rem] tracking-tight no-underline"
             >
               <span className="text-fg-faint" aria-hidden="true">
                 {"</>"}
               </span>
               youmightnotneed
             </Link>
-            <ul className="flex items-center gap-3 text-metadata sm:gap-5">
+            <ul className="flex items-center gap-1 text-metadata sm:gap-5">
               {NAV.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="plain flex items-center gap-1.5 whitespace-nowrap text-fg-muted no-underline hover:text-fg"
+                    className="plain flex items-center gap-1.5 whitespace-nowrap p-1.5 text-fg-muted no-underline hover:text-fg sm:p-0"
                   >
                     <item.icon />
                     <span className="sr-only sm:not-sr-only">{item.label}</span>
@@ -114,7 +114,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <li>
                 <a
                   href={site.repo}
-                  className="plain flex items-center gap-1.5 whitespace-nowrap text-fg-muted no-underline hover:text-fg"
+                  className="plain flex items-center gap-1.5 whitespace-nowrap p-1.5 text-fg-muted no-underline hover:text-fg sm:p-0"
                   target="_blank"
                   rel="noreferrer"
                 >
