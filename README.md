@@ -2,7 +2,7 @@
 
 Is it CSS yet?
 
-Find the modern CSS and HTML that replaces your JavaScript dependencies.
+Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.
 Website, CLI, MCP server, and one rule catalog underneath all three.
 
 ```
@@ -87,7 +87,7 @@ The schema will tell you what is missing. The parts worth thinking about:
 - `featureIds` lists only the features the replacement *requires*. A feature
   that merely makes the snippet nicer would understate the rule's support, so
   mention those in `unless` instead.
-- `unless` is the field that matters most. An answer that is always "use CSS"
+- `unless` is the field that matters most. An answer that always says "the platform covers it"
   is worse than no answer. Write the cases where you would keep the library.
 
 Run `pnpm test`. Beyond the schema, the suite checks that no rule tells the

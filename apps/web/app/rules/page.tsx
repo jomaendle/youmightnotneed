@@ -13,7 +13,7 @@ import { TIERS } from "@/lib/tiers";
 export const metadata: Metadata = {
   title: "Rules",
   description:
-    "Every CSS and HTML replacement in the catalog, grouped by how well it is supported.",
+    "Every native replacement in the catalog, grouped by how well it is supported.",
 };
 
 function weight(replaces: readonly string[]): number {

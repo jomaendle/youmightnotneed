@@ -1,8 +1,8 @@
 # youmightnotneed
 
-Tells developers which JavaScript dependencies can go because modern CSS and
-HTML now do the job. The product is the rule catalog. Every surface is a thin
-adapter over it.
+Tells developers which JavaScript dependencies can go because the platform
+now does the job: CSS, HTML, or a Web API. The product is the rule catalog.
+Every surface is a thin adapter over it.
 
 ## Decisions that are settled
 
@@ -52,7 +52,7 @@ edit it by hand, and do run `pnpm refresh` rather than patching numbers.
 
 ## The `unless` field
 
-The most important field in the schema. An agent that always answers "use CSS"
+The most important field in the schema. An agent that always answers "the platform covers it"
 is worse than no agent. Every rule states when the dependency is still right,
 and the schema rejects an empty list. When adding a rule, write `unless` first.
 

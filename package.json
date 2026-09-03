@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Find the modern CSS and HTML that replaces your JavaScript dependencies.",
+  "description": "Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.",
   "license": "MIT",
   "author": "Johannes Maendle",
   "repository": {

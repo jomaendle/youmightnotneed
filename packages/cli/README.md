@@ -1,6 +1,6 @@
 # youmightnotneed
 
-Find the modern CSS and HTML that replaces your JavaScript dependencies.
+Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.
 
 ```
 npx youmightnotneed

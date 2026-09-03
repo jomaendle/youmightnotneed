@@ -24,7 +24,7 @@ describe("formatBytes", () => {
 
 describe("formatHeadline", () => {
   it("says nothing was found when nothing matched", () => {
-    expect(formatHeadline(0, 0)).toBe("Nothing here that CSS covers yet");
+    expect(formatHeadline(0, 0)).toBe("Nothing here the platform covers yet");
   });
 
   it("hedges with 'up to' rather than promising a saving", () => {

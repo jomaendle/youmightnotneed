@@ -24,9 +24,16 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-02",
+  "generatedOn": "2026-09-03",
   "webFeaturesVersion": "3.36.0",
   "features": {
+    "aborting": {
+      "name": "AbortController and AbortSignal",
+      "baseline": "high",
+      "lowDate": "2019-03-25",
+      "highDate": "2021-09-25",
+      "spec": "https://dom.spec.whatwg.org/#aborting-ongoing-activities"
+    },
     "anchor-positioning": {
       "name": "Anchor positioning",
       "baseline": false,
@@ -40,6 +47,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": "2021-09-20",
       "highDate": "2024-03-20",
       "spec": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
+    },
+    "async-clipboard": {
+      "name": "Async clipboard",
+      "baseline": "low",
+      "lowDate": "2024-06-11",
+      "highDate": null,
+      "spec": "https://w3c.github.io/clipboard-apis/#async-clipboard-api"
+    },
+    "broadcast-channel": {
+      "name": "BroadcastChannel",
+      "baseline": "high",
+      "lowDate": "2022-03-14",
+      "highDate": "2024-09-14",
+      "spec": "https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts"
     },
     "calc-size": {
       "name": "calc-size()",
@@ -104,6 +125,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-forms-1/#field-sizing"
     },
+    "fullscreen": {
+      "name": "Fullscreen API",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://fullscreen.spec.whatwg.org/"
+    },
     "has": {
       "name": ":has()",
       "baseline": "high",
@@ -124,6 +152,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": null,
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-values-5/#interpolate-size"
+    },
+    "intersection-observer": {
+      "name": "Intersection observer",
+      "baseline": "high",
+      "lowDate": "2019-03-25",
+      "highDate": "2021-09-25",
+      "spec": "https://w3c.github.io/IntersectionObserver/"
     },
     "invoker-commands": {
       "name": "Invoker commands",
@@ -174,6 +209,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-overscroll-1/"
     },
+    "page-visibility": {
+      "name": "Page visibility",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://html.spec.whatwg.org/multipage/interaction.html#page-visibility"
+    },
     "popover": {
       "name": "Popover",
       "baseline": "low",
@@ -187,6 +229,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": null,
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-ui-4/#resize"
+    },
+    "screen-wake-lock": {
+      "name": "Screen wake lock",
+      "baseline": "low",
+      "lowDate": "2025-03-31",
+      "highDate": null,
+      "spec": "https://w3c.github.io/screen-wake-lock/"
     },
     "scroll-behavior": {
       "name": "scroll-behavior",
@@ -244,6 +293,27 @@ export const baselineSnapshot: BaselineSnapshot = {
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-scrollbars-1/#scrollbar-width"
     },
+    "share": {
+      "name": "navigator.share()",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://w3c.github.io/web-share/"
+    },
+    "speech-recognition": {
+      "name": "Speech recognition",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://webaudio.github.io/web-speech-api/#speechreco-section"
+    },
+    "speech-synthesis": {
+      "name": "Speech synthesis",
+      "baseline": "high",
+      "lowDate": "2018-09-05",
+      "highDate": "2021-03-05",
+      "spec": "https://webaudio.github.io/web-speech-api/#tts-section"
+    },
     "starting-style": {
       "name": "@starting-style",
       "baseline": "low",
@@ -257,6 +327,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": "2019-09-19",
       "highDate": "2022-03-19",
       "spec": "https://drafts.csswg.org/css-position-3/#stickypos-insets"
+    },
+    "structured-clone": {
+      "name": "structuredClone()",
+      "baseline": "high",
+      "lowDate": "2022-03-14",
+      "highDate": "2024-09-14",
+      "spec": "https://html.spec.whatwg.org/multipage/structured-data.html#structured-cloning"
     },
     "text-box": {
       "name": "text-box",
@@ -285,6 +362,13 @@ export const baselineSnapshot: BaselineSnapshot = {
       "lowDate": "2025-10-14",
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-view-transitions-1/"
+    },
+    "web-bluetooth": {
+      "name": "Web Bluetooth",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://webbluetoothcg.github.io/web-bluetooth/"
     }
   }
 };

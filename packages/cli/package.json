@@ -2,7 +2,7 @@
   "name": "youmightnotneed",
   "version": "0.1.4",
   "type": "module",
-  "description": "Find the modern CSS and HTML that replaces your JavaScript dependencies.",
+  "description": "Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.",
   "license": "MIT",
   "author": "Johannes Maendle",
   "homepage": "https://youmightnotneed-web.vercel.app",

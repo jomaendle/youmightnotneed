@@ -5,17 +5,19 @@ description: Use when adding a new rule to packages/catalog (a new "you might no
 
 # Adding a catalog rule
 
-A rule maps one or more npm packages to the modern CSS or HTML that replaces
-them. This is the exact sequence, in order. Skipping a step fails CI, not a
-review comment.
+A rule maps one or more npm packages to the native browser feature that
+replaces them: CSS, HTML, or a JavaScript Web API. This is the exact
+sequence, in order. Skipping a step fails CI, not a review comment.
 
 ## 1. Confirm it fits
 
-- The replacement must be CSS or HTML, not a JS Web API. `detect()` only
-  claims "you might not need this dependency because the platform does it,"
-  and the site's whole premise depends on that being narrowly true. A
-  clipboard or debounce helper does not belong here even if native APIs
-  exist for them.
+- The replacement must be something the browser ships, not a JavaScript
+  library reimplementing browser-adjacent logic. `detect()` only claims
+  "you might not need this dependency because the platform does it," and
+  the site's whole premise depends on that being narrowly true. A rule
+  claiming a Web API (Bluetooth, Web Share, clipboard, and so on) needs the
+  same rigor as a CSS one: a real `unless` list, and a native method that
+  genuinely does what the package did, not just something adjacent to it.
 - The feature must have a `web-features` ID. Check with:
   ```
   node -e "console.log(Object.keys(require('web-features').features).filter(k => k.includes('your-term')))"

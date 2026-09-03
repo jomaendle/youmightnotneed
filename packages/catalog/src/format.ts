@@ -17,7 +17,7 @@ export function formatBytes(bytes: number): string {
 
 /** The honest headline. It hedges, and never promises a saving. */
 export function formatHeadline(bytes: number, packageCount: number): string {
-  if (packageCount === 0) return "Nothing here that CSS covers yet";
+  if (packageCount === 0) return "Nothing here the platform covers yet";
   const deps = packageCount === 1 ? "dependency" : "dependencies";
   if (bytes === 0) {
     return `${packageCount} ${deps} may have a native equivalent`;
