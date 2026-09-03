@@ -13,6 +13,12 @@ export interface BaselineSnapshotEntry {
   highDate: string | null;
   /** Canonical specification URL, when web-features records one. */
   spec: string | null;
+  /**
+   * Minimum version each tracked browser needs, keyed by chrome, edge, firefox, safari.
+   * Null means web-features has no support data for that browser (commonly
+   * because the feature never shipped there).
+   */
+  support: Record<string, string | null>;
 }
 
 export interface BaselineSnapshot {
@@ -32,343 +38,702 @@ export const baselineSnapshot: BaselineSnapshot = {
       "baseline": "high",
       "lowDate": "2019-03-25",
       "highDate": "2021-09-25",
-      "spec": "https://dom.spec.whatwg.org/#aborting-ongoing-activities"
+      "spec": "https://dom.spec.whatwg.org/#aborting-ongoing-activities",
+      "support": {
+        "chrome": "66",
+        "edge": "16",
+        "firefox": "57",
+        "safari": "12.1"
+      }
     },
     "anchor-positioning": {
       "name": "Anchor positioning",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-anchor-position-1/#anchoring"
+      "spec": "https://drafts.csswg.org/css-anchor-position-1/#anchoring",
+      "support": {
+        "chrome": null,
+        "edge": null,
+        "firefox": null,
+        "safari": null
+      }
     },
     "aspect-ratio": {
       "name": "aspect-ratio",
       "baseline": "high",
       "lowDate": "2021-09-20",
       "highDate": "2024-03-20",
-      "spec": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio"
+      "spec": "https://drafts.csswg.org/css-sizing-4/#aspect-ratio",
+      "support": {
+        "chrome": "88",
+        "edge": "88",
+        "firefox": "89",
+        "safari": "15"
+      }
     },
     "async-clipboard": {
       "name": "Async clipboard",
       "baseline": "low",
       "lowDate": "2024-06-11",
       "highDate": null,
-      "spec": "https://w3c.github.io/clipboard-apis/#async-clipboard-api"
+      "spec": "https://w3c.github.io/clipboard-apis/#async-clipboard-api",
+      "support": {
+        "chrome": "76",
+        "edge": "79",
+        "firefox": "127",
+        "safari": "13.1"
+      }
     },
     "broadcast-channel": {
       "name": "BroadcastChannel",
       "baseline": "high",
       "lowDate": "2022-03-14",
       "highDate": "2024-09-14",
-      "spec": "https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts"
+      "spec": "https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts",
+      "support": {
+        "chrome": "54",
+        "edge": "79",
+        "firefox": "38",
+        "safari": "15.4"
+      }
     },
     "calc-size": {
       "name": "calc-size()",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-values-5/#calc-size"
+      "spec": "https://drafts.csswg.org/css-values-5/#calc-size",
+      "support": {
+        "chrome": "129",
+        "edge": "129",
+        "firefox": null,
+        "safari": null
+      }
     },
     "color-mix": {
       "name": "color-mix()",
       "baseline": "high",
       "lowDate": "2023-05-09",
       "highDate": "2025-11-09",
-      "spec": "https://drafts.csswg.org/css-color-5/#color-mix"
+      "spec": "https://drafts.csswg.org/css-color-5/#color-mix",
+      "support": {
+        "chrome": "111",
+        "edge": "111",
+        "firefox": "113",
+        "safari": "16.2"
+      }
+    },
+    "compression-streams": {
+      "name": "Compression streams",
+      "baseline": "high",
+      "lowDate": "2023-05-09",
+      "highDate": "2025-11-09",
+      "spec": "https://compression.spec.whatwg.org/",
+      "support": {
+        "chrome": "80",
+        "edge": "80",
+        "firefox": "113",
+        "safari": "16.4"
+      }
     },
     "container-queries": {
       "name": "Container queries",
       "baseline": "high",
       "lowDate": "2023-02-14",
       "highDate": "2025-08-14",
-      "spec": "https://drafts.csswg.org/css-conditional-5/#container-queries"
+      "spec": "https://drafts.csswg.org/css-conditional-5/#container-queries",
+      "support": {
+        "chrome": "105",
+        "edge": "105",
+        "firefox": "110",
+        "safari": "16"
+      }
     },
     "content-visibility": {
       "name": "content-visibility",
       "baseline": "low",
       "lowDate": "2025-09-15",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-contain-2/#content-visibility"
+      "spec": "https://drafts.csswg.org/css-contain-2/#content-visibility",
+      "support": {
+        "chrome": "108",
+        "edge": "108",
+        "firefox": "130",
+        "safari": "26"
+      }
     },
     "customizable-select": {
       "name": "Customizable <select>",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://open-ui.org/components/customizableselect/"
+      "spec": "https://open-ui.org/components/customizableselect/",
+      "support": {
+        "chrome": "135",
+        "edge": "135",
+        "firefox": null,
+        "safari": null
+      }
     },
     "details-name": {
       "name": "Mutually exclusive <details> elements",
       "baseline": "low",
       "lowDate": "2024-09-03",
       "highDate": null,
-      "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#attr-details-name"
+      "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#attr-details-name",
+      "support": {
+        "chrome": "120",
+        "edge": "120",
+        "firefox": "130",
+        "safari": "17.2"
+      }
     },
     "dialog": {
       "name": "<dialog>",
       "baseline": "high",
       "lowDate": "2022-03-14",
       "highDate": "2024-09-14",
-      "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element"
+      "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#the-dialog-element",
+      "support": {
+        "chrome": "37",
+        "edge": "79",
+        "firefox": "98",
+        "safari": "15.4"
+      }
     },
     "dialog-closedby": {
       "name": "<dialog closedby>",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#attr-dialog-closedby"
+      "spec": "https://html.spec.whatwg.org/multipage/interactive-elements.html#attr-dialog-closedby",
+      "support": {
+        "chrome": "134",
+        "edge": "134",
+        "firefox": "141",
+        "safari": null
+      }
+    },
+    "draganddrop": {
+      "name": "Drag and Drop",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://html.spec.whatwg.org/multipage/dnd.html#dnd",
+      "support": {
+        "chrome": "3",
+        "edge": "12",
+        "firefox": "3.5",
+        "safari": "4"
+      }
     },
     "field-sizing": {
       "name": "field-sizing",
       "baseline": "low",
       "lowDate": "2026-06-16",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-forms-1/#field-sizing"
+      "spec": "https://drafts.csswg.org/css-forms-1/#field-sizing",
+      "support": {
+        "chrome": "123",
+        "edge": "123",
+        "firefox": "152",
+        "safari": "26.2"
+      }
+    },
+    "focus-visible": {
+      "name": ":focus-visible",
+      "baseline": "high",
+      "lowDate": "2022-03-14",
+      "highDate": "2024-09-14",
+      "spec": "https://drafts.csswg.org/selectors-4/#the-focus-visible-pseudo",
+      "support": {
+        "chrome": "86",
+        "edge": "86",
+        "firefox": "85",
+        "safari": "15.4"
+      }
     },
     "fullscreen": {
       "name": "Fullscreen API",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://fullscreen.spec.whatwg.org/"
+      "spec": "https://fullscreen.spec.whatwg.org/",
+      "support": {
+        "chrome": "71",
+        "edge": "79",
+        "firefox": "64",
+        "safari": "16.4"
+      }
     },
     "has": {
       "name": ":has()",
       "baseline": "high",
       "lowDate": "2023-12-19",
       "highDate": "2026-06-19",
-      "spec": "https://drafts.csswg.org/selectors-4/#relational"
+      "spec": "https://drafts.csswg.org/selectors-4/#relational",
+      "support": {
+        "chrome": "105",
+        "edge": "105",
+        "firefox": "121",
+        "safari": "15.4"
+      }
     },
     "input-date-time": {
       "name": "Date and time <input> types",
       "baseline": "high",
       "lowDate": "2021-04-26",
       "highDate": "2023-10-26",
-      "spec": "https://html.spec.whatwg.org/multipage/input.html#date-state-(type=date)"
+      "spec": "https://html.spec.whatwg.org/multipage/input.html#date-state-(type=date)",
+      "support": {
+        "chrome": "20",
+        "edge": "12",
+        "firefox": "57",
+        "safari": "14.1"
+      }
     },
     "interpolate-size": {
       "name": "interpolate-size",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-values-5/#interpolate-size"
+      "spec": "https://drafts.csswg.org/css-values-5/#interpolate-size",
+      "support": {
+        "chrome": "129",
+        "edge": "129",
+        "firefox": null,
+        "safari": null
+      }
     },
     "intersection-observer": {
       "name": "Intersection observer",
       "baseline": "high",
       "lowDate": "2019-03-25",
       "highDate": "2021-09-25",
-      "spec": "https://w3c.github.io/IntersectionObserver/"
+      "spec": "https://w3c.github.io/IntersectionObserver/",
+      "support": {
+        "chrome": "58",
+        "edge": "16",
+        "firefox": "55",
+        "safari": "12.1"
+      }
+    },
+    "intl-relative-time-format": {
+      "name": "Intl.RelativeTimeFormat",
+      "baseline": "high",
+      "lowDate": "2020-09-16",
+      "highDate": "2023-03-16",
+      "spec": "https://tc39.es/ecma402/#relativetimeformat-objects",
+      "support": {
+        "chrome": "71",
+        "edge": "79",
+        "firefox": "76",
+        "safari": "14"
+      }
     },
     "invoker-commands": {
       "name": "Invoker commands",
       "baseline": "low",
       "lowDate": "2025-12-12",
       "highDate": null,
-      "spec": "https://html.spec.whatwg.org/multipage/form-elements.html#attr-button-command"
+      "spec": "https://html.spec.whatwg.org/multipage/form-elements.html#attr-button-command",
+      "support": {
+        "chrome": "135",
+        "edge": "135",
+        "firefox": "144",
+        "safari": "26.2"
+      }
     },
     "light-dark": {
       "name": "light-dark()",
       "baseline": "low",
       "lowDate": "2024-05-13",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-color-5/#light-dark"
+      "spec": "https://drafts.csswg.org/css-color-5/#light-dark",
+      "support": {
+        "chrome": "123",
+        "edge": "123",
+        "firefox": "120",
+        "safari": "17.5"
+      }
     },
     "loading-lazy": {
       "name": "Lazy-loading images and iframes",
       "baseline": "high",
       "lowDate": "2023-12-19",
       "highDate": "2026-06-19",
-      "spec": "https://html.spec.whatwg.org/multipage/urls-and-fetching.html#lazy-loading-attributes"
+      "spec": "https://html.spec.whatwg.org/multipage/urls-and-fetching.html#lazy-loading-attributes",
+      "support": {
+        "chrome": "77",
+        "edge": "79",
+        "firefox": "121",
+        "safari": "16.4"
+      }
     },
     "masonry": {
       "name": "Masonry",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-grid-3/"
+      "spec": "https://drafts.csswg.org/css-grid-3/",
+      "support": {
+        "chrome": null,
+        "edge": null,
+        "firefox": null,
+        "safari": null
+      }
     },
     "min-max-clamp": {
       "name": "min(), max(), and clamp()",
       "baseline": "high",
       "lowDate": "2020-07-28",
       "highDate": "2023-01-28",
-      "spec": "https://drafts.csswg.org/css-values-4/#comp-func"
+      "spec": "https://drafts.csswg.org/css-values-4/#comp-func",
+      "support": {
+        "chrome": "79",
+        "edge": "79",
+        "firefox": "75",
+        "safari": "13.1"
+      }
     },
     "oklab": {
       "name": "Oklab and OkLCh",
       "baseline": "high",
       "lowDate": "2023-05-09",
       "highDate": "2025-11-09",
-      "spec": "https://drafts.csswg.org/css-color-4/#ok-lab"
+      "spec": "https://drafts.csswg.org/css-color-4/#ok-lab",
+      "support": {
+        "chrome": "111",
+        "edge": "111",
+        "firefox": "113",
+        "safari": "15.4"
+      }
     },
     "overscroll-behavior": {
       "name": "overscroll-behavior",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-overscroll-1/"
+      "spec": "https://drafts.csswg.org/css-overscroll-1/",
+      "support": {
+        "chrome": "144",
+        "edge": "144",
+        "firefox": "150",
+        "safari": null
+      }
     },
     "page-visibility": {
       "name": "Page visibility",
       "baseline": "high",
       "lowDate": "2015-07-29",
       "highDate": "2018-01-29",
-      "spec": "https://html.spec.whatwg.org/multipage/interaction.html#page-visibility"
+      "spec": "https://html.spec.whatwg.org/multipage/interaction.html#page-visibility",
+      "support": {
+        "chrome": "33",
+        "edge": "12",
+        "firefox": "18",
+        "safari": "7"
+      }
     },
     "popover": {
       "name": "Popover",
       "baseline": "low",
       "lowDate": "2025-01-27",
       "highDate": null,
-      "spec": "https://html.spec.whatwg.org/multipage/popover.html"
+      "spec": "https://html.spec.whatwg.org/multipage/popover.html",
+      "support": {
+        "chrome": "116",
+        "edge": "116",
+        "firefox": "125",
+        "safari": "17"
+      }
     },
     "resize": {
       "name": "resize (CSS property)",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-ui-4/#resize"
+      "spec": "https://drafts.csswg.org/css-ui-4/#resize",
+      "support": {
+        "chrome": "4",
+        "edge": "79",
+        "firefox": "5",
+        "safari": "4"
+      }
+    },
+    "resize-observer": {
+      "name": "Resize observer",
+      "baseline": "high",
+      "lowDate": "2020-07-28",
+      "highDate": "2023-01-28",
+      "spec": "https://drafts.csswg.org/resize-observer-1/",
+      "support": {
+        "chrome": "64",
+        "edge": "79",
+        "firefox": "69",
+        "safari": "13.1"
+      }
     },
     "screen-wake-lock": {
       "name": "Screen wake lock",
       "baseline": "low",
       "lowDate": "2025-03-31",
       "highDate": null,
-      "spec": "https://w3c.github.io/screen-wake-lock/"
+      "spec": "https://w3c.github.io/screen-wake-lock/",
+      "support": {
+        "chrome": "84",
+        "edge": "84",
+        "firefox": "126",
+        "safari": "16.4"
+      }
     },
     "scroll-behavior": {
       "name": "scroll-behavior",
       "baseline": "high",
       "lowDate": "2022-03-14",
       "highDate": "2024-09-14",
-      "spec": "https://drafts.csswg.org/css-overflow-3/#smooth-scrolling"
+      "spec": "https://drafts.csswg.org/css-overflow-3/#smooth-scrolling",
+      "support": {
+        "chrome": "61",
+        "edge": "79",
+        "firefox": "36",
+        "safari": "15.4"
+      }
     },
     "scroll-buttons": {
       "name": "::scroll-button",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-overflow-5/#scroll-buttons"
+      "spec": "https://drafts.csswg.org/css-overflow-5/#scroll-buttons",
+      "support": {
+        "chrome": null,
+        "edge": null,
+        "firefox": null,
+        "safari": null
+      }
     },
     "scroll-driven-animations": {
       "name": "Scroll-driven animations",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/scroll-animations-1/"
+      "spec": "https://drafts.csswg.org/scroll-animations-1/",
+      "support": {
+        "chrome": "115",
+        "edge": "115",
+        "firefox": null,
+        "safari": "26"
+      }
     },
     "scroll-markers": {
       "name": "Scroll markers",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-overflow-5/#scroll-markers"
+      "spec": "https://drafts.csswg.org/css-overflow-5/#scroll-markers",
+      "support": {
+        "chrome": "135",
+        "edge": "135",
+        "firefox": null,
+        "safari": null
+      }
     },
     "scroll-snap": {
       "name": "Scroll snap",
       "baseline": "high",
       "lowDate": "2020-01-15",
       "highDate": "2022-07-15",
-      "spec": "https://drafts.csswg.org/css-scroll-snap-2/"
+      "spec": "https://drafts.csswg.org/css-scroll-snap-2/",
+      "support": {
+        "chrome": "69",
+        "edge": "79",
+        "firefox": "68",
+        "safari": "11"
+      }
     },
     "scrollbar-color": {
       "name": "scrollbar-color",
       "baseline": "low",
       "lowDate": "2025-12-12",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-scrollbars-1/#scrollbar-color"
+      "spec": "https://drafts.csswg.org/css-scrollbars-1/#scrollbar-color",
+      "support": {
+        "chrome": "121",
+        "edge": "121",
+        "firefox": "64",
+        "safari": "26.2"
+      }
     },
     "scrollbar-gutter": {
       "name": "scrollbar-gutter",
       "baseline": "low",
       "lowDate": "2024-12-11",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-overflow-3/#scrollbar-gutter-property"
+      "spec": "https://drafts.csswg.org/css-overflow-3/#scrollbar-gutter-property",
+      "support": {
+        "chrome": "94",
+        "edge": "94",
+        "firefox": "97",
+        "safari": "18.2"
+      }
     },
     "scrollbar-width": {
       "name": "scrollbar-width",
       "baseline": "low",
       "lowDate": "2024-12-11",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-scrollbars-1/#scrollbar-width"
+      "spec": "https://drafts.csswg.org/css-scrollbars-1/#scrollbar-width",
+      "support": {
+        "chrome": "121",
+        "edge": "121",
+        "firefox": "64",
+        "safari": "18.2"
+      }
     },
     "share": {
       "name": "navigator.share()",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://w3c.github.io/web-share/"
+      "spec": "https://w3c.github.io/web-share/",
+      "support": {
+        "chrome": "128",
+        "edge": "93",
+        "firefox": null,
+        "safari": "12.1"
+      }
     },
     "speech-recognition": {
       "name": "Speech recognition",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://webaudio.github.io/web-speech-api/#speechreco-section"
+      "spec": "https://webaudio.github.io/web-speech-api/#speechreco-section",
+      "support": {
+        "chrome": "139",
+        "edge": "139",
+        "firefox": null,
+        "safari": null
+      }
     },
     "speech-synthesis": {
       "name": "Speech synthesis",
       "baseline": "high",
       "lowDate": "2018-09-05",
       "highDate": "2021-03-05",
-      "spec": "https://webaudio.github.io/web-speech-api/#tts-section"
+      "spec": "https://webaudio.github.io/web-speech-api/#tts-section",
+      "support": {
+        "chrome": "33",
+        "edge": "14",
+        "firefox": "49",
+        "safari": "7"
+      }
     },
     "starting-style": {
       "name": "@starting-style",
       "baseline": "low",
       "lowDate": "2024-08-06",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-transitions-2/#defining-before-change-style"
+      "spec": "https://drafts.csswg.org/css-transitions-2/#defining-before-change-style",
+      "support": {
+        "chrome": "117",
+        "edge": "117",
+        "firefox": "129",
+        "safari": "17.5"
+      }
     },
     "sticky-positioning": {
       "name": "Sticky positioning",
       "baseline": "high",
       "lowDate": "2019-09-19",
       "highDate": "2022-03-19",
-      "spec": "https://drafts.csswg.org/css-position-3/#stickypos-insets"
+      "spec": "https://drafts.csswg.org/css-position-3/#stickypos-insets",
+      "support": {
+        "chrome": "56",
+        "edge": "16",
+        "firefox": "59",
+        "safari": "13"
+      }
     },
     "structured-clone": {
       "name": "structuredClone()",
       "baseline": "high",
       "lowDate": "2022-03-14",
       "highDate": "2024-09-14",
-      "spec": "https://html.spec.whatwg.org/multipage/structured-data.html#structured-cloning"
+      "spec": "https://html.spec.whatwg.org/multipage/structured-data.html#structured-cloning",
+      "support": {
+        "chrome": "98",
+        "edge": "98",
+        "firefox": "94",
+        "safari": "15.4"
+      }
     },
     "text-box": {
       "name": "text-box",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-inline-3/#leading-trim"
+      "spec": "https://drafts.csswg.org/css-inline-3/#leading-trim",
+      "support": {
+        "chrome": "133",
+        "edge": "133",
+        "firefox": null,
+        "safari": "18.2"
+      }
     },
     "text-wrap-balance": {
       "name": "text-wrap: balance",
       "baseline": "low",
       "lowDate": "2024-05-13",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-text-4/#valdef-text-wrap-style-balance"
+      "spec": "https://drafts.csswg.org/css-text-4/#valdef-text-wrap-style-balance",
+      "support": {
+        "chrome": "114",
+        "edge": "114",
+        "firefox": "121",
+        "safari": "17.5"
+      }
     },
     "transition-behavior": {
       "name": "transition-behavior",
       "baseline": "low",
       "lowDate": "2024-08-06",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-transitions-2/#transition-behavior-property"
+      "spec": "https://drafts.csswg.org/css-transitions-2/#transition-behavior-property",
+      "support": {
+        "chrome": "117",
+        "edge": "117",
+        "firefox": "129",
+        "safari": "17.4"
+      }
     },
     "view-transitions": {
       "name": "View transitions",
       "baseline": "low",
       "lowDate": "2025-10-14",
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-view-transitions-1/"
+      "spec": "https://drafts.csswg.org/css-view-transitions-1/",
+      "support": {
+        "chrome": "111",
+        "edge": "111",
+        "firefox": "144",
+        "safari": "18"
+      }
     },
     "web-bluetooth": {
       "name": "Web Bluetooth",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://webbluetoothcg.github.io/web-bluetooth/"
+      "spec": "https://webbluetoothcg.github.io/web-bluetooth/",
+      "support": {
+        "chrome": "70",
+        "edge": "79",
+        "firefox": null,
+        "safari": null
+      }
     }
   }
 };

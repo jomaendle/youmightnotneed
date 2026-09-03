@@ -16,7 +16,10 @@ export function LiveDemo({ demo, title }: { demo: Demo; title: string }) {
       <iframe
         srcDoc={demo.html}
         title={`Live example: ${title}`}
-        sandbox="allow-scripts allow-modals"
+        sandbox={["allow-scripts", "allow-modals", demo.extraSandbox]
+          .filter(Boolean)
+          .join(" ")}
+        allow={demo.allow}
         loading="lazy"
         style={{ height: demo.height }}
         className="w-full"

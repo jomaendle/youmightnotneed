@@ -3,7 +3,13 @@ import type { Rule } from "../schema.ts";
 export const lineClamp: Rule = {
   id: "line-clamp",
   title: "Multi-line text truncation",
-  replaces: ["react-clamp-lines", "react-line-clamp", "clamp-js", "line-clamp"],
+  replaces: [
+    "react-clamp-lines",
+    "react-line-clamp",
+    "clamp-js",
+    "line-clamp",
+    "vue-clamp",
+  ],
   featureIds: [],
   manualBaseline: {
     status: "widely",

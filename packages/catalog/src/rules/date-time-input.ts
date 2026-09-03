@@ -8,6 +8,8 @@ export const dateTimeInput: Rule = {
     "flatpickr",
     "react-flatpickr",
     "react-day-picker",
+    "@mui/x-date-pickers",
+    "ng2-date-picker",
   ],
   featureIds: ["input-date-time"],
   native: '<input type="date"> and <input type="time">',

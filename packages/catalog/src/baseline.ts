@@ -13,6 +13,8 @@ export interface ResolvedFeature {
   /** Date the feature reached its current status, when known. */
   since: string | null;
   spec: string | null;
+  /** Minimum version each tracked browser needs. Null means no data (commonly: never shipped there). */
+  support: Record<string, string | null>;
 }
 
 export interface BaselineInfo {
@@ -103,7 +105,14 @@ function sinceDate(
 export function resolveFeature(id: string): ResolvedFeature {
   const entry = baselineSnapshot.features[id];
   if (!entry) {
-    return { id, name: id, status: "unknown", since: null, spec: null };
+    return {
+      id,
+      name: id,
+      status: "unknown",
+      since: null,
+      spec: null,
+      support: {},
+    };
   }
   const status = toStatus(entry.baseline);
   return {
@@ -112,7 +121,48 @@ export function resolveFeature(id: string): ResolvedFeature {
     status,
     since: sinceDate(status, entry),
     spec: entry.spec,
+    support: entry.support,
   };
+}
+
+/** Browsers the catalog tracks support for, in display order. */
+export const TRACKED_BROWSERS = [
+  "chrome",
+  "edge",
+  "firefox",
+  "safari",
+] as const;
+export type TrackedBrowser = (typeof TRACKED_BROWSERS)[number];
+
+/**
+ * Combines support across every feature a rule needs. A rule only works in a
+ * browser once every required feature does, so each browser's version is the
+ * highest (latest) minimum any single feature demands. A browser missing from
+ * even one feature's data means the rule has no known support there at all.
+ */
+export function combinedSupport(
+  features: readonly ResolvedFeature[],
+): Record<TrackedBrowser, string | null> {
+  const result = {} as Record<TrackedBrowser, string | null>;
+  for (const browser of TRACKED_BROWSERS) {
+    let max: number | null = null;
+    let raw: string | null = null;
+    for (const feature of features) {
+      const version = feature.support[browser];
+      if (version === null || version === undefined) {
+        max = null;
+        raw = null;
+        break;
+      }
+      const parsed = Number.parseFloat(version);
+      if (max === null || parsed > max) {
+        max = parsed;
+        raw = version;
+      }
+    }
+    result[browser] = raw;
+  }
+  return result;
 }
 
 /**

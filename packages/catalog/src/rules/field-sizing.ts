@@ -3,7 +3,13 @@ import type { Rule } from "../schema.ts";
 export const fieldSizing: Rule = {
   id: "field-sizing",
   title: "Auto-growing textareas",
-  replaces: ["react-textarea-autosize", "autosize", "react-autosize-textarea"],
+  replaces: [
+    "react-textarea-autosize",
+    "autosize",
+    "react-autosize-textarea",
+    "vue-textarea-autosize",
+    "ngx-autosize",
+  ],
   featureIds: ["field-sizing"],
   native: "field-sizing: content",
   human: {

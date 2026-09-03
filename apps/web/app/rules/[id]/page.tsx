@@ -1,5 +1,6 @@
 import {
   baselineLabel,
+  combinedSupport,
   formatBytes,
   packageSizes,
   resolveBaseline,
@@ -10,6 +11,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BaselineBadge } from "@/components/baseline-badge";
+import { BrowserSupport } from "@/components/browser-support";
 import { LiveDemo } from "@/components/live-demo";
 import { Snippet } from "@/components/snippet";
 import { demos } from "@/lib/demos";
@@ -72,6 +74,11 @@ export default async function RulePage({ params }: PageProps) {
               </span>
             )}
           </div>
+          {baseline.features.length === 0 ? null : (
+            <div className="mt-4">
+              <BrowserSupport support={combinedSupport(baseline.features)} />
+            </div>
+          )}
         </header>
 
         {baseline.features.length === 0 ? null : (

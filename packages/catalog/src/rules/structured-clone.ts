@@ -3,7 +3,7 @@ import type { Rule } from "../schema.ts";
 export const structuredCloneRule: Rule = {
   id: "structured-clone",
   title: "Deep cloning",
-  replaces: ["lodash.clonedeep", "rfdc", "clone"],
+  replaces: ["lodash.clonedeep", "rfdc", "clone", "klona"],
   featureIds: ["structured-clone"],
   native: "structuredClone()",
   human: {

@@ -9,6 +9,8 @@ export const masonry: Rule = {
     "react-masonry-component",
     "muuri",
     "react-photo-gallery",
+    "vue-masonry",
+    "vue-masonry-css",
   ],
   featureIds: ["masonry"],
   native: "CSS masonry item placement",

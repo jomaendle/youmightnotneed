@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img">
+  <title>Safari</title>
+  <defs>
+    <linearGradient id="safari-globe" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4dc8ff" />
+      <stop offset="1" stop-color="#0071e3" />
+    </linearGradient>
+  </defs>
+  <circle cx="12" cy="12" r="11" fill="url(#safari-globe)" />
+  <circle cx="12" cy="12" r="11" fill="none" stroke="#e8f4fb" stroke-width="0.75" opacity="0.35" />
+  <g transform="rotate(-45 12 12)">
+    <path d="M12 4 L14 12 L12 12 Z" fill="#ff3b30" />
+    <path d="M12 4 L10 12 L12 12 Z" fill="#ff6b60" />
+    <path d="M12 20 L14 12 L12 12 Z" fill="#f2f2f2" />
+    <path d="M12 20 L10 12 L12 12 Z" fill="#cfd4d8" />
+  </g>
+  <circle cx="12" cy="12" r="1.1" fill="#f2f2f2" stroke="#8a8a8a" stroke-width="0.3" />
+</svg>

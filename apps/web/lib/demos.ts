@@ -5,6 +5,21 @@ export interface Demo {
   html: string;
   /** Fixed iframe height in pixels. Demos are small, so a fixed height avoids a layout jump. */
   height: number;
+  /**
+   * Permissions-Policy grant for this demo's iframe, e.g. "fullscreen" or
+   * "screen-wake-lock". Most demos need nothing here: the API either needs no
+   * grant (clipboard-write's default allowlist is "*") or can't be granted
+   * meaningfully in a nested, sandboxed, cross-origin frame at all (bluetooth,
+   * microphone), in which case the demo uses the honest-fallback pattern
+   * instead of asking for a permission that would still fail.
+   */
+  allow?: string;
+  /**
+   * Extra sandbox token(s) beyond the default "allow-scripts allow-modals",
+   * e.g. "allow-fullscreen". The Fullscreen API is suppressed in a sandboxed
+   * iframe without this token even when Permissions-Policy allows it.
+   */
+  extraSandbox?: string;
 }
 
 /** A small solid placeholder image, so lazy-loading has something real to defer. */
@@ -517,6 +532,532 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
       `
 .scroller { width:240px; height:180px; padding:0.75rem; }
 .ph { display:block; width:100%; height:70px; border-radius:0.375rem; margin-bottom:0.75rem; }
+`,
+    ),
+  },
+
+  "abort-controller": {
+    height: 170,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.875rem;">
+  <div style="display:flex; gap:0.5rem;">
+    <button id="start">Start task</button>
+    <button id="cancel" disabled>Cancel</button>
+  </div>
+  <p id="status" class="demo-hint" data-state="idle">idle</p>
+</div>
+<script>
+  const startBtn = document.getElementById("start");
+  const cancelBtn = document.getElementById("cancel");
+  const status = document.getElementById("status");
+  let controller = null;
+
+  function setStatus(text, state) {
+    status.textContent = text;
+    status.dataset.state = state;
+  }
+
+  function run() {
+    controller = new AbortController();
+    const signal = controller.signal;
+    startBtn.disabled = true;
+    cancelBtn.disabled = false;
+
+    let remaining = 3;
+    setStatus("pending, " + remaining + "s left", "pending");
+    const tick = setInterval(() => {
+      remaining -= 1;
+      if (remaining > 0) setStatus("pending, " + remaining + "s left", "pending");
+    }, 1000);
+
+    const timeout = setTimeout(() => {
+      clearInterval(tick);
+      setStatus("done", "done");
+      startBtn.disabled = false;
+      cancelBtn.disabled = true;
+    }, 3000);
+
+    signal.addEventListener("abort", () => {
+      clearTimeout(timeout);
+      clearInterval(tick);
+      setStatus("cancelled", "cancelled");
+      startBtn.disabled = false;
+      cancelBtn.disabled = true;
+    });
+  }
+
+  startBtn.addEventListener("click", run);
+  cancelBtn.addEventListener("click", () => controller && controller.abort());
+</script>
+`,
+      `
+button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); }
+#status { font-family: ui-monospace, monospace; font-size: 0.8125rem; min-height: 1.25rem; }
+#status[data-state="pending"] { color: var(--c-accent); }
+#status[data-state="done"] { color: var(--c-fg); }
+#status[data-state="cancelled"] { color: var(--c-fg-muted); }
+`,
+    ),
+  },
+
+  "broadcast-channel": {
+    height: 220,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div class="tabs">
+    <div class="tab">
+      <span class="tab-label">Tab A</span>
+      <span class="count" id="count-a">0</span>
+      <button id="add-a">Add to cart</button>
+    </div>
+    <div class="tab">
+      <span class="tab-label">Tab B</span>
+      <span class="count" id="count-b">0</span>
+      <button id="add-b">Add to cart</button>
+    </div>
+  </div>
+  <p class="demo-hint" style="text-align:center;">Two separate BroadcastChannel instances, same channel name</p>
+</div>
+<script>
+  let valueA = 0;
+  let valueB = 0;
+  const displayA = document.getElementById("count-a");
+  const displayB = document.getElementById("count-b");
+  const channelA = new BroadcastChannel("cart-updates");
+  const channelB = new BroadcastChannel("cart-updates");
+
+  document.getElementById("add-a").addEventListener("click", () => {
+    valueA++;
+    displayA.textContent = valueA;
+    channelA.postMessage({ itemCount: valueA });
+  });
+  document.getElementById("add-b").addEventListener("click", () => {
+    valueB++;
+    displayB.textContent = valueB;
+    channelB.postMessage({ itemCount: valueB });
+  });
+  channelB.onmessage = (event) => {
+    valueB = event.data.itemCount;
+    displayB.textContent = valueB;
+  };
+  channelA.onmessage = (event) => {
+    valueA = event.data.itemCount;
+    displayA.textContent = valueA;
+  };
+</script>
+`,
+      `
+.tabs { display:flex; gap:0.875rem; }
+.tab { width:130px; border:1px solid var(--c-border); border-radius:0.5rem; padding:0.875rem 0.75rem; display:flex; flex-direction:column; align-items:center; gap:0.625rem; background:var(--c-bg-subtle); }
+.tab-label { font-size:0.6875rem; text-transform:uppercase; letter-spacing:0.04em; color:var(--c-fg-muted); }
+.count { font-size:1.75rem; font-weight:700; font-variant-numeric:tabular-nums; }
+`,
+    ),
+  },
+
+  "structured-clone": {
+    height: 260,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem;">
+    <button id="clone">structuredClone()</button>
+    <button id="mutate">Push to original.tags</button>
+  </div>
+  <div class="panels">
+    <div class="panel">
+      <p class="demo-hint" style="margin-bottom:0.375rem;">original</p>
+      <pre id="original" class="json"></pre>
+    </div>
+    <div class="panel">
+      <p class="demo-hint" style="margin-bottom:0.375rem;">clone</p>
+      <pre id="clone-out" class="json" data-empty="true">not cloned yet</pre>
+    </div>
+  </div>
+</div>
+<script>
+  const original = { name: "cart", tags: ["sale"] };
+  let clone = null;
+  const originalEl = document.getElementById("original");
+  const cloneEl = document.getElementById("clone-out");
+
+  function render() {
+    originalEl.textContent = JSON.stringify(original, null, 2);
+    if (clone) {
+      cloneEl.textContent = JSON.stringify(clone, null, 2);
+      cloneEl.dataset.empty = "false";
+    } else {
+      cloneEl.textContent = "not cloned yet";
+      cloneEl.dataset.empty = "true";
+    }
+  }
+
+  document.getElementById("clone").addEventListener("click", () => {
+    clone = structuredClone(original);
+    render();
+  });
+  document.getElementById("mutate").addEventListener("click", () => {
+    original.tags.push("new");
+    render();
+  });
+  render();
+</script>
+`,
+      `
+.panels { display:flex; gap:0.875rem; }
+.panel { width:150px; border:1px solid var(--c-border); border-radius:0.5rem; padding:0.625rem 0.75rem; background:var(--c-bg-subtle); }
+.json { margin:0; font-family:ui-monospace, monospace; font-size:0.75rem; color:var(--c-fg-muted); white-space:pre-wrap; word-break:break-word; min-height:3.5rem; }
+#clone-out[data-empty="true"] { color: var(--c-fg-muted); font-style: italic; }
+`,
+    ),
+  },
+
+  "content-visibility": {
+    height: 280,
+    html: wrapDemo(
+      `
+<div>
+  <div class="scroller demo-scroll">
+    <div class="row">Row 1</div>
+    <div class="row">Row 2</div>
+    <div class="row">Row 3</div>
+    <div class="row">Row 4</div>
+    <div class="row">Row 5</div>
+    <div class="row">Row 6</div>
+    <div class="row">Row 7</div>
+    <div class="row">Row 8</div>
+    <div class="row">Row 9</div>
+    <div class="row">Row 10</div>
+    <div class="row">Row 11</div>
+    <div class="row">Row 12</div>
+  </div>
+  <p class="demo-hint" style="margin-top:0.5rem;">Each row below carries content-visibility: auto. Off-screen rows skip layout and paint until they near view. This frame is too small to show the saved work; open devtools' rendering panel on a live page to see it.</p>
+</div>
+`,
+      `
+.scroller { width:260px; height:170px; padding:0.75rem; }
+.row { content-visibility:auto; contain-intrinsic-size:auto 44px; height:44px; margin-bottom:0.5rem; border-radius:0.375rem; background:var(--c-bg-subtle); display:flex; align-items:center; padding:0 0.75rem; font-size:0.8125rem; color:var(--c-fg-muted); }
+`,
+    ),
+  },
+
+  "line-clamp": {
+    height: 200,
+    html: wrapDemo(
+      `
+<div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center;">
+  <div style="width:180px;">
+    <p class="demo-hint" style="margin-bottom:0.5rem;">overflow: hidden</p>
+    <p class="card overflowing">The library measures rendered line height in JavaScript and cuts the string by hand, re-running on every resize and font load.</p>
+  </div>
+  <div style="width:180px;">
+    <p class="demo-hint" style="margin-bottom:0.5rem;">-webkit-line-clamp: 3</p>
+    <p class="card clamped">The library measures rendered line height in JavaScript and cuts the string by hand, re-running on every resize and font load.</p>
+  </div>
+</div>
+`,
+      `
+.card { width:180px; padding:0.625rem; border:1px solid var(--c-border); border-radius:0.375rem; background:var(--c-bg-subtle); font-size:0.8125rem; color:var(--c-fg-muted); margin:0; }
+.overflowing { height:4.7em; overflow:hidden; }
+.clamped { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:3; overflow:hidden; }
+`,
+    ),
+  },
+
+  "resizable-panels": {
+    height: 180,
+    html: wrapDemo(
+      `
+<div>
+  <div class="panel demo-resizer">Sidebar content</div>
+  <p class="demo-hint" style="margin-top:0.5rem;">Drag the corner to resize &#8600;</p>
+</div>
+`,
+      `
+.panel { width:160px; min-width:110px; max-width:280px; height:110px; padding:0.625rem 0.75rem; background:var(--c-bg-subtle); font-size:0.8125rem; color:var(--c-fg-muted); }
+`,
+    ),
+  },
+
+  "date-time-input": {
+    height: 180,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; gap:1rem; width:220px;">
+  <label class="field">
+    Departure date
+    <input type="date" min="2024-01-01" required>
+  </label>
+  <label class="field">
+    Departure time
+    <input type="time" required>
+  </label>
+</div>
+`,
+      `
+.field { display:flex; flex-direction:column; gap:0.375rem; font-size:0.8125rem; color:var(--c-fg-muted); }
+.field input { font:inherit; color:var(--c-fg); background:var(--c-bg-subtle); border:1px solid var(--c-border); border-radius:0.375rem; padding:0.375rem 0.625rem; color-scheme:dark; }
+.field input:hover { border-color:var(--c-accent); }
+.field input:focus-visible { outline:2px solid var(--c-accent); outline-offset:1px; }
+`,
+    ),
+  },
+
+  "intersection-observer": {
+    height: 240,
+    html: wrapDemo(
+      `
+<div>
+  <div class="scroller demo-scroll">
+    <div class="spacer-top">Scroll down &darr;</div>
+    <div id="target" class="target">Target element</div>
+    <div class="spacer-bottom"></div>
+  </div>
+  <p class="demo-hint" id="status" style="margin-top:0.5rem;">visible: no</p>
+</div>
+<script>
+  const target = document.getElementById("target");
+  const status = document.getElementById("status");
+  const scroller = target.closest(".scroller");
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      status.textContent = "visible: " + (entry.isIntersecting ? "yes" : "no");
+      target.classList.toggle("in-view", entry.isIntersecting);
+    }
+  }, { root: scroller, threshold: 0.5 });
+  observer.observe(target);
+</script>
+`,
+      `
+.scroller { width:240px; height:160px; }
+.spacer-top { height:210px; display:flex; align-items:center; justify-content:center; color:var(--c-fg-faint); font-size:0.8125rem; }
+.spacer-bottom { height:140px; }
+.target { margin:0 1rem; padding:1rem; text-align:center; border-radius:0.5rem; background:var(--c-bg-subtle); border:1px solid var(--c-border); font-size:0.8125rem; transition: background 0.2s, border-color 0.2s, color 0.2s; }
+.target.in-view { background:var(--c-accent); color:var(--c-bg); border-color:var(--c-accent); }
+`,
+    ),
+  },
+
+  "page-visibility": {
+    height: 160,
+    html: wrapDemo(
+      `
+<div style="text-align:center;">
+  <p class="demo-hint" style="margin-bottom:0.75rem;">Switch to another tab, then come back.</p>
+  <div id="state" class="state">visible</div>
+</div>
+<script>
+  const state = document.getElementById("state");
+  function render() {
+    state.textContent = document.visibilityState;
+    state.classList.toggle("hidden-state", document.visibilityState === "hidden");
+  }
+  document.addEventListener("visibilitychange", render);
+  render();
+</script>
+`,
+      `
+.state { display:inline-block; padding:0.5rem 1rem; border-radius:0.375rem; background:var(--c-accent); color:var(--c-bg); font-family:var(--font-mono, monospace); font-size:0.875rem; font-weight:600; }
+.state.hidden-state { background:var(--c-bg-subtle); color:var(--c-fg-muted); border:1px solid var(--c-border); }
+`,
+    ),
+  },
+
+  "speech-synthesis": {
+    height: 140,
+    html: wrapDemo(
+      `
+<div style="text-align:center;">
+  <button id="speak">Speak</button>
+  <p class="demo-hint" id="status" style="margin-top:0.75rem;">idle</p>
+</div>
+<script>
+  const status = document.getElementById("status");
+  document.getElementById("speak").addEventListener("click", () => {
+    if (typeof speechSynthesis === "undefined") {
+      status.textContent = "not available here";
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance("The browser can read this aloud.");
+    utterance.onstart = () => { status.textContent = "speaking..."; };
+    utterance.onend = () => { status.textContent = "idle"; };
+    utterance.onerror = (e) => { status.textContent = "blocked: " + e.error; };
+    speechSynthesis.speak(utterance);
+  });
+</script>
+`,
+    ),
+  },
+
+  clipboard: {
+    height: 150,
+    html: wrapDemo(`
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <code class="demo-hint" style="font-size:0.9375rem; color:var(--c-fg);">const text = "npm uninstall clipboard-copy";</code>
+  <button id="copy">Copy</button>
+</div>
+<script>
+  const btn = document.getElementById("copy");
+  const original = btn.textContent;
+  btn.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText("npm uninstall clipboard-copy");
+      btn.textContent = "Copied";
+    } catch (e) {
+      btn.textContent = "Couldn't copy";
+    }
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  });
+</script>
+`),
+  },
+
+  fullscreen: {
+    height: 220,
+    allow: "fullscreen",
+    extraSandbox: "allow-fullscreen",
+    html: wrapDemo(
+      `
+<div>
+  <div id="stage" class="stage">Preview</div>
+  <button id="toggle" style="margin-top:0.75rem;">Fullscreen</button>
+  <p class="demo-hint" style="margin-top:0.5rem;">Fills this frame, not your whole screen. A nested demo can't take over the real display.</p>
+</div>
+<script>
+  const stage = document.getElementById("stage");
+  const btn = document.getElementById("toggle");
+  btn.addEventListener("click", async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await stage.requestFullscreen();
+        btn.textContent = "Exit fullscreen";
+      } else {
+        await document.exitFullscreen();
+        btn.textContent = "Fullscreen";
+      }
+    } catch (e) {
+      btn.textContent = "Not available here";
+    }
+  });
+</script>
+`,
+      `
+.stage { width:220px; height:90px; border-radius:0.5rem; display:flex; align-items:center; justify-content:center; background:var(--c-accent); color:var(--c-bg); font-weight:600; }
+.stage:fullscreen { width:100%; height:100%; border-radius:0; }
+`,
+    ),
+  },
+
+  "screen-wake-lock": {
+    height: 160,
+    allow: "screen-wake-lock",
+    html: wrapDemo(`
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <button id="toggle">Request lock</button>
+  <p id="status" class="demo-hint">Screen can sleep normally</p>
+</div>
+<script>
+  let lock = null;
+  const btn = document.getElementById("toggle");
+  const status = document.getElementById("status");
+  btn.addEventListener("click", async () => {
+    if (lock) { await lock.release(); return; }
+    try {
+      lock = await navigator.wakeLock.request("screen");
+      status.textContent = "Locked: this tab won't let the screen sleep";
+      btn.textContent = "Release lock";
+      lock.addEventListener("release", () => {
+        status.textContent = "Screen can sleep normally";
+        btn.textContent = "Request lock";
+        lock = null;
+      });
+    } catch (e) {
+      status.textContent = "Not available in this embed";
+    }
+  });
+</script>
+`),
+  },
+
+  "web-share": {
+    height: 280,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <button disabled>Share</button>
+  <p class="demo-hint" style="max-width:220px; text-align:center;">Calls the OS's real share sheet. Rendering it here would just pop a native dialog over this page, so this mocks what the visitor sees.</p>
+  <div class="sheet">
+    <div class="sheet-row">Messages</div>
+    <div class="sheet-row">Mail</div>
+    <div class="sheet-row">Copy Link</div>
+  </div>
+</div>
+`,
+      `
+.sheet { width:200px; border:1px solid var(--c-border); border-radius:0.5rem; overflow:hidden; }
+.sheet-row { padding:0.5rem 0.75rem; font-size:0.8125rem; border-bottom:1px solid var(--c-border); }
+.sheet-row:last-child { border-bottom:none; }
+`,
+    ),
+  },
+
+  "web-bluetooth": {
+    height: 280,
+    html: wrapDemo(
+      `
+<div style="width:260px;">
+  <p class="demo-hint" style="margin-bottom:0.5rem;">Illustrative: the OS device chooser navigator.bluetooth.requestDevice() opens</p>
+  <div class="chooser">
+    <div class="chooser-title">Select a Bluetooth device</div>
+    <div class="chooser-row">Heart Rate Monitor</div>
+    <div class="chooser-row">Smart Scale 2</div>
+    <div class="chooser-row">ESP32-BLE</div>
+  </div>
+  <p class="demo-hint" style="margin-top:0.75rem;">Real, from your browser: "bluetooth" in navigator is <span id="has-bt">checking</span></p>
+</div>
+<script>
+  document.getElementById("has-bt").textContent = "bluetooth" in navigator ? "true" : "false";
+</script>
+`,
+      `
+.chooser { border:1px solid var(--c-border); border-radius:0.5rem; background:var(--c-bg-subtle); overflow:hidden; }
+.chooser-title { padding:0.625rem 0.875rem; font-size:0.8125rem; font-weight:600; border-bottom:1px solid var(--c-border); }
+.chooser-row { padding:0.625rem 0.875rem; font-size:0.8125rem; color:var(--c-fg-muted); border-bottom:1px solid var(--c-border); }
+.chooser-row:last-child { border-bottom:none; }
+#has-bt { color:var(--c-accent); font-family:var(--font-mono, monospace); }
+`,
+    ),
+  },
+
+  "speech-recognition": {
+    height: 180,
+    html: wrapDemo(
+      `
+<div style="width:240px; text-align:center;">
+  <div class="mic">
+    <div class="bars"><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+  <p class="demo-hint" style="margin-top:0.75rem;">Illustrative waveform. A live transcript needs mic access this embed can't request.</p>
+  <p class="demo-hint" style="margin-top:0.5rem;">Real, from your browser: SpeechRecognition is <span id="has-sr">checking</span></p>
+</div>
+<script>
+  document.getElementById("has-sr").textContent =
+    (window.SpeechRecognition || window.webkitSpeechRecognition) ? "available" : "not available";
+</script>
+`,
+      `
+.mic { display:flex; align-items:center; justify-content:center; height:56px; }
+.bars { display:flex; align-items:center; gap:4px; }
+.bars span { display:block; width:5px; border-radius:3px; background:var(--c-accent); animation: wave 1.2s ease-in-out infinite; }
+.bars span:nth-child(1) { height:14px; animation-delay:0s; }
+.bars span:nth-child(2) { height:28px; animation-delay:0.1s; }
+.bars span:nth-child(3) { height:40px; animation-delay:0.2s; }
+.bars span:nth-child(4) { height:24px; animation-delay:0.3s; }
+.bars span:nth-child(5) { height:16px; animation-delay:0.4s; }
+#has-sr { color:var(--c-accent); font-family:var(--font-mono, monospace); }
+@keyframes wave { 0%, 100% { transform:scaleY(0.4); } 50% { transform:scaleY(1); } }
 `,
     ),
   },

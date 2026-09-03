@@ -9,6 +9,8 @@ export const sticky: Rule = {
     "react-sticky",
     "sticky-kit",
     "stickybits",
+    "vue-sticky-directive",
+    "vue-sticky",
   ],
   featureIds: ["sticky-positioning"],
   native: "position: sticky",

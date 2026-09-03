@@ -9,6 +9,7 @@ export const smoothScroll: Rule = {
     "scroll-behavior-polyfill",
     "smooth-scroll",
     "jump.js",
+    "vue-scrollto",
   ],
   featureIds: ["scroll-behavior"],
   native: "scroll-behavior: smooth with scroll-margin-top",
