@@ -19,7 +19,7 @@ const server = await device.gatt.connect();`,
   agent: {
     when: "connecting to a Bluetooth Low Energy device directly from a web page",
     unless: [
-      "You need to support iOS in any browser. Apple has stated it has no plans to implement Web Bluetooth, so this is not a temporary gap, it is a permanent one for iPhone and iPad users.",
+      "You need to support iOS in any browser. Apple has stated it has no plans to implement Web Bluetooth. That gap is permanent for iPhone and iPad users.",
       "You need background scanning or a connection that survives the tab closing. The API only works while the page is open.",
       "You are already shipping a native app shell for other reasons. The plugin ecosystem is more mature for background operation and OS-level pairing UI.",
     ],
