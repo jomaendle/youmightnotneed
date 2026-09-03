@@ -1,8 +1,8 @@
 # youmightnotneed
 
-Tells developers which JavaScript dependencies can go because modern CSS and
-HTML now do the job. The product is the rule catalog. Every surface is a thin
-adapter over it.
+Tells developers which JavaScript dependencies can go because the platform
+now does the job: CSS, HTML, or a Web API. The product is the rule catalog.
+Every surface is a thin adapter over it.
 
 ## Decisions that are settled
 
