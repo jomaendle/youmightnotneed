@@ -89,37 +89,37 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={inter.variable}>
       <body className="min-h-dvh">
         <header className="sticky top-0 z-40 border-border border-b bg-bg/85 backdrop-blur-sm">
-          <nav className="mx-auto flex max-w-4xl items-center justify-between gap-6 px-6 py-3.5">
+          <nav className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3.5 sm:gap-6 sm:px-6">
             <Link
               href="/"
-              className="plain flex items-center gap-2 font-medium font-mono text-[0.9375rem] tracking-tight no-underline"
+              className="plain flex shrink-0 items-center gap-2 font-medium font-mono text-[0.9375rem] tracking-tight no-underline"
             >
               <span className="text-fg-faint" aria-hidden="true">
                 {"</>"}
               </span>
               youmightnotneed
             </Link>
-            <ul className="flex items-center gap-5 text-metadata">
+            <ul className="flex items-center gap-3 text-metadata sm:gap-5">
               {NAV.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="plain flex items-center gap-1.5 text-fg-muted no-underline hover:text-fg"
+                    className="plain flex items-center gap-1.5 whitespace-nowrap text-fg-muted no-underline hover:text-fg"
                   >
                     <item.icon />
-                    {item.label}
+                    <span className="sr-only sm:not-sr-only">{item.label}</span>
                   </Link>
                 </li>
               ))}
               <li>
                 <a
                   href={site.repo}
-                  className="plain flex items-center gap-1.5 text-fg-muted no-underline hover:text-fg"
+                  className="plain flex items-center gap-1.5 whitespace-nowrap text-fg-muted no-underline hover:text-fg"
                   target="_blank"
                   rel="noreferrer"
                 >
                   <GitHubIcon />
-                  GitHub
+                  <span className="sr-only sm:not-sr-only">GitHub</span>
                 </a>
               </li>
             </ul>
