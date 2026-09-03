@@ -52,7 +52,7 @@ export default function HomePage() {
           Is it CSS yet?
         </p>
         <h1 className="mb-5 max-w-[22ch] text-display">
-          Find the CSS that replaces your dependencies
+          Find the native feature that replaces your dependencies
         </h1>
         <p className="max-w-[58ch] text-fg-muted text-lede">
           Some of what you installed a library for is now in the platform. Paste

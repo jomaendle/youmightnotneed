@@ -2,7 +2,7 @@
   "name": "@jomae/catalog",
   "version": "0.3.0",
   "type": "module",
-  "description": "The rule catalog behind youmightnotneed. Maps npm packages to the modern CSS and HTML that replaces them.",
+  "description": "The rule catalog behind youmightnotneed. Maps npm packages to the CSS, HTML, or Web API that replaces them.",
   "license": "MIT",
   "author": "Johannes Maendle",
   "homepage": "https://youmightnotneed-web.vercel.app",

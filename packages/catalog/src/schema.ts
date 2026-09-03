@@ -76,7 +76,7 @@ export const ruleSchema = z
     human: z.object({
       /** 2 to 4 sentences of prose. */
       explainer: z.string().min(1),
-      /** Copy-pasteable CSS or HTML. */
+      /** Copy-pasteable CSS, HTML, or JavaScript. */
       snippet: z.string().min(1),
       /** A live demo or a post that walks through it. */
       demoUrl: z.url().optional(),

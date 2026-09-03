@@ -8,7 +8,7 @@ export const webBluetooth: Rule = {
   native: "navigator.bluetooth.requestDevice()",
   human: {
     explainer:
-      "Talking to a Bluetooth peripheral from a web app used to mean wrapping the page in a native shell such as Cordova or Capacitor and reaching for a plugin that called into the operating system's own Bluetooth stack. A page running directly in a supporting browser can request a device, connect to its GATT services, and read or write characteristics with no native wrapper at all. This is a narrower case than most of this catalog: it replaces the native-app packaging step these plugins exist for, not a JavaScript library doing work the browser could already do.",
+      "Talking to a Bluetooth peripheral from a web app used to mean wrapping the page in a native shell such as Cordova or Capacitor and reaching for a plugin that called into the operating system's own Bluetooth stack. A page running directly in a supporting browser can request a device, connect to its GATT services, and read or write characteristics with no native wrapper at all. This is a narrower case than most of this catalog. It replaces the native-app packaging step these plugins exist for, rather than a JavaScript library doing work the browser could already do.",
     snippet: `const device = await navigator.bluetooth.requestDevice({
   acceptAllDevices: true,
 });

@@ -43,7 +43,7 @@ export async function generateMetadata({
     description:
       payload.projectName === undefined
         ? site.description
-        : `${payload.projectName}: ${summary.findingCount} of its dependencies have a native CSS or HTML equivalent.`,
+        : `${payload.projectName}: ${summary.findingCount} of its dependencies have a native equivalent.`,
     openGraph: {
       title: headline,
       description: `${summary.findingCount} rules matched. Support derived from web-features.`,
@@ -167,11 +167,11 @@ function EmptyHeadline() {
   return (
     <>
       <h1 className="mb-4 max-w-[26ch] text-page-title">
-        Nothing here that CSS covers yet
+        Nothing here the platform covers yet
       </h1>
       <p className="max-w-[58ch] text-fg-muted text-lede">
         None of these dependencies matched a rule. The catalog only covers cases
-        where CSS or HTML replaces a library outright.
+        where the platform replaces a library outright.
       </p>
     </>
   );

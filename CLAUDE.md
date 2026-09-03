@@ -52,7 +52,7 @@ edit it by hand, and do run `pnpm refresh` rather than patching numbers.
 
 ## The `unless` field
 
-The most important field in the schema. An agent that always answers "use CSS"
+The most important field in the schema. An agent that always answers "the platform covers it"
 is worse than no agent. Every rule states when the dependency is still right,
 and the schema rejects an empty list. When adding a rule, write `unless` first.
 

@@ -8,7 +8,7 @@ export const site = {
   url: "https://youmightnotneed-web.vercel.app",
   tagline: "Is it CSS yet?",
   description:
-    "Find the modern CSS and HTML that replaces your JavaScript dependencies. Paste a package.json and see what the platform now does natively.",
+    "Find the CSS, HTML, or Web API that replaces your JavaScript dependencies. Paste a package.json and see what the platform now does natively.",
   repo: "https://github.com/jomaendle/youmightnotneed",
   author: "Johannes Maendle",
   authorUrl: "https://www.jomaendle.com",

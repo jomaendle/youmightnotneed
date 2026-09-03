@@ -21,7 +21,7 @@ import { renderJson, renderReport } from "./render.ts";
 const HELP = `
 youmightnotneed  ·  is it CSS yet?
 
-Finds the modern CSS and HTML that replaces your JavaScript dependencies.
+Finds the CSS, HTML, or Web API that replaces your JavaScript dependencies.
 
 Usage
   npx youmightnotneed [path] [options]

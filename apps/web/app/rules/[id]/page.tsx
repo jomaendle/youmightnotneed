@@ -126,8 +126,8 @@ export default async function RulePage({ params }: PageProps) {
             When the dependency is still right
           </h2>
           <p className="mb-4 max-w-[62ch] text-compact text-fg-muted">
-            An answer that is always "use CSS" is worse than no answer. These
-            are the cases where this one does not hold.
+            An answer that always says "the platform covers it" is worse than no
+            answer. These are the cases where this one does not hold.
           </p>
           <ul className="max-w-[68ch] space-y-2.5 border-border border-l pl-5">
             {rule.agent.unless.map((condition) => (

@@ -142,7 +142,7 @@ export function renderReport(report: Report, options: RenderOptions): string {
       `  ${palette("green", "Nothing in this package.json has a native equivalent in the catalog.")}`,
     );
     lines.push(
-      `  ${palette("grey", "That is a real result. The catalog only covers CSS and HTML replacements.")}`,
+      `  ${palette("grey", "The catalog only covers cases where the platform replaces a library outright.")}`,
     );
     lines.push("");
     lines.push(palette("grey", footer(options)));
