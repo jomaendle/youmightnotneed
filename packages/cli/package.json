@@ -1,6 +1,6 @@
 {
   "name": "youmightnotneed",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "description": "Find the modern CSS and HTML that replaces your JavaScript dependencies.",
   "license": "MIT",

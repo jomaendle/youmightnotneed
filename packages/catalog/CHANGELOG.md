@@ -1,5 +1,22 @@
 # @jomae/catalog
 
+## 0.3.0
+
+### Minor Changes
+
+- [#32](https://github.com/jomaendle/youmightnotneed/pull/32) [`b2027f5`](https://github.com/jomaendle/youmightnotneed/commit/b2027f5d1106f4f01035eed76498fa878a0c2d91) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add three rules: `content-visibility` (replaces react-window,
+  react-virtualized), `resizable-panels` (replaces react-resizable-panels,
+  re-resizable, react-split-pane), and `date-time-input` (replaces
+  react-datepicker, flatpickr, react-flatpickr, react-day-picker).
+
+### Patch Changes
+
+- [#26](https://github.com/jomaendle/youmightnotneed/pull/26) [`3a04168`](https://github.com/jomaendle/youmightnotneed/commit/3a041686be88eb92e58eca371592c2cb30ed525d) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Point the npm package listing and CLI output at the live Vercel deployment
+  instead of `youmightnotneed.dev`, which isn't wired up yet. `homepage` in
+  both package.json files, the catalog README, and the CLI's "Details and
+  live demos" footer line now point to
+  `https://youmightnotneed-web.vercel.app`.
+
 ## 0.2.0
 
 ### Minor Changes
