@@ -3,7 +3,7 @@ import type { Rule } from "../schema.ts";
 export const fullscreen: Rule = {
   id: "fullscreen",
   title: "Fullscreen toggling",
-  replaces: ["screenfull", "react-full-screen"],
+  replaces: ["screenfull", "react-full-screen", "vue-fullscreen"],
   featureIds: ["fullscreen"],
   native: "Element.requestFullscreen()",
   human: {

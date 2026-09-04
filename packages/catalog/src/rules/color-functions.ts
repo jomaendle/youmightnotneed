@@ -3,7 +3,14 @@ import type { Rule } from "../schema.ts";
 export const colorFunctions: Rule = {
   id: "css-color-functions",
   title: "Colour manipulation",
-  replaces: ["polished", "color2k", "chroma-js", "tinycolor2", "color"],
+  replaces: [
+    "polished",
+    "color2k",
+    "chroma-js",
+    "tinycolor2",
+    "color",
+    "colord",
+  ],
   featureIds: ["color-mix", "oklab"],
   native: "color-mix(), oklch() and relative colour syntax",
   human: {

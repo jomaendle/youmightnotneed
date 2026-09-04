@@ -21,12 +21,21 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, "..");
 const outFile = join(repoRoot, "packages/catalog/src/generated/baseline.ts");
 
+/**
+ * The browsers shown in the per-feature support row, in display order.
+ * Desktop engines only: mobile variants (chrome_android, firefox_android,
+ * safari_ios) track their desktop counterpart closely enough that showing
+ * both would double the row's width for little new information.
+ */
+const TRACKED_BROWSERS = ["chrome", "edge", "firefox", "safari"] as const;
+
 interface WebFeature {
   name?: string;
   status?: {
     baseline?: "high" | "low" | false;
     baseline_low_date?: string;
     baseline_high_date?: string;
+    support?: Record<string, string>;
   };
   spec?: string | string[];
 }
@@ -85,6 +94,17 @@ function firstSpec(spec: string | string[] | undefined): string | null {
   return Array.isArray(spec) ? (spec[0] ?? null) : spec;
 }
 
+/** Picks only the browsers this catalog displays, dropping the rest (Android/iOS variants, etc.). */
+function trackedSupport(
+  support: Record<string, string> | undefined,
+): Record<string, string | null> {
+  const result: Record<string, string | null> = {};
+  for (const browser of TRACKED_BROWSERS) {
+    result[browser] = support?.[browser] ?? null;
+  }
+  return result;
+}
+
 const snapshot: Record<string, unknown> = {};
 for (const id of referenced) {
   const feature = features[id];
@@ -95,6 +115,7 @@ for (const id of referenced) {
     lowDate: cleanDate(feature.status?.baseline_low_date),
     highDate: cleanDate(feature.status?.baseline_high_date),
     spec: firstSpec(feature.spec),
+    support: trackedSupport(feature.status?.support),
   };
 }
 
@@ -115,6 +136,12 @@ export interface BaselineSnapshotEntry {
   highDate: string | null;
   /** Canonical specification URL, when web-features records one. */
   spec: string | null;
+  /**
+   * Minimum version each tracked browser needs, keyed by ${TRACKED_BROWSERS.join(", ")}.
+   * Null means web-features has no support data for that browser (commonly
+   * because the feature never shipped there).
+   */
+  support: Record<string, string | null>;
 }
 
 export interface BaselineSnapshot {

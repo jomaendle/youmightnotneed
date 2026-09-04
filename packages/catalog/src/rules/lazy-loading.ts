@@ -10,6 +10,8 @@ export const lazyLoading: Rule = {
     "react-lazyload",
     "react-lazy-load-image-component",
     "yall-js",
+    "vue-lazyload",
+    "v-lazy-image",
   ],
   featureIds: ["loading-lazy"],
   native: 'loading="lazy"',

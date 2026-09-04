@@ -13,6 +13,8 @@ export const popover: Rule = {
     "@tippyjs/react",
     "react-popper",
     "react-tooltip",
+    "floating-vue",
+    "v-tooltip",
   ],
   featureIds: ["popover", "anchor-positioning"],
   native: "The Popover API with CSS anchor positioning",

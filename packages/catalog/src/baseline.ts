@@ -13,6 +13,8 @@ export interface ResolvedFeature {
   /** Date the feature reached its current status, when known. */
   since: string | null;
   spec: string | null;
+  /** Minimum version each tracked browser needs. Null means no data (commonly: never shipped there). */
+  support: Record<string, string | null>;
 }
 
 export interface BaselineInfo {
@@ -103,7 +105,14 @@ function sinceDate(
 export function resolveFeature(id: string): ResolvedFeature {
   const entry = baselineSnapshot.features[id];
   if (!entry) {
-    return { id, name: id, status: "unknown", since: null, spec: null };
+    return {
+      id,
+      name: id,
+      status: "unknown",
+      since: null,
+      spec: null,
+      support: {},
+    };
   }
   const status = toStatus(entry.baseline);
   return {
@@ -112,7 +121,57 @@ export function resolveFeature(id: string): ResolvedFeature {
     status,
     since: sinceDate(status, entry),
     spec: entry.spec,
+    support: entry.support,
   };
+}
+
+/** Browsers the catalog tracks support for, in display order. */
+export const TRACKED_BROWSERS = [
+  "chrome",
+  "edge",
+  "firefox",
+  "safari",
+] as const;
+export type TrackedBrowser = (typeof TRACKED_BROWSERS)[number];
+
+/**
+ * The highest of several minimum versions for one browser, or null if any
+ * feature has no support data there (a rule needing all of them then has no
+ * known support in that browser either). A non-numeric version string is
+ * ignored rather than treated as the max: the snapshot should never contain
+ * one, but silently winning a comparison it can't meaningfully make would be
+ * worse than being skipped.
+ */
+function highestVersion(versions: readonly (string | null)[]): string | null {
+  if (versions.some((v) => v === null)) return null;
+
+  let max: number | null = null;
+  let raw: string | null = null;
+  for (const version of versions as readonly string[]) {
+    const parsed = Number.parseFloat(version);
+    if (!Number.isNaN(parsed) && (max === null || parsed > max)) {
+      max = parsed;
+      raw = version;
+    }
+  }
+  return raw;
+}
+
+/**
+ * Combines support across every feature a rule needs. A rule only works in a
+ * browser once every required feature does, so each browser's version is the
+ * highest (latest) minimum any single feature demands.
+ */
+export function combinedSupport(
+  features: readonly ResolvedFeature[],
+): Record<TrackedBrowser, string | null> {
+  const result = {} as Record<TrackedBrowser, string | null>;
+  for (const browser of TRACKED_BROWSERS) {
+    result[browser] = highestVersion(
+      features.map((feature) => feature.support[browser] ?? null),
+    );
+  }
+  return result;
 }
 
 /**

@@ -47,7 +47,7 @@ const TIERS: Tier[] = [
   {
     status: "unknown",
     heading: "Support unverified",
-    note: "the catalog could not resolve these, so treat them with suspicion",
+    note: "the catalog could not resolve support for these",
     marker: "?",
     color: "grey",
   },

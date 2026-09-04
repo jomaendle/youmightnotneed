@@ -3,7 +3,14 @@ import type { Rule } from "../schema.ts";
 export const contentVisibility: Rule = {
   id: "content-visibility",
   title: "Off-screen rendering",
-  replaces: ["react-window", "react-virtualized"],
+  replaces: [
+    "react-window",
+    "react-virtualized",
+    "vue-virtual-scroller",
+    "vue-virtual-scroll-list",
+    "ngx-virtual-scroller",
+    "svelte-virtual-list",
+  ],
   featureIds: ["content-visibility"],
   native: "content-visibility: auto",
   human: {

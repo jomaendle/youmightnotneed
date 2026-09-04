@@ -4,9 +4,11 @@ import {
   baselineLabel,
   baselineRank,
   baselineShortLabel,
+  combinedSupport,
   compareBaseline,
   resolveBaseline,
   resolveFeature,
+  TRACKED_BROWSERS,
   WEB_FEATURES_VERSION,
 } from "./baseline.ts";
 import type { Rule } from "./schema.ts";
@@ -59,6 +61,56 @@ describe("resolveFeature", () => {
 
   it("carries a spec link when web-features has one", () => {
     expect(resolveFeature("dialog").spec).toMatch(/^https:\/\//);
+  });
+
+  it("carries per-browser minimum versions for every tracked browser", () => {
+    const feature = resolveFeature("dialog");
+    for (const browser of TRACKED_BROWSERS) {
+      expect(feature.support).toHaveProperty(browser);
+    }
+  });
+
+  it("has no support data for an ID the snapshot lacks", () => {
+    expect(resolveFeature("not-a-real-feature-id").support).toEqual({});
+  });
+});
+
+describe("combinedSupport", () => {
+  it("carries a single feature's own support through unchanged", () => {
+    const feature = resolveFeature("dialog");
+    expect(combinedSupport([feature])).toEqual(feature.support);
+  });
+
+  it("takes the highest per-browser minimum across several required features", () => {
+    const older = resolveFeature("dialog");
+    const newer = resolveFeature("popover");
+    const combined = combinedSupport([older, newer]);
+    for (const browser of TRACKED_BROWSERS) {
+      const a = older.support[browser];
+      const b = newer.support[browser];
+      if (a === null || b === null) continue;
+      const expected =
+        Number.parseFloat(a as string) > Number.parseFloat(b as string) ? a : b;
+      expect(combined[browser]).toBe(expected);
+    }
+  });
+
+  it("reports no support for a browser missing from even one required feature", () => {
+    // web-bluetooth never shipped in Firefox or Safari, so a rule needing it
+    // alongside a universally-supported feature still can't run there.
+    const bluetooth = resolveFeature("web-bluetooth");
+    const dialog = resolveFeature("dialog");
+    const combined = combinedSupport([bluetooth, dialog]);
+    expect(combined.firefox).toBeNull();
+    expect(combined.safari).toBeNull();
+    expect(combined.chrome).not.toBeNull();
+  });
+
+  it("reports no support for every browser when there are no features", () => {
+    const combined = combinedSupport([]);
+    for (const browser of TRACKED_BROWSERS) {
+      expect(combined[browser]).toBeNull();
+    }
   });
 });
 

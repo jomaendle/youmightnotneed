@@ -3,7 +3,16 @@ import type { Rule } from "../schema.ts";
 export const select: Rule = {
   id: "customizable-select",
   title: "Custom select menus",
-  replaces: ["react-select", "choices.js", "select2", "tom-select"],
+  replaces: [
+    "react-select",
+    "choices.js",
+    "select2",
+    "tom-select",
+    "vue-select",
+    "vue-multiselect",
+    "@ng-select/ng-select",
+    "svelte-select",
+  ],
   featureIds: ["customizable-select"],
   native: "appearance: base-select on <select>",
   human: {

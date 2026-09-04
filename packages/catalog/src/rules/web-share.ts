@@ -3,7 +3,7 @@ import type { Rule } from "../schema.ts";
 export const webShare: Rule = {
   id: "web-share",
   title: "Sharing to other apps",
-  replaces: ["react-share"],
+  replaces: ["react-share", "vue-social-sharing", "ngx-sharebuttons"],
   featureIds: ["share"],
   native: "navigator.share()",
   human: {

@@ -11,10 +11,13 @@ export {
   baselineLabel,
   baselineRank,
   baselineShortLabel,
+  combinedSupport,
   compareBaseline,
   type ResolvedFeature,
   resolveBaseline,
   resolveFeature,
+  TRACKED_BROWSERS,
+  type TrackedBrowser,
   WEB_FEATURES_VERSION,
 } from "./baseline.ts";
 export {

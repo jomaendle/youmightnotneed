@@ -20,7 +20,7 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-09-03",
+  "fetchedOn": "2026-09-04",
   "source": "bundlephobia.com",
   "sizes": {
     "@capacitor-community/bluetooth-le": {
@@ -53,6 +53,21 @@ export const packageSizes: SizeSnapshot = {
       "raw": 24506,
       "version": "2.1.9"
     },
+    "@juggle/resize-observer": {
+      "gzip": 3010,
+      "raw": 8146,
+      "version": "3.4.0"
+    },
+    "@mui/x-date-pickers": {
+      "gzip": 58097,
+      "raw": 206962,
+      "version": "9.12.0"
+    },
+    "@ng-select/ng-select": {
+      "gzip": 33247,
+      "raw": 155163,
+      "version": "24.1.1"
+    },
     "@popperjs/core": {
       "gzip": 14468,
       "raw": 19984,
@@ -77,6 +92,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2010,
       "raw": 7039,
       "version": "3.4.1"
+    },
+    "accounting": {
+      "gzip": 1231,
+      "raw": 2931,
+      "version": "0.4.1"
     },
     "annyang": {
       "gzip": 1920,
@@ -112,6 +132,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 5293,
       "raw": 16697,
       "version": "7.4.0"
+    },
+    "cancelable-promise": {
+      "gzip": 2273,
+      "raw": 6394,
+      "version": "4.3.1"
     },
     "capsize": {
       "gzip": 771,
@@ -158,10 +183,20 @@ export const packageSizes: SizeSnapshot = {
       "raw": 5564,
       "version": "2.0.4"
     },
+    "colord": {
+      "gzip": 2169,
+      "raw": 6159,
+      "version": "2.10.0"
+    },
     "copy-to-clipboard": {
       "gzip": 1551,
       "raw": 3299,
       "version": "4.0.2"
+    },
+    "currency.js": {
+      "gzip": 1068,
+      "raw": 2250,
+      "version": "2.0.4"
     },
     "element-resize-detector": {
       "gzip": 5786,
@@ -198,10 +233,30 @@ export const packageSizes: SizeSnapshot = {
       "raw": 42515,
       "version": "3.0.0"
     },
+    "floating-vue": {
+      "gzip": 12035,
+      "raw": 39659,
+      "version": "5.2.2"
+    },
+    "focus-visible": {
+      "gzip": 1013,
+      "raw": 3020,
+      "version": "5.2.1"
+    },
+    "format-number": {
+      "gzip": 1107,
+      "raw": 3262,
+      "version": "3.0.0"
+    },
     "framer-motion": {
-      "gzip": 62054,
-      "raw": 185337,
-      "version": "13.1.1"
+      "gzip": 62291,
+      "raw": 185909,
+      "version": "13.2.0"
+    },
+    "javascript-time-ago": {
+      "gzip": 8948,
+      "raw": 43587,
+      "version": "2.6.4"
     },
     "jump.js": {
       "gzip": 673,
@@ -212,6 +267,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 5878,
       "raw": 14232,
       "version": "6.8.6"
+    },
+    "klona": {
+      "gzip": 551,
+      "raw": 1063,
+      "version": "2.0.6"
     },
     "lazysizes": {
       "gzip": 2695,
@@ -232,6 +292,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1293,
       "raw": 2854,
       "version": "1.16.0"
+    },
+    "lz-string": {
+      "gzip": 1477,
+      "raw": 4839,
+      "version": "1.5.0"
     },
     "masonry-layout": {
       "gzip": 6870,
@@ -258,6 +323,41 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3091,
       "version": "0.3.5"
     },
+    "ng2-date-picker": {
+      "gzip": 14719,
+      "raw": 102826,
+      "version": "21.0.1"
+    },
+    "ngx-autosize": {
+      "gzip": 1817,
+      "raw": 5539,
+      "version": "2.0.4"
+    },
+    "ngx-clipboard": {
+      "gzip": 2154,
+      "raw": 7139,
+      "version": "16.0.0"
+    },
+    "ngx-owl-carousel-o": {
+      "gzip": 15900,
+      "raw": 72064,
+      "version": "22.0.0"
+    },
+    "ngx-perfect-scrollbar": {
+      "gzip": 18113,
+      "raw": 66919,
+      "version": "10.1.1"
+    },
+    "ngx-sharebuttons": {
+      "gzip": 3883,
+      "raw": 13047,
+      "version": "17.0.0"
+    },
+    "ngx-virtual-scroller": {
+      "gzip": 8517,
+      "raw": 35290,
+      "version": "4.0.3"
+    },
     "no-scroll": {
       "gzip": 517,
       "raw": 1007,
@@ -267,6 +367,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 6559,
       "raw": 15092,
       "version": "0.12.0"
+    },
+    "numeral": {
+      "gzip": 3897,
+      "raw": 11257,
+      "version": "2.0.6"
     },
     "overlayscrollbars": {
       "gzip": 14636,
@@ -278,10 +383,20 @@ export const packageSizes: SizeSnapshot = {
       "raw": 1937,
       "version": "0.5.6"
     },
+    "overlayscrollbars-vue": {
+      "gzip": 1153,
+      "raw": 2698,
+      "version": "0.5.10"
+    },
     "p-cancelable": {
       "gzip": 681,
       "raw": 1404,
       "version": "4.0.1"
+    },
+    "pako": {
+      "gzip": 13113,
+      "raw": 43085,
+      "version": "3.0.1"
     },
     "perfect-scrollbar": {
       "gzip": 5470,
@@ -488,6 +603,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 10157,
       "version": "2.1.2"
     },
+    "react-sortablejs": {
+      "gzip": 2803,
+      "raw": 7353,
+      "version": "6.1.4"
+    },
     "react-speech-recognition": {
       "gzip": 3734,
       "raw": 11015,
@@ -508,6 +628,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 8724,
       "version": "6.0.3"
     },
+    "react-text-to-speech": {
+      "gzip": 5747,
+      "raw": 14972,
+      "version": "5.1.10"
+    },
     "react-textarea-autosize": {
       "gzip": 1605,
       "raw": 3579,
@@ -517,6 +642,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 3352,
       "raw": 9084,
       "version": "1.1.1"
+    },
+    "react-timeago": {
+      "gzip": 1061,
+      "raw": 1932,
+      "version": "8.3.0"
     },
     "react-tooltip": {
       "gzip": 14592,
@@ -562,6 +692,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2473,
       "raw": 7260,
       "version": "1.12.1"
+    },
+    "resize-observer-polyfill": {
+      "gzip": 2511,
+      "raw": 7581,
+      "version": "1.5.1"
     },
     "rfdc": {
       "gzip": 876,
@@ -623,10 +758,20 @@ export const packageSizes: SizeSnapshot = {
       "raw": 4062,
       "version": "0.4.4"
     },
+    "sortablejs": {
+      "gzip": 18314,
+      "raw": 45765,
+      "version": "1.15.7"
+    },
     "speak-tts": {
       "gzip": 2086,
       "raw": 5746,
       "version": "2.0.8"
+    },
+    "splitpanes": {
+      "gzip": 3887,
+      "raw": 11298,
+      "version": "4.1.2"
     },
     "sticky-js": {
       "gzip": 1917,
@@ -643,6 +788,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 5446,
       "version": "1.1.1-strict"
     },
+    "svelte-virtual-list": {
+      "gzip": 150,
+      "raw": 277,
+      "version": "3.0.1"
+    },
     "swiper": {
       "gzip": 20076,
       "raw": 65778,
@@ -650,13 +800,18 @@ export const packageSizes: SizeSnapshot = {
     },
     "swup": {
       "gzip": 9232,
-      "raw": 26711,
-      "version": "4.9.2"
+      "raw": 26552,
+      "version": "4.10.0"
     },
     "textfit": {
       "gzip": 1474,
       "raw": 3448,
       "version": "2.4.0"
+    },
+    "timeago.js": {
+      "gzip": 1037,
+      "raw": 1830,
+      "version": "4.0.2"
     },
     "tinycolor2": {
       "gzip": 5353,
@@ -673,6 +828,16 @@ export const packageSizes: SizeSnapshot = {
       "raw": 55175,
       "version": "2.6.2"
     },
+    "v-lazy-image": {
+      "gzip": 936,
+      "raw": 1944,
+      "version": "2.1.1"
+    },
+    "v-tooltip": {
+      "gzip": 21329,
+      "raw": 74073,
+      "version": "2.1.3"
+    },
     "vanilla-lazyload": {
       "gzip": 2695,
       "raw": 6794,
@@ -682,6 +847,116 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 966,
       "raw": 2336,
       "version": "2.0.2"
+    },
+    "vue-awesome-swiper": {
+      "gzip": 235,
+      "raw": 345,
+      "version": "5.0.1"
+    },
+    "vue-clamp": {
+      "gzip": 18396,
+      "raw": 57086,
+      "version": "1.6.0"
+    },
+    "vue-clipboard2": {
+      "gzip": 6065,
+      "raw": 10302,
+      "version": "0.3.3"
+    },
+    "vue-clipboard3": {
+      "gzip": 3328,
+      "raw": 9370,
+      "version": "2.0.0"
+    },
+    "vue-final-modal": {
+      "gzip": 7151,
+      "raw": 21718,
+      "version": "4.5.5"
+    },
+    "vue-fullscreen": {
+      "gzip": 3012,
+      "raw": 9760,
+      "version": "2.6.1"
+    },
+    "vue-js-modal": {
+      "gzip": 11979,
+      "raw": 43223,
+      "version": "2.0.1"
+    },
+    "vue-lazyload": {
+      "gzip": 5382,
+      "raw": 15439,
+      "version": "3.0.0"
+    },
+    "vue-masonry": {
+      "gzip": 8771,
+      "raw": 28845,
+      "version": "0.16.0"
+    },
+    "vue-masonry-css": {
+      "gzip": 1102,
+      "raw": 2529,
+      "version": "1.0.3"
+    },
+    "vue-multiselect": {
+      "gzip": 5792,
+      "raw": 21806,
+      "version": "3.5.0"
+    },
+    "vue-perfect-scrollbar": {
+      "gzip": 7844,
+      "raw": 24942,
+      "version": "0.2.1"
+    },
+    "vue-resize": {
+      "gzip": 1352,
+      "raw": 3154,
+      "version": "1.0.1"
+    },
+    "vue-scrollto": {
+      "gzip": 2403,
+      "raw": 5382,
+      "version": "2.20.0"
+    },
+    "vue-select": {
+      "gzip": 6436,
+      "raw": 21067,
+      "version": "3.20.4"
+    },
+    "vue-social-sharing": {
+      "gzip": 2355,
+      "raw": 6241,
+      "version": "3.0.9"
+    },
+    "vue-sticky": {
+      "gzip": 971,
+      "raw": 2051,
+      "version": "3.3.4"
+    },
+    "vue-sticky-directive": {
+      "gzip": 1823,
+      "raw": 5516,
+      "version": "0.0.10"
+    },
+    "vue-textarea-autosize": {
+      "gzip": 1220,
+      "raw": 2991,
+      "version": "1.1.1"
+    },
+    "vue-virtual-scroll-list": {
+      "gzip": 4416,
+      "raw": 14192,
+      "version": "2.3.5"
+    },
+    "vue-virtual-scroller": {
+      "gzip": 16554,
+      "raw": 55397,
+      "version": "3.0.5"
+    },
+    "vue3-carousel": {
+      "gzip": 8355,
+      "raw": 23861,
+      "version": "0.17.0"
     },
     "wow.js": {
       "gzip": 2739,

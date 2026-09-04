@@ -6,22 +6,28 @@ import { broadcastChannel } from "./broadcast-channel.ts";
 import { carousel } from "./carousel.ts";
 import { clipboard } from "./clipboard.ts";
 import { colorFunctions } from "./color-functions.ts";
+import { compressionStreams } from "./compression-streams.ts";
 import { containerQueries } from "./container-queries.ts";
 import { contentVisibility } from "./content-visibility.ts";
 import { dateTimeInput } from "./date-time-input.ts";
 import { dialog } from "./dialog.ts";
 import { discreteTransitions } from "./discrete-transitions.ts";
+import { dragAndDrop } from "./drag-and-drop.ts";
 import { fieldSizing } from "./field-sizing.ts";
 import { fluidType } from "./fluid-type.ts";
+import { focusVisible } from "./focus-visible.ts";
 import { fullscreen } from "./fullscreen.ts";
 import { heightAnimation } from "./height-animation.ts";
 import { intersectionObserver } from "./intersection-observer.ts";
 import { lazyLoading } from "./lazy-loading.ts";
 import { lineClamp } from "./line-clamp.ts";
 import { masonry } from "./masonry.ts";
+import { numberFormat } from "./number-format.ts";
 import { pageVisibility } from "./page-visibility.ts";
 import { popover } from "./popover.ts";
+import { relativeTime } from "./relative-time.ts";
 import { resizablePanels } from "./resizable-panels.ts";
+import { resizeObserver } from "./resize-observer.ts";
 import { screenWakeLock } from "./screen-wake-lock.ts";
 import { scrollAnimations } from "./scroll-animations.ts";
 import { scrollLock } from "./scroll-lock.ts";
@@ -50,22 +56,28 @@ export const rules: readonly Rule[] = [
   carousel,
   clipboard,
   colorFunctions,
+  compressionStreams,
   containerQueries,
   contentVisibility,
   dateTimeInput,
   dialog,
   discreteTransitions,
+  dragAndDrop,
   fieldSizing,
   fluidType,
+  focusVisible,
   fullscreen,
   heightAnimation,
   intersectionObserver,
   lazyLoading,
   lineClamp,
   masonry,
+  numberFormat,
   pageVisibility,
   popover,
+  relativeTime,
   resizablePanels,
+  resizeObserver,
   screenWakeLock,
   scrollAnimations,
   scrollLock,
