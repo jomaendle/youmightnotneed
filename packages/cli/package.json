@@ -1,6 +1,6 @@
 {
   "name": "youmightnotneed",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "description": "Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.",
   "license": "MIT",
