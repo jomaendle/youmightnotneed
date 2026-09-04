@@ -450,6 +450,21 @@ option:checked { background:var(--c-accent); color:var(--c-bg); }
     <section id="s3">Section three</section>
   </div>
 </div>
+<script>
+  // A sandboxed srcdoc document without allow-same-origin inherits its base
+  // URL from the parent page, so a plain href="#id" resolves against that
+  // parent URL instead of this document and navigates the frame away on
+  // click. Scrolling manually sidesteps that and still honours
+  // scroll-behavior: smooth on the scroller, the actual technique this
+  // demo is showing.
+  document.querySelectorAll(".tabs a").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.getElementById(link.getAttribute("href").slice(1));
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+</script>
 `,
       `
 .tabs { display:flex; gap:0.5rem; margin-bottom:0.5rem; }
@@ -1178,29 +1193,86 @@ button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); 
 <script>
   const list = document.getElementById("list");
   let dragging = null;
+  let placeholder = null;
 
   list.addEventListener("dragstart", (e) => {
     dragging = e.target;
+    placeholder = document.createElement("li");
+    placeholder.className = "placeholder";
+    placeholder.style.height = dragging.getBoundingClientRect().height + "px";
+    dragging.after(placeholder);
+    dragging.classList.add("dragging-source");
     e.dataTransfer.setData("text/plain", e.target.dataset.id);
     e.dataTransfer.effectAllowed = "move";
   });
 
   list.addEventListener("dragover", (e) => {
     e.preventDefault();
-    const target = e.target.closest("li");
-    if (!target || target === dragging) return;
+    const target = e.target.closest("li:not(.placeholder)");
+    if (!target || target === dragging || !placeholder) return;
     const rect = target.getBoundingClientRect();
     const before = e.clientY < rect.top + rect.height / 2;
-    list.insertBefore(dragging, before ? target : target.nextSibling);
+    list.insertBefore(placeholder, before ? target : target.nextSibling);
   });
 
-  list.addEventListener("drop", (e) => e.preventDefault());
+  list.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (placeholder) {
+      placeholder.replaceWith(dragging);
+      placeholder = null;
+    }
+    dragging.classList.remove("dragging-source");
+  });
+
+  list.addEventListener("dragend", () => {
+    if (placeholder) {
+      placeholder.remove();
+      placeholder = null;
+    }
+    dragging?.classList.remove("dragging-source");
+  });
 </script>
 `,
       `
 .dnd-list { list-style:none; margin:0; padding:0; width:200px; display:flex; flex-direction:column; gap:0.5rem; }
 .dnd-list li { padding:0.625rem 0.875rem; border:1px solid var(--c-border); border-radius:0.375rem; background:var(--c-bg-subtle); font-size:0.8125rem; cursor:grab; user-select:none; }
-.dnd-list li:active { cursor:grabbing; opacity:0.7; }
+.dnd-list li:active { cursor:grabbing; }
+.dnd-list li.dragging-source { opacity:0.35; }
+.dnd-list li.placeholder { border:1.5px dashed var(--c-accent); background:transparent; padding:0; }
+`,
+    ),
+  },
+
+  "number-format": {
+    height: 220,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button data-style="currency" data-locale="en-US">USD</button>
+    <button data-style="currency" data-locale="de-DE">EUR</button>
+    <button data-style="percent" data-locale="en-US">Percent</button>
+    <button data-style="unit" data-locale="en-US">Unit</button>
+  </div>
+  <p id="result" class="demo-hint" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg);">pick a format</p>
+</div>
+<script>
+  const result = document.getElementById("result");
+  const value = 1234.5;
+  document.querySelectorAll("button[data-style]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const opts = { style: btn.dataset.style };
+      if (btn.dataset.style === "currency") opts.currency = btn.dataset.locale === "de-DE" ? "EUR" : "USD";
+      if (btn.dataset.style === "unit") opts.unit = "kilometer-per-hour";
+      if (btn.dataset.style === "percent") { }
+      const formatted = new Intl.NumberFormat(
+        btn.dataset.locale,
+        opts,
+      ).format(btn.dataset.style === "percent" ? 0.42 : value);
+      result.textContent = formatted;
+    });
+  });
+</script>
 `,
     ),
   },

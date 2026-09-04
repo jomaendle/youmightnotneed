@@ -22,6 +22,7 @@ import { intersectionObserver } from "./intersection-observer.ts";
 import { lazyLoading } from "./lazy-loading.ts";
 import { lineClamp } from "./line-clamp.ts";
 import { masonry } from "./masonry.ts";
+import { numberFormat } from "./number-format.ts";
 import { pageVisibility } from "./page-visibility.ts";
 import { popover } from "./popover.ts";
 import { relativeTime } from "./relative-time.ts";
@@ -71,6 +72,7 @@ export const rules: readonly Rule[] = [
   lazyLoading,
   lineClamp,
   masonry,
+  numberFormat,
   pageVisibility,
   popover,
   relativeTime,

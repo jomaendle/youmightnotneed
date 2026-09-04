@@ -30,7 +30,7 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-03",
+  "generatedOn": "2026-09-04",
   "webFeaturesVersion": "3.36.0",
   "features": {
     "aborting": {
@@ -317,6 +317,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "16",
         "firefox": "55",
         "safari": "12.1"
+      }
+    },
+    "intl": {
+      "name": "Intl",
+      "baseline": "high",
+      "lowDate": "2017-09-28",
+      "highDate": "2020-03-28",
+      "spec": "https://tc39.es/ecma402/#introduction",
+      "support": {
+        "chrome": "24",
+        "edge": "12",
+        "firefox": "29",
+        "safari": "10"
       }
     },
     "intl-relative-time-format": {

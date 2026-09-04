@@ -20,7 +20,7 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-09-03",
+  "fetchedOn": "2026-09-04",
   "source": "bundlephobia.com",
   "sizes": {
     "@capacitor-community/bluetooth-le": {
@@ -92,6 +92,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2010,
       "raw": 7039,
       "version": "3.4.1"
+    },
+    "accounting": {
+      "gzip": 1231,
+      "raw": 2931,
+      "version": "0.4.1"
     },
     "annyang": {
       "gzip": 1920,
@@ -188,6 +193,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3299,
       "version": "4.0.2"
     },
+    "currency.js": {
+      "gzip": 1068,
+      "raw": 2250,
+      "version": "2.0.4"
+    },
     "element-resize-detector": {
       "gzip": 5786,
       "raw": 17155,
@@ -232,6 +242,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1013,
       "raw": 3020,
       "version": "5.2.1"
+    },
+    "format-number": {
+      "gzip": 1107,
+      "raw": 3262,
+      "version": "3.0.0"
     },
     "framer-motion": {
       "gzip": 62291,
@@ -352,6 +367,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 6559,
       "raw": 15092,
       "version": "0.12.0"
+    },
+    "numeral": {
+      "gzip": 3897,
+      "raw": 11257,
+      "version": "2.0.6"
     },
     "overlayscrollbars": {
       "gzip": 14636,
