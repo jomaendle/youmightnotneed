@@ -21,7 +21,12 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, "..");
 const outFile = join(repoRoot, "packages/catalog/src/generated/baseline.ts");
 
-/** The browsers shown in the per-feature support row, in display order. */
+/**
+ * The browsers shown in the per-feature support row, in display order.
+ * Desktop engines only: mobile variants (chrome_android, firefox_android,
+ * safari_ios) track their desktop counterpart closely enough that showing
+ * both would double the row's width for little new information.
+ */
 const TRACKED_BROWSERS = ["chrome", "edge", "firefox", "safari"] as const;
 
 interface WebFeature {

@@ -1061,4 +1061,147 @@ button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); 
 `,
     ),
   },
+
+  "resize-observer": {
+    height: 200,
+    html: wrapDemo(
+      `
+<div>
+  <div class="resizer demo-resizer">
+    <div class="box">
+      <span id="size">150 &times; 70</span>
+    </div>
+  </div>
+  <p class="demo-hint" style="margin-top:0.5rem;">Drag the corner to resize &#8600;</p>
+</div>
+<script>
+  const box = document.querySelector(".box");
+  const label = document.getElementById("size");
+  const observer = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const { inlineSize, blockSize } = entry.contentBoxSize[0];
+      label.textContent = Math.round(inlineSize) + " × " + Math.round(blockSize);
+    }
+  });
+  observer.observe(box);
+</script>
+`,
+      `
+.resizer { width:220px; min-width:120px; max-width:320px; height:110px; padding:0.5rem; }
+.box { background:var(--c-bg); border:1px solid var(--c-border); border-radius:0.375rem; height:100%; box-sizing:border-box; display:flex; align-items:center; justify-content:center; font-family:ui-monospace, monospace; font-size:0.875rem; color:var(--c-accent); }
+`,
+    ),
+  },
+
+  "focus-visible": {
+    height: 160,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.75rem;">
+    <button class="fv-demo">Tab to me</button>
+    <button class="fv-demo">Then click me</button>
+  </div>
+  <p class="demo-hint">Tab between them, then click one. Only keyboard focus gets a ring.</p>
+</div>
+`,
+      `
+.fv-demo:focus { outline: none; }
+.fv-demo:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+`,
+    ),
+  },
+
+  "compression-streams": {
+    height: 200,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <button id="compress">Compress 2 KB of text</button>
+  <p id="result" class="demo-hint">idle</p>
+</div>
+<script>
+  const status = document.getElementById("result");
+  document.getElementById("compress").addEventListener("click", async () => {
+    const text = "youmightnotneed ".repeat(120);
+    const original = new Blob([text]);
+    try {
+      const compressedStream = original.stream().pipeThrough(new CompressionStream("gzip"));
+      const compressed = await new Response(compressedStream).arrayBuffer();
+      status.textContent = original.size + " bytes → " + compressed.byteLength + " bytes gzipped";
+    } catch (e) {
+      status.textContent = "Not available here";
+    }
+  });
+</script>
+`,
+    ),
+  },
+
+  "relative-time": {
+    height: 180,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button data-value="-5" data-unit="minute">-5 min</button>
+    <button data-value="-2" data-unit="day">-2 days</button>
+    <button data-value="3" data-unit="week">+3 weeks</button>
+  </div>
+  <p id="result" class="demo-hint" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg);">pick one</p>
+</div>
+<script>
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const result = document.getElementById("result");
+  document.querySelectorAll("button[data-unit]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      result.textContent = rtf.format(Number(btn.dataset.value), btn.dataset.unit);
+    });
+  });
+</script>
+`,
+    ),
+  },
+
+  "drag-and-drop": {
+    height: 220,
+    html: wrapDemo(
+      `
+<div>
+  <ul id="list" class="dnd-list">
+    <li draggable="true" data-id="a">Row A</li>
+    <li draggable="true" data-id="b">Row B</li>
+    <li draggable="true" data-id="c">Row C</li>
+  </ul>
+  <p class="demo-hint" style="margin-top:0.5rem;">Drag a row to reorder</p>
+</div>
+<script>
+  const list = document.getElementById("list");
+  let dragging = null;
+
+  list.addEventListener("dragstart", (e) => {
+    dragging = e.target;
+    e.dataTransfer.setData("text/plain", e.target.dataset.id);
+    e.dataTransfer.effectAllowed = "move";
+  });
+
+  list.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const target = e.target.closest("li");
+    if (!target || target === dragging) return;
+    const rect = target.getBoundingClientRect();
+    const before = e.clientY < rect.top + rect.height / 2;
+    list.insertBefore(dragging, before ? target : target.nextSibling);
+  });
+
+  list.addEventListener("drop", (e) => e.preventDefault());
+</script>
+`,
+      `
+.dnd-list { list-style:none; margin:0; padding:0; width:200px; display:flex; flex-direction:column; gap:0.5rem; }
+.dnd-list li { padding:0.625rem 0.875rem; border:1px solid var(--c-border); border-radius:0.375rem; background:var(--c-bg-subtle); font-size:0.8125rem; cursor:grab; user-select:none; }
+.dnd-list li:active { cursor:grabbing; opacity:0.7; }
+`,
+    ),
+  },
 };

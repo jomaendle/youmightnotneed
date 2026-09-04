@@ -1,7 +1,8 @@
-import { resolveFeature, rulesById } from "@jomae/catalog";
+import { combinedSupport, resolveFeature, rulesById } from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
+import { BrowserSupport } from "@/components/browser-support";
 import { NATIVE_USAGE, type Usage } from "@/lib/native-usage";
 
 export const metadata: Metadata = {
@@ -58,6 +59,10 @@ function UsageRow({ usage }: { usage: Usage }) {
       <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h3 className="font-mono text-subsection">{feature.name}</h3>
         <BaselineBadge status={feature.status} short={true} />
+      </div>
+
+      <div className="mb-3">
+        <BrowserSupport support={combinedSupport([feature])} />
       </div>
 
       <dl className="max-w-[66ch] space-y-1.5 text-compact">
