@@ -1,5 +1,25 @@
 # @jomae/catalog
 
+## 0.4.0
+
+### Minor Changes
+
+- [#34](https://github.com/jomaendle/youmightnotneed/pull/34) [`bda3c5d`](https://github.com/jomaendle/youmightnotneed/commit/bda3c5d4e2e968b6abf1656f71aa60c88b818593) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add 13 rules using the newly broadened scope (CSS, HTML, or a Web API,
+  not just CSS/HTML): `clipboard`, `web-share`, `intersection-observer`,
+  `broadcast-channel`, `fullscreen`, `page-visibility`, `abort-controller`,
+  `structured-clone`, `speech-synthesis`, `screen-wake-lock`,
+  `web-bluetooth`, `speech-recognition`, and `line-clamp`.
+
+- [#36](https://github.com/jomaendle/youmightnotneed/pull/36) [`b748387`](https://github.com/jomaendle/youmightnotneed/commit/b748387b7d5fe82e259f173a14619688ad80695f) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add 5 rules: `resize-observer`, `focus-visible`, `compression-streams`,
+  `relative-time`, and `drag-and-drop`. Add cross-ecosystem package aliases
+  (Vue, Angular, Svelte) to 21 existing rules. Add per-feature browser
+  support data (`ResolvedFeature.support`, `combinedSupport()`) so a rule
+  can report the minimum Chrome, Edge, Firefox, and Safari version it needs.
+
+- [#36](https://github.com/jomaendle/youmightnotneed/pull/36) [`b748387`](https://github.com/jomaendle/youmightnotneed/commit/b748387b7d5fe82e259f173a14619688ad80695f) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add `number-format` rule for `Intl.NumberFormat` (currency, percent, and
+  unit formatting), replacing `numeral`, `accounting`, `currency.js`, and
+  `format-number`.
+
 ## 0.3.0
 
 ### Minor Changes
