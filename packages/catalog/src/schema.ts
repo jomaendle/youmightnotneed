@@ -24,7 +24,35 @@ export type BaselineStatus = z.infer<typeof baselineStatusSchema>;
 
 const isoDate = z
   .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "expected an ISO date, YYYY-MM-DD");
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "expected an ISO date, YYYY-MM-DD")
+  // Shape alone is not enough: "2026-99-99" matches the regex, and
+  // check-freshness then computes NaN days of age, which is never greater
+  // than the limit. A typo would make a hand-verified claim immortal.
+  //
+  // Checked arithmetically rather than with Date, because the purity test
+  // bans constructing one anywhere detect() can reach.
+  .refine((value) => {
+    const year = Number(value.slice(0, 4));
+    const month = Number(value.slice(5, 7));
+    const day = Number(value.slice(8, 10));
+    if (month < 1 || month > 12 || day < 1) return false;
+    const leap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+    const lengths = [
+      31,
+      leap ? 29 : 28,
+      31,
+      30,
+      31,
+      30,
+      31,
+      31,
+      30,
+      31,
+      30,
+      31,
+    ];
+    return day <= (lengths[month - 1] as number);
+  }, "expected a real calendar date");
 
 const slug = z
   .string()
@@ -37,6 +65,11 @@ const packageName = z
     /^(?:@[a-z0-9][a-z0-9-._]*\/)?[a-z0-9][a-z0-9-._]*$/,
     "expected a lowercase npm package name",
   );
+
+/** Rendered as a link on every surface, so nothing but https gets in. */
+const httpsUrl = z
+  .url()
+  .refine((value) => value.startsWith("https://"), "expected an https URL");
 
 /**
  * Escape hatch for features that web-features has no ID for yet. Carries the
@@ -71,7 +104,19 @@ export const ruleSchema = z
      * Call those out in `agent.unless` instead. Empty only when
      * `manualBaseline` is supplied.
      */
-    featureIds: z.array(z.string().min(1)),
+    featureIds: z
+      .array(
+        z
+          .string()
+          .regex(
+            /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+            "expected a lowercase web-features ID",
+          ),
+      )
+      .refine(
+        (ids) => new Set(ids).size === ids.length,
+        "a feature may only be listed once",
+      ),
 
     /** The native approach, one line. */
     native: z.string().min(1),
@@ -82,9 +127,9 @@ export const ruleSchema = z
       /** Copy-pasteable CSS, HTML, or JavaScript. */
       snippet: z.string().min(1),
       /** A live demo or a post that walks through it. */
-      demoUrl: z.url().optional(),
+      demoUrl: httpsUrl.optional(),
       /** The MDN reference page for the native feature. */
-      mdnUrl: z.url().optional(),
+      mdnUrl: httpsUrl.optional(),
     }),
 
     /** Terse projection for LLM surfaces. Budget roughly 200 tokens. */
@@ -102,6 +147,16 @@ export const ruleSchema = z
       snippet: z.string().min(1),
     }),
 
+    /**
+     * IDs of GoogleChrome/modern-web-guidance guides that cover the
+     * implementation in depth. Their guides are keyed by use case, ours by
+     * package name, so this is the hand-off from "which dependency can go" to
+     * "how to build the thing properly". IDs only: the category and the URL
+     * are resolved from the committed snapshot in guides.ts, so a guide that
+     * is renamed upstream fails a test instead of shipping as a dead link.
+     */
+    guides: z.array(slug).optional(),
+
     manualBaseline: manualBaselineSchema.optional(),
   })
   .superRefine((rule, ctx) => {
@@ -111,6 +166,17 @@ export const ruleSchema = z
         path: ["featureIds"],
         message:
           "a rule needs at least one web-features ID, or an explicit manualBaseline with a verifiedOn date",
+      });
+    }
+    // resolveBaseline() only consults manualBaseline when featureIds is empty,
+    // so carrying both silently discards the hand-verified override while
+    // check-freshness keeps ageing its verifiedOn date.
+    if (rule.featureIds.length > 0 && rule.manualBaseline) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["manualBaseline"],
+        message:
+          "a manualBaseline is only read when featureIds is empty. Drop one or the other.",
       });
     }
   });

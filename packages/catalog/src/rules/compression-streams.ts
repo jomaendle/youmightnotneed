@@ -20,7 +20,7 @@ const bytes = await compressed.arrayBuffer();`,
   agent: {
     when: "compressing or decompressing bytes with gzip or deflate before sending or storing them",
     unless: [
-      "You need brotli. Only the newest browser versions expose it, so a library is still the safer choice for that format today.",
+      "You need brotli. CompressionStream takes gzip, deflate and deflate-raw and nothing else, so brotli is a library either way.",
       "You need lz-string's specific format, such as its base64 or UTF-16 encodings meant for squeezing compressed data into localStorage or a URL. CompressionStream only speaks gzip, deflate, and raw deflate.",
       "You need synchronous compression of a small string with no stream setup. CompressionStream is stream-based, so a few lines of glue code are still required at the call site.",
     ],

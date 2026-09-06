@@ -15,6 +15,18 @@ export interface ResolvedFeature {
   spec: string | null;
   /** Minimum version each tracked browser needs. Null means no data (commonly: never shipped there). */
   support: Record<string, string | null>;
+  /**
+   * Set only when web-features publishes no aggregate support for the feature,
+   * which happens when one small part of it has not shipped anywhere. `key` is
+   * the compat key standing in for the feature and `support` is that key's own
+   * versions. It describes a part, so never show it without naming the part:
+   * an empty `support` above plus this filled in means "the feature as a whole
+   * has no published versions, but this piece of it has these".
+   */
+  partialSupport: {
+    key: string;
+    support: Record<string, string | null>;
+  } | null;
 }
 
 export interface BaselineInfo {
@@ -103,7 +115,12 @@ function sinceDate(
  * `unknown`, which is where this is meant to be caught.
  */
 export function resolveFeature(id: string): ResolvedFeature {
-  const entry = baselineSnapshot.features[id];
+  // Object.hasOwn, not a bare index: the snapshot is a plain object, so an ID
+  // of "constructor" would otherwise resolve to Object and badge the rule
+  // "limited availability" with a fabricated feature name.
+  const entry = Object.hasOwn(baselineSnapshot.features, id)
+    ? baselineSnapshot.features[id]
+    : undefined;
   if (!entry) {
     return {
       id,
@@ -112,6 +129,7 @@ export function resolveFeature(id: string): ResolvedFeature {
       since: null,
       spec: null,
       support: {},
+      partialSupport: null,
     };
   }
   const status = toStatus(entry.baseline);
@@ -122,6 +140,7 @@ export function resolveFeature(id: string): ResolvedFeature {
     since: sinceDate(status, entry),
     spec: entry.spec,
     support: entry.support,
+    partialSupport: entry.partialSupport,
   };
 }
 
@@ -172,6 +191,31 @@ export function combinedSupport(
     );
   }
   return result;
+}
+
+/**
+ * True when a support map names no version for any tracked browser. That is
+ * two different situations wearing the same face: the feature shipped nowhere,
+ * or web-features publishes no aggregate for it. A caller that renders one row
+ * per browser has to tell them apart, or a dash reads as "nobody has this".
+ */
+export function hasNoVersions(support: Record<string, string | null>): boolean {
+  return TRACKED_BROWSERS.every(
+    (browser) => (support[browser] ?? null) === null,
+  );
+}
+
+/**
+ * The features whose versions are missing because web-features publishes no
+ * aggregate, each with the part standing in for it. Empty for the usual case
+ * where every feature has a real support row.
+ */
+export function unpublishedSupport(
+  features: readonly ResolvedFeature[],
+): ResolvedFeature[] {
+  return features.filter(
+    (feature) => hasNoVersions(feature.support) && feature.partialSupport,
+  );
 }
 
 /**

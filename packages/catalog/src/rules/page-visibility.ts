@@ -25,4 +25,8 @@ export const pageVisibility: Rule = {
     ],
     snippet: `document.addEventListener("visibilitychange", () => { ... });`,
   },
+  guides: [
+    "detect-initial-visibility-state",
+    "calculate-total-foreground-time",
+  ],
 };

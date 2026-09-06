@@ -17,6 +17,13 @@ Do not relitigate these. If one looks wrong, say so in a sentence and carry on.
 - **Baseline status is derived, never hardcoded.** Rules store `web-features`
   IDs. `scripts/refresh-baseline.ts` commits a snapshot. A rule reports its
   least-supported required feature.
+- **No browser version is ever written by hand.** Not the tier, not the
+  numbers in prose. A rule writes `{{safari:api.Crypto.randomUUID}}` and
+  `scripts/refresh-support.ts` resolves it from `web-features` or from MDN's
+  browser-compat-data. A token with no source fails the refresh, a committed
+  number that no longer matches its source fails `check:freshness`, and a
+  literal `Safari 15.4` anywhere in a rule file fails the tests. This exists
+  because a review found seven rules naming a version the source contradicts.
 - **Findings are conditional, never instructions.** "If you're using X for Y,
   Z covers that case", not "delete X". Sizes are "up to", never "you will
   save". Tests enforce the phrasing.
@@ -33,11 +40,24 @@ packages/catalog   the rules, schema, baseline resolution, detect()
 packages/cli       npx youmightnotneed
 packages/mcp       npx youmightnotneed-mcp
 apps/web           youmightnotneed.dev
+skills             the distributable agent skill, for people using the catalog
 scripts            snapshot generators, freshness check
 ```
 
-`packages/catalog/src/generated/` is written by the refresh scripts. Do not
-edit it by hand, and do run `pnpm refresh` rather than patching numbers.
+There are two kinds of skill here and they point in opposite directions.
+`.claude/skills/` is for working *on* this repo: `adding-a-rule` and
+`writing-voice`, never published. `skills/youmightnotneed/` is for agents
+*using* the catalog in someone else's codebase, installed through
+`.claude-plugin/`. A change to the rules affects the second one, so
+`pnpm refresh:skill` regenerates its catalog reference and the freshness
+check fails if it drifts. Do not put counts or rule names in its hand-written
+SKILL.md: the generated `references/catalog.md` carries those, and the
+freshness check rejects a hardcoded count.
+
+`packages/catalog/src/generated/` (Baseline, sizes, guide index, support
+claims) and `skills/youmightnotneed/references/catalog.md` are written by the
+refresh scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
+patching numbers.
 
 ## Conventions
 
@@ -49,6 +69,29 @@ edit it by hand, and do run `pnpm refresh` rather than patching numbers.
   and the README, load `.claude/skills/writing-voice/SKILL.md`. No em dashes.
 - `pnpm verify` runs lint, typecheck, tests and the freshness check. Run it
   before you call anything done.
+
+## Guides are references, never copies
+
+A rule may carry `guides`, which are IDs from GoogleChrome/modern-web-guidance
+(Apache-2.0). Their guides are keyed by use case, ours by package name, so
+they cover the implementation this catalog deliberately leaves out. Store IDs
+only. `scripts/refresh-guides.ts` snapshots their index from the published npm
+package and the freshness check rejects an ID that no longer exists. Do not
+vendor their prose: the catalog is a lookup table, not a documentation mirror.
+
+Read a guide before linking it. A plausible ID is not evidence: a review found
+three links wrong, each one pointing at an adjacent topic rather than the
+rule's own. `.claude/skills/adding-a-rule/SKILL.md` has the method and the
+three worked examples. Most rules have no guide, which is fine.
+
+## Categories
+
+Every rule carries a `category` from `packages/catalog/src/categories.ts`,
+which drives the sidebar and the filters. It is picked by hand like `title`,
+and the closed union means a typo fails to type-check rather than creating a
+silent ninth group. Match what comparable rules already use: Web Crypto and
+data handling sit under `async-data`, anything `Intl` under `formatting`,
+focus and overlays under `forms`.
 
 ## The `unless` field
 

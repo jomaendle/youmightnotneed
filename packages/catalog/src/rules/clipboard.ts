@@ -12,6 +12,7 @@ export const clipboard: Rule = {
     "vue-clipboard3",
     "vue-clipboard2",
     "ngx-clipboard",
+    "clipboard-polyfill",
   ],
   featureIds: ["async-clipboard"],
   native: "navigator.clipboard.writeText()",
@@ -27,7 +28,8 @@ export const clipboard: Rule = {
   agent: {
     when: "copying text to the clipboard on a button click or similar user action",
     unless: [
-      "You need to support Firefox before version 127 or Safari before 13.1, where this API landed later than Chrome.",
+      "You support Firefox below {{firefox:api.Clipboard.writeText}} or Safari below {{safari:api.Clipboard.writeText}}, where writeText landed later than in Chrome.",
+      "You read from the clipboard as well as writing to it. navigator.clipboard.read() and ClipboardItem arrived years after writeText and are still the part with the thinner support.",
       "You need to read arbitrary clipboard formats rather than plain text. Reading needs a permission prompt in some browsers and is more restricted than writing.",
       "You're running without focus or without a secure origin (HTTPS). The API rejects in both cases, so you still need a fallback path for that error.",
     ],

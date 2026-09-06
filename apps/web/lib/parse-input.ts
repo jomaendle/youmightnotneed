@@ -79,7 +79,16 @@ export function parsePackageJson(input: string): ParseResult {
   const hasBlock = DEPENDENCY_BLOCKS.some(
     (key) => typeof record[key] === "object" && record[key] !== null,
   );
-  if (hasBlock) return { ok: true, pkg: record as PackageJsonLike };
+  if (hasBlock) {
+    // `name` is whatever the file says. A number or an object here reached
+    // encodeReport and threw on .trim(), which is a server error rather than
+    // the message ParseResult exists to return.
+    const pkg = record as PackageJsonLike;
+    return {
+      ok: true,
+      pkg: typeof record.name === "string" ? pkg : { ...pkg, name: undefined },
+    };
+  }
 
   // A bare dependency map is a reasonable thing to paste, so accept it.
   if (looksLikeDependencyMap(record)) {
@@ -108,7 +117,23 @@ export interface RepoRef {
   path?: string | undefined;
 }
 
-const TRAILING_SLASHES = /\/+$/;
+/**
+ * The longest thing anyone legitimately pastes here is a GitHub URL. The repo
+ * field reaches the server with no cap of its own, so give it one.
+ */
+const MAX_REPO_INPUT = 2000;
+
+/**
+ * Trailing slashes, trimmed without a regex. `/\/+$/` backtracks
+ * quadratically on a long run of slashes that does not end in one: 60,000
+ * characters took 2.8 seconds of server CPU, and this field is reached before
+ * any validation.
+ */
+function trimTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value.charCodeAt(end - 1) === 47) end -= 1;
+  return value.slice(0, end);
+}
 const GIT_SUFFIX = /\.git$/;
 
 /**
@@ -151,12 +176,13 @@ function fromGitHubUrl(input: string): RepoRef | null {
 
 /** Pulls owner/repo out of a GitHub URL, or an "owner/repo" shorthand. */
 export function parseRepoInput(input: string): RepoRef | null {
+  // Bound it before any pattern touches it. Nothing legitimate is this long,
+  // and the field arrives from a form with no cap of its own.
+  if (input.length > MAX_REPO_INPUT) return null;
+
   // Order matters: strip the trailing slash first, or a URL ending `.git/`
   // keeps its `.git` and the repo name is wrong.
-  const trimmed = input
-    .trim()
-    .replace(TRAILING_SLASHES, "")
-    .replace(GIT_SUFFIX, "");
+  const trimmed = trimTrailingSlashes(input.trim()).replace(GIT_SUFFIX, "");
   if (trimmed.length === 0) return null;
 
   // Try the URL form first. `github.com/vercel` looks like a shorthand but is

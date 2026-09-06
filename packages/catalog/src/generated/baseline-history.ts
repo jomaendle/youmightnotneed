@@ -22,13 +22,13 @@ export const baselineHistory: BaselineHistory = {
   "entries": [
     {
       "month": "2026-09",
-      "generatedOn": "2026-09-05",
+      "generatedOn": "2026-09-06",
       "webFeaturesVersion": "3.36.0",
-      "ruleCount": 44,
+      "ruleCount": 56,
       "tally": {
-        "widely": 22,
-        "newly": 9,
-        "limited": 13,
+        "widely": 32,
+        "newly": 12,
+        "limited": 12,
         "unknown": 0
       }
     }

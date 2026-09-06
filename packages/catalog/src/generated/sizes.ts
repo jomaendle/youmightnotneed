@@ -20,7 +20,7 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-09-04",
+  "fetchedOn": "2026-09-06",
   "source": "bundlephobia.com",
   "sizes": {
     "@capacitor-community/bluetooth-le": {
@@ -58,15 +58,25 @@ export const packageSizes: SizeSnapshot = {
       "raw": 8146,
       "version": "3.4.0"
     },
+    "@lukeed/uuid": {
+      "gzip": 336,
+      "raw": 455,
+      "version": "2.0.1"
+    },
     "@mui/x-date-pickers": {
-      "gzip": 58097,
-      "raw": 206962,
-      "version": "9.12.0"
+      "gzip": 58100,
+      "raw": 206963,
+      "version": "9.13.0"
     },
     "@ng-select/ng-select": {
       "gzip": 33247,
       "raw": 155163,
       "version": "24.1.1"
+    },
+    "@oddbird/popover-polyfill": {
+      "gzip": 3737,
+      "raw": 11070,
+      "version": "0.7.2"
     },
     "@popperjs/core": {
       "gzip": 14468,
@@ -87,6 +97,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1774,
       "raw": 4562,
       "version": "8.1.5"
+    },
+    "abab": {
+      "gzip": 725,
+      "raw": 1507,
+      "version": "2.0.6"
+    },
+    "abortcontroller-polyfill": {
+      "gzip": 2865,
+      "raw": 8003,
+      "version": "1.7.8"
     },
     "accordion-js": {
       "gzip": 2010,
@@ -113,6 +133,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 2828,
       "version": "6.0.1"
     },
+    "axios": {
+      "gzip": 18926,
+      "raw": 50756,
+      "version": "1.20.0"
+    },
     "balance-text": {
       "gzip": 2297,
       "raw": 5372,
@@ -121,6 +146,11 @@ export const packageSizes: SizeSnapshot = {
     "barba.js": {
       "gzip": 4214,
       "raw": 13017,
+      "version": "1.0.0"
+    },
+    "base-64": {
+      "gzip": 887,
+      "raw": 1602,
       "version": "1.0.0"
     },
     "body-scroll-lock": {
@@ -163,6 +193,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 862,
       "version": "4.0.1"
     },
+    "clipboard-polyfill": {
+      "gzip": 2204,
+      "raw": 5374,
+      "version": "4.1.1"
+    },
     "clipboard.js": {
       "gzip": 950,
       "raw": 2084,
@@ -172,6 +207,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1045,
       "raw": 2443,
       "version": "2.1.2"
+    },
+    "clone-deep": {
+      "gzip": 1384,
+      "raw": 3699,
+      "version": "4.0.1"
     },
     "color": {
       "gzip": 8386,
@@ -193,10 +233,30 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3299,
       "version": "4.0.2"
     },
+    "cross-fetch": {
+      "gzip": 3606,
+      "raw": 10490,
+      "version": "4.1.0"
+    },
+    "crypto-hash": {
+      "gzip": 585,
+      "raw": 1050,
+      "version": "4.0.1"
+    },
+    "crypto-js": {
+      "gzip": 23374,
+      "raw": 63937,
+      "version": "4.2.0"
+    },
     "currency.js": {
       "gzip": 1068,
       "raw": 2250,
       "version": "2.0.4"
+    },
+    "dialog-polyfill": {
+      "gzip": 3928,
+      "raw": 11616,
+      "version": "0.5.6"
     },
     "element-resize-detector": {
       "gzip": 5786,
@@ -213,15 +273,35 @@ export const packageSizes: SizeSnapshot = {
       "raw": 17975,
       "version": "8.6.0"
     },
+    "event-emitter": {
+      "gzip": 1706,
+      "raw": 4438,
+      "version": "0.3.5"
+    },
+    "event-source-polyfill": {
+      "gzip": 4578,
+      "raw": 11969,
+      "version": "1.0.31"
+    },
+    "eventemitter3": {
+      "gzip": 1141,
+      "raw": 2956,
+      "version": "5.0.4"
+    },
+    "eventsource": {
+      "gzip": 3660,
+      "raw": 9928,
+      "version": "5.1.1"
+    },
+    "fast-copy": {
+      "gzip": 1628,
+      "raw": 4181,
+      "version": "4.1.1"
+    },
     "fittext.js": {
       "gzip": 337,
       "raw": 529,
       "version": "1.2.0"
-    },
-    "fitty": {
-      "gzip": 1420,
-      "raw": 3596,
-      "version": "2.4.2"
     },
     "flatpickr": {
       "gzip": 14362,
@@ -238,6 +318,21 @@ export const packageSizes: SizeSnapshot = {
       "raw": 39659,
       "version": "5.2.2"
     },
+    "focus-lock": {
+      "gzip": 3800,
+      "raw": 10089,
+      "version": "1.3.6"
+    },
+    "focus-trap": {
+      "gzip": 6603,
+      "raw": 19752,
+      "version": "8.2.2"
+    },
+    "focus-trap-react": {
+      "gzip": 8457,
+      "raw": 27262,
+      "version": "12.0.3"
+    },
     "focus-visible": {
       "gzip": 1013,
       "raw": 3020,
@@ -253,15 +348,55 @@ export const packageSizes: SizeSnapshot = {
       "raw": 185909,
       "version": "13.2.0"
     },
+    "group-array": {
+      "gzip": 3107,
+      "raw": 8177,
+      "version": "1.0.0"
+    },
+    "humanize-duration": {
+      "gzip": 6799,
+      "raw": 19112,
+      "version": "3.34.1"
+    },
+    "intersection-observer": {
+      "gzip": 3068,
+      "raw": 8917,
+      "version": "0.12.2"
+    },
+    "isomorphic-fetch": {
+      "gzip": 3541,
+      "raw": 10127,
+      "version": "3.0.0"
+    },
     "javascript-time-ago": {
       "gzip": 8948,
       "raw": 43587,
       "version": "2.6.4"
     },
+    "js-base64": {
+      "gzip": 1789,
+      "raw": 4151,
+      "version": "3.9.3"
+    },
+    "js-sha256": {
+      "gzip": 3054,
+      "raw": 7654,
+      "version": "1.0.0"
+    },
     "jump.js": {
       "gzip": 673,
       "raw": 1317,
       "version": "1.0.2"
+    },
+    "just-clone": {
+      "gzip": 438,
+      "raw": 753,
+      "version": "6.2.0"
+    },
+    "just-group-by": {
+      "gzip": 277,
+      "raw": 432,
+      "version": "2.2.0"
     },
     "keen-slider": {
       "gzip": 5878,
@@ -288,6 +423,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 9124,
       "version": "4.5.0"
     },
+    "lodash.groupby": {
+      "gzip": 4384,
+      "raw": 11514,
+      "version": "4.6.0"
+    },
     "lozad": {
       "gzip": 1293,
       "raw": 2854,
@@ -297,6 +437,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1477,
       "raw": 4839,
       "version": "1.5.0"
+    },
+    "mark.js": {
+      "gzip": 5786,
+      "raw": 16902,
+      "version": "8.11.1"
     },
     "masonry-layout": {
       "gzip": 6870,
@@ -308,6 +453,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 8834,
       "version": "0.7.0"
     },
+    "mitt": {
+      "gzip": 282,
+      "raw": 488,
+      "version": "3.0.1"
+    },
     "motion": {
       "gzip": 45560,
       "raw": 136288,
@@ -317,6 +467,26 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 23075,
       "raw": 83530,
       "version": "0.9.5"
+    },
+    "nanoevents": {
+      "gzip": 269,
+      "raw": 396,
+      "version": "10.0.0"
+    },
+    "natural-compare": {
+      "gzip": 425,
+      "raw": 638,
+      "version": "1.4.0"
+    },
+    "natural-compare-lite": {
+      "gzip": 466,
+      "raw": 711,
+      "version": "1.4.1"
+    },
+    "natural-orderby": {
+      "gzip": 1775,
+      "raw": 5037,
+      "version": "5.0.0"
     },
     "next-view-transitions": {
       "gzip": 1275,
@@ -357,11 +527,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 8517,
       "raw": 35290,
       "version": "4.0.3"
-    },
-    "no-scroll": {
-      "gzip": 517,
-      "raw": 1007,
-      "version": "2.1.1"
     },
     "nosleep.js": {
       "gzip": 6559,
@@ -413,6 +578,26 @@ export const packageSizes: SizeSnapshot = {
       "raw": 20652,
       "version": "1.16.1"
     },
+    "pretty-ms": {
+      "gzip": 1234,
+      "raw": 2739,
+      "version": "9.3.1"
+    },
+    "qs": {
+      "gzip": 12882,
+      "raw": 41431,
+      "version": "6.16.0"
+    },
+    "query-string": {
+      "gzip": 2987,
+      "raw": 8528,
+      "version": "9.5.1"
+    },
+    "querystringify": {
+      "gzip": 479,
+      "raw": 771,
+      "version": "2.2.0"
+    },
     "re-resizable": {
       "gzip": 4998,
       "raw": 16536,
@@ -434,9 +619,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "5.0.2"
     },
     "react-aspect-ratio": {
-      "gzip": 823,
-      "raw": 2148,
-      "version": "1.1.9"
+      "gzip": 553,
+      "raw": 928,
+      "version": "2.0.1"
     },
     "react-autosize-textarea": {
       "gzip": 2984,
@@ -493,15 +678,30 @@ export const packageSizes: SizeSnapshot = {
       "raw": 52175,
       "version": "4.0.11"
     },
+    "react-focus-lock": {
+      "gzip": 7990,
+      "raw": 22752,
+      "version": "2.13.7"
+    },
     "react-full-screen": {
       "gzip": 1014,
       "raw": 2921,
       "version": "1.1.1"
     },
+    "react-highlight-words": {
+      "gzip": 1785,
+      "raw": 4976,
+      "version": "0.21.0"
+    },
+    "react-highlighter": {
+      "gzip": 3817,
+      "raw": 10317,
+      "version": "0.4.3"
+    },
     "react-in-viewport": {
-      "gzip": 1638,
-      "raw": 4199,
-      "version": "1.0.0-beta.9"
+      "gzip": 2459,
+      "raw": 6888,
+      "version": "1.0.0-beta.10"
     },
     "react-intersection-observer": {
       "gzip": 2074,
@@ -553,11 +753,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 5454,
       "version": "2.3.0"
     },
-    "react-resizable-panels": {
-      "gzip": 11141,
-      "raw": 34377,
-      "version": "4.12.3"
-    },
     "react-resize-detector": {
       "gzip": 1483,
       "raw": 3228,
@@ -572,11 +767,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 7438,
       "raw": 30421,
       "version": "1.9.3"
-    },
-    "react-scrolllock": {
-      "gzip": 2600,
-      "raw": 9930,
-      "version": "5.0.1"
     },
     "react-select": {
       "gzip": 29804,
@@ -613,11 +803,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 11015,
       "version": "4.0.1"
     },
-    "react-split-pane": {
-      "gzip": 3893,
-      "raw": 10021,
-      "version": "3.2.0"
-    },
     "react-spring": {
       "gzip": 19978,
       "raw": 52063,
@@ -637,11 +822,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1605,
       "raw": 3579,
       "version": "8.5.9"
-    },
-    "react-textfit": {
-      "gzip": 3352,
-      "raw": 9084,
-      "version": "1.1.1"
     },
     "react-timeago": {
       "gzip": 1061,
@@ -688,6 +868,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 2166,
       "version": "1.1.1"
     },
+    "redaxios": {
+      "gzip": 1016,
+      "raw": 2038,
+      "version": "0.5.1"
+    },
     "rellax": {
       "gzip": 2473,
       "raw": 7260,
@@ -712,11 +897,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 3620,
       "raw": 9829,
       "version": "2.0.13"
-    },
-    "scroll-lock": {
-      "gzip": 3328,
-      "raw": 12636,
-      "version": "2.1.5"
     },
     "scrollmagic": {
       "gzip": 7645,
@@ -768,11 +948,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 5746,
       "version": "2.0.8"
     },
-    "splitpanes": {
-      "gzip": 3887,
-      "raw": 11298,
-      "version": "4.1.2"
-    },
     "sticky-js": {
       "gzip": 1917,
       "raw": 6977,
@@ -787,6 +962,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1992,
       "raw": 5446,
       "version": "1.1.1-strict"
+    },
+    "string-natural-compare": {
+      "gzip": 684,
+      "raw": 1300,
+      "version": "3.0.1"
+    },
+    "superagent": {
+      "gzip": 18749,
+      "raw": 59333,
+      "version": "10.3.0"
     },
     "svelte-virtual-list": {
       "gzip": 150,
@@ -803,15 +988,15 @@ export const packageSizes: SizeSnapshot = {
       "raw": 26552,
       "version": "4.10.0"
     },
-    "textfit": {
-      "gzip": 1474,
-      "raw": 3448,
-      "version": "2.4.0"
-    },
     "timeago.js": {
       "gzip": 1037,
       "raw": 1830,
       "version": "4.0.2"
+    },
+    "tiny-emitter": {
+      "gzip": 427,
+      "raw": 759,
+      "version": "2.1.0"
     },
     "tinycolor2": {
       "gzip": 5353,
@@ -827,6 +1012,31 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 17777,
       "raw": 55175,
       "version": "2.6.2"
+    },
+    "unfetch": {
+      "gzip": 555,
+      "raw": 1113,
+      "version": "5.0.0"
+    },
+    "url-parse": {
+      "gzip": 2516,
+      "raw": 5997,
+      "version": "1.5.10"
+    },
+    "uuid": {
+      "gzip": 3842,
+      "raw": 10213,
+      "version": "14.0.2"
+    },
+    "uuid-random": {
+      "gzip": 663,
+      "raw": 1304,
+      "version": "1.3.2"
+    },
+    "uuidv4": {
+      "gzip": 566,
+      "raw": 1245,
+      "version": "6.2.13"
     },
     "v-lazy-image": {
       "gzip": 936,
@@ -872,6 +1082,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 7151,
       "raw": 21718,
       "version": "4.5.5"
+    },
+    "vue-focus-lock": {
+      "gzip": 6086,
+      "raw": 19473,
+      "version": "2.0.7"
     },
     "vue-fullscreen": {
       "gzip": 3012,
@@ -957,6 +1172,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 8355,
       "raw": 23861,
       "version": "0.17.0"
+    },
+    "whatwg-fetch": {
+      "gzip": 3512,
+      "raw": 10057,
+      "version": "3.6.20"
+    },
+    "wicg-inert": {
+      "gzip": 2531,
+      "raw": 8367,
+      "version": "3.1.3"
     },
     "wow.js": {
       "gzip": 2739,

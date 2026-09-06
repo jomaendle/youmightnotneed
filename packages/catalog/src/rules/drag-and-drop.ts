@@ -10,13 +10,26 @@ export const dragAndDrop: Rule = {
   human: {
     explainer:
       "Sortable.js tracks pointer position, computes where a dragged item would land, and reorders the DOM to match, all in its own event handling. The native drag-and-drop API does the same core job: mark an element draggable, listen for dragstart, dragover, and drop, and move it yourself in the drop handler. It gives you the events and the ghost image; the reordering logic is still yours to write.",
-    snippet: `el.addEventListener("dragstart", (e) => {
-  e.dataTransfer.setData("text/plain", el.dataset.id);
-});
-list.addEventListener("drop", (e) => {
-  const id = e.dataTransfer.getData("text/plain");
-  // move the item with this id to the drop position
-});`,
+    snippet: `<!-- Without draggable, dragstart never fires. -->
+<li draggable="true" data-id="a1">Item</li>
+
+<script>
+  el.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", el.dataset.id);
+  });
+
+  // Without preventDefault here, the element is not a drop target and the
+  // drop event below never fires at all. This is the step people miss.
+  list.addEventListener("dragover", (e) => {
+    e.preventDefault();
+  });
+
+  list.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("text/plain");
+    // move the item with this id to the drop position
+  });
+</script>`,
     mdnUrl:
       "https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API",
   },
@@ -28,7 +41,10 @@ list.addEventListener("drop", (e) => {
       "You want the dataTransfer API's plain-text-and-files model to also carry rich in-memory objects between drag and drop without round-tripping through a serialized string.",
       "You need accessible, keyboard-operable reordering. The native drag events are pointer-only; keyboard support is separate work either way.",
     ],
-    snippet:
-      'el.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/plain", id));',
+    snippet: `<li draggable="true">Item</li>
+el.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/plain", id));
+// dragover must preventDefault or drop never fires.
+list.addEventListener("dragover", (e) => e.preventDefault());
+list.addEventListener("drop", (e) => { e.preventDefault(); /* reorder */ });`,
   },
 };

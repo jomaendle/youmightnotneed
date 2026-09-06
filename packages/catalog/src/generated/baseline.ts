@@ -19,6 +19,16 @@ export interface BaselineSnapshotEntry {
    * because the feature never shipped there).
    */
   support: Record<string, string | null>;
+  /**
+   * Set only when web-features publishes no aggregate support for the feature.
+   * `key` names one of its BCD compat keys and `support` is that key's own
+   * versions, straight from web-features. It describes a part of the feature,
+   * never the whole, so it is shown with the part named next to it.
+   */
+  partialSupport: {
+    key: string;
+    support: Record<string, string | null>;
+  } | null;
 }
 
 export interface BaselineSnapshot {
@@ -30,7 +40,7 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-05",
+  "generatedOn": "2026-09-06",
   "webFeaturesVersion": "3.36.0",
   "features": {
     "aborting": {
@@ -44,7 +54,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "16",
         "firefox": "57",
         "safari": "12.1"
-      }
+      },
+      "partialSupport": null
     },
     "anchor-positioning": {
       "name": "Anchor positioning",
@@ -57,7 +68,30 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": null,
         "firefox": null,
         "safari": null
+      },
+      "partialSupport": {
+        "key": "css.properties.anchor-name",
+        "support": {
+          "chrome": "125",
+          "edge": "125",
+          "firefox": "147",
+          "safari": "26"
+        }
       }
+    },
+    "array-group": {
+      "name": "Array grouping",
+      "baseline": "low",
+      "lowDate": "2024-03-05",
+      "highDate": null,
+      "spec": "https://tc39.es/ecma262/multipage/abstract-operations.html#sec-groupby",
+      "support": {
+        "chrome": "117",
+        "edge": "117",
+        "firefox": "119",
+        "safari": "17.4"
+      },
+      "partialSupport": null
     },
     "aspect-ratio": {
       "name": "aspect-ratio",
@@ -70,7 +104,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "88",
         "firefox": "89",
         "safari": "15"
-      }
+      },
+      "partialSupport": null
     },
     "async-clipboard": {
       "name": "Async clipboard",
@@ -83,7 +118,22 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "127",
         "safari": "13.1"
-      }
+      },
+      "partialSupport": null
+    },
+    "base64encodedecode": {
+      "name": "Base64 encoding and decoding",
+      "baseline": "high",
+      "lowDate": "2016-09-20",
+      "highDate": "2019-03-20",
+      "spec": "https://html.spec.whatwg.org/multipage/webappapis.html#atob",
+      "support": {
+        "chrome": "30",
+        "edge": "12",
+        "firefox": "4",
+        "safari": "10"
+      },
+      "partialSupport": null
     },
     "broadcast-channel": {
       "name": "BroadcastChannel",
@@ -96,7 +146,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "38",
         "safari": "15.4"
-      }
+      },
+      "partialSupport": null
     },
     "calc-size": {
       "name": "calc-size()",
@@ -109,7 +160,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "129",
         "firefox": null,
         "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "color-mix": {
       "name": "color-mix()",
@@ -122,7 +174,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "111",
         "firefox": "113",
         "safari": "16.2"
-      }
+      },
+      "partialSupport": null
     },
     "compression-streams": {
       "name": "Compression streams",
@@ -135,7 +188,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "80",
         "firefox": "113",
         "safari": "16.4"
-      }
+      },
+      "partialSupport": null
     },
     "container-queries": {
       "name": "Container queries",
@@ -148,7 +202,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "105",
         "firefox": "110",
         "safari": "16"
-      }
+      },
+      "partialSupport": null
     },
     "content-visibility": {
       "name": "content-visibility",
@@ -161,7 +216,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "108",
         "firefox": "130",
         "safari": "26"
-      }
+      },
+      "partialSupport": null
     },
     "customizable-select": {
       "name": "Customizable <select>",
@@ -174,7 +230,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "135",
         "firefox": null,
         "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "details-name": {
       "name": "Mutually exclusive <details> elements",
@@ -187,7 +244,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "120",
         "firefox": "130",
         "safari": "17.2"
-      }
+      },
+      "partialSupport": null
     },
     "dialog": {
       "name": "<dialog>",
@@ -200,7 +258,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "98",
         "safari": "15.4"
-      }
+      },
+      "partialSupport": null
     },
     "dialog-closedby": {
       "name": "<dialog closedby>",
@@ -213,7 +272,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "134",
         "firefox": "141",
         "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "draganddrop": {
       "name": "Drag and Drop",
@@ -226,7 +286,22 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "3.5",
         "safari": "4"
-      }
+      },
+      "partialSupport": null
+    },
+    "fetch": {
+      "name": "Fetch",
+      "baseline": "high",
+      "lowDate": "2017-03-27",
+      "highDate": "2019-09-27",
+      "spec": "https://fetch.spec.whatwg.org/",
+      "support": {
+        "chrome": "42",
+        "edge": "14",
+        "firefox": "39",
+        "safari": "10.1"
+      },
+      "partialSupport": null
     },
     "field-sizing": {
       "name": "field-sizing",
@@ -239,7 +314,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "123",
         "firefox": "152",
         "safari": "26.2"
-      }
+      },
+      "partialSupport": null
     },
     "focus-visible": {
       "name": ":focus-visible",
@@ -252,7 +328,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "86",
         "firefox": "85",
         "safari": "15.4"
-      }
+      },
+      "partialSupport": null
     },
     "fullscreen": {
       "name": "Fullscreen API",
@@ -265,7 +342,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "64",
         "safari": "16.4"
-      }
+      },
+      "partialSupport": null
     },
     "has": {
       "name": ":has()",
@@ -278,7 +356,36 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "105",
         "firefox": "121",
         "safari": "15.4"
-      }
+      },
+      "partialSupport": null
+    },
+    "highlight": {
+      "name": "Custom highlights",
+      "baseline": "low",
+      "lowDate": "2026-03-24",
+      "highDate": null,
+      "spec": "https://drafts.csswg.org/css-highlight-api-1/",
+      "support": {
+        "chrome": "105",
+        "edge": "105",
+        "firefox": "149",
+        "safari": "17.2"
+      },
+      "partialSupport": null
+    },
+    "inert": {
+      "name": "inert",
+      "baseline": "high",
+      "lowDate": "2023-04-11",
+      "highDate": "2025-10-11",
+      "spec": "https://html.spec.whatwg.org/multipage/interaction.html#inert-subtrees",
+      "support": {
+        "chrome": "102",
+        "edge": "102",
+        "firefox": "112",
+        "safari": "15.5"
+      },
+      "partialSupport": null
     },
     "input-date-time": {
       "name": "Date and time <input> types",
@@ -291,7 +398,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "57",
         "safari": "14.1"
-      }
+      },
+      "partialSupport": null
     },
     "interpolate-size": {
       "name": "interpolate-size",
@@ -304,7 +412,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "129",
         "firefox": null,
         "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "intersection-observer": {
       "name": "Intersection observer",
@@ -317,7 +426,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "16",
         "firefox": "55",
         "safari": "12.1"
-      }
+      },
+      "partialSupport": null
     },
     "intl": {
       "name": "Intl",
@@ -330,7 +440,22 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "29",
         "safari": "10"
-      }
+      },
+      "partialSupport": null
+    },
+    "intl-duration-format": {
+      "name": "Intl.DurationFormat",
+      "baseline": "low",
+      "lowDate": "2025-03-04",
+      "highDate": null,
+      "spec": "https://tc39.es/proposal-intl-duration-format/",
+      "support": {
+        "chrome": "129",
+        "edge": "129",
+        "firefox": "136",
+        "safari": "16.4"
+      },
+      "partialSupport": null
     },
     "intl-relative-time-format": {
       "name": "Intl.RelativeTimeFormat",
@@ -343,7 +468,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "76",
         "safari": "14"
-      }
+      },
+      "partialSupport": null
     },
     "invoker-commands": {
       "name": "Invoker commands",
@@ -356,7 +482,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "135",
         "firefox": "144",
         "safari": "26.2"
-      }
+      },
+      "partialSupport": null
     },
     "light-dark": {
       "name": "light-dark()",
@@ -369,7 +496,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "123",
         "firefox": "120",
         "safari": "17.5"
-      }
+      },
+      "partialSupport": null
     },
     "loading-lazy": {
       "name": "Lazy-loading images and iframes",
@@ -382,7 +510,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "121",
         "safari": "16.4"
-      }
+      },
+      "partialSupport": null
     },
     "masonry": {
       "name": "Masonry",
@@ -395,7 +524,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": null,
         "firefox": null,
         "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "min-max-clamp": {
       "name": "min(), max(), and clamp()",
@@ -408,7 +538,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "75",
         "safari": "13.1"
-      }
+      },
+      "partialSupport": null
     },
     "oklab": {
       "name": "Oklab and OkLCh",
@@ -421,20 +552,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "111",
         "firefox": "113",
         "safari": "15.4"
-      }
-    },
-    "overscroll-behavior": {
-      "name": "overscroll-behavior",
-      "baseline": false,
-      "lowDate": null,
-      "highDate": null,
-      "spec": "https://drafts.csswg.org/css-overscroll-1/",
-      "support": {
-        "chrome": "144",
-        "edge": "144",
-        "firefox": "150",
-        "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "page-visibility": {
       "name": "Page visibility",
@@ -447,7 +566,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "18",
         "safari": "7"
-      }
+      },
+      "partialSupport": null
     },
     "popover": {
       "name": "Popover",
@@ -460,7 +580,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "116",
         "firefox": "125",
         "safari": "17"
-      }
+      },
+      "partialSupport": null
     },
     "resize": {
       "name": "resize (CSS property)",
@@ -473,7 +594,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "5",
         "safari": "4"
-      }
+      },
+      "partialSupport": null
     },
     "resize-observer": {
       "name": "Resize observer",
@@ -486,7 +608,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "69",
         "safari": "13.1"
-      }
+      },
+      "partialSupport": null
     },
     "screen-wake-lock": {
       "name": "Screen wake lock",
@@ -499,7 +622,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "84",
         "firefox": "126",
         "safari": "16.4"
-      }
+      },
+      "partialSupport": null
     },
     "scroll-behavior": {
       "name": "scroll-behavior",
@@ -512,7 +636,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "36",
         "safari": "15.4"
-      }
+      },
+      "partialSupport": null
     },
     "scroll-buttons": {
       "name": "::scroll-button",
@@ -525,6 +650,15 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": null,
         "firefox": null,
         "safari": null
+      },
+      "partialSupport": {
+        "key": "css.selectors.scroll-button",
+        "support": {
+          "chrome": "135",
+          "edge": "135",
+          "firefox": null,
+          "safari": null
+        }
       }
     },
     "scroll-driven-animations": {
@@ -538,7 +672,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "115",
         "firefox": null,
         "safari": "26"
-      }
+      },
+      "partialSupport": null
     },
     "scroll-markers": {
       "name": "Scroll markers",
@@ -551,7 +686,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "135",
         "firefox": null,
         "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "scroll-snap": {
       "name": "Scroll snap",
@@ -564,7 +700,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "68",
         "safari": "11"
-      }
+      },
+      "partialSupport": null
     },
     "scrollbar-color": {
       "name": "scrollbar-color",
@@ -577,7 +714,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "121",
         "firefox": "64",
         "safari": "26.2"
-      }
+      },
+      "partialSupport": null
     },
     "scrollbar-gutter": {
       "name": "scrollbar-gutter",
@@ -590,7 +728,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "94",
         "firefox": "97",
         "safari": "18.2"
-      }
+      },
+      "partialSupport": null
     },
     "scrollbar-width": {
       "name": "scrollbar-width",
@@ -603,7 +742,22 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "121",
         "firefox": "64",
         "safari": "18.2"
-      }
+      },
+      "partialSupport": null
+    },
+    "server-sent-events": {
+      "name": "Server-sent events",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events",
+      "support": {
+        "chrome": "6",
+        "edge": "79",
+        "firefox": "6",
+        "safari": "5"
+      },
+      "partialSupport": null
     },
     "share": {
       "name": "navigator.share()",
@@ -616,7 +770,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "93",
         "firefox": null,
         "safari": "12.1"
-      }
+      },
+      "partialSupport": null
     },
     "speech-recognition": {
       "name": "Speech recognition",
@@ -629,7 +784,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "139",
         "firefox": null,
         "safari": null
-      }
+      },
+      "partialSupport": null
     },
     "speech-synthesis": {
       "name": "Speech synthesis",
@@ -642,7 +798,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "14",
         "firefox": "49",
         "safari": "7"
-      }
+      },
+      "partialSupport": null
     },
     "starting-style": {
       "name": "@starting-style",
@@ -655,7 +812,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "117",
         "firefox": "129",
         "safari": "17.5"
-      }
+      },
+      "partialSupport": null
     },
     "sticky-positioning": {
       "name": "Sticky positioning",
@@ -668,7 +826,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "16",
         "firefox": "59",
         "safari": "13"
-      }
+      },
+      "partialSupport": null
     },
     "structured-clone": {
       "name": "structuredClone()",
@@ -681,7 +840,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "98",
         "firefox": "94",
         "safari": "15.4"
-      }
+      },
+      "partialSupport": null
     },
     "text-box": {
       "name": "text-box",
@@ -694,7 +854,22 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "133",
         "firefox": null,
         "safari": "18.2"
-      }
+      },
+      "partialSupport": null
+    },
+    "text-encoding": {
+      "name": "Text encoding and decoding",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://encoding.spec.whatwg.org/",
+      "support": {
+        "chrome": "38",
+        "edge": "79",
+        "firefox": "19",
+        "safari": "10.1"
+      },
+      "partialSupport": null
     },
     "text-wrap-balance": {
       "name": "text-wrap: balance",
@@ -707,7 +882,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "114",
         "firefox": "121",
         "safari": "17.5"
-      }
+      },
+      "partialSupport": null
     },
     "transition-behavior": {
       "name": "transition-behavior",
@@ -720,7 +896,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "117",
         "firefox": "129",
         "safari": "17.4"
-      }
+      },
+      "partialSupport": null
     },
     "view-transitions": {
       "name": "View transitions",
@@ -733,7 +910,8 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "111",
         "firefox": "144",
         "safari": "18"
-      }
+      },
+      "partialSupport": null
     },
     "web-bluetooth": {
       "name": "Web Bluetooth",
@@ -746,7 +924,22 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": null,
         "safari": null
-      }
+      },
+      "partialSupport": null
+    },
+    "web-cryptography": {
+      "name": "Web Cryptography",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://w3c.github.io/webcrypto/",
+      "support": {
+        "chrome": "37",
+        "edge": "12",
+        "firefox": "34",
+        "safari": "11"
+      },
+      "partialSupport": null
     }
   }
 };

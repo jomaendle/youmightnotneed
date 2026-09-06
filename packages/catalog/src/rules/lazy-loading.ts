@@ -36,4 +36,5 @@ export const lazyLoading: Rule = {
     snippet: `<img src="/photo.jpg" alt="" loading="lazy" />
 <iframe src="/embed" loading="lazy"></iframe>`,
   },
+  guides: ["optimize-image-priority"],
 };

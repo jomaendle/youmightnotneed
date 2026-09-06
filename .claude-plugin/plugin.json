@@ -1,0 +1,12 @@
+{
+  "name": "youmightnotneed",
+  "description": "Check whether a JavaScript dependency has a native CSS, HTML or Web API equivalent",
+  "version": "0.1.5",
+  "author": {
+    "name": "Johannes Mändle",
+    "url": "https://www.jomaendle.com"
+  },
+  "homepage": "https://youmightnotneed-web.vercel.app",
+  "repository": "https://github.com/jomaendle/youmightnotneed",
+  "license": "MIT"
+}

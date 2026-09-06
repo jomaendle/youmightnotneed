@@ -43,4 +43,5 @@ export const smoothScroll: Rule = {
 }
 [id] { scroll-margin-top: 5rem; }`,
   },
+  guides: ["scroll-target-on-load"],
 };

@@ -35,4 +35,5 @@ p {
     snippet: `h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }`,
   },
+  guides: ["improve-text-layout-and-legibility"],
 };

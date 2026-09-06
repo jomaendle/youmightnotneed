@@ -27,10 +27,11 @@ export const textBoxTrim: Rule = {
   agent: {
     when: "removing a font's built-in leading so text sits flush in its box",
     unless: [
-      "You are shipping to production outside Chromium. text-box is limited availability, and the fallback is the untrimmed spacing you started with, which shifts your vertical rhythm between browsers.",
+      "Your support target reaches below Chrome {{chrome:css.properties.text-box}}, Safari {{safari:css.properties.text-box}} or Firefox {{firefox:css.properties.text-box}}. Firefox was last to ship it, so on an older target the fallback is the untrimmed spacing you started with and your vertical rhythm shifts between browsers.",
       "You need the computed metrics as numbers at build time, for example to generate spacing tokens or to lay out text in a canvas or a PDF. Capsize gives you values; CSS only affects rendering.",
       "You need to support a font whose metrics are wrong or missing, which Capsize lets you override by hand.",
     ],
     snippet: "h1 { text-box: trim-both cap alphabetic; }",
   },
+  guides: ["precise-text-alignment"],
 };

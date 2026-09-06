@@ -17,10 +17,19 @@ grouped by how well supported the replacement is.
 npx youmightnotneed [path] [options]
 
   path            A package.json, or a directory holding one.
+  -p, --package   Check one npm package by name instead of reading a
+                  package.json. Use it before you install something.
   -v, --verbose   Print every condition where the dependency still wins.
-      --json      Machine-readable output.
+      --json      Machine-readable output, with provenance for the data.
       --no-color  Disable colour. NO_COLOR is respected too.
   -h, --help      Show help.
+      --version   Print the version.
+```
+
+Before adding a dependency, check whether the platform already covers it:
+
+```
+npx youmightnotneed --package axios --verbose
 ```
 
 Run it with `--verbose` before you change anything. The conditions are the

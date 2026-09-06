@@ -4,7 +4,7 @@ export const fluidType: Rule = {
   id: "fluid-type-clamp",
   title: "Fluid type scales",
   category: "typography",
-  replaces: ["fitty", "fittext.js", "textfit", "react-textfit"],
+  replaces: ["fittext.js"],
   featureIds: ["min-max-clamp"],
   native: "clamp() with a viewport-relative middle value",
   human: {
@@ -31,4 +31,5 @@ export const fluidType: Rule = {
     snippet: `h1 { font-size: clamp(2rem, 1.5rem + 2.5vw, 4rem); }
 .card h2 { font-size: clamp(1.25rem, 0.9rem + 2cqi, 2rem); }`,
   },
+  guides: ["fluid-scaling"],
 };

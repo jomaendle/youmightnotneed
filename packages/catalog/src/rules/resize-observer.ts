@@ -23,7 +23,7 @@ observer.observe(document.querySelector("#panel"));`,
     unless: [
       "You need a framework hook's ergonomics, such as a ref and a reactive size value, rather than managing an observer instance yourself.",
       "You're targeting an engine old enough that the polyfill's manual measurement fallback is still doing real work.",
-      "You need devicePixelContentBoxSize specifically. That entry is still limited to Chromium engines.",
+      "You need devicePixelContentBoxSize specifically. Chrome has it from {{chrome:api.ResizeObserverEntry.devicePixelContentBoxSize}} and Firefox from {{firefox:api.ResizeObserverEntry.devicePixelContentBoxSize}}, but Safari does not implement it at all.",
     ],
     snippet: "new ResizeObserver((entries) => { ... }).observe(el);",
   },

@@ -31,6 +31,8 @@ Usage
                   directory upwards.
 
 Options
+  -p, --package   Check one npm package by name instead of reading a
+                  package.json. Use it before you install something.
   -v, --verbose   Print every condition under which the dependency is still
                   the right call. Recommended before you change anything.
       --json      Machine-readable output.
@@ -45,8 +47,10 @@ Notes
   youmightnotneed command only works after a global install.
 `;
 
-interface Args {
+export interface Args {
   path: string | undefined;
+  /** A single npm package to check, instead of reading a package.json. */
+  package: string | undefined;
   verbose: boolean;
   json: boolean;
   color: boolean;
@@ -54,9 +58,38 @@ interface Args {
   version: boolean;
 }
 
-function parseArgs(argv: readonly string[]): Args {
+/**
+ * Reads --package, the one flag that takes a value. Accepts both
+ * `--package name` and `--package=name`. Returns how many argv entries it
+ * consumed, or 0 when this argument is not the package flag.
+ */
+function readPackageFlag(
+  args: Args,
+  argv: readonly string[],
+  index: number,
+): number {
+  const arg = argv[index] as string;
+
+  const attached = arg.startsWith("--package=");
+  if (!(attached || arg === "-p" || arg === "--package")) return 0;
+
+  // Both spellings go through one check, or --package= and --package=-v slip
+  // past it and the run reports on the empty string instead of erroring.
+  const value = attached ? arg.slice("--package=".length) : argv[index + 1];
+  if (value === undefined || value === "" || value.startsWith("-")) {
+    console.error(
+      "--package needs a package name, for example: --package swiper",
+    );
+    process.exit(2);
+  }
+  args.package = value;
+  return attached ? 1 : 2;
+}
+
+export function parseArgs(argv: readonly string[]): Args {
   const args: Args = {
     path: undefined,
+    package: undefined,
     verbose: false,
     json: false,
     color: !process.env.NO_COLOR,
@@ -64,7 +97,15 @@ function parseArgs(argv: readonly string[]): Args {
     version: false,
   };
 
-  for (const arg of argv) {
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i] as string;
+
+    const consumed = readPackageFlag(args, argv, i);
+    if (consumed > 0) {
+      i += consumed - 1;
+      continue;
+    }
+
     switch (arg) {
       case "-v":
       case "--verbose":
@@ -158,16 +199,38 @@ function readPackageJson(file: string): PackageJsonLike {
     process.exit(1);
   }
 
+  let parsed: unknown;
   try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (typeof parsed !== "object" || parsed === null) {
-      throw new Error("not an object");
-    }
-    return parsed as PackageJsonLike;
+    parsed = JSON.parse(raw);
   } catch {
     console.error(`${file} is not valid JSON.`);
     process.exit(1);
   }
+
+  // typeof [] is "object", so an array would otherwise pass and produce a
+  // confident "nothing found" for a file that is not a manifest at all.
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    console.error(`${file} is valid JSON but not a package.json object.`);
+    process.exit(1);
+  }
+
+  const record = parsed as Record<string, unknown>;
+
+  // A lockfile's top-level `dependencies` is the whole transitive tree, so
+  // reading one would report hundreds of packages nothing here depends on
+  // directly, dev-only entries included.
+  if ("lockfileVersion" in record) {
+    console.error(
+      `${file} is a lockfile, not a package.json. Point at the manifest instead.`,
+    );
+    process.exit(1);
+  }
+
+  // `name` is whatever the file says. Anything but a string would render as
+  // "[object Object]" in the report header.
+  if (typeof record.name !== "string") delete record.name;
+
+  return record as PackageJsonLike;
 }
 
 function readOwnVersion(): string {
@@ -184,41 +247,59 @@ function readOwnVersion(): string {
 function main(): void {
   const args = parseArgs(process.argv.slice(2));
 
+  // Never process.exit(0) after writing: stdout to a pipe is asynchronous in
+  // Node, and exiting discards whatever is still buffered. That silently
+  // truncated --json past the 64 KiB pipe buffer. Returning lets Node flush
+  // and exit 0 on its own.
   if (args.help) {
     console.info(HELP);
-    process.exit(0);
+    return;
   }
 
   if (args.version) {
     console.info(readOwnVersion());
-    process.exit(0);
+    return;
   }
 
-  const target = resolveTarget(args.path);
-  const pkg = readPackageJson(target);
+  if (args.package !== undefined && args.path !== undefined) {
+    console.error(
+      "--package checks one name and ignores a path. Pass one or the other.",
+    );
+    process.exit(2);
+  }
+
+  // --package builds a one-entry dependency map so a single lookup goes
+  // through exactly the same detect() and renderers as a whole project.
+  const single = args.package;
+  const target = single === undefined ? resolveTarget(args.path) : null;
+  const pkg: PackageJsonLike =
+    single === undefined
+      ? readPackageJson(target as string)
+      : { name: single, dependencies: { [single]: "*" } };
   const report = analyze(pkg);
+  const provenance = {
+    baselineOn: BASELINE_DATA_DATE,
+    webFeaturesVersion: WEB_FEATURES_VERSION,
+    sizesOn: packageSizes.fetchedOn,
+  };
 
   if (args.json) {
-    console.info(renderJson(report));
+    console.info(renderJson(report, provenance));
   } else {
     const useColor = args.color && process.stdout.isTTY === true;
     console.info(
       renderReport(report, {
         palette: createPalette(useColor),
-        projectName: pkg.name ?? basename(dirname(target)),
-        provenance: {
-          baselineOn: BASELINE_DATA_DATE,
-          webFeaturesVersion: WEB_FEATURES_VERSION,
-          sizesOn: packageSizes.fetchedOn,
-        },
+        subject: single === undefined ? "project" : "package",
+        projectName: single ?? pkg.name ?? basename(dirname(target as string)),
+        provenance,
         verbose: args.verbose,
       }),
     );
   }
 
-  // The report is informational, so a clean run always exits 0. A CI-friendly
-  // threshold flag can come later, once the catalog has settled.
-  process.exit(0);
+  // The report is informational, so a clean run always exits 0, which is what
+  // returning gives us. See the note above on why this is not process.exit(0).
 }
 
 // Only run as a side effect when this file is the process entry point, not

@@ -11,10 +11,25 @@
  *
  * Run: pnpm refresh:sizes
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { rules } from "../packages/catalog/src/rules/index.ts";
+
+/**
+ * This script writes committed snapshots at module scope. Importing it would
+ * regenerate them as a side effect, which is exactly how a gate that imports a
+ * refresh script would end up repairing the drift it exists to detect. Fail
+ * loudly instead: a caller that needs the data should export a function from
+ * here, the way build-skill.ts and refresh-support.ts do.
+ */
+if (
+  import.meta.url !== pathToFileURL(realpathSync(process.argv[1] ?? "")).href
+) {
+  throw new Error(
+    "refresh-sizes.ts writes files and must be run, not imported. Export a function instead.",
+  );
+}
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outFile = join(here, "../packages/catalog/src/generated/sizes.ts");
@@ -108,6 +123,37 @@ for (let i = 0; i < packages.length; i += CONCURRENCY) {
   await sleep(DELAY_MS);
 }
 process.stdout.write("\n");
+
+// A run where every fetch failed is indistinguishable from a clean no-change
+// run once the file is rewritten: the old values are copied forward and
+// fetchedOn is stamped today, which clears the staleness warning that should
+// have fired. Bail instead, so the committed snapshot keeps its real date.
+const fetched = packages.length - failed.length;
+if (fetched === 0 && packages.length > 0) {
+  console.error(
+    `\nEvery one of the ${packages.length} fetches failed. Leaving the committed snapshot alone.`,
+  );
+  process.exit(1);
+}
+
+// Bailing only on 0-of-N missed the shape a rate-limited bundlephobia actually
+// produces: 1-of-N succeeds, the other 122 fall back to their old values, and
+// the file is stamped fresh anyway. A package that had a size and no longer
+// fetches one is the signal that this run should not be committed.
+const regressed = Object.keys(existing).filter((pkg) => !sizes[pkg]);
+if (regressed.length > 0) {
+  console.error(
+    `\n${regressed.length} package(s) had a size and no longer fetch one: ${regressed.slice(0, 5).join(", ")}. Leaving the committed snapshot alone.`,
+  );
+  process.exit(1);
+}
+
+// Belt and braces: never write an empty map. If the previous file failed to
+// parse and the network is also down, this is the path that would erase it.
+if (Object.keys(sizes).length === 0) {
+  console.error("\nNo sizes to write. Leaving the committed snapshot alone.");
+  process.exit(1);
+}
 
 const ordered: Record<string, SizeEntry> = {};
 for (const key of Object.keys(sizes).sort()) {

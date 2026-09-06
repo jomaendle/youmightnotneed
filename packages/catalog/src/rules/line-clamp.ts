@@ -15,7 +15,7 @@ export const lineClamp: Rule = {
   manualBaseline: {
     status: "widely",
     verifiedOn: "2026-09-03",
-    note: "web-features tracks the unprefixed line-clamp property under the ID 'line-clamp', which has near-zero real-world support. The -webkit- prefixed form this rule actually recommends has been supported in every major engine for years (Firefox since 68, Safari and Chrome far longer), so the automated resolution would misreport a decades-safe technique as limited availability.",
+    note: "web-features tracks the unprefixed line-clamp property under the ID 'line-clamp', which has near-zero real-world support. The -webkit- prefixed form this rule actually recommends has been supported in every major engine for years (BCD records it only under a prefixed entry, so there is no unprefixed version to cite here), so the automated resolution would misreport a decades-safe technique as limited availability.",
   },
   native: "-webkit-line-clamp",
   human: {

@@ -18,6 +18,9 @@ export const DEPENDENCY_FIELDS = [
   "dependencies",
   "devDependencies",
   "peerDependencies",
+  // Optional dependencies are installed and bundled like any other, so a
+  // package parked here is just as replaceable as one in `dependencies`.
+  "optionalDependencies",
 ] as const;
 
 export type DependencyField = (typeof DEPENDENCY_FIELDS)[number];
@@ -28,6 +31,7 @@ export interface PackageJsonLike {
   dependencies?: Record<string, string> | undefined;
   devDependencies?: Record<string, string> | undefined;
   peerDependencies?: Record<string, string> | undefined;
+  optionalDependencies?: Record<string, string> | undefined;
 }
 
 export interface MatchedPackage {
@@ -63,7 +67,12 @@ function readSize(name: string): {
   gzip: number | null;
   version: string | null;
 } {
-  const entry = packageSizes.sizes[name];
+  // Object.hasOwn, not a bare index: a package literally named "constructor"
+  // would otherwise pick up Object off the prototype and report a confident
+  // 0 bytes instead of an unknown size.
+  const entry = Object.hasOwn(packageSizes.sizes, name)
+    ? packageSizes.sizes[name]
+    : undefined;
   if (!entry) return { gzip: null, version: null };
   return { gzip: entry.gzip, version: entry.version };
 }
@@ -188,7 +197,12 @@ export function sortFindings(findings: Finding[]): Finding[] {
     if (byBytes !== 0) return byBytes;
     const byBaseline = compareBaseline(a.baseline.status, b.baseline.status);
     if (byBaseline !== 0) return byBaseline;
-    return a.rule.title.localeCompare(b.rule.title);
+    // Codepoint order, not localeCompare: collation varies by runtime locale
+    // and ICU build, and two surfaces rendering the same report must not
+    // order a tie differently.
+    if (a.rule.title < b.rule.title) return -1;
+    if (a.rule.title > b.rule.title) return 1;
+    return 0;
   });
 }
 

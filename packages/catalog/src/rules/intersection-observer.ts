@@ -9,6 +9,7 @@ export const intersectionObserver: Rule = {
     "react-visibility-sensor",
     "react-in-viewport",
     "svelte-intersection-observer",
+    "intersection-observer",
   ],
   featureIds: ["intersection-observer"],
   native: "IntersectionObserver",

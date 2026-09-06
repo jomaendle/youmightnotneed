@@ -48,4 +48,8 @@ html {
   scrollbar-color: #666 transparent;
 }`,
   },
+  guides: [
+    "customize-scrollbar-color-and-thickness",
+    "adapt-scrollbar-to-contrast-preferences",
+  ],
 };

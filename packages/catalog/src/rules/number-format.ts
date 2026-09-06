@@ -18,8 +18,9 @@ export const numberFormat: Rule = {
       "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat",
   },
   agent: {
-    when: "formatting a number as currency, a percentage, a unit, or a locale-correct thousands-grouped number for display",
+    when: "formatting a number as currency, a percentage, or a locale-correct thousands-grouped number for display",
     unless: [
+      'You format units or compact notation. style: "unit" and notation: "compact" arrived long after the rest of Intl.NumberFormat, in Chrome {{chrome:javascript.builtins.Intl.NumberFormat.NumberFormat.options_parameter.options_unit_parameter}}, Firefox {{firefox:javascript.builtins.Intl.NumberFormat.NumberFormat.options_parameter.options_unit_parameter}} and Safari {{safari:javascript.builtins.Intl.NumberFormat.NumberFormat.options_parameter.options_unit_parameter}}, so an older target does not get them.',
       "You need safe decimal arithmetic, such as adding money values without floating-point rounding errors. currency.js and accounting.js do that math for you; Intl.NumberFormat only formats a number you already computed correctly.",
       "You need to parse a formatted string back into a number. Intl.NumberFormat is format-only; these libraries often provide the reverse direction too.",
       "You need a custom format pattern, such as a specific abbreviation style, that the options Intl.NumberFormat exposes cannot express.",

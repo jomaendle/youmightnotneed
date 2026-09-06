@@ -4,12 +4,7 @@ export const resizablePanels: Rule = {
   id: "resizable-panels",
   title: "Resizable panels",
   category: "layout",
-  replaces: [
-    "react-resizable-panels",
-    "re-resizable",
-    "react-split-pane",
-    "splitpanes",
-  ],
+  replaces: ["re-resizable"],
   featureIds: ["resize"],
   native: "resize",
   human: {
@@ -26,7 +21,8 @@ export const resizablePanels: Rule = {
   agent: {
     when: "letting someone drag-resize a single panel, such as a sidebar or a textarea",
     unless: [
-      "You need the block/inline logical values rather than horizontal/vertical/both. Those only reached Firefox in version 63 and Safari in 16; the classic physical-direction values have been supported everywhere for over a decade.",
+      "The panels have to be resizable on a phone. Safari on iOS does not implement the resize property at all, so the handle simply is not there.",
+      "You need the block/inline logical values rather than horizontal/vertical/both. Those reached Chrome {{chrome:css.properties.resize.block}}, Firefox {{firefox:css.properties.resize.block}} and Safari {{safari:css.properties.resize.block}}; the classic physical-direction values have been supported everywhere for over a decade.",
       "You need multiple panels to resize together, such as a split view where dragging one edge shrinks its neighbor. resize only affects the element it is set on.",
       "You need to read back or persist the size someone chose. resize has no resize event; ResizeObserver still covers that, and it is a JavaScript API, not CSS.",
       "You need to style the drag handle itself, or place it somewhere other than the element's edge or corner. The native handle's appearance is fixed.",

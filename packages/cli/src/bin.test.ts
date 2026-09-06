@@ -8,8 +8,9 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { rules } from "@jomae/catalog";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { findPackageJson, resolveTarget } from "./bin.ts";
+import { findPackageJson, parseArgs, resolveTarget } from "./bin.ts";
 
 const ownVersion = (
   JSON.parse(
@@ -124,5 +125,188 @@ describe.skipIf(!canSymlink)("entry point detection through a symlink", () => {
     });
 
     expect(result.status).toBe(2);
+  });
+});
+
+describe("parseArgs", () => {
+  it("reads --package with a separate value", () => {
+    expect(parseArgs(["--package", "swiper"]).package).toBe("swiper");
+  });
+
+  it("reads --package= with an attached value", () => {
+    expect(parseArgs(["--package=react-modal"]).package).toBe("react-modal");
+  });
+
+  it("reads the -p short form", () => {
+    expect(parseArgs(["-p", "swiper", "--verbose"])).toMatchObject({
+      package: "swiper",
+      verbose: true,
+    });
+  });
+
+  it("leaves package undefined and keeps the path when the flag is absent", () => {
+    expect(parseArgs(["./app", "--json"])).toMatchObject({
+      package: undefined,
+      path: "./app",
+      json: true,
+    });
+  });
+});
+
+describe("--package rejects a missing value", () => {
+  // parseArgs calls process.exit(2) on bad input, so these run out of process.
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  it.each([["--package="], ["--package=-v"], ["-p"], ["--package"]])(
+    "%s exits 2 rather than reporting on an empty name",
+    (arg) => {
+      const result = spawnSync(process.execPath, [binPath, arg], {
+        encoding: "utf8",
+      });
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("needs a package name");
+      expect(result.stdout).not.toContain("no rule for");
+    },
+  );
+
+  it.each([["--package=swiper"], ["-p"]])(
+    "%s still accepts a real name",
+    (arg) => {
+      const args = arg === "-p" ? [arg, "swiper"] : [arg];
+      const result = spawnSync(process.execPath, [binPath, ...args], {
+        encoding: "utf8",
+      });
+
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("Carousels");
+    },
+  );
+});
+
+describe("stdout survives a pipe", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // process.exit(0) after console.info discarded whatever stdout still had
+  // buffered, so --json past the 64 KiB pipe buffer arrived as invalid JSON
+  // with exit 0. spawnSync's captured stdio does not reproduce it; a real
+  // pipe does.
+  it("emits complete JSON through a shell pipe", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ymnn-pipe-"));
+    try {
+      const dependencies: Record<string, string> = {};
+      for (const rule of rules) {
+        for (const name of rule.replaces) dependencies[name] = "*";
+      }
+      const manifest = join(dir, "package.json");
+      writeFileSync(manifest, JSON.stringify({ name: "big", dependencies }));
+
+      const result = spawnSync(
+        "/bin/sh",
+        ["-c", `"${process.execPath}" "${binPath}" "${manifest}" --json | cat`],
+        { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
+      );
+
+      expect(result.status).toBe(0);
+      expect(result.stdout.length).toBeGreaterThan(65_536);
+      expect(() => JSON.parse(result.stdout)).not.toThrow();
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("puts provenance in --json, like the human footer and the MCP server", () => {
+    const result = spawnSync(
+      process.execPath,
+      [binPath, "--package", "swiper", "--json"],
+      { encoding: "utf8" },
+    );
+    const parsed = JSON.parse(result.stdout) as {
+      provenance?: { baselineOn: string; webFeaturesVersion: string };
+    };
+    expect(parsed.provenance?.baselineOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(parsed.provenance?.webFeaturesVersion).toBeTruthy();
+  });
+});
+
+describe("a file that is not a package.json", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // typeof [] is "object", so an array used to pass the shape check and
+  // produce a confident "nothing found" for a file that is not a manifest.
+  it.each([["[1,2,3]"], ['"hello"'], ["42"]])(
+    "rejects %s rather than reporting a clean run",
+    (contents) => {
+      const dir = mkdtempSync(join(tmpdir(), "ymnn-shape-"));
+      try {
+        const file = join(dir, "package.json");
+        writeFileSync(file, contents);
+        const result = spawnSync(process.execPath, [binPath, file], {
+          encoding: "utf8",
+        });
+        expect(result.status).toBe(1);
+        expect(result.stdout).not.toContain("Nothing in this package.json");
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    },
+  );
+
+  it("refuses --package together with a path instead of ignoring the path", () => {
+    const result = spawnSync(
+      process.execPath,
+      [binPath, "--package", "swiper", "./somewhere/package.json"],
+      { encoding: "utf8" },
+    );
+    expect(result.status).toBe(2);
+    expect(result.stderr).toContain("one or the other");
+  });
+});
+
+describe("a lockfile is not a manifest", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // A lockfile's top-level `dependencies` is the whole transitive tree, so
+  // reading one reported packages nothing depends on directly.
+  it("refuses a package-lock.json rather than reporting its whole tree", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ymnn-lock-"));
+    try {
+      const file = join(dir, "package.json");
+      writeFileSync(
+        file,
+        JSON.stringify({
+          name: "app",
+          lockfileVersion: 2,
+          dependencies: { uuid: { version: "9.0.0" } },
+        }),
+      );
+      const result = spawnSync(process.execPath, [binPath, file], {
+        encoding: "utf8",
+      });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain("lockfile");
+      expect(result.stdout).not.toContain("Generating UUIDs");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("does not render a non-string name into the header", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ymnn-name-"));
+    try {
+      const file = join(dir, "package.json");
+      writeFileSync(
+        file,
+        JSON.stringify({ name: { a: 1 }, dependencies: { swiper: "^11.0.0" } }),
+      );
+      const result = spawnSync(process.execPath, [binPath, file], {
+        encoding: "utf8",
+      });
+      expect(result.status).toBe(0);
+      expect(result.stdout).not.toContain("[object Object]");
+      expect(result.stdout).toContain("Carousels");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

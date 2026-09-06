@@ -13,11 +13,13 @@ export {
   baselineShortLabel,
   combinedSupport,
   compareBaseline,
+  hasNoVersions,
   type ResolvedFeature,
   resolveBaseline,
   resolveFeature,
   TRACKED_BROWSERS,
   type TrackedBrowser,
+  unpublishedSupport,
   WEB_FEATURES_VERSION,
 } from "./baseline.ts";
 export {
@@ -52,6 +54,16 @@ export {
   baselineHistory,
 } from "./generated/baseline-history.ts";
 export { packageSizes, type SizeSnapshot } from "./generated/sizes.ts";
+export {
+  GUIDE_SOURCE,
+  type GuideSnapshot,
+  guideCommand,
+  guideSnapshot,
+  isKnownGuide,
+  type ResolvedGuide,
+  resolveGuide,
+  resolveGuides,
+} from "./guides.ts";
 export { type TierShare, tierShareOf } from "./history.ts";
 export { rules, rulesById, rulesByPackage } from "./rules/index.ts";
 export {

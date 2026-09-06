@@ -55,4 +55,12 @@ document.startViewTransition(() => {
   ::view-transition-group(*) { animation: none; }
 }`,
   },
+  guides: [
+    "same-document-transitions",
+    "cross-document-transitions",
+    "faster-spa-view-transitions",
+    "consistent-cross-document-transitions",
+    "directional-navigation-transitions",
+    "group-element-transitions",
+  ],
 };

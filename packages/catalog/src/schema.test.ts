@@ -136,3 +136,80 @@ describe("parseCatalog", () => {
     expect(() => parseCatalog([broken])).toThrow();
   });
 });
+
+describe("the schema rejects data it documents as invalid", () => {
+  const base = {
+    id: "x",
+    title: "T",
+    category: "async-data",
+    replaces: ["swiper"],
+    featureIds: ["dialog"],
+    native: "n",
+    human: { explainer: "e", snippet: "s" },
+    agent: { when: "w", unless: ["u"], snippet: "s" },
+  };
+  const manual = { status: "widely", verifiedOn: "2026-02-28", note: "n" };
+
+  // resolveBaseline() only reads manualBaseline when featureIds is empty, so
+  // carrying both silently discards the hand-verified override.
+  it("refuses a manualBaseline next to featureIds", () => {
+    const result = ruleSchema.safeParse({ ...base, manualBaseline: manual });
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts a manualBaseline when featureIds is empty", () => {
+    expect(
+      ruleSchema.safeParse({ ...base, featureIds: [], manualBaseline: manual })
+        .success,
+    ).toBe(true);
+  });
+
+  it.each([
+    "2026-99-99",
+    "2026-02-30",
+    "2026-13-01",
+    "2026-00-10",
+    "2026-04-31",
+  ])("refuses the impossible date %s", (verifiedOn) => {
+    expect(
+      ruleSchema.safeParse({
+        ...base,
+        featureIds: [],
+        manualBaseline: { ...manual, verifiedOn },
+      }).success,
+    ).toBe(false);
+  });
+
+  it("accepts a leap day in a leap year and refuses one otherwise", () => {
+    const parse = (verifiedOn: string) =>
+      ruleSchema.safeParse({
+        ...base,
+        featureIds: [],
+        manualBaseline: { ...manual, verifiedOn },
+      }).success;
+    expect(parse("2024-02-29")).toBe(true);
+    expect(parse("2026-02-29")).toBe(false);
+  });
+
+  it.each(["javascript:alert(1)", "http://x.test", "data:text/html,x"])(
+    "refuses %s as a link",
+    (mdnUrl) => {
+      expect(
+        ruleSchema.safeParse({
+          ...base,
+          human: { ...base.human, mdnUrl },
+        }).success,
+      ).toBe(false);
+    },
+  );
+
+  it("refuses a duplicated or malformed feature id", () => {
+    expect(
+      ruleSchema.safeParse({ ...base, featureIds: ["dialog", "dialog"] })
+        .success,
+    ).toBe(false);
+    expect(
+      ruleSchema.safeParse({ ...base, featureIds: ["  NOT an ID!! "] }).success,
+    ).toBe(false);
+  });
+});

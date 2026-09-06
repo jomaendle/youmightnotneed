@@ -4,13 +4,13 @@ export const scrollLock: Rule = {
   id: "overscroll-behavior",
   title: "Scroll chaining and body scroll lock",
   category: "scrolling",
-  replaces: [
-    "body-scroll-lock",
-    "react-scrolllock",
-    "no-scroll",
-    "scroll-lock",
-  ],
-  featureIds: ["overscroll-behavior"],
+  replaces: ["body-scroll-lock"],
+  featureIds: [],
+  manualBaseline: {
+    status: "widely",
+    verifiedOn: "2026-09-06",
+    note: "web-features rolls the logical longhands (overscroll-behavior-block and -inline) into the 'overscroll-behavior' ID, which reports Chrome {{chrome:overscroll-behavior}}, Firefox {{firefox:overscroll-behavior}} and no Safari at all. All this rule uses is overscroll-behavior: contain, which BCD puts at Chrome {{chrome:css.properties.overscroll-behavior.contain}}, Firefox {{firefox:css.properties.overscroll-behavior.contain}} and Safari {{safari:css.properties.overscroll-behavior.contain}}. Deriving from that ID would badge a technique every engine has had for years as limited availability.",
+  },
   native: "overscroll-behavior: contain",
   human: {
     explainer:

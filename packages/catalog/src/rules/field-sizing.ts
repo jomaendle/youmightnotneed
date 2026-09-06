@@ -34,7 +34,7 @@ input[type="text"] {
   agent: {
     when: "a textarea or input should grow to fit what the user has typed",
     unless: [
-      "You need Safari or Firefox support today. field-sizing reached Baseline newly available only in mid-2026, so verify against your support target and keep a fallback if you cannot afford a fixed-height textarea.",
+      "Your support target reaches below Chrome {{chrome:field-sizing}}, Firefox {{firefox:field-sizing}} or Safari {{safari:field-sizing}}. Every engine ships field-sizing now, but Safari only at the end of 2025 and Firefox in 2026, so an older target still needs the fallback.",
       "You need the measured height in JavaScript, for example to sync a neighbouring element.",
       "You need to animate the height change. field-sizing resizes without a transition.",
     ],
@@ -44,4 +44,5 @@ input[type="text"] {
   max-height: 12lh;
 }`,
   },
+  guides: ["form-fields-automatically-fit-contents"],
 };

@@ -100,3 +100,16 @@ describe("toPackageJsonLike", () => {
     expect(pkg.dependencies).toEqual({ swiper: "*" });
   });
 });
+
+describe("a label with astral characters", () => {
+  it("never comes back ending in a replacement character", () => {
+    // 80 emoji is over the cap in code points and well over it in UTF-16
+    // units, so a plain slice would cut the 40th one in half.
+    const name = "🎠".repeat(80);
+    const decoded = decodeReport(
+      encodeReport({ packages: ["swiper"], projectName: name }),
+    );
+    expect(decoded?.projectName).not.toContain("�");
+    expect([...(decoded?.projectName ?? "")].length).toBe(80);
+  });
+});

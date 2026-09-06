@@ -56,4 +56,5 @@ export const containerQueries: Rule = {
   .card { grid-template-columns: 8rem 1fr; }
 }`,
   },
+  guides: ["size-aware-styling"],
 };

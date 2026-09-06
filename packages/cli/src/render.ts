@@ -4,7 +4,9 @@ import {
   type Finding,
   formatBytes,
   formatHeadline,
+  guideCommand,
   type Report,
+  resolveGuides,
 } from "@jomae/catalog";
 import type { ColorName, Palette } from "./colors.ts";
 
@@ -53,15 +55,22 @@ const TIERS: Tier[] = [
   },
 ];
 
+export interface Provenance {
+  baselineOn: string;
+  webFeaturesVersion: string;
+  sizesOn: string;
+}
+
 export interface RenderOptions {
   palette: Palette;
   /** Shown in the header, usually the package.json name field. */
   projectName?: string | undefined;
-  provenance: {
-    baselineOn: string;
-    webFeaturesVersion: string;
-    sizesOn: string;
-  };
+  /**
+   * What was scanned. A single --package lookup that matches nothing needs
+   * different wording from a whole project that matches nothing.
+   */
+  subject?: "project" | "package" | undefined;
+  provenance: Provenance;
   /** Print the full unless list. When false, print only a count. */
   verbose: boolean;
 }
@@ -102,25 +111,42 @@ function renderFinding(finding: Finding, options: RenderOptions): string[] {
     }
   } else {
     const count = finding.rule.agent.unless.length;
-    lines.push(
-      `    ${palette(
-        "dim",
-        `keep it if ${count} condition${count === 1 ? "" : "s"} apply, see --verbose`,
-      )}`,
-    );
+    const clause =
+      count === 1 ? "1 condition applies" : `${count} conditions apply`;
+    lines.push(`    ${palette("dim", `keep it if ${clause}, see --verbose`)}`);
+  }
+
+  // The catalog says which dependency has a native equivalent. It does not
+  // try to be the tutorial, so point at the one that is.
+  if (options.verbose) {
+    const guides = resolveGuides(finding.rule).filter((g) => g.url !== null);
+    if (guides.length > 0) {
+      lines.push(
+        `    ${palette("dim", "guides    ")}${palette(
+          "grey",
+          guides.map((g) => g.id).join(", "),
+        )}`,
+      );
+    }
   }
 
   lines.push("");
   return lines;
 }
 
-function footer(options: RenderOptions): string {
+function footer(options: RenderOptions, hasGuides: boolean): string {
   const { provenance } = options;
-  return [
+  const lines = [
     `Baseline from web-features@${provenance.webFeaturesVersion}, captured ${provenance.baselineOn}.`,
     `Sizes from bundlephobia, captured ${provenance.sizesOn}.`,
-    "Details and live demos: https://youmightnotneed-web.vercel.app",
-  ].join("\n");
+  ];
+  if (hasGuides) {
+    lines.push(
+      `Guides are from modern-web-guidance, Apache-2.0. Read one with ${guideCommand(["<id>"])}.`,
+    );
+  }
+  lines.push("Details and live demos: https://youmightnotneed-web.vercel.app");
+  return lines.join("\n");
 }
 
 export function renderReport(report: Report, options: RenderOptions): string {
@@ -139,13 +165,18 @@ export function renderReport(report: Report, options: RenderOptions): string {
 
   if (findings.length === 0) {
     lines.push(
-      `  ${palette("green", "Nothing in this package.json has a native equivalent in the catalog.")}`,
+      `  ${palette(
+        "green",
+        options.subject === "package"
+          ? `The catalog has no rule for ${options.projectName ?? "that package"}.`
+          : "Nothing in this package.json has a native equivalent in the catalog.",
+      )}`,
     );
     lines.push(
       `  ${palette("grey", "The catalog only covers cases where the platform replaces a library outright.")}`,
     );
     lines.push("");
-    lines.push(palette("grey", footer(options)));
+    lines.push(palette("grey", footer(options, false)));
     lines.push("");
     return lines.join("\n");
   }
@@ -179,36 +210,56 @@ export function renderReport(report: Report, options: RenderOptions): string {
     }
   }
 
-  lines.push(palette("grey", footer(options)));
+  const hasGuides =
+    options.verbose &&
+    findings.some((f) => resolveGuides(f.rule).some((g) => g.url !== null));
+  lines.push(palette("grey", footer(options, hasGuides)));
   lines.push("");
   return lines.join("\n");
 }
 
 /** --json, so scripts and agents get the data without parsing terminal text. */
-export function renderJson(report: Report): string {
+export function renderJson(report: Report, provenance?: Provenance): string {
   return JSON.stringify(
     {
+      // The human footer states the data vintage; without it here a script or
+      // an agent consuming --json cannot tell how old the snapshot is.
+      provenance,
       summary: report.summary,
       findings: report.findings.map((finding) => ({
         ruleId: finding.rule.id,
         title: finding.rule.title,
+        category: finding.rule.category,
         native: finding.rule.native,
         baseline: {
           status: finding.baseline.status,
           label: baselineLabel(finding.baseline.status),
           limitedBy: finding.baseline.limitedBy?.id ?? null,
           dataDate: finding.baseline.dataDate,
+          // Null for a derived tier. On the four hand-verified rules this
+          // says which web-features ID was rejected and why, which is the
+          // only place a consumer can see that the tier was not derived.
+          note: finding.baseline.note,
         },
         matched: finding.matched.map((m) => ({
           name: m.name,
           fields: m.fields,
           gzip: m.gzip,
+          measuredVersion: m.measuredVersion,
         })),
         replaceableBytes: finding.replaceableBytes,
         when: finding.rule.agent.when,
         unless: finding.rule.agent.unless,
         snippet: finding.rule.agent.snippet,
         demoUrl: finding.rule.human.demoUrl ?? null,
+        guides: resolveGuides(finding.rule)
+          .filter((g) => g.url !== null)
+          .map((g) => ({
+            id: g.id,
+            category: g.category,
+            url: g.url,
+            command: g.command,
+          })),
       })),
     },
     null,

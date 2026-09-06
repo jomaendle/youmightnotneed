@@ -3,10 +3,17 @@ import {
   CATEGORIES_BY_ID,
   combinedSupport,
   formatBytes,
+  GUIDE_SOURCE,
+  hasNoVersions,
   packageSizes,
+  type ResolvedFeature,
+  type ResolvedGuide,
+  type Rule,
   resolveBaseline,
+  resolveGuides,
   rules,
   rulesById,
+  unpublishedSupport,
 } from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -54,36 +61,7 @@ export default async function RulePage({ params }: PageProps) {
       <div className="progress-bar" aria-hidden="true" />
 
       <article className="space-y-11">
-        <header>
-          <Link
-            href="/rules"
-            className="plain text-fg-faint text-metadata no-underline hover:text-fg"
-          >
-            Back to the catalog
-          </Link>
-          <h1 className="mt-4 mb-3 text-page-title">{rule.title}</h1>
-          <p className="mb-1 text-fg-faint text-metadata">
-            {CATEGORIES_BY_ID[rule.category]?.name}
-          </p>
-          <p className="mb-4 font-mono text-accent text-lede">{rule.native}</p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <BaselineBadge status={baseline.status} />
-            {baseline.source === "web-features" ? (
-              <span className="text-fg-faint text-metadata">
-                derived from web-features, captured {baseline.dataDate}
-              </span>
-            ) : (
-              <span className="text-fg-faint text-metadata">
-                verified by hand on {baseline.dataDate}
-              </span>
-            )}
-          </div>
-          {baseline.features.length === 0 ? null : (
-            <div className="mt-4">
-              <BrowserSupport support={combinedSupport(baseline.features)} />
-            </div>
-          )}
-        </header>
+        <RuleHeader rule={rule} baseline={baseline} />
 
         {baseline.features.length === 0 ? null : (
           <FeatureTable
@@ -149,9 +127,151 @@ export default async function RulePage({ params }: PageProps) {
           </ul>
         </section>
 
+        <GuideList guides={resolveGuides(rule)} />
+
         <PackageTable replaces={rule.replaces} />
       </article>
     </>
+  );
+}
+
+/**
+ * The title block: what the rule replaces, how well supported it is, and,
+ * on a hand-verified rule, why its tier was not derived.
+ */
+function RuleHeader({
+  rule,
+  baseline,
+}: {
+  rule: Rule;
+  baseline: ReturnType<typeof resolveBaseline>;
+}) {
+  return (
+    <header>
+      <Link
+        href="/rules"
+        className="plain text-fg-faint text-metadata no-underline hover:text-fg"
+      >
+        Back to the catalog
+      </Link>
+      <h1 className="mt-4 mb-3 text-page-title">{rule.title}</h1>
+      <p className="mb-1 text-fg-faint text-metadata">
+        {CATEGORIES_BY_ID[rule.category]?.name}
+      </p>
+      <p className="mb-4 font-mono text-accent text-lede">{rule.native}</p>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <BaselineBadge status={baseline.status} />
+        {baseline.source === "web-features" ? (
+          <span className="text-fg-faint text-metadata">
+            derived from web-features, captured {baseline.dataDate}
+          </span>
+        ) : (
+          <span className="text-fg-faint text-metadata">
+            verified by hand on {baseline.dataDate}
+          </span>
+        )}
+      </div>
+      {baseline.note === null ? null : (
+        <p className="mt-4 max-w-[68ch] border-border border-l-2 pl-4 text-fg-muted text-metadata">
+          {baseline.note}
+        </p>
+      )}
+      <HeaderSupport features={baseline.features} />
+    </header>
+  );
+}
+
+/**
+ * The one-line version row for the whole rule: the highest minimum across its
+ * features. It goes missing entirely when any feature has no published
+ * versions, because a row of dashes there reads as "no engine has this" when
+ * the truth is "web-features publishes no number for the feature as a whole".
+ * The feature table below says which part is missing and what it needs.
+ */
+function HeaderSupport({ features }: { features: readonly ResolvedFeature[] }) {
+  if (features.length === 0) return null;
+
+  const combined = combinedSupport(features);
+  if (!hasNoVersions(combined)) {
+    return (
+      <div className="mt-4">
+        <BrowserSupport support={combined} />
+      </div>
+    );
+  }
+
+  const unpublished = unpublishedSupport(features);
+  return (
+    <p className="mt-4 max-w-[62ch] text-fg-muted text-metadata">
+      {unpublished.length === 0
+        ? "web-features tracks no browser versions for this feature yet."
+        : `web-features publishes no single version for ${listNames(unpublished)}, so there is no one row for this rule. The versions its parts do have are below.`}
+    </p>
+  );
+}
+
+function listNames(features: readonly ResolvedFeature[]): string {
+  const names = features.map((feature) => feature.name);
+  if (names.length <= 1) return names[0] ?? "";
+  return `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+}
+
+/** "carousel-snap-highlights" reads as "Carousel snap highlights". */
+function guideTitle(id: string): string {
+  // Object.hasOwn, per the rest of the codebase: a plain-object lookup on an
+  // id like "constructor" otherwise reads off Object.prototype.
+  const spelled = Object.hasOwn(UPPERCASE_GUIDE_IDS, id)
+    ? (UPPERCASE_GUIDE_IDS[id] ?? id)
+    : id;
+  const words = spelled.split("-").join(" ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/**
+ * A handful of upstream IDs are acronyms, and sentence case turns them into
+ * "Css" and "Html". They are whole-category guides rather than use cases, so
+ * there are few of them and naming them here beats guessing at capitalisation.
+ */
+const UPPERCASE_GUIDE_IDS: Record<string, string> = {
+  css: "CSS",
+  "css-layout": "CSS layout",
+  html: "HTML",
+};
+
+/**
+ * The long-form guides for this rule. The catalog answers which dependency has
+ * a native equivalent and stops there, so the implementation is a link out.
+ */
+function GuideList({ guides }: { guides: readonly ResolvedGuide[] }) {
+  const linkable = guides.filter((guide) => guide.url !== null);
+  if (linkable.length === 0) return null;
+
+  return (
+    <section className="hairline pt-8">
+      <h2 className="mb-2 text-section">Building it</h2>
+      <p className="mb-4 max-w-[62ch] text-compact text-fg-muted">
+        This catalog stops at the swap. These guides go through the
+        implementation and the fallbacks. They come from Google Chrome's{" "}
+        <a href={GUIDE_SOURCE.repo} target="_blank" rel="noreferrer">
+          modern-web-guidance
+        </a>
+        , Apache-2.0.
+      </p>
+      <ul className="max-w-[68ch] space-y-2">
+        {linkable.map((guide) => (
+          <li key={guide.id} className="flex flex-wrap items-baseline gap-x-3">
+            <a href={guide.url ?? undefined} target="_blank" rel="noreferrer">
+              {guideTitle(guide.id)}
+            </a>
+            {guide.category === guide.id ? null : (
+              <span className="text-compact text-fg-muted">
+                {guide.category}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -199,13 +319,7 @@ function FeatureTable({
   cappedBy,
   status,
 }: {
-  features: readonly {
-    id: string;
-    name: string;
-    status: Parameters<typeof baselineLabel>[0];
-    since: string | null;
-    spec: string | null;
-  }[];
+  features: readonly ResolvedFeature[];
   cappedBy: string | null;
   status: Parameters<typeof baselineLabel>[0];
 }) {
@@ -233,6 +347,21 @@ function FeatureTable({
               )}
             </span>
             <BaselineBadge status={feature.status} short={true} />
+            {feature.partialSupport === null ||
+            !hasNoVersions(feature.support) ? null : (
+              <div className="w-full">
+                <p className="mb-2 max-w-[62ch] text-fg-muted text-metadata">
+                  web-features publishes no version for {feature.name} as a
+                  whole, because a small part of it has not shipped anywhere.
+                  These are the versions for{" "}
+                  <code className="font-mono">
+                    {feature.partialSupport.key}
+                  </code>
+                  , the part this rule is built on.
+                </p>
+                <BrowserSupport support={feature.partialSupport.support} />
+              </div>
+            )}
           </li>
         ))}
       </ul>

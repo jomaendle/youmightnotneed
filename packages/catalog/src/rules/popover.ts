@@ -16,6 +16,7 @@ export const popover: Rule = {
     "react-tooltip",
     "floating-vue",
     "v-tooltip",
+    "@oddbird/popover-polyfill",
   ],
   featureIds: ["popover", "anchor-positioning"],
   native: "The Popover API with CSS anchor positioning",
@@ -47,7 +48,7 @@ export const popover: Rule = {
   agent: {
     when: "building a tooltip, dropdown menu or popover anchored to a trigger",
     unless: [
-      "You need Baseline-level support for the positioning. CSS anchor positioning is Chromium-only today, so Safari and Firefox need a JavaScript fallback or a static position.",
+      "You need Baseline-level support for the positioning. Anchor positioning is in all three engines now, but only from Chrome {{chrome:css.properties.anchor-name}}, Safari {{safari:css.properties.anchor-name}} and Firefox {{firefox:css.properties.anchor-name}}, so anything older needs a JavaScript fallback or a static position.",
       "You need collision handling beyond position-try-fallbacks, such as shifting along an axis to stay in view rather than flipping.",
       "You need an arrow that tracks the trigger across a flip.",
       "A popover must stay open while a second one opens, or nest inside another. Auto popovers close their ancestors.",
@@ -65,4 +66,9 @@ export const popover: Rule = {
   }
 </style>`,
   },
+  guides: [
+    "position-aware-tooltips",
+    "interest-triggered-tooltips",
+    "resilient-context-menus-and-nested-dropdowns",
+  ],
 };
