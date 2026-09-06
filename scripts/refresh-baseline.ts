@@ -191,8 +191,12 @@ function featureStatus(id: string): BaselineStatus {
 }
 
 function ruleStatus(rule: Rule): BaselineStatus {
-  if (rule.featureIds.length === 0 && rule.manualBaseline) {
-    return rule.manualBaseline.status;
+  if (rule.featureIds.length === 0) {
+    // Mirrors resolveBaseline: no features and no hand-verified claim is a
+    // data error, and it reports as unknown rather than defaulting to the
+    // best tier. The schema forbids it, but this tally is written into a
+    // permanent committed file, so it should not quietly overstate support.
+    return rule.manualBaseline?.status ?? "unknown";
   }
   let worst: BaselineStatus = "widely";
   for (const id of rule.featureIds) {

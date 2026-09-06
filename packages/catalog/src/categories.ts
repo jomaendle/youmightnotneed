@@ -1,7 +1,27 @@
 import { z } from "zod";
 
+/**
+ * The ids, as a literal tuple. Declaring them here rather than deriving them
+ * from CATEGORIES with a cast is what keeps CategoryId a closed union: a
+ * `as [string, ...string[]]` cast widens the element type back to string, and
+ * z.enum then infers string, so a typo'd category would type-check.
+ */
+const CATEGORY_IDS = [
+  "layout",
+  "scrolling",
+  "animation",
+  "typography",
+  "forms",
+  "device-apis",
+  "async-data",
+  "formatting",
+] as const;
+
+export const categorySchema = z.enum(CATEGORY_IDS);
+export type CategoryId = z.infer<typeof categorySchema>;
+
 export interface CategoryMeta {
-  id: string;
+  id: CategoryId;
   name: string;
   description: string;
 }
@@ -48,10 +68,6 @@ export const CATEGORIES: readonly CategoryMeta[] = [
     description: "Locale-aware number, date, and time formatting.",
   },
 ] as const;
-
-const categoryIds = CATEGORIES.map((c) => c.id) as [string, ...string[]];
-export const categorySchema = z.enum(categoryIds);
-export type CategoryId = z.infer<typeof categorySchema>;
 
 export const CATEGORIES_BY_ID: Readonly<Record<CategoryId, CategoryMeta>> =
   Object.fromEntries(CATEGORIES.map((c) => [c.id, c])) as Record<

@@ -47,6 +47,27 @@ export default function RulesPage() {
     );
   }
 
+  /*
+   * Tier and category filter independently, so some pairs select nothing at
+   * all and the page would otherwise go blank with no explanation. CSS
+   * cannot ask "is anything still visible", but the pairs that come up empty
+   * are known here, so the empty state is revealed by naming them. Derived
+   * from the rules rather than hardcoded, so it stays right as the catalog
+   * grows.
+   */
+  const emptyPairs = FILTERABLE_STATUSES.flatMap((status) =>
+    CATEGORIES.filter(
+      (category) =>
+        !withBaseline.some(
+          (entry) =>
+            entry.status === status && entry.rule.category === category.id,
+        ),
+    ).map(
+      (category) =>
+        `.catalog:has(#filter-${status}:checked):has(#cat-filter-${category.id}:checked) .catalog-empty`,
+    ),
+  );
+
   return (
     <div className="space-y-10">
       <header>
@@ -63,6 +84,10 @@ export default function RulesPage() {
           .catalog wrapper below. It ships no JavaScript, and it keeps
           working with JavaScript disabled.
         */}
+      {emptyPairs.length === 0 ? null : (
+        <style>{`${emptyPairs.join(",")}{display:block}`}</style>
+      )}
+
       <div className="catalog rules-shell">
         <aside className="rules-sidebar">
           <fieldset className="sidebar-group">
@@ -150,6 +175,11 @@ export default function RulesPage() {
         </aside>
 
         <div>
+          <p className="catalog-empty max-w-[52ch] text-fg-muted">
+            No rule sits in both of those. Widen either filter to see the rest
+            of the catalog.
+          </p>
+
           {TIERS.map((tier) => {
             const inTier = withBaseline
               .filter((entry) => entry.status === tier.status)

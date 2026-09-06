@@ -811,3 +811,27 @@ dialog[open]::backdrop {
 .catalog:has(#cat-filter-formatting:checked) [data-category]:not([data-category="formatting"]) {
   display: none;
 }
+
+/* Shown only for the filter pairs that select nothing. The rules page emits
+   the selectors that reveal it, since only it knows which pairs those are. */
+.catalog-empty {
+  display: none;
+}
+
+/*
+  Hide a tier heading the chosen category empties out. Without this,
+  picking "Async, Observers & Data" leaves the "Newly available" and
+  "Bleeding edge" headings, badges and descriptions standing over nothing.
+  :has() tests what is in the DOM, which display: none does not affect, so
+  this composes with the rules above rather than fighting them.
+*/
+.catalog:has(#cat-filter-layout:checked) [data-tier-group]:not(:has([data-category="layout"])),
+.catalog:has(#cat-filter-scrolling:checked) [data-tier-group]:not(:has([data-category="scrolling"])),
+.catalog:has(#cat-filter-animation:checked) [data-tier-group]:not(:has([data-category="animation"])),
+.catalog:has(#cat-filter-typography:checked) [data-tier-group]:not(:has([data-category="typography"])),
+.catalog:has(#cat-filter-forms:checked) [data-tier-group]:not(:has([data-category="forms"])),
+.catalog:has(#cat-filter-device-apis:checked) [data-tier-group]:not(:has([data-category="device-apis"])),
+.catalog:has(#cat-filter-async-data:checked) [data-tier-group]:not(:has([data-category="async-data"])),
+.catalog:has(#cat-filter-formatting:checked) [data-tier-group]:not(:has([data-category="formatting"])) {
+  display: none;
+}

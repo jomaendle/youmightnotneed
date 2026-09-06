@@ -74,9 +74,12 @@ export function TierHistorySparkline({
   }
 
   const first = entries[0];
-  const ariaLabel = first
-    ? `Baseline tier share over ${entries.length} tracked months: currently ${Math.round(latestShare.widely)}% widely available, ${Math.round(latestShare.newly)}% newly available, ${Math.round(latestShare.limited)}% limited.`
-    : "";
+  if (!first) return null;
+
+  // Named by the range it actually covers rather than a count of months: the
+  // refresh runs monthly, but a skipped run would make "over N months" a
+  // claim the data does not support.
+  const ariaLabel = `Baseline tier share, ${formatMonth(first.month)} to ${formatMonth(latest.month)}: currently ${Math.round(latestShare.widely)}% widely available, ${Math.round(latestShare.newly)}% newly available, ${Math.round(latestShare.limited)}% limited.`;
 
   return (
     <div className="mt-6">
@@ -105,11 +108,9 @@ export function TierHistorySparkline({
           strokeWidth="2"
         />
       </svg>
-      {first ? (
-        <p className="mt-2 text-fg-faint text-metadata">
-          Tracked since {formatMonth(first.month)}.
-        </p>
-      ) : null}
+      <p className="mt-2 text-fg-faint text-metadata">
+        Tracked since {formatMonth(first.month)}.
+      </p>
     </div>
   );
 }
