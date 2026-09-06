@@ -8,7 +8,7 @@ export const urlSearchParams: Rule = {
   manualBaseline: {
     status: "widely",
     verifiedOn: "2026-09-06",
-    note: "web-features folds URLSearchParams into the 'url' feature, which reports Chrome 32 and Safari 7 because the URL constructor landed first. URLSearchParams itself is Chrome 49, Firefox 44 and Safari 10.1. Deriving from 'url' would understate the floor by three Safari majors. Widely available on its own dates since 2017.",
+    note: "web-features folds URLSearchParams into the 'url' feature, which reports Chrome {{chrome:url}} and Safari {{safari:url}} because the URL constructor landed first. URLSearchParams itself is Chrome {{chrome:api.URLSearchParams}}, Firefox {{firefox:api.URLSearchParams}} and Safari {{safari:api.URLSearchParams}}. Deriving from 'url' would understate the floor by three Safari majors. Widely available on its own dates since 2017.",
   },
   native: "URLSearchParams and the URL constructor",
   human: {
@@ -33,7 +33,7 @@ new URLSearchParams({ q: "scroll snap", page: "1" }).toString();
       "You depend on the library's options: a custom array format, a configurable delimiter, sorted output, or comma-separated values parsed into arrays.",
       "You parse untrusted input on a server and rely on qs's depth and parameterLimit guards against prototype pollution. URLSearchParams applies no limits of its own.",
       "You need Node's legacy querystring semantics, where a repeated key gives an array rather than needing getAll().",
-      "Your support target reaches below Chrome 49, Firefox 44 or Safari 10.1. The URL constructor arrived earlier than URLSearchParams, so a browser having one is not proof it has the other.",
+      "Your support target reaches below Chrome {{chrome:api.URLSearchParams}}, Firefox {{firefox:api.URLSearchParams}} or Safari {{safari:api.URLSearchParams}}. The URL constructor arrived earlier than URLSearchParams, so a browser having one is not proof it has the other.",
     ],
     snippet: `const params = new URLSearchParams(location.search);
 params.get("page");

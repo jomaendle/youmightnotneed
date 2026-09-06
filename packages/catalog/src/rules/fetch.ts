@@ -31,14 +31,14 @@ const items = await res.json();`,
     mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch",
   },
   agent: {
-    when: "making HTTP requests from the browser or from Node 18 and up",
+    when: "making HTTP requests from the browser or from Node {{nodejs:api.fetch}} and up",
     unless: [
       "You use interceptors to attach auth headers or refresh a token on 401 across every call. fetch has no hook for that, so it becomes a wrapper every request has to route through.",
       "You rely on a 4xx or 5xx rejecting. fetch resolves for any response the server sent, so every call site needs an explicit response.ok check and existing catch blocks quietly stop firing.",
       "You need upload progress. Download progress can come off the response stream, but tracking bytes sent still needs XMLHttpRequest, which is what axios uses underneath.",
-      "You share one client with Node 16 or older, where there is no global fetch, or you depend on axios features with no equivalent: XSRF cookie handling, automatic transforms, or the adapter system.",
+      "You share one client with Node below {{nodejs:api.fetch}}, where there is no global fetch, or you depend on axios features with no equivalent: XSRF cookie handling, automatic transforms, or the adapter system.",
       "Your tests mock axios directly. Moving to fetch means rewriting those mocks, which is real work for no behaviour change.",
-      "You need a request timeout below Chrome 124, Safari 16 or Firefox 100. fetch itself is far older than all three, but AbortSignal.timeout() is not, so an older target needs a setTimeout calling controller.abort().",
+      "You need a request timeout below Chrome {{chrome:abortsignal-timeout}}, Safari {{safari:abortsignal-timeout}} or Firefox {{firefox:abortsignal-timeout}}. fetch itself is far older than all three, but AbortSignal.timeout() is not, so an older target needs a setTimeout calling controller.abort().",
     ],
     snippet: `const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
 if (!res.ok) throw new Error(String(res.status));

@@ -50,6 +50,26 @@ Where a feature has no `web-features` ID yet, a rule may carry a
 `manualBaseline` with a `verifiedOn` date. CI fails once that date is more than
 90 days old.
 
+## Nor are the version numbers
+
+A rule's conditions often name a specific version: "below Chrome 92, Firefox 95
+or Safari 15.4". Those were typed by hand once, and a review found seven of
+them wrong, all in the direction that gets someone shipping broken code.
+
+So they are no longer typed. A rule writes a token:
+
+```ts
+"You support browsers below Safari {{safari:api.Crypto.randomUUID}}."
+```
+
+`pnpm refresh:support` resolves it from `web-features`, or from MDN's
+browser-compat-data when the claim is finer than web-features rolls up, and
+commits the result. A token the sources cannot confirm fails the refresh
+rather than shipping a guess. A committed number that stops matching its
+source fails the freshness check. A literal version anywhere in a rule file
+fails the tests. The catalog cannot state a browser version it did not get
+from the source data.
+
 ## Guides for the part this does not cover
 
 A rule says which dependency has a native equivalent and gives one snippet. It

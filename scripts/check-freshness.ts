@@ -11,7 +11,9 @@
  *   4. The agent skill's generated catalog reference differing by one byte
  *      from a fresh render is an error, so the skill can never describe a
  *      catalog that moved on.
- *   5. The skill's hand-written SKILL.md restating a count that the generated
+ *   5. A browser version cited in rule prose that no longer matches the
+ *      source data is an error. No version is ever written by hand.
+ *   6. The skill's hand-written SKILL.md restating a count that the generated
  *      reference already carries is an error, because it goes stale silently.
  *   6. A snapshot older than 45 days, or generated from an older web-features
  *      than the one installed, is a warning telling you to run the refresh.
@@ -26,8 +28,10 @@ import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
 import { guideSnapshot } from "../packages/catalog/src/generated/guides.ts";
 import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
+import { supportClaims } from "../packages/catalog/src/generated/support-claims.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
 import { renderCatalogReference, SKILL_CATALOG_FILE } from "./build-skill.ts";
+import { resolveAllClaims, sourceVersions } from "./refresh-support.ts";
 
 const MANUAL_BASELINE_MAX_AGE_DAYS = 90;
 const SNAPSHOT_WARN_AGE_DAYS = 45;
@@ -118,7 +122,45 @@ for (const rule of rules) {
   }
 }
 
-// 6. The skill's generated catalog reference must match the catalog exactly.
+// 6. Every browser version the prose cites must still match the source data.
+// This is the gate that makes "never guess a version" real: the snapshot is
+// re-derived from web-features and BCD and compared, so a hand-edited number
+// cannot survive, and a version that moved upstream fails until it is
+// regenerated.
+const { claims: freshClaims, failures: claimFailures } = resolveAllClaims();
+for (const failure of claimFailures) {
+  errors.push(`Support claim does not resolve. ${failure}`);
+}
+
+const committedClaims = supportClaims.claims;
+for (const [token, version] of Object.entries(freshClaims)) {
+  const committed = committedClaims[token];
+  if (committed === undefined) {
+    errors.push(
+      `Rule prose cites {{${token}}} but the snapshot has no entry for it. Run \`pnpm refresh:support\`.`,
+    );
+  } else if (committed !== version) {
+    errors.push(
+      `{{${token}}} is committed as "${committed}" but the source data says "${version}". Run \`pnpm refresh:support\` and read the diff.`,
+    );
+  }
+}
+for (const token of Object.keys(committedClaims)) {
+  if (!(token in freshClaims)) {
+    errors.push(
+      `The snapshot carries {{${token}}}, which no rule cites any more. Run \`pnpm refresh:support\`.`,
+    );
+  }
+}
+
+const sources = sourceVersions();
+if (supportClaims.bcdVersion !== sources.bcdVersion) {
+  errors.push(
+    `Support claims came from browser-compat-data@${supportClaims.bcdVersion} but @${sources.bcdVersion} is installed. Run \`pnpm refresh:support\`.`,
+  );
+}
+
+// 7. The skill's generated catalog reference must match the catalog exactly.
 // Comparing against a fresh render, rather than grepping for rule ids, is what
 // catches an edited `when` line or a moved support tier.
 try {
@@ -134,7 +176,7 @@ try {
   );
 }
 
-// 7. The hand-written part of the skill must not restate a generated number.
+// 8. The hand-written part of the skill must not restate a generated number.
 const skillDoc = join(
   dirname(fileURLToPath(import.meta.url)),
   "../skills/youmightnotneed/SKILL.md",
@@ -151,7 +193,7 @@ try {
   errors.push("skills/youmightnotneed/SKILL.md is missing.");
 }
 
-// 8. Snapshot age is a warning. A version mismatch is not: it means the
+// 9. Snapshot age is a warning. A version mismatch is not: it means the
 // committed data and its source have actually diverged.
 const snapshotAge = daysSince(baselineSnapshot.generatedOn);
 if (snapshotAge > SNAPSHOT_WARN_AGE_DAYS) {

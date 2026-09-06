@@ -8,7 +8,7 @@ export const randomUuid: Rule = {
   manualBaseline: {
     status: "widely",
     verifiedOn: "2026-09-06",
-    note: "web-features has no ID for crypto.randomUUID() on its own. The nearest is 'web-cryptography', which spans the whole Web Crypto API and reports Safari 11, where randomUUID needs Safari 15.4, Chrome 92 and Firefox 95. Deriving from that ID would publish a support table this rule cannot honour. The tier is widely available on the method's own dates: Safari 15.4 shipped in March 2022.",
+    note: "web-features has no ID for crypto.randomUUID() on its own. The nearest is 'web-cryptography', which spans the whole Web Crypto API and reports Safari {{safari:web-cryptography}}, where randomUUID needs Safari {{safari:api.Crypto.randomUUID}}, Chrome {{chrome:api.Crypto.randomUUID}} and Firefox {{firefox:api.Crypto.randomUUID}}. Deriving from that ID would publish a support table this rule cannot honour. The tier is widely available on the method's own dates: Safari {{safari:api.Crypto.randomUUID}} shipped in March 2022.",
   },
   native: "crypto.randomUUID()",
   human: {
@@ -25,7 +25,7 @@ export const randomUuid: Rule = {
       "You need a version other than 4. randomUUID only makes v4, so v1, v5 and v7 still need the library, and v7 sorting by creation time is a common reason to want it.",
       "You parse, validate or stringify UUIDs you already have. The library exports validate(), parse() and stringify(); the platform covers generation only.",
       "The code runs on plain http somewhere other than localhost. randomUUID is only defined in a secure context, so an insecure page throws a TypeError.",
-      "You support browsers below Chrome 92, Firefox 95 or Safari 15.4. randomUUID landed years later than the rest of Web Crypto, so the surrounding API being present is not proof this method is.",
+      "You support browsers below Chrome {{chrome:api.Crypto.randomUUID}}, Firefox {{firefox:api.Crypto.randomUUID}} or Safari {{safari:api.Crypto.randomUUID}}. randomUUID landed years later than the rest of Web Crypto, so the surrounding API being present is not proof this method is.",
       "You need identifiers shorter or differently shaped than a 36-character UUID, which is what nanoid and short-uuid are for.",
     ],
     snippet: "const id = crypto.randomUUID();",

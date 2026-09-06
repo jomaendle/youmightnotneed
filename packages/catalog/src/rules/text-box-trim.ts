@@ -26,7 +26,7 @@ export const textBoxTrim: Rule = {
   agent: {
     when: "removing a font's built-in leading so text sits flush in its box",
     unless: [
-      "You need Firefox support. Chrome 133 and Safari 18.2 both ship text-box, but Firefox does not, so the fallback there is the untrimmed spacing you started with and your vertical rhythm shifts between browsers.",
+      "You need Firefox support. Chrome {{chrome:text-box}} and Safari {{safari:text-box}} both ship text-box, but Firefox does not, so the fallback there is the untrimmed spacing you started with and your vertical rhythm shifts between browsers.",
       "You need the computed metrics as numbers at build time, for example to generate spacing tokens or to lay out text in a canvas or a PDF. Capsize gives you values; CSS only affects rendering.",
       "You need to support a font whose metrics are wrong or missing, which Capsize lets you override by hand.",
     ],

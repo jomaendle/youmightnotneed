@@ -1,4 +1,5 @@
 import type { Rule } from "../schema.ts";
+import { resolveSupportClaims } from "../support.ts";
 import { abortController } from "./abort-controller.ts";
 import { accordion } from "./accordion.ts";
 import { arrayGrouping } from "./array-grouping.ts";
@@ -57,10 +58,38 @@ import { webCrypto } from "./web-crypto.ts";
 import { webShare } from "./web-share.ts";
 
 /**
- * Every rule in the catalog. Order is not significant: surfaces sort by
- * replaceable weight or support tier, not by position here.
+ * Interpolates the {{browser:key}} tokens a rule's prose uses in place of a
+ * hand-typed browser version. Done once here, so the website, the CLI, the
+ * MCP server and the skill reference all read resolved prose without any of
+ * them knowing the mechanism exists.
  */
-export const rules: readonly Rule[] = [
+function withResolvedClaims(rule: Rule): Rule {
+  return {
+    ...rule,
+    human: {
+      ...rule.human,
+      explainer: resolveSupportClaims(rule.human.explainer),
+      snippet: resolveSupportClaims(rule.human.snippet),
+    },
+    agent: {
+      ...rule.agent,
+      when: resolveSupportClaims(rule.agent.when),
+      unless: rule.agent.unless.map(resolveSupportClaims),
+      snippet: resolveSupportClaims(rule.agent.snippet),
+    },
+    ...(rule.manualBaseline
+      ? {
+          manualBaseline: {
+            ...rule.manualBaseline,
+            note: resolveSupportClaims(rule.manualBaseline.note),
+          },
+        }
+      : {}),
+  };
+}
+
+/** The rules exactly as authored, tokens and all. */
+const rawRules: readonly Rule[] = [
   abortController,
   accordion,
   aspectRatio,
@@ -118,6 +147,12 @@ export const rules: readonly Rule[] = [
   urlSearchParams,
   webCrypto,
 ];
+
+/**
+ * Every rule in the catalog. Order is not significant: surfaces sort by
+ * replaceable weight or support tier, not by position here.
+ */
+export const rules: readonly Rule[] = rawRules.map(withResolvedClaims);
 
 /** Lookup by rule id. */
 export const rulesById: ReadonlyMap<string, Rule> = new Map(

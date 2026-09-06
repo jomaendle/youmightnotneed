@@ -17,6 +17,13 @@ Do not relitigate these. If one looks wrong, say so in a sentence and carry on.
 - **Baseline status is derived, never hardcoded.** Rules store `web-features`
   IDs. `scripts/refresh-baseline.ts` commits a snapshot. A rule reports its
   least-supported required feature.
+- **No browser version is ever written by hand.** Not the tier, not the
+  numbers in prose. A rule writes `{{safari:api.Crypto.randomUUID}}` and
+  `scripts/refresh-support.ts` resolves it from `web-features` or from MDN's
+  browser-compat-data. A token with no source fails the refresh, a committed
+  number that no longer matches its source fails `check:freshness`, and a
+  literal `Safari 15.4` anywhere in a rule file fails the tests. This exists
+  because a review found seven rules naming a version the source contradicts.
 - **Findings are conditional, never instructions.** "If you're using X for Y,
   Z covers that case", not "delete X". Sizes are "up to", never "you will
   save". Tests enforce the phrasing.
@@ -47,9 +54,9 @@ check fails if it drifts. Do not put counts or rule names in its hand-written
 SKILL.md: the generated `references/catalog.md` carries those, and the
 freshness check rejects a hardcoded count.
 
-`packages/catalog/src/generated/` and
-`skills/youmightnotneed/references/catalog.md` are written by the refresh
-scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
+`packages/catalog/src/generated/` (Baseline, sizes, guide index, support
+claims) and `skills/youmightnotneed/references/catalog.md` are written by the
+refresh scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
 patching numbers.
 
 ## Conventions

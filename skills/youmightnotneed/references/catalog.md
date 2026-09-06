@@ -56,7 +56,7 @@ were about to install.
 | letting someone drag-resize a single panel, such as a sidebar or a textarea | resize | limited | `resizable-panels` |
 | letting someone reorder a list by dragging an item with a mouse | draggable and the drag events | widely available | `drag-and-drop` |
 | letting someone share the current page or a piece of content to whatever app they choose | navigator.share() | limited | `web-share` |
-| making HTTP requests from the browser or from Node 18 and up | fetch() | widely available | `fetch` |
+| making HTTP requests from the browser or from Node 18.0.0 and up | fetch() | widely available | `fetch` |
 | making in-page anchor links scroll smoothly to their target | scroll-behavior: smooth with scroll-margin-top | widely available | `smooth-scroll` |
 | passing messages between parts of an app through a small event bus | EventTarget with CustomEvent | widely available | `event-target` |
 | pausing or resuming work, such as polling or video playback, based on whether the tab is visible | document.visibilityState and the visibilitychange event | widely available | `page-visibility` |
@@ -303,7 +303,7 @@ Sorted by title.
 - **native**: fetch()
 - **support**: widely available
 - **replaces**: `axios`, `superagent`, `redaxios`, `whatwg-fetch`, `unfetch`, `isomorphic-fetch`, `cross-fetch`
-- **when**: making HTTP requests from the browser or from Node 18 and up
+- **when**: making HTTP requests from the browser or from Node 18.0.0 and up
 
 ### Hashing and encryption
 

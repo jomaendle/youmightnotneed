@@ -30,7 +30,7 @@ export const inert: Rule = {
       "You rely on the library restoring focus to the element that opened the overlay. inert does not track that, so storing the previous activeElement and calling focus() on close is yours to write.",
       "The overlay lives inside the same subtree you would have to mark inert, so there is no ancestor you can set the attribute on without disabling the overlay along with it.",
       "You are using the initial-focus, Escape handling and scroll locking the library bundles around the trap, and separating those out costs more than keeping the dependency.",
-      "Your support target includes browsers older than Chrome 102, Firefox 112 or Safari 15.5. They ignore inert, and focus escapes quietly rather than failing in a way you would notice.",
+      "Your support target includes browsers older than Chrome {{chrome:inert}}, Firefox {{firefox:inert}} or Safari {{safari:inert}}. They ignore inert, and focus escapes quietly rather than failing in a way you would notice.",
     ],
     snippet: `page.inert = true;   // opening the overlay
 page.inert = false;  // closing it`,

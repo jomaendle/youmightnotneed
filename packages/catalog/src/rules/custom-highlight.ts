@@ -34,7 +34,7 @@ CSS.highlights.set("search", new Highlight(...ranges));`,
       "A highlight has to be interactive, for example a click target, a tooltip anchor, or something you scroll into view. Highlight ranges are paint-only and are not elements, so there is nothing to attach a listener or an anchor name to.",
       "You style highlights with more than colour, background-color, text-decoration and text-shadow. ::highlight() ignores everything else, so a rounded background or a border still needs real elements.",
       "Finding the matches is what you are buying: diacritic folding, stemming, or matching across element boundaries. The API takes Ranges you have already computed and does not help you compute them.",
-      "Your support target reaches below Safari 17.2 or Firefox 149. Custom highlights only became Baseline newly available in March 2026, so those browsers need the wrapping approach as a fallback.",
+      "Your support target reaches below Safari {{safari:highlight}} or Firefox {{firefox:highlight}}. Custom highlights only became Baseline newly available in March 2026, so those browsers need the wrapping approach as a fallback.",
       "The highlighting has to survive being copied out of the page or serialised back to HTML, where a paint-time highlight leaves no trace.",
     ],
     snippet: `CSS.highlights.set("search", new Highlight(...ranges));

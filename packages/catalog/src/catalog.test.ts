@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
@@ -7,6 +7,7 @@ import { baselineSnapshot } from "./generated/baseline.ts";
 import { isKnownGuide, resolveGuide, resolveGuides } from "./guides.ts";
 import { rules, rulesByPackage } from "./rules/index.ts";
 import { catalogSchema } from "./schema.ts";
+import { hasUnresolvedClaim, supportClaims } from "./support.ts";
 
 const srcDir = dirname(fileURLToPath(import.meta.url));
 
@@ -339,4 +340,62 @@ describe("guide references", () => {
       expect(guide.category).toBe("");
     },
   );
+});
+
+describe("browser versions are never written by hand", () => {
+  // CLAUDE.md's "derived, never hardcoded" covered the support tier but not
+  // the version numbers in prose, and a review found seven rules naming a
+  // version the source data contradicts. A rule now writes
+  // {{browser:key}} and the number comes from web-features or from MDN's
+  // browser-compat-data, so a wrong one cannot be typed in the first place.
+  const BROWSERS =
+    "Chrome|Chromium|Firefox|Safari|Edge|Opera|Samsung Internet|Node|Node\\.js|Deno|Bun";
+  const LITERAL_VERSION = new RegExp(`\\b(?:${BROWSERS})\\s+v?\\d`, "g");
+
+  const ruleFiles = readdirSync(join(srcDir, "rules")).filter(
+    (file) => file.endsWith(".ts") && file !== "index.ts",
+  );
+
+  it("has a rule file for every rule", () => {
+    expect(ruleFiles.length).toBe(rules.length);
+  });
+
+  it.each(ruleFiles)(
+    "%s cites no version the source data did not give",
+    (file) => {
+      const source = readFileSync(join(srcDir, "rules", file), "utf8");
+      // Tokens out first: what remains is anything typed by hand.
+      const handWritten = source.replace(
+        /\{\{[a-z_]+:[A-Za-z0-9_.-]+\}\}/g,
+        "",
+      );
+      const offenders = handWritten.match(LITERAL_VERSION) ?? [];
+      expect(
+        offenders,
+        `${file} states a browser version by hand. Replace it with {{browser:key}}, where key is a web-features ID or a BCD path, and run \`pnpm refresh:support\`.`,
+      ).toEqual([]);
+    },
+  );
+
+  it.each(rules.map((r) => [r.id, r] as const))(
+    "%s resolves every token it uses",
+    (_id, rule) => {
+      const texts = [
+        rule.human.explainer,
+        rule.human.snippet,
+        rule.agent.when,
+        rule.agent.snippet,
+        ...rule.agent.unless,
+        rule.manualBaseline?.note ?? "",
+      ];
+      for (const text of texts) {
+        expect(hasUnresolvedClaim(text)).toBe(false);
+        expect(text).not.toContain("{{");
+      }
+    },
+  );
+
+  it("resolves at least one claim, so the mechanism is actually load-bearing", () => {
+    expect(Object.keys(supportClaims.claims).length).toBeGreaterThan(0);
+  });
 });

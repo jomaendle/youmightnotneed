@@ -44,7 +44,7 @@ export const scrollAnimations: Rule = {
   agent: {
     when: "fading or moving elements in as they scroll into view, or driving a reading-progress bar",
     unless: [
-      "You need Firefox support. Chrome 115 and Safari 26 ship scroll-driven animations but Firefox does not, so wrap them in @supports and make sure the un-animated state is the visible one.",
+      "You need Firefox support. Chrome {{chrome:scroll-driven-animations}} and Safari {{safari:scroll-driven-animations}} ship scroll-driven animations but Firefox does not, so wrap them in @supports and make sure the un-animated state is the visible one.",
       "You need a callback in JavaScript when an element enters view, for analytics, lazy loading or infinite scroll. That is what IntersectionObserver is for and CSS does not replace it.",
       "You need to animate something that is not a descendant of, or a sibling reachable from, the scrolling element. Timeline scope is limited.",
       "The animation must run once and stay put. A view timeline is scrubbed, so it reverses when the user scrolls back up.",

@@ -31,6 +31,7 @@ jobs:
       # a support label per rule. Without this the PR is born stale and
       # check:freshness rejects the one PR whose whole purpose is a tier change.
       - run: pnpm refresh:guides
+      - run: pnpm refresh:support
       - run: pnpm refresh:skill
 
       # Run the gates here rather than trusting the PR to be checked. A PR

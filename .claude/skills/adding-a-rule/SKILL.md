@@ -39,6 +39,13 @@ New file at `packages/catalog/src/rules/<id>.ts`, one `Rule` object (see
   Nice-to-have features go in `agent.unless` instead, not here, or the
   rule understates itself.
 - `human.explainer`: 2 to 4 sentences, `human.snippet`: copy-pasteable.
+- **Never type a browser version.** Write `{{browser:key}}` instead, where
+  key is a web-features ID (`{{safari:inert}}`) or a BCD path
+  (`{{safari:api.Crypto.randomUUID}}`) when you need member-level detail that
+  web-features rolls up. `pnpm refresh:support` resolves it and fails if the
+  source data cannot confirm it, which is the point: if no source has the
+  number, the condition needs rewording rather than a guess. A literal
+  `Safari 15.4` in a rule file fails `catalog.test.ts`.
 - `guides` (optional): IDs from GoogleChrome/modern-web-guidance covering the
   implementation. Check `packages/catalog/src/generated/guides.ts` for the
   ID, or run `pnpm refresh:guides` if the guide is newer than the snapshot.
@@ -63,10 +70,11 @@ Order in the array is not significant.
 pnpm refresh:baseline   # pulls featureIds' status into generated/baseline.ts
 pnpm refresh:sizes       # fetches bundlephobia sizes for every claimed package
 pnpm refresh:guides      # snapshots the modern-web-guidance index
+pnpm refresh:support     # resolves every {{browser:key}} token in the prose
 pnpm refresh:skill       # regenerates the skill's catalog reference
 ```
 
-`pnpm refresh` runs all four. The skill reference must be regenerated for any
+`pnpm refresh` runs all five. The skill reference must be regenerated for any
 new rule, or `check:freshness` fails.
 
 All four are safe to run even when nothing else changed: existing entries
