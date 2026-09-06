@@ -4,7 +4,12 @@ export const randomUuid: Rule = {
   id: "random-uuid",
   title: "Generating UUIDs",
   replaces: ["uuid", "uuidv4", "@lukeed/uuid", "uuid-random"],
-  featureIds: ["web-cryptography"],
+  featureIds: [],
+  manualBaseline: {
+    status: "widely",
+    verifiedOn: "2026-09-06",
+    note: "web-features has no ID for crypto.randomUUID() on its own. The nearest is 'web-cryptography', which spans the whole Web Crypto API and reports Safari 11, where randomUUID needs Safari 15.4, Chrome 92 and Firefox 95. Deriving from that ID would publish a support table this rule cannot honour. The tier is widely available on the method's own dates: Safari 15.4 shipped in March 2022.",
+  },
   native: "crypto.randomUUID()",
   human: {
     explainer:

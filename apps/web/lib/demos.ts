@@ -36,6 +36,379 @@ const SOLID =
  * frame can show truthfully.
  */
 export const demos: Partial<Record<string, Demo>> = {
+  "random-uuid": {
+    height: 200,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <button id="gen">crypto.randomUUID()</button>
+  <ul id="out" class="ids"></ul>
+</div>
+<script>
+  const out = document.getElementById("out");
+  document.getElementById("gen").addEventListener("click", () => {
+    if (typeof crypto.randomUUID !== "function") {
+      out.innerHTML = "<li>randomUUID needs a secure context</li>";
+      return;
+    }
+    const li = document.createElement("li");
+    li.textContent = crypto.randomUUID();
+    out.prepend(li);
+    while (out.children.length > 3) out.lastElementChild.remove();
+  });
+</script>
+`,
+      `
+.ids { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.375rem; min-height:4.5rem; }
+.ids li { font-family:ui-monospace, monospace; font-size:0.75rem; color:var(--c-fg-muted); }
+.ids li:first-child { color:var(--c-fg); }
+`,
+    ),
+  },
+  base64: {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; gap:0.625rem; width:100%; max-width:340px;">
+  <input id="in" value="caffè ☕" aria-label="Text to encode" />
+  <p class="demo-hint" style="margin:0;">btoa() alone throws on both of those characters.</p>
+  <pre id="enc" class="mono"></pre>
+  <pre id="dec" class="mono"></pre>
+</div>
+<script>
+  const input = document.getElementById("in");
+  const enc = document.getElementById("enc");
+  const dec = document.getElementById("dec");
+
+  function render() {
+    const bytes = new TextEncoder().encode(input.value);
+    const encoded = btoa(String.fromCharCode(...bytes));
+    enc.textContent = "encoded  " + encoded;
+    dec.textContent =
+      "round trip  " +
+      new TextDecoder().decode(
+        Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0)),
+      );
+  }
+
+  input.addEventListener("input", render);
+  render();
+</script>
+`,
+      `
+input { font:inherit; width:100%; padding:0.5rem 0.625rem; color:var(--c-fg); background:var(--c-bg-subtle); border:1px solid var(--c-border); border-radius:0.375rem; }
+.mono { margin:0; font-family:ui-monospace, monospace; font-size:0.75rem; color:var(--c-fg-muted); white-space:pre-wrap; word-break:break-all; }
+`,
+    ),
+  },
+  "natural-sort": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem;">
+    <button data-mode="plain">sort()</button>
+    <button data-mode="collator">Intl.Collator</button>
+  </div>
+  <pre id="out" class="mono"></pre>
+</div>
+<script>
+  const items = ["item10", "item9", "Item2", "Öl", "Oase"];
+  const out = document.getElementById("out");
+  const collator = new Intl.Collator("de", { numeric: true });
+
+  function render(mode) {
+    const sorted =
+      mode === "collator"
+        ? [...items].sort(collator.compare)
+        : [...items].sort();
+    out.textContent = sorted.join("\\n");
+  }
+
+  document.querySelectorAll("button[data-mode]").forEach((btn) => {
+    btn.addEventListener("click", () => render(btn.dataset.mode));
+  });
+  render("plain");
+</script>
+`,
+      `
+.mono { margin:0; font-family:ui-monospace, monospace; font-size:0.8125rem; color:var(--c-fg-muted); line-height:1.6; min-height:6.5rem; }
+`,
+    ),
+  },
+  "url-search-params": {
+    height: 240,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; gap:0.625rem; width:100%; max-width:340px;">
+  <input id="qs" value="?tag=css&tag=html&page=2" aria-label="Query string" />
+  <pre id="out" class="mono"></pre>
+</div>
+<script>
+  const input = document.getElementById("qs");
+  const out = document.getElementById("out");
+
+  function render() {
+    const params = new URLSearchParams(input.value);
+    const lines = [];
+    for (const key of new Set(params.keys())) {
+      const all = params.getAll(key);
+      lines.push(key + "  " + (all.length > 1 ? JSON.stringify(all) : JSON.stringify(all[0])));
+    }
+    out.textContent = lines.join("\\n") || "no parameters";
+  }
+
+  input.addEventListener("input", render);
+  render();
+</script>
+`,
+      `
+input { font:inherit; font-family:ui-monospace, monospace; font-size:0.8125rem; width:100%; padding:0.5rem 0.625rem; color:var(--c-fg); background:var(--c-bg-subtle); border:1px solid var(--c-border); border-radius:0.375rem; }
+.mono { margin:0; font-family:ui-monospace, monospace; font-size:0.8125rem; color:var(--c-fg-muted); line-height:1.7; min-height:5rem; }
+`,
+    ),
+  },
+  "event-target": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem;">
+    <button id="emit">dispatchEvent</button>
+    <button id="off">controller.abort()</button>
+  </div>
+  <pre id="log" class="mono"></pre>
+</div>
+<script>
+  const bus = new EventTarget();
+  const log = document.getElementById("log");
+  const lines = [];
+  let count = 0;
+
+  function write(text) {
+    lines.unshift(text);
+    while (lines.length > 4) lines.pop();
+    log.textContent = lines.join("\\n");
+  }
+
+  const controller = new AbortController();
+  bus.addEventListener(
+    "cart:add",
+    (event) => write("listener A  " + event.detail.sku),
+    { signal: controller.signal },
+  );
+  bus.addEventListener(
+    "cart:add",
+    (event) => write("listener B  " + event.detail.sku),
+    { signal: controller.signal },
+  );
+
+  document.getElementById("emit").addEventListener("click", () => {
+    count += 1;
+    bus.dispatchEvent(
+      new CustomEvent("cart:add", { detail: { sku: "A" + count } }),
+    );
+  });
+  document.getElementById("off").addEventListener("click", () => {
+    controller.abort();
+    write("both listeners removed by one abort()");
+  });
+  write("nothing dispatched yet");
+</script>
+`,
+      `
+.mono { margin:0; font-family:ui-monospace, monospace; font-size:0.75rem; color:var(--c-fg-muted); line-height:1.7; min-height:5.5rem; }
+`,
+    ),
+  },
+  "web-crypto": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; gap:0.625rem; width:100%; max-width:340px;">
+  <input id="in" value="hello world" aria-label="Text to hash" />
+  <pre id="out" class="mono"></pre>
+</div>
+<script>
+  const input = document.getElementById("in");
+  const out = document.getElementById("out");
+
+  async function render() {
+    if (!crypto.subtle) {
+      out.textContent = "crypto.subtle needs a secure context";
+      return;
+    }
+    const bytes = new TextEncoder().encode(input.value);
+    const digest = await crypto.subtle.digest("SHA-256", bytes);
+    out.textContent = [...new Uint8Array(digest)]
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  }
+
+  input.addEventListener("input", render);
+  render();
+</script>
+`,
+      `
+input { font:inherit; width:100%; padding:0.5rem 0.625rem; color:var(--c-fg); background:var(--c-bg-subtle); border:1px solid var(--c-border); border-radius:0.375rem; }
+.mono { margin:0; font-family:ui-monospace, monospace; font-size:0.75rem; color:var(--c-fg-muted); white-space:pre-wrap; word-break:break-all; min-height:3rem; }
+`,
+    ),
+  },
+  "array-grouping": {
+    height: 240,
+    html: wrapDemo(
+      `
+<pre id="out" class="mono"></pre>
+<script>
+  const orders = [
+    { id: 1, status: "open" },
+    { id: 2, status: "shipped" },
+    { id: 3, status: "open" },
+  ];
+  const out = document.getElementById("out");
+
+  if (typeof Object.groupBy !== "function") {
+    out.textContent = "Object.groupBy is not in this browser yet.";
+  } else {
+    const grouped = Object.groupBy(orders, (order) => order.status);
+    out.textContent = Object.entries(grouped)
+      .map(([key, rows]) => key + "  " + JSON.stringify(rows.map((r) => r.id)))
+      .join("\\n");
+  }
+</script>
+`,
+      `
+.mono { margin:0; font-family:ui-monospace, monospace; font-size:0.8125rem; color:var(--c-fg-muted); line-height:1.8; }
+`,
+    ),
+  },
+  "duration-format": {
+    height: 220,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem;">
+    <button data-style="long">long</button>
+    <button data-style="short">short</button>
+    <button data-style="narrow">narrow</button>
+  </div>
+  <p id="out" class="result"></p>
+</div>
+<script>
+  const out = document.getElementById("out");
+  const duration = { hours: 1, minutes: 30, seconds: 5 };
+
+  function render(style) {
+    if (typeof Intl.DurationFormat !== "function") {
+      out.textContent = "Intl.DurationFormat is not in this browser yet.";
+      return;
+    }
+    out.textContent = new Intl.DurationFormat("en", { style }).format(duration);
+  }
+
+  document.querySelectorAll("button[data-style]").forEach((btn) => {
+    btn.addEventListener("click", () => render(btn.dataset.style));
+  });
+  render("long");
+</script>
+`,
+      `
+.result { margin:0; font-size:1.125rem; text-align:center; min-height:2.5rem; }
+`,
+    ),
+  },
+  inert: {
+    height: 260,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; width:100%; max-width:340px;">
+  <button id="toggle">Open the panel</button>
+  <div id="page" class="page">
+    <p class="demo-hint" style="margin:0 0 0.5rem;">the rest of the page</p>
+    <button>Nav</button>
+    <button>Settings</button>
+    <a href="#">A link</a>
+  </div>
+  <div id="panel" class="panel" hidden>
+    <button>Inside the panel</button>
+    <button id="close">Close</button>
+  </div>
+  <p class="demo-hint" style="margin:0; text-align:center;">Open it, then press Tab: focus never reaches the buttons above.</p>
+</div>
+<script>
+  const page = document.getElementById("page");
+  const panel = document.getElementById("panel");
+
+  function setOpen(open) {
+    panel.hidden = !open;
+    page.inert = open;
+    document.getElementById("toggle").inert = open;
+    if (open) panel.querySelector("button").focus();
+  }
+
+  document.getElementById("toggle").addEventListener("click", () => setOpen(true));
+  document.getElementById("close").addEventListener("click", () => setOpen(false));
+</script>
+`,
+      `
+.page, .panel { width:100%; border:1px solid var(--c-border); border-radius:0.5rem; padding:0.75rem; background:var(--c-bg-subtle); display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; }
+.page { flex-direction:column; align-items:flex-start; }
+.page[inert] { opacity:0.4; }
+a { color:var(--c-accent); }
+`,
+    ),
+  },
+  "custom-highlight": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; gap:0.625rem; width:100%; max-width:360px;">
+  <input id="q" value="scroll" aria-label="Search term" />
+  <p id="text">Scroll snap, scroll markers and scroll buttons turn a scroll container into a carousel without a single scroll listener.</p>
+  <p class="demo-hint" style="margin:0;">The paragraph is still one text node. Nothing was wrapped.</p>
+</div>
+<script>
+  const input = document.getElementById("q");
+  const node = document.getElementById("text").firstChild;
+
+  function render() {
+    if (!CSS.highlights) return;
+    CSS.highlights.delete("search");
+    const query = input.value.toLowerCase();
+    if (query === "") return;
+
+    const text = node.textContent.toLowerCase();
+    const ranges = [];
+    let from = 0;
+    for (;;) {
+      const index = text.indexOf(query, from);
+      if (index === -1) break;
+      const range = new Range();
+      range.setStart(node, index);
+      range.setEnd(node, index + query.length);
+      ranges.push(range);
+      from = index + query.length;
+    }
+    if (ranges.length > 0) {
+      CSS.highlights.set("search", new Highlight(...ranges));
+    }
+  }
+
+  input.addEventListener("input", render);
+  render();
+</script>
+`,
+      `
+input { font:inherit; width:100%; padding:0.5rem 0.625rem; color:var(--c-fg); background:var(--c-bg-subtle); border:1px solid var(--c-border); border-radius:0.375rem; }
+#text { margin:0; color:var(--c-fg-muted); }
+::highlight(search) { background-color:oklch(80% 0.15 90); color:oklch(20% 0.02 90); }
+@supports not (selector(::highlight(x))) {
+  #text::after { content:" (custom highlights are not in this browser yet)"; color:var(--c-fg-muted); font-style:italic; }
+}
+`,
+    ),
+  },
   "aspect-ratio": {
     height: 180,
     html: wrapDemo(
@@ -1276,4 +1649,19 @@ button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); 
 `,
     ),
   },
+};
+
+/**
+ * Rules that deliberately have no live demo, and why. A demo runs in a
+ * sandboxed srcdoc iframe with no server and no reliable network, so some
+ * rules cannot be shown without faking the thing being demonstrated, and a
+ * faked demo is worse than none. Every rule must appear here or in `demos`,
+ * which `demos.test.ts` enforces, so the gap stays a decision rather than an
+ * oversight.
+ */
+export const demosNotWorthIt: Record<string, string> = {
+  fetch:
+    "A request needs a server to answer it. Faking one with setTimeout would demonstrate setTimeout.",
+  "server-sent-events":
+    "EventSource needs a real streaming endpoint. Nothing in a srcdoc frame can serve one.",
 };

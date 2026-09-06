@@ -8,8 +8,9 @@
  *   2. A rule whose featureIds are missing from the snapshot is an error.
  *   3. A rule pointing at a modern-web-guidance guide that no longer exists
  *      upstream is an error, so a report never links to a dead guide.
- *   4. The agent skill's generated catalog reference falling behind the rules
- *      is an error, so the skill can never describe a catalog that moved on.
+ *   4. The agent skill's generated catalog reference differing by one byte
+ *      from a fresh render is an error, so the skill can never describe a
+ *      catalog that moved on.
  *   5. The skill's hand-written SKILL.md restating a count that the generated
  *      reference already carries is an error, because it goes stale silently.
  *   6. A snapshot older than 45 days, or generated from an older web-features
@@ -21,12 +22,12 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-
 import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
 import { guideSnapshot } from "../packages/catalog/src/generated/guides.ts";
 import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
+import { renderCatalogReference, SKILL_CATALOG_FILE } from "./build-skill.ts";
 
 const MANUAL_BASELINE_MAX_AGE_DAYS = 90;
 const SNAPSHOT_WARN_AGE_DAYS = 45;
@@ -79,7 +80,7 @@ for (const id of NATIVE_FEATURE_IDS) {
 // 4. Guide references must still exist upstream.
 for (const rule of rules) {
   for (const id of rule.guides ?? []) {
-    if (!guideSnapshot.guides[id]) {
+    if (!Object.hasOwn(guideSnapshot.guides, id)) {
       errors.push(
         `Rule "${rule.id}" points at modern-web-guidance guide "${id}", which is not in the snapshot. Run \`pnpm refresh:guides\`, and drop or repoint the reference if it was renamed upstream.`,
       );
@@ -87,19 +88,14 @@ for (const rule of rules) {
   }
 }
 
-// 5. The skill's generated catalog reference must match the catalog.
-const skillCatalog = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "../skills/youmightnotneed/references/catalog.md",
-);
+// 5. The skill's generated catalog reference must match the catalog exactly.
+// Comparing against a fresh render, rather than grepping for rule ids, is what
+// catches an edited `when` line or a moved support tier.
 try {
-  const listing = readFileSync(skillCatalog, "utf8");
-  const missing = rules.filter((rule) => !listing.includes(`\`${rule.id}\``));
-  if (missing.length > 0) {
+  const committed = readFileSync(SKILL_CATALOG_FILE, "utf8");
+  if (committed !== renderCatalogReference()) {
     errors.push(
-      `The skill's catalog reference is missing ${missing.length} rule(s): ${missing
-        .map((r) => r.id)
-        .join(", ")}. Run \`pnpm refresh:skill\`.`,
+      "skills/youmightnotneed/references/catalog.md does not match the rules. Run `pnpm refresh:skill`.",
     );
   }
 } catch {

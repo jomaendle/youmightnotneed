@@ -35,5 +35,5 @@ export const inert: Rule = {
     snippet: `page.inert = true;   // opening the overlay
 page.inert = false;  // closing it`,
   },
-  guides: ["light-dismiss-a-dialog"],
+  guides: ["accessibility", "navigation-drawer"],
 };

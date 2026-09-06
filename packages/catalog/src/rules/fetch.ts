@@ -38,6 +38,7 @@ const items = await res.json();`,
       "You need upload progress. Download progress can come off the response stream, but tracking bytes sent still needs XMLHttpRequest, which is what axios uses underneath.",
       "You share one client with Node 16 or older, where there is no global fetch, or you depend on axios features with no equivalent: XSRF cookie handling, automatic transforms, or the adapter system.",
       "Your tests mock axios directly. Moving to fetch means rewriting those mocks, which is real work for no behaviour change.",
+      "You need a request timeout below Safari 16, Chrome 103 or Firefox 100. fetch itself is older than all three, but AbortSignal.timeout() is not, so an older target needs a setTimeout calling controller.abort().",
     ],
     snippet: `const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
 if (!res.ok) throw new Error(String(res.status));

@@ -10,7 +10,12 @@ export const eventTarget: Rule = {
     "eventemitter3",
     "event-emitter",
   ],
-  featureIds: ["events"],
+  featureIds: [],
+  manualBaseline: {
+    status: "widely",
+    verifiedOn: "2026-09-06",
+    note: "web-features tracks addEventListener and CustomEvent under 'events', which reports Safari 1 because the event model itself is that old. What this rule needs is newer: constructing a bare EventTarget is Safari 14, and the AbortSignal option on addEventListener is Safari 15. Deriving from 'events' would publish a floor a decade below what the snippet requires. Widely available on the newer of those dates, Safari 15 in September 2021.",
+  },
   native: "EventTarget with CustomEvent",
   human: {
     explainer:
@@ -37,6 +42,7 @@ controller.abort();`,
       "You use wildcard listeners or read the registered listener list, as mitt's all map allows. EventTarget exposes neither.",
       "You need the bus in Node 14 or older, where EventTarget is not a global. Node's own EventEmitter covers that without a dependency.",
       "You depend on the library's dispatch ordering or on re-entrant emits behaving a particular way, which DOM event dispatch does not promise to match.",
+      "Your support target reaches below Safari 14, where new EventTarget() cannot be constructed, or below Safari 15, where addEventListener ignores the signal option and listeners never come off.",
       "The package is also pulled in transitively by something else, so dropping your direct dependency does not remove the bytes from the bundle.",
     ],
     snippet: `const bus = new EventTarget();

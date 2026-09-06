@@ -69,8 +69,8 @@ pnpm refresh:skill       # regenerates the skill's catalog reference
 `pnpm refresh` runs all four. The skill reference must be regenerated for any
 new rule, or `check:freshness` fails.
 
-Both are safe to run even when nothing else changed: existing entries survive
-a failed fetch. Check the output of `refresh:sizes` for "No size for N
+All four are safe to run even when nothing else changed: existing entries
+survive a failed fetch. Check the output of `refresh:sizes` for "No size for N
 package(s)". That means a typo in `replaces`, since the rule can never match
 a package that doesn't exist on npm.
 

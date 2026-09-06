@@ -151,3 +151,34 @@ describe("parseArgs", () => {
     });
   });
 });
+
+describe("--package rejects a missing value", () => {
+  // parseArgs calls process.exit(2) on bad input, so these run out of process.
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  it.each([["--package="], ["--package=-v"], ["-p"], ["--package"]])(
+    "%s exits 2 rather than reporting on an empty name",
+    (arg) => {
+      const result = spawnSync(process.execPath, [binPath, arg], {
+        encoding: "utf8",
+      });
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("needs a package name");
+      expect(result.stdout).not.toContain("no rule for");
+    },
+  );
+
+  it.each([["--package=swiper"], ["-p"]])(
+    "%s still accepts a real name",
+    (arg) => {
+      const args = arg === "-p" ? [arg, "swiper"] : [arg];
+      const result = spawnSync(process.execPath, [binPath, ...args], {
+        encoding: "utf8",
+      });
+
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("Carousels");
+    },
+  );
+});

@@ -263,7 +263,7 @@ Sorted by title.
 - **support**: widely available
 - **replaces**: `focus-trap`, `focus-trap-react`, `react-focus-lock`, `focus-lock`, `vue-focus-lock`, `wicg-inert`
 - **when**: keeping keyboard focus inside an open modal, drawer or menu
-- **guides**: light-dismiss-a-dialog
+- **guides**: accessibility, navigation-drawer
 
 ### Fullscreen toggling
 
@@ -354,7 +354,7 @@ Sorted by title.
 - **support**: widely available
 - **replaces**: `lozad`, `lazysizes`, `vanilla-lazyload`, `react-lazyload`, `react-lazy-load-image-component`, `yall-js`, `vue-lazyload`, `v-lazy-image`
 - **when**: deferring offscreen images or iframes so they load as the user scrolls to them
-- **guides**: optimize-image-priority, deliver-optimized-decorative-images
+- **guides**: optimize-image-priority
 
 ### Locale-aware number and currency formatting
 
@@ -430,7 +430,6 @@ Sorted by title.
 - **support**: widely available
 - **replaces**: `javascript-time-ago`, `timeago.js`, `react-timeago`
 - **when**: formatting a timestamp as relative text, such as "5 minutes ago" or "in 2 days"
-- **guides**: format-human-readable-durations
 
 ### Reordering a list by dragging
 

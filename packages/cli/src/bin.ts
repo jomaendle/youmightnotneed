@@ -70,21 +70,20 @@ function readPackageFlag(
 ): number {
   const arg = argv[index] as string;
 
-  if (arg.startsWith("--package=")) {
-    args.package = arg.slice("--package=".length);
-    return 1;
-  }
-  if (arg !== "-p" && arg !== "--package") return 0;
+  const attached = arg.startsWith("--package=");
+  if (!(attached || arg === "-p" || arg === "--package")) return 0;
 
-  const value = argv[index + 1];
-  if (value === undefined || value.startsWith("-")) {
+  // Both spellings go through one check, or --package= and --package=-v slip
+  // past it and the run reports on the empty string instead of erroring.
+  const value = attached ? arg.slice("--package=".length) : argv[index + 1];
+  if (value === undefined || value === "" || value.startsWith("-")) {
     console.error(
       "--package needs a package name, for example: --package swiper",
     );
     process.exit(2);
   }
   args.package = value;
-  return 2;
+  return attached ? 1 : 2;
 }
 
 export function parseArgs(argv: readonly string[]): Args {

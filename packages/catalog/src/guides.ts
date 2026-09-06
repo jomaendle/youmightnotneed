@@ -45,7 +45,10 @@ export function guideCommand(ids: readonly string[]): string {
  * throwing, matching resolveFeature()'s behaviour for an unknown feature.
  */
 export function resolveGuide(id: string): ResolvedGuide {
-  const category = guideSnapshot.guides[id];
+  // Object.hasOwn, not `in` or a bare read: the snapshot is a plain object, so
+  // an id like "constructor" or "toString" would otherwise resolve to
+  // something off Object.prototype and build a nonsense URL from it.
+  const category = isKnownGuide(id) ? guideSnapshot.guides[id] : undefined;
   return {
     id,
     category: category ?? "",
@@ -63,7 +66,7 @@ export function resolveGuides(rule: Rule): ResolvedGuide[] {
 
 /** True when the snapshot knows this ID. Used by the tests and the scripts. */
 export function isKnownGuide(id: string): boolean {
-  return id in guideSnapshot.guides;
+  return Object.hasOwn(guideSnapshot.guides, id);
 }
 
 export { type GuideSnapshot, guideSnapshot };

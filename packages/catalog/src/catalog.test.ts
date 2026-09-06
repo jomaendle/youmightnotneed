@@ -237,4 +237,16 @@ describe("guide references", () => {
     expect(guide.url).toBeNull();
     expect(guide.category).toBe("");
   });
+
+  // The snapshot is a plain object, so a bare `guides[id]` would resolve
+  // "constructor" off Object.prototype and build a URL out of a function.
+  it.each(["constructor", "toString", "hasOwnProperty", "__proto__"])(
+    "does not resolve %s off the prototype chain",
+    (id) => {
+      expect(isKnownGuide(id)).toBe(false);
+      const guide = resolveGuide(id);
+      expect(guide.url).toBeNull();
+      expect(guide.category).toBe("");
+    },
+  );
 });
