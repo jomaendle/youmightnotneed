@@ -1,5 +1,6 @@
 import {
   baselineLabel,
+  CATEGORIES_BY_ID,
   combinedSupport,
   formatBytes,
   packageSizes,
@@ -61,6 +62,9 @@ export default async function RulePage({ params }: PageProps) {
             Back to the catalog
           </Link>
           <h1 className="mt-4 mb-3 text-page-title">{rule.title}</h1>
+          <p className="mb-1 text-fg-faint text-metadata">
+            {CATEGORIES_BY_ID[rule.category]?.name}
+          </p>
           <p className="mb-4 font-mono text-accent text-lede">{rule.native}</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <BaselineBadge status={baseline.status} />

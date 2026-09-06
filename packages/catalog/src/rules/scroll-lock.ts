@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const scrollLock: Rule = {
   id: "overscroll-behavior",
   title: "Scroll chaining and body scroll lock",
+  category: "scrolling",
   replaces: [
     "body-scroll-lock",
     "react-scrolllock",

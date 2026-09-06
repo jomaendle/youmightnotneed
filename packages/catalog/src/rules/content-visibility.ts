@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const contentVisibility: Rule = {
   id: "content-visibility",
   title: "Off-screen rendering",
+  category: "layout",
   replaces: [
     "react-window",
     "react-virtualized",

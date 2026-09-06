@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const speechRecognition: Rule = {
   id: "speech-recognition",
   title: "Voice input",
+  category: "device-apis",
   replaces: ["annyang", "react-speech-recognition"],
   featureIds: ["speech-recognition"],
   native: "SpeechRecognition",

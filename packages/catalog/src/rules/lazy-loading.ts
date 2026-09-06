@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const lazyLoading: Rule = {
   id: "lazy-loading",
   title: "Lazy-loaded images and iframes",
+  category: "async-data",
   replaces: [
     "lozad",
     "lazysizes",

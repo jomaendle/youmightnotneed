@@ -17,6 +17,7 @@ import { dirname, join } from "node:path";
 
 import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
+import { baselineHistory } from "../packages/catalog/src/generated/baseline-history.ts";
 import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
 
@@ -105,6 +106,26 @@ const installed = installedWebFeaturesVersion();
 if (installed && installed !== baselineSnapshot.webFeaturesVersion) {
   warnings.push(
     `The snapshot came from web-features@${baselineSnapshot.webFeaturesVersion} but web-features@${installed} is installed. Run \`pnpm refresh:baseline\`.`,
+  );
+}
+
+// 5. The history snapshot should track the current run, not a stale/hand-edited one.
+const lastEntry = baselineHistory.entries.at(-1) ?? null;
+const lastHistoryMonth = lastEntry?.month ?? null;
+const currentMonth = baselineSnapshot.generatedOn.slice(0, 7);
+if (lastHistoryMonth !== currentMonth) {
+  warnings.push(
+    `The history snapshot's last entry (${lastHistoryMonth ?? "none"}) does not match the current baseline snapshot month (${currentMonth}). Run \`pnpm refresh:baseline\`.`,
+  );
+}
+
+// The month is too coarse on its own: add a rule in the same month as the
+// last refresh and the check above stays quiet while the homepage prints
+// live rule counts next to percentages taken from a snapshot that no longer
+// describes the catalog. The entry stores its rule count for exactly this.
+if (lastEntry && lastEntry.ruleCount !== rules.length) {
+  warnings.push(
+    `The history snapshot's last entry counts ${lastEntry.ruleCount} rules but the catalog has ${rules.length}. Run \`pnpm refresh:baseline\`.`,
   );
 }
 

@@ -34,6 +34,8 @@ New file at `packages/catalog/src/rules/<id>.ts`, one `Rule` object (see
 `schema.ts` for the full shape). Use an existing small rule (e.g.
 `aspect-ratio.ts`) as the template. Required parts:
 
+- `category`: one of the ids in `packages/catalog/src/categories.ts`, picked
+  by hand like `title`. No script generates it.
 - `replaces`: exact, lowercase npm package names.
 - `featureIds`: the web-features IDs REQUIRED to make the replacement work.
   Nice-to-have features go in `agent.unless` instead, not here, or the

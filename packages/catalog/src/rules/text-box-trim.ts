@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const textBoxTrim: Rule = {
   id: "text-box-trim",
   title: "Trimming font leading",
+  category: "typography",
   replaces: ["capsize", "@capsizecss/core", "@capsizecss/metrics"],
   featureIds: ["text-box"],
   native: "text-box-trim and text-box-edge",

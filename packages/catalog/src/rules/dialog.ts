@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const dialog: Rule = {
   id: "dialog-element",
   title: "Modal dialogs",
+  category: "forms",
   replaces: [
     "react-modal",
     "react-responsive-modal",

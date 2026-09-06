@@ -30,7 +30,7 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-04",
+  "generatedOn": "2026-09-05",
   "webFeaturesVersion": "3.36.0",
   "features": {
     "aborting": {

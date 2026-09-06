@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const smoothScroll: Rule = {
   id: "smooth-scroll",
   title: "Smooth scrolling and scroll-to-anchor",
+  category: "scrolling",
   replaces: [
     "react-scroll",
     "smoothscroll-polyfill",
