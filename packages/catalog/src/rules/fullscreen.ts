@@ -23,7 +23,7 @@ export const fullscreen: Rule = {
   agent: {
     when: "toggling an element, such as a video player or image viewer, into and out of fullscreen",
     unless: [
-      "You support Safari before version 16.4, where the unprefixed API only recently landed.",
+      "You support Safari below {{safari:api.Element.requestFullscreen}}, where the unprefixed API only recently landed.",
       "You're targeting iOS Safari specifically. It still doesn't support fullscreen on arbitrary elements, only on the built-in video player.",
       "You need the older vendor-prefixed fallback chain screenfull still maintains for browsers this old.",
     ],

@@ -4,12 +4,7 @@ export const resizablePanels: Rule = {
   id: "resizable-panels",
   title: "Resizable panels",
   category: "layout",
-  replaces: [
-    "react-resizable-panels",
-    "re-resizable",
-    "react-split-pane",
-    "splitpanes",
-  ],
+  replaces: ["re-resizable"],
   featureIds: ["resize"],
   native: "resize",
   human: {

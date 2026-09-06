@@ -1,4 +1,4 @@
-import { analyze } from "@jomae/catalog";
+import { analyze, rules } from "@jomae/catalog";
 import { describe, expect, it } from "vitest";
 import { createPalette } from "./colors.ts";
 import { renderJson, renderReport } from "./render.ts";
@@ -175,5 +175,49 @@ describe("a single --package lookup", () => {
       },
     );
     expect(output).toContain("no rule for that package");
+  });
+});
+
+describe("condition count grammar", () => {
+  it("agrees in number for a single condition", () => {
+    const template = rules[0];
+    if (!template) throw new Error("the catalog is empty");
+    const rule = {
+      ...template,
+      id: "one-condition",
+      replaces: ["swiper"],
+      agent: {
+        ...template.agent,
+        unless: ["A single reason to keep it here."],
+      },
+    };
+
+    const output = renderReport(
+      analyze({ dependencies: { swiper: "^11.0.0" } }, { rules: [rule] }),
+      { palette: createPalette(false), provenance, verbose: false },
+    );
+    expect(output).toContain("keep it if 1 condition applies");
+    expect(output).not.toContain("1 condition apply,");
+  });
+
+  it("agrees in number for several", () => {
+    const output = renderReport(
+      analyze({ dependencies: { swiper: "^11.0.0" } }),
+      {
+        palette: createPalette(false),
+        provenance,
+        verbose: false,
+      },
+    );
+    expect(output).toMatch(/keep it if \d+ conditions apply/);
+  });
+});
+
+describe("--json carries what the other surfaces carry", () => {
+  it("includes the rule category, as the MCP server does", () => {
+    const parsed = JSON.parse(
+      renderJson(analyze({ dependencies: { swiper: "^11.0.0" } })),
+    ) as { findings: { category: string }[] };
+    expect(parsed.findings[0]?.category).toBe("scrolling");
   });
 });

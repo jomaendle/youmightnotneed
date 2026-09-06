@@ -62,12 +62,36 @@ describe("demo scripts", () => {
     (id) => {
       const demo = demos[id];
       if (!demo) throw new Error(`no demo for ${id}`);
-      const queried = [
-        ...demo.html.matchAll(/getElementById\("([^"]+)"\)/g),
-      ].map((m) => m[1]);
-      for (const elementId of queried) {
+      for (const elementId of idsQueriedBy(demo.html)) {
         expect(demo.html, `#${elementId}`).toContain(`id="${elementId}"`);
+      }
+      for (const className of classesQueriedBy(demo.html)) {
+        expect(demo.html, `.${className}`).toMatch(
+          new RegExp(`class="[^"]*\\b${className}\\b`),
+        );
       }
     },
   );
 });
+
+/**
+ * getElementById is not the only way a demo reaches for a node, and a
+ * querySelector typo fails the same way: silently, in an iframe no test runs.
+ * Both APIs are read here, and attribute and tag selectors are skipped
+ * because there is nothing single to match them against.
+ */
+function idsQueriedBy(html: string): string[] {
+  const found = [
+    ...[...html.matchAll(/getElementById\("([^"]+)"\)/g)].map((m) => m[1]),
+    ...[...html.matchAll(/querySelector(?:All)?\("#([\w-]+)"\)/g)].map(
+      (m) => m[1],
+    ),
+  ];
+  return found.filter((value): value is string => value !== undefined);
+}
+
+function classesQueriedBy(html: string): string[] {
+  return [...html.matchAll(/querySelector(?:All)?\("\.([\w-]+)"\)/g)]
+    .map((m) => m[1])
+    .filter((value): value is string => value !== undefined);
+}

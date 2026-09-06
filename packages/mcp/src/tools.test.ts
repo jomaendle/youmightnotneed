@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { analyze, DEPENDENCY_FIELDS } from "@jomae/catalog";
 import { describe, expect, it } from "vitest";
 import { analyzeDependencies, getRule, listRules } from "./tools.ts";
 
@@ -108,5 +109,34 @@ describe("guide hand-off", () => {
     expect(result.findings[0]?.guides.length).toBeGreaterThan(0);
     expect(result.provenance.guidesVersion).not.toBe("");
     expect(result.guideSource.licence).toBe("Apache-2.0");
+  });
+});
+
+describe("the MCP surface matches the catalog", () => {
+  // The tool schema listed three dependency fields by hand while detect()
+  // read four, and zod strips undeclared keys, so the MCP server quietly
+  // returned fewer findings than the CLI for the same manifest.
+  it("analyses every dependency field detect() reads", () => {
+    for (const field of DEPENDENCY_FIELDS) {
+      const result = analyzeDependencies({ [field]: { swiper: "^11.0.0" } });
+      expect(result.summary.findingCount, field).toBe(1);
+      expect(result.findings[0]?.matched[0]?.fields, field).toEqual([field]);
+    }
+  });
+
+  it("agrees with a direct catalog analysis, field for field", () => {
+    const pkg = {
+      dependencies: { swiper: "^11.0.0" },
+      devDependencies: { "react-modal": "^3.0.0" },
+      peerDependencies: { axios: "^1.0.0" },
+      optionalDependencies: { uuid: "^9.0.0" },
+    };
+    const direct = analyze(pkg);
+    const viaMcp = analyzeDependencies(pkg);
+    expect(viaMcp.findings.map((f) => f.rule.id)).toEqual(
+      direct.findings.map((f) => f.rule.id),
+    );
+    expect(viaMcp.summary).toEqual(direct.summary);
+    expect(viaMcp.summary.packageCount).toBe(4);
   });
 });

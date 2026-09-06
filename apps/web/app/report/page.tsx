@@ -173,7 +173,7 @@ function Headline({
       <p className="mb-2 text-fg-faint text-metadata">up to</p>
       <h1 className="mb-5 text-hero tabular-nums">{formatBytes(bytes)}</h1>
       <p className="max-w-[56ch] text-fg-muted text-lede">
-        that CSS now does natively, across {packages}{" "}
+        that the platform now does natively, across {packages}{" "}
         {packages === 1 ? "dependency" : "dependencies"} in {categories}{" "}
         {categories === 1 ? "category" : "categories"}. Minified and gzipped. It
         says "up to" because having a package installed is not proof of how you

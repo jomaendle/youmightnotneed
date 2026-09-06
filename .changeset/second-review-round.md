@@ -21,8 +21,8 @@ badged a rule "limited availability" with a fabricated feature name, the second
 reported a confident 0 bytes instead of an unknown size.
 
 **Corrected support claims in seven rules**, all verified against
-`web-features`: content-visibility said Safari 18 and Firefox 125 where
-`auto` needs Safari 26 and Firefox 130; text-box-trim said "outside Chromium"
+`web-features` or browser-compat-data: content-visibility named Safari 18
+where `auto` needs Safari 26; text-box-trim said "outside Chromium"
 when Safari has shipped it since 18.2; scroll-driven animations and
 field-sizing both named Safari as missing when it ships them; screen-wake-lock
 omitted that iOS only got it in 18.4; resizable-panels omitted that iOS Safari

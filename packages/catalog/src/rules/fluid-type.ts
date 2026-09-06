@@ -4,7 +4,7 @@ export const fluidType: Rule = {
   id: "fluid-type-clamp",
   title: "Fluid type scales",
   category: "typography",
-  replaces: ["fitty", "fittext.js", "textfit", "react-textfit"],
+  replaces: ["fittext.js"],
   featureIds: ["min-max-clamp"],
   native: "clamp() with a viewport-relative middle value",
   human: {

@@ -34,18 +34,35 @@ export default function RulesPage() {
     status: resolveBaseline(rule).status,
   }));
 
-  const tierCounts = new Map<string, number>();
-  for (const entry of withBaseline) {
-    tierCounts.set(entry.status, (tierCounts.get(entry.status) ?? 0) + 1);
+  /*
+   * A sidebar count that ignores the other filter is a lie the reader can
+   * check: pick a category, and the tier rows still claim the catalog-wide
+   * totals while the list beside them shows far fewer. So every row carries
+   * one count per state of the other filter, and CSS reveals the one that
+   * matches. Still no JavaScript.
+   */
+  function countRules(status: string, category: string): number {
+    return withBaseline.filter(
+      (entry) =>
+        (status === "all" || entry.status === status) &&
+        (category === "all" || entry.rule.category === category),
+    ).length;
   }
 
-  const categoryCounts = new Map<string, number>();
-  for (const rule of rules) {
-    categoryCounts.set(
-      rule.category,
-      (categoryCounts.get(rule.category) ?? 0) + 1,
-    );
-  }
+  const categoryStates = ["all", ...CATEGORIES.map((c) => c.id)];
+  const tierStates = ["all", ...FILTERABLE_STATUSES];
+
+  const countVisibility = [
+    ".sidebar-row-count[data-count-tier],.sidebar-row-count[data-count-cat]{display:none}",
+    ...categoryStates.map(
+      (category) =>
+        `.catalog:has(#cat-filter-${category}:checked) .sidebar-row-count[data-count-cat="${category}"]{display:inline}`,
+    ),
+    ...tierStates.map(
+      (status) =>
+        `.catalog:has(#filter-${status}:checked) .sidebar-row-count[data-count-tier="${status}"]{display:inline}`,
+    ),
+  ].join("");
 
   /*
    * Tier and category filter independently, so some pairs select nothing at
@@ -84,95 +101,18 @@ export default function RulesPage() {
           .catalog wrapper below. It ships no JavaScript, and it keeps
           working with JavaScript disabled.
         */}
-      {emptyPairs.length === 0 ? null : (
-        <style>{`${emptyPairs.join(",")}{display:block}`}</style>
-      )}
+      <style>
+        {emptyPairs.length === 0
+          ? countVisibility
+          : `${emptyPairs.join(",")}{display:block}${countVisibility}`}
+      </style>
 
       <div className="catalog rules-shell">
-        <aside className="rules-sidebar">
-          <fieldset className="sidebar-group">
-            <legend className="sidebar-heading">Support tier</legend>
-            <div className="sidebar-options">
-              <div className="relative">
-                <input
-                  type="radio"
-                  name="tier-filter"
-                  id="filter-all"
-                  className="filter-input"
-                  defaultChecked={true}
-                />
-                <label htmlFor="filter-all" className="sidebar-row">
-                  <span className="sidebar-row-label">All tiers</span>
-                  <span className="sidebar-row-count">{rules.length}</span>
-                </label>
-              </div>
-              {FILTERABLE_STATUSES.map((status) => {
-                const tier = TIERS_BY_STATUS[status];
-                return (
-                  <div key={status} className="relative">
-                    <input
-                      type="radio"
-                      name="tier-filter"
-                      id={`filter-${status}`}
-                      className="filter-input"
-                    />
-                    <label htmlFor={`filter-${status}`} className="sidebar-row">
-                      <span
-                        className={`sidebar-row-dot ${tier.cssTier}`}
-                        aria-hidden="true"
-                      />
-                      <span className="sidebar-row-label">{tier.verdict}</span>
-                      <span className="sidebar-row-count">
-                        {tierCounts.get(status) ?? 0}
-                      </span>
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="sidebar-aside">
-              <TierHelp />
-            </div>
-          </fieldset>
-
-          <fieldset className="sidebar-group">
-            <legend className="sidebar-heading">Category</legend>
-            <div className="sidebar-options">
-              <div className="relative">
-                <input
-                  type="radio"
-                  name="cat-filter"
-                  id="cat-filter-all"
-                  className="filter-input"
-                  defaultChecked={true}
-                />
-                <label htmlFor="cat-filter-all" className="sidebar-row">
-                  <span className="sidebar-row-label">All categories</span>
-                  <span className="sidebar-row-count">{rules.length}</span>
-                </label>
-              </div>
-              {CATEGORIES.map((category) => (
-                <div key={category.id} className="relative">
-                  <input
-                    type="radio"
-                    name="cat-filter"
-                    id={`cat-filter-${category.id}`}
-                    className="filter-input"
-                  />
-                  <label
-                    htmlFor={`cat-filter-${category.id}`}
-                    className="sidebar-row"
-                  >
-                    <span className="sidebar-row-label">{category.name}</span>
-                    <span className="sidebar-row-count">
-                      {categoryCounts.get(category.id) ?? 0}
-                    </span>
-                  </label>
-                </div>
-              ))}
-            </div>
-          </fieldset>
-        </aside>
+        <Sidebar
+          categoryStates={categoryStates}
+          tierStates={tierStates}
+          countRules={countRules}
+        />
 
         {/*
             A flex gap rather than padding on each group. Both filters hide
@@ -249,5 +189,135 @@ export default function RulesPage() {
         </p>
       </section>
     </div>
+  );
+}
+
+/**
+ * The two filters. Each row carries one count per state of the *other*
+ * filter and CSS reveals the matching one, so the numbers stay true as the
+ * reader narrows down. See countVisibility above.
+ */
+function Sidebar({
+  categoryStates,
+  tierStates,
+  countRules,
+}: {
+  categoryStates: readonly string[];
+  tierStates: readonly string[];
+  countRules: (status: string, category: string) => number;
+}) {
+  return (
+    <aside className="rules-sidebar">
+      <fieldset className="sidebar-group">
+        <legend className="sidebar-heading">Support tier</legend>
+        <div className="sidebar-options">
+          <div className="relative">
+            <input
+              type="radio"
+              name="tier-filter"
+              id="filter-all"
+              className="filter-input"
+              defaultChecked={true}
+            />
+            <label htmlFor="filter-all" className="sidebar-row">
+              <span className="sidebar-row-label">All tiers</span>
+              {categoryStates.map((category) => (
+                <span
+                  key={category}
+                  className="sidebar-row-count"
+                  data-count-cat={category}
+                >
+                  {countRules("all", category)}
+                </span>
+              ))}
+            </label>
+          </div>
+          {FILTERABLE_STATUSES.map((status) => {
+            const tier = TIERS_BY_STATUS[status];
+            return (
+              <div key={status} className="relative">
+                <input
+                  type="radio"
+                  name="tier-filter"
+                  id={`filter-${status}`}
+                  className="filter-input"
+                />
+                <label htmlFor={`filter-${status}`} className="sidebar-row">
+                  <span
+                    className={`sidebar-row-dot ${tier.cssTier}`}
+                    aria-hidden="true"
+                  />
+                  <span className="sidebar-row-label">{tier.verdict}</span>
+                  {categoryStates.map((category) => (
+                    <span
+                      key={category}
+                      className="sidebar-row-count"
+                      data-count-cat={category}
+                    >
+                      {countRules(status, category)}
+                    </span>
+                  ))}
+                </label>
+              </div>
+            );
+          })}
+        </div>
+        <div className="sidebar-aside">
+          <TierHelp />
+        </div>
+      </fieldset>
+
+      <fieldset className="sidebar-group">
+        <legend className="sidebar-heading">Category</legend>
+        <div className="sidebar-options">
+          <div className="relative">
+            <input
+              type="radio"
+              name="cat-filter"
+              id="cat-filter-all"
+              className="filter-input"
+              defaultChecked={true}
+            />
+            <label htmlFor="cat-filter-all" className="sidebar-row">
+              <span className="sidebar-row-label">All categories</span>
+              {tierStates.map((status) => (
+                <span
+                  key={status}
+                  className="sidebar-row-count"
+                  data-count-tier={status}
+                >
+                  {countRules(status, "all")}
+                </span>
+              ))}
+            </label>
+          </div>
+          {CATEGORIES.map((category) => (
+            <div key={category.id} className="relative">
+              <input
+                type="radio"
+                name="cat-filter"
+                id={`cat-filter-${category.id}`}
+                className="filter-input"
+              />
+              <label
+                htmlFor={`cat-filter-${category.id}`}
+                className="sidebar-row"
+              >
+                <span className="sidebar-row-label">{category.name}</span>
+                {tierStates.map((status) => (
+                  <span
+                    key={status}
+                    className="sidebar-row-count"
+                    data-count-tier={status}
+                  >
+                    {countRules(status, category.id)}
+                  </span>
+                ))}
+              </label>
+            </div>
+          ))}
+        </div>
+      </fieldset>
+    </aside>
   );
 }

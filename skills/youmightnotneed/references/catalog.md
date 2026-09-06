@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 56 of them, covering 252 npm packages.
+Every rule, 56 of them, covering 241 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
@@ -44,7 +44,7 @@ were about to install.
 | encoding or decoding base64 in the browser | btoa() and atob(), with TextEncoder for text | widely available | `base64` |
 | fading or moving elements in as they scroll into view, or driving a reading-progress bar | animation-timeline: view() and scroll() | limited | `scroll-driven-animations` |
 | fading or sliding an element in and out as it is added to or removed from the DOM | @starting-style with transition-behavior: allow-discrete | newly available | `discrete-transitions` |
-| formatting a number as currency, a percentage, a unit, or a locale-correct thousands-grouped number for display | Intl.NumberFormat | widely available | `number-format` |
+| formatting a number as currency, a percentage, or a locale-correct thousands-grouped number for display | Intl.NumberFormat | widely available | `number-format` |
 | formatting a timestamp as relative text, such as "5 minutes ago" or "in 2 days" | Intl.RelativeTimeFormat | widely available | `relative-time` |
 | generating a random v4 UUID | crypto.randomUUID() | widely available | `random-uuid` |
 | hashing, signing, or encrypting with SHA-2, HMAC, AES or RSA | crypto.subtle | widely available | `web-crypto` |
@@ -72,7 +72,7 @@ were about to install.
 | showing a focus ring only for keyboard or other non-pointer focus, not for a mouse click | :focus-visible | widely available | `focus-visible` |
 | sorting strings that contain numbers, or sorting for a human reader | Intl.Collator with numeric: true | widely available | `natural-sort` |
 | stopping a heading or short blurb from breaking with one word on the last line | text-wrap: balance | newly available | `text-wrap-balance` |
-| stopping the page behind a modal or drawer from scrolling when the overlay reaches its end | overscroll-behavior: contain | limited | `overscroll-behavior` |
+| stopping the page behind a modal or drawer from scrolling when the overlay reaches its end | overscroll-behavior: contain | widely available | `overscroll-behavior` |
 | styling a select's options with markup, such as a flag or a two-line label | appearance: base-select on <select> | limited | `customizable-select` |
 | subscribing to a one-way stream of updates from a server | EventSource | widely available | `server-sent-events` |
 | toggling an element, such as a video player or image viewer, into and out of fullscreen | Element.requestFullscreen() | limited | `fullscreen` |
@@ -252,7 +252,7 @@ Sorted by title.
 - **id**: `fluid-type-clamp`
 - **native**: clamp() with a viewport-relative middle value
 - **support**: widely available
-- **replaces**: `fitty`, `fittext.js`, `textfit`, `react-textfit`
+- **replaces**: `fittext.js`
 - **when**: a heading or display type should scale between a minimum and maximum size with the viewport
 - **guides**: fluid-scaling
 
@@ -318,7 +318,7 @@ Sorted by title.
 - **id**: `custom-highlight`
 - **native**: the CSS Custom Highlight API
 - **support**: newly available
-- **replaces**: `mark.js`, `react-highlight-words`, `highlight-words-core`, `react-highlighter`
+- **replaces**: `mark.js`, `react-highlight-words`, `react-highlighter`
 - **when**: highlighting search matches or ranges of text without changing the markup
 - **guides**: highlight-text-ranges
 
@@ -327,7 +327,7 @@ Sorted by title.
 - **id**: `duration-format`
 - **native**: Intl.DurationFormat
 - **support**: newly available
-- **replaces**: `humanize-duration`, `pretty-ms`, `format-duration`
+- **replaces**: `humanize-duration`, `pretty-ms`
 - **when**: rendering a length of time as text, such as "1 hour, 30 minutes"
 - **guides**: format-human-readable-durations
 
@@ -362,7 +362,7 @@ Sorted by title.
 - **native**: Intl.NumberFormat
 - **support**: widely available
 - **replaces**: `numeral`, `accounting`, `currency.js`, `format-number`
-- **when**: formatting a number as currency, a percentage, a unit, or a locale-correct thousands-grouped number for display
+- **when**: formatting a number as currency, a percentage, or a locale-correct thousands-grouped number for display
 
 ### Masonry layouts
 
@@ -444,15 +444,15 @@ Sorted by title.
 - **id**: `resizable-panels`
 - **native**: resize
 - **support**: limited
-- **replaces**: `react-resizable-panels`, `re-resizable`, `react-split-pane`, `splitpanes`
+- **replaces**: `re-resizable`
 - **when**: letting someone drag-resize a single panel, such as a sidebar or a textarea
 
 ### Scroll chaining and body scroll lock
 
 - **id**: `overscroll-behavior`
 - **native**: overscroll-behavior: contain
-- **support**: limited
-- **replaces**: `body-scroll-lock`, `react-scrolllock`, `no-scroll`, `scroll-lock`
+- **support**: widely available
+- **replaces**: `body-scroll-lock`
 - **when**: stopping the page behind a modal or drawer from scrolling when the overlay reaches its end
 
 ### Scroll-triggered animations

@@ -111,12 +111,9 @@ function renderFinding(finding: Finding, options: RenderOptions): string[] {
     }
   } else {
     const count = finding.rule.agent.unless.length;
-    lines.push(
-      `    ${palette(
-        "dim",
-        `keep it if ${count} condition${count === 1 ? "" : "s"} apply, see --verbose`,
-      )}`,
-    );
+    const clause =
+      count === 1 ? "1 condition applies" : `${count} conditions apply`;
+    lines.push(`    ${palette("dim", `keep it if ${clause}, see --verbose`)}`);
   }
 
   // The catalog says which dependency has a native equivalent. It does not
@@ -232,12 +229,17 @@ export function renderJson(report: Report, provenance?: Provenance): string {
       findings: report.findings.map((finding) => ({
         ruleId: finding.rule.id,
         title: finding.rule.title,
+        category: finding.rule.category,
         native: finding.rule.native,
         baseline: {
           status: finding.baseline.status,
           label: baselineLabel(finding.baseline.status),
           limitedBy: finding.baseline.limitedBy?.id ?? null,
           dataDate: finding.baseline.dataDate,
+          // Null for a derived tier. On the four hand-verified rules this
+          // says which web-features ID was rejected and why, which is the
+          // only place a consumer can see that the tier was not derived.
+          note: finding.baseline.note,
         },
         matched: finding.matched.map((m) => ({
           name: m.name,

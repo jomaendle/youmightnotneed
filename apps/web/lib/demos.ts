@@ -185,6 +185,7 @@ input { font:inherit; font-family:ui-monospace, monospace; font-size:0.8125rem; 
   const log = document.getElementById("log");
   const lines = [];
   let count = 0;
+  let ran = 0;
 
   function write(text) {
     lines.unshift(text);
@@ -195,24 +196,34 @@ input { font:inherit; font-family:ui-monospace, monospace; font-size:0.8125rem; 
   const controller = new AbortController();
   bus.addEventListener(
     "cart:add",
-    (event) => write("listener A  " + event.detail.sku),
+    (event) => {
+      ran += 1;
+      write("listener A  " + event.detail.sku);
+    },
     { signal: controller.signal },
   );
   bus.addEventListener(
     "cart:add",
-    (event) => write("listener B  " + event.detail.sku),
+    (event) => {
+      ran += 1;
+      write("listener B  " + event.detail.sku);
+    },
     { signal: controller.signal },
   );
 
   document.getElementById("emit").addEventListener("click", () => {
     count += 1;
+    const before = ran;
     bus.dispatchEvent(
       new CustomEvent("cart:add", { detail: { sku: "A" + count } }),
     );
+    // Counted, not asserted: the line only appears because neither listener
+    // incremented, which is the whole point of dispatching again after abort.
+    if (ran === before) write("dispatched A" + count + ", no listener ran");
   });
   document.getElementById("off").addEventListener("click", () => {
     controller.abort();
-    write("both listeners removed by one abort()");
+    write("controller.abort() called once");
   });
   write("nothing dispatched yet");
 </script>
@@ -335,20 +346,31 @@ input { font:inherit; width:100%; padding:0.5rem 0.625rem; color:var(--c-fg); ba
     <button>Inside the panel</button>
     <button id="close">Close</button>
   </div>
-  <p class="demo-hint" style="margin:0; text-align:center;">Open it, then press Tab: focus never reaches the buttons above.</p>
+  <p id="hint" class="demo-hint" style="margin:0; text-align:center;">Open it, then press Tab: focus never reaches the buttons above.</p>
 </div>
 <script>
   const page = document.getElementById("page");
   const panel = document.getElementById("panel");
+  const toggle = document.getElementById("toggle");
+
+  // Without inert the demo would look like it works and quietly not trap
+  // focus, which is the one thing it is here to show. Say so instead.
+  if (!("inert" in HTMLElement.prototype)) {
+    document.getElementById("hint").textContent =
+      "This browser has no inert yet, so focus would still reach the buttons above.";
+  }
 
   function setOpen(open) {
     panel.hidden = !open;
     page.inert = open;
-    document.getElementById("toggle").inert = open;
+    toggle.inert = open;
+    // Focus has to come back out with the panel, or closing it strands the
+    // keyboard on a hidden button.
     if (open) panel.querySelector("button").focus();
+    else toggle.focus();
   }
 
-  document.getElementById("toggle").addEventListener("click", () => setOpen(true));
+  toggle.addEventListener("click", () => setOpen(true));
   document.getElementById("close").addEventListener("click", () => setOpen(false));
 </script>
 `,

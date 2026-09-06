@@ -23,10 +23,9 @@ function weight(rule: (typeof rules)[number]): number {
 
 /**
  * The rules with a live example behind them read best as the first
- * impression. rule.human.demoUrl is a different, almost-unused field (an
- * external write-up), not the interactive iframe in lib/demos.ts: checking
- * that instead would feature 2 rules out of 22 rather than the 21 that
- * actually have one.
+ * impression. That means lib/demos.ts, which almost every rule has an entry
+ * in. rule.human.demoUrl is a different field, an external write-up that two
+ * rules carry, so filtering on it would leave the homepage with a handful.
  */
 function featured() {
   return [...rules]

@@ -20,9 +20,9 @@ Add it to an MCP client's config:
 ## Tools
 
 - `analyze_dependencies`: matches a package.json's `dependencies`,
-  `devDependencies` and `peerDependencies` against the catalog. Returns
-  findings, a summary, and provenance for when the underlying data was
-  captured.
+  `devDependencies`, `peerDependencies` and `optionalDependencies` against
+  the catalog. Returns findings, a summary, and provenance for when the
+  underlying data was captured.
 - `list_rules`: every rule's id, title, the npm packages it replaces, and
   the native approach, in one line each.
 - `get_rule`: full detail on one rule, looked up by id or by an npm

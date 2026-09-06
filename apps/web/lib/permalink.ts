@@ -42,6 +42,23 @@ function stripControlChars(value: string): string {
   return out;
 }
 
+/**
+ * Caps a label by code point rather than by UTF-16 unit. A plain slice at 80
+ * lands in the middle of a surrogate pair for anything astral (an emoji in a
+ * repo name is enough), and the lone half encodes as U+FFFD, so the label
+ * comes back ending in a replacement character.
+ */
+function truncateCodePoints(value: string, max: number): string {
+  let out = "";
+  let count = 0;
+  for (const char of value) {
+    if (count >= max) break;
+    out += char;
+    count += 1;
+  }
+  return out;
+}
+
 /** Base64url, without Buffer, so this works in Node and on the edge. */
 function toBase64Url(input: string): string {
   const bytes = new TextEncoder().encode(input);
@@ -80,7 +97,11 @@ export function encodeReport(payload: ReportPayload): string {
     .sort()
     .slice(0, MAX_PACKAGES)
     .join(",");
-  const label = payload.projectName?.trim().slice(0, MAX_PROJECT_NAME);
+  const trimmed = payload.projectName?.trim();
+  const label =
+    trimmed === undefined
+      ? undefined
+      : truncateCodePoints(trimmed, MAX_PROJECT_NAME);
   const raw = label ? `${names}~${label}` : names;
   return `${VERSION}.${toBase64Url(raw)}`;
 }
@@ -109,7 +130,10 @@ export function decodeReport(value: string | undefined): ReportPayload | null {
     const label =
       projectName === undefined
         ? undefined
-        : stripControlChars(projectName).trim().slice(0, MAX_PROJECT_NAME);
+        : truncateCodePoints(
+            stripControlChars(projectName).trim(),
+            MAX_PROJECT_NAME,
+          );
 
     // An empty list is valid: it is the "nothing matched" report, which is a
     // real result worth having a shareable link for.

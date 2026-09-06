@@ -27,6 +27,7 @@ export const dateTimeInput: Rule = {
   agent: {
     when: "collecting a single date or time value from a form",
     unless: [
+      "The displayed format has to be yours. The control renders in the user's own locale and there is no way to force dd/mm/yyyy, which is one of the most common reasons teams keep a date picker.",
       "You need a date range, picking a start and end date in one control. The native input only holds one value.",
       "You need the calendar's own appearance to match your design. Its popup is rendered by the browser or OS and cannot be restyled.",
       "You need to disable specific dates, such as holidays or already-booked days, rather than a single continuous min/max range.",

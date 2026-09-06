@@ -68,3 +68,29 @@ describe("formatConditional", () => {
     expect(text).not.toMatch(/delete/i);
   });
 });
+
+describe("formatBytes boundaries", () => {
+  // The switch from one decimal place to none sits at 100 kB, and toFixed
+  // rounds across it: 99,950 bytes is 99.95 kB, which renders as "100.0 kB"
+  // while 100,000 renders as "100 kB". Both are correct; neither was tested.
+  it.each([
+    [999, "999 B"],
+    [1000, "1.0 kB"],
+    [99_949, "99.9 kB"],
+    [99_950, "100.0 kB"],
+    [100_000, "100 kB"],
+    [100_499, "100 kB"],
+  ])("renders %i as %s", (bytes, expected) => {
+    expect(formatBytes(bytes)).toBe(expected);
+  });
+});
+
+describe("formatList", () => {
+  it("returns an empty string for nothing", () => {
+    expect(formatList([])).toBe("");
+  });
+
+  it("does not add a conjunction to a single item", () => {
+    expect(formatList(["swiper"])).toBe("swiper");
+  });
+});

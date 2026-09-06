@@ -17,6 +17,8 @@ speechSynthesis.speak(utterance);`,
   agent: {
     when: "reading text aloud with the browser's own text-to-speech engine",
     unless: [
+      "You need the voice list on first paint. speechSynthesis.getVoices() returns an empty array until the voiceschanged event fires, so a voice picker has to wait for it, and that timing is most of what speak-tts wraps.",
+      "You speak long passages in Chrome, which cuts an utterance off after roughly fifteen seconds unless something keeps resuming it.",
       "You need a specific voice bundled with your app rather than whatever the person's operating system happens to have installed. Voice availability and quality vary by device.",
       "You need the callback-based API wrapped in a promise, or queueing logic across multiple utterances. The library still saves real code there.",
     ],

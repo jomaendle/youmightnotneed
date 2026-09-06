@@ -4,7 +4,7 @@ export const durationFormat: Rule = {
   id: "duration-format",
   title: "Human-readable durations",
   category: "formatting",
-  replaces: ["humanize-duration", "pretty-ms", "format-duration"],
+  replaces: ["humanize-duration", "pretty-ms"],
   featureIds: ["intl-duration-format"],
   native: "Intl.DurationFormat",
   human: {

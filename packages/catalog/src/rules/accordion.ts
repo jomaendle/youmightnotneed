@@ -38,6 +38,7 @@ export const accordion: Rule = {
   agent: {
     when: "building an FAQ or accordion where opening one panel should close the others",
     unless: [
+      "Your support target predates the name attribute on <details>. Older browsers ignore it silently rather than failing, so every panel opens independently and the one behaviour this rule promises is the one that quietly does not happen.",
       "You need to animate the panel height. That needs interpolate-size or calc-size(), which is Chromium-only today.",
       "You need several panels open at once with a controlled open state driven by application logic. Drop the name attribute for independent panels, but co-ordinated state still needs JavaScript.",
       "You need the header to be something other than a summary element, for example a heading that also holds a separate action button.",

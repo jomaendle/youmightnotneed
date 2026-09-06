@@ -501,19 +501,6 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "15.4"
       }
     },
-    "overscroll-behavior": {
-      "name": "overscroll-behavior",
-      "baseline": false,
-      "lowDate": null,
-      "highDate": null,
-      "spec": "https://drafts.csswg.org/css-overscroll-1/",
-      "support": {
-        "chrome": "144",
-        "edge": "144",
-        "firefox": "150",
-        "safari": null
-      }
-    },
     "page-visibility": {
       "name": "Page visibility",
       "baseline": "high",

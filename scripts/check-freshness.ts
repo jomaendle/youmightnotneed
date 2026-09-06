@@ -4,19 +4,27 @@
  * Browser support moves monthly and a hardcoded or hand-verified claim will
  * eventually be wrong in public. This script is the backstop:
  *
- *   1. Any rule with a `manualBaseline` older than 90 days is an error.
- *   2. A rule whose featureIds are missing from the snapshot is an error.
- *   3. A rule pointing at a modern-web-guidance guide that no longer exists
- *      upstream is an error, so a report never links to a dead guide.
- *   4. The agent skill's generated catalog reference differing by one byte
- *      from a fresh render is an error, so the skill can never describe a
- *      catalog that moved on.
- *   5. A browser version cited in rule prose that no longer matches the
- *      source data is an error. No version is ever written by hand.
- *   6. The skill's hand-written SKILL.md restating a count that the generated
- *      reference already carries is an error, because it goes stale silently.
- *   6. A snapshot older than 45 days, or generated from an older web-features
- *      than the one installed, is a warning telling you to run the refresh.
+ *    1. Any rule with a `manualBaseline` older than 90 days is an error.
+ *    2. A rule whose featureIds are missing from the snapshot is an error.
+ *    3. A feature ID the website itself renders, missing from the snapshot,
+ *       is an error: /native would badge it "Unverified".
+ *    4. A package in `replaces` with no size measurement is an error, since a
+ *       typo there contributes 0 to the headline kilobytes and says nothing.
+ *    5. A rule pointing at a modern-web-guidance guide that no longer exists
+ *       upstream is an error, so a report never links to a dead guide.
+ *    6. A browser version cited in rule prose that no longer matches the
+ *       source data is an error. No version is ever written by hand.
+ *    7. The agent skill's generated catalog reference differing by one byte
+ *       from a fresh render is an error, so the skill can never describe a
+ *       catalog that moved on.
+ *    8. The skill's hand-written SKILL.md restating a count that the generated
+ *       reference already carries is an error, because it goes stale silently.
+ *    9. A snapshot older than its warning age, or generated from an older
+ *       web-features than the one installed, is a warning telling you to run
+ *       the refresh. A version mismatch is an error.
+ *   10. A Baseline history snapshot whose last entry does not describe the
+ *       current catalog is a warning: the homepage prints live rule counts
+ *       beside percentages taken from it.
  *
  * Run: pnpm check:freshness
  */
@@ -25,6 +33,7 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
+import { resolveBaseline } from "../packages/catalog/src/baseline.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
 import { baselineHistory } from "../packages/catalog/src/generated/baseline-history.ts";
 import { guideSnapshot } from "../packages/catalog/src/generated/guides.ts";
@@ -73,7 +82,7 @@ for (const rule of rules) {
 // 2. Every referenced feature must be in the snapshot.
 for (const rule of rules) {
   for (const id of rule.featureIds) {
-    if (!baselineSnapshot.features[id]) {
+    if (!Object.hasOwn(baselineSnapshot.features, id)) {
       errors.push(
         `Rule "${rule.id}" references web-features ID "${id}", which is not in the snapshot. Run \`pnpm refresh:baseline\`.`,
       );
@@ -84,7 +93,7 @@ for (const rule of rules) {
 // 3. Features the site itself uses must resolve, or /native claims a feature
 // is widely available while its badge reads "Unverified".
 for (const id of NATIVE_FEATURE_IDS) {
-  if (!baselineSnapshot.features[id]) {
+  if (!Object.hasOwn(baselineSnapshot.features, id)) {
     errors.push(
       `The site uses web-features ID "${id}" but it is not in the snapshot. Run \`pnpm refresh:baseline\`.`,
     );
@@ -105,7 +114,7 @@ const UNSIZEABLE = new Set([
 
 for (const rule of rules) {
   for (const pkg of rule.replaces) {
-    if (packageSizes.sizes[pkg] || UNSIZEABLE.has(pkg)) continue;
+    if (Object.hasOwn(packageSizes.sizes, pkg) || UNSIZEABLE.has(pkg)) continue;
     errors.push(
       `Rule "${rule.id}" claims "${pkg}", which has no size measurement. Run \`pnpm refresh:sizes\`; if the name is right and bundlephobia simply cannot build it, add it to UNSIZEABLE in this script.`,
     );
@@ -154,7 +163,37 @@ for (const token of Object.keys(committedClaims)) {
   }
 }
 
+// The newest history entry is recomputable from the current catalog, so
+// recompute it. Only `month` and `ruleCount` were compared before, leaving the
+// tally the homepage chart draws from unverified.
+const newest = baselineHistory.entries.at(-1);
+if (newest) {
+  const recomputed = { widely: 0, newly: 0, limited: 0, unknown: 0 };
+  for (const rule of rules) recomputed[resolveBaseline(rule).status] += 1;
+
+  for (const tier of ["widely", "newly", "limited", "unknown"] as const) {
+    if (newest.tally[tier] !== recomputed[tier]) {
+      errors.push(
+        `The newest Baseline history entry says ${newest.tally[tier]} ${tier} rules but the catalog has ${recomputed[tier]}. Run \`pnpm refresh:baseline\`.`,
+      );
+    }
+  }
+}
+
 const sources = sourceVersions();
+const claimsAge = daysSince(supportClaims.generatedOn);
+if (claimsAge > SNAPSHOT_WARN_AGE_DAYS) {
+  warnings.push(
+    `Support claims were resolved ${claimsAge} days ago (${supportClaims.generatedOn}). Run \`pnpm refresh:support\`.`,
+  );
+}
+
+if (supportClaims.webFeaturesVersion !== baselineSnapshot.webFeaturesVersion) {
+  errors.push(
+    `Support claims came from web-features@${supportClaims.webFeaturesVersion} but the Baseline snapshot is from @${baselineSnapshot.webFeaturesVersion}. Run \`pnpm refresh:support\`.`,
+  );
+}
+
 if (supportClaims.bcdVersion !== sources.bcdVersion) {
   errors.push(
     `Support claims came from browser-compat-data@${supportClaims.bcdVersion} but @${sources.bcdVersion} is installed. Run \`pnpm refresh:support\`.`,
@@ -246,7 +285,8 @@ if (installed && installed !== baselineSnapshot.webFeaturesVersion) {
   );
 }
 
-// 5. The history snapshot should track the current run, not a stale/hand-edited one.
+// 10. The history snapshot should track the current run, not a stale or
+// hand-edited one.
 const lastEntry = baselineHistory.entries.at(-1) ?? null;
 const lastHistoryMonth = lastEntry?.month ?? null;
 const currentMonth = baselineSnapshot.generatedOn.slice(0, 7);

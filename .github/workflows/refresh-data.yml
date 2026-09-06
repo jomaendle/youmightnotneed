@@ -23,9 +23,21 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      # Both snapshots read from these, so both are updated before anything is
+      # regenerated: web-features for the Baseline tiers, browser-compat-data
+      # for the member-level versions behind every {{browser:...}} claim.
       - run: pnpm update web-features --latest
+      - run: pnpm update @mdn/browser-compat-data --latest
+
       - run: pnpm refresh:baseline
+
+      # bundlephobia is a third-party service and it goes down. A refresh that
+      # got the tiers right is worth opening without it, so this step is
+      # allowed to fail: refresh:sizes keeps the previous measurement for any
+      # package it could not reach, and exits non-zero only if one is lost.
       - run: pnpm refresh:sizes
+        continue-on-error: true
 
       # A tier change re-renders the skill's catalog reference, since it prints
       # a support label per rule. Without this the PR is born stale and

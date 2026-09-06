@@ -4,12 +4,7 @@ export const customHighlight: Rule = {
   id: "custom-highlight",
   title: "Highlighting search matches",
   category: "typography",
-  replaces: [
-    "mark.js",
-    "react-highlight-words",
-    "highlight-words-core",
-    "react-highlighter",
-  ],
+  replaces: ["mark.js", "react-highlight-words", "react-highlighter"],
   featureIds: ["highlight"],
   native: "the CSS Custom Highlight API",
   human: {

@@ -257,19 +257,34 @@ describe("detect stays pure", () => {
       .replace(/`(?:\\.|[^`\\])*`/g, '""');
   }
 
+  /**
+   * Import specifiers, anchored to the start of a line because rule prose
+   * legitimately says things like: the usual range from "1 hour, 30 minutes".
+   *
+   * `[^;]*?` rather than `[^\n]*?` is load-bearing twice over. It spans
+   * newlines, so a multi-line `import {\n  a,\n} from "x"` is seen at all:
+   * without it, detect.ts's own import of baseline.ts was invisible and
+   * neither baseline.ts nor generated/baseline.ts was ever purity-checked.
+   * Excluding `=` as well as `;` keeps it from running out of
+   * `export const rule: Rule = {` and down into rule prose, which really does
+   * say things like: the usual range from "1 hour, 30 minutes".
+   */
+  const IMPORT_PATTERNS = [
+    /^[ \t]*import\s[^;=]*?\bfrom\s*["']([^"']+)["']/gm,
+    /^[ \t]*import\s*["']([^"']+)["']/gm,
+    /^[ \t]*export\s[^;=]*?\bfrom\s*["']([^"']+)["']/gm,
+  ];
+
   function importsOf(source: string): string[] {
-    const specifiers: string[] = [];
-    // Anchored to the start of a line, because rule prose legitimately says
-    // things like: the usual range from "1 hour, 30 minutes" down to "1h 30m".
-    // Covers `import x from "y"`, a bare side-effect `import "y"`, and
-    // `export ... from "y"`.
-    for (const match of forImports(source).matchAll(
-      /^\s*(?:import|export)\b[^\n]*?["']([^"']+)["']/gm,
-    )) {
-      const specifier = match[1];
-      if (specifier !== undefined) specifiers.push(specifier);
+    const specifiers = new Set<string>();
+    const code = forImports(source);
+    for (const pattern of IMPORT_PATTERNS) {
+      for (const match of code.matchAll(pattern)) {
+        const specifier = match[1];
+        if (specifier !== undefined) specifiers.add(specifier);
+      }
     }
-    return specifiers;
+    return [...specifiers];
   }
 
   /** The relative files one module pulls in, as paths under srcDir. */
@@ -313,23 +328,43 @@ describe("detect stays pure", () => {
   }
 
   /**
-   * Roots of the pure graph. detect() is the one CLAUDE.md names; history.ts
-   * is pure too but nothing imports it from detect(), so it needs naming or
-   * the walk would never reach it.
+   * Roots of the pure graph. detect() is the one CLAUDE.md names. The rest are
+   * equally pure and shared by every surface, but nothing imports them from
+   * detect(), so a walk rooted only there would never reach them. format.ts
+   * was covered by the hand-written list this walk replaced.
    */
-  const PURE_ROOTS = ["detect.ts", "history.ts"];
+  const PURE_ROOTS = [
+    "detect.ts",
+    "format.ts",
+    "guides.ts",
+    "history.ts",
+    "support.ts",
+  ];
 
   const reachable = [
     ...new Set(PURE_ROOTS.flatMap((root) => reachableFrom(root))),
   ];
 
-  it("reaches the rule data, the generated snapshots and history.ts", () => {
-    // Guards the walker itself: if this stops finding the rules, the purity
-    // check silently narrows back to a handful of files.
-    expect(reachable).toContain("rules/index.ts");
-    expect(reachable).toContain("generated/sizes.ts");
-    expect(reachable).toContain("history.ts");
-    expect(reachable.length).toBeGreaterThan(50);
+  it("reaches every module detect() actually depends on", () => {
+    // Guards the walker itself. baseline.ts is named explicitly because a
+    // line-anchored regex once missed it, along with generated/baseline.ts,
+    // leaving both unchecked while the suite stayed green. `> 50` alone did
+    // not notice: the 56 rule files satisfy it on their own.
+    for (const file of [
+      "baseline.ts",
+      "generated/baseline.ts",
+      "generated/sizes.ts",
+      "generated/support-claims.ts",
+      "guides.ts",
+      "generated/guides.ts",
+      "history.ts",
+      "rules/index.ts",
+      "schema.ts",
+      "support.ts",
+    ]) {
+      expect(reachable, `${file} is not being purity-checked`).toContain(file);
+    }
+    expect(reachable.length).toBeGreaterThan(60);
   });
 
   it.each(reachable)("%s imports nothing impure", (file) => {
@@ -418,8 +453,21 @@ describe("browser versions are never written by hand", () => {
   // {{browser:key}} and the number comes from web-features or from MDN's
   // browser-compat-data, so a wrong one cannot be typed in the first place.
   const BROWSERS =
-    "Chrome|Chromium|Firefox|Safari|Edge|Opera|Samsung Internet|Node|Node\\.js|Deno|Bun";
-  const LITERAL_VERSION = new RegExp(`\\b(?:${BROWSERS})\\s+v?\\d`, "g");
+    "Chrome|Chromium|Firefox|Safari|Edge|Opera|WebKit|Blink|Gecko|iOS|iPadOS|macOS|Android|Samsung Internet|Node|Node\\.js|Deno|Bun";
+
+  /**
+   * Any sentence naming a browser or runtime, so a version is caught wherever
+   * it sits in it. Matching only `Browser NN` let every real phrasing through:
+   * "Safari before version 16.4", "Firefox before 127", "before 13.1",
+   * "18.4 on iOS", "iOS 15.4", "versions below 102 of Chrome".
+   */
+  const BROWSER_SENTENCE = new RegExp(
+    `[^.!?\\n]*\\b(?:${BROWSERS})\\b[^.!?\\n]*`,
+    "g",
+  );
+
+  /** A bare four-digit year is a date, not a version. Anything else is one. */
+  const YEAR = /^(?:19|20)\d{2}$/;
 
   const ruleFiles = readdirSync(join(srcDir, "rules")).filter(
     (file) => file.endsWith(".ts") && file !== "index.ts",
@@ -438,7 +486,13 @@ describe("browser versions are never written by hand", () => {
         /\{\{[a-z_]+:[A-Za-z0-9_.-]+\}\}/g,
         "",
       );
-      const offenders = handWritten.match(LITERAL_VERSION) ?? [];
+      const offenders: string[] = [];
+      for (const [sentence] of handWritten.matchAll(BROWSER_SENTENCE)) {
+        for (const [number] of sentence.matchAll(/\b\d+(?:\.\d+)*\b/g)) {
+          if (!number.includes(".") && YEAR.test(number)) continue;
+          offenders.push(`${number} in "${sentence.trim().slice(0, 80)}"`);
+        }
+      }
       expect(
         offenders,
         `${file} states a browser version by hand. Replace it with {{browser:key}}, where key is a web-features ID or a BCD path, and run \`pnpm refresh:support\`.`,
@@ -449,7 +503,12 @@ describe("browser versions are never written by hand", () => {
   it.each(rules.map((r) => [r.id, r] as const))(
     "%s resolves every token it uses",
     (_id, rule) => {
+      // Every field withResolvedClaims() touches, and nothing it does not:
+      // title and native were interpolated later than the rest, and a token
+      // in either shipped raw until this list caught up.
       const texts = [
+        rule.title,
+        rule.native,
         rule.human.explainer,
         rule.human.snippet,
         rule.agent.when,

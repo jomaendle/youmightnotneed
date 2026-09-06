@@ -9,14 +9,29 @@
  *
  * Run: pnpm refresh:baseline
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { baselineHistory } from "../packages/catalog/src/generated/baseline-history.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
 import type { BaselineStatus, Rule } from "../packages/catalog/src/schema.ts";
+
+/**
+ * This script writes committed snapshots at module scope. Importing it would
+ * regenerate them as a side effect, which is exactly how a gate that imports a
+ * refresh script would end up repairing the drift it exists to detect. Fail
+ * loudly instead: a caller that needs the data should export a function from
+ * here, the way build-skill.ts and refresh-support.ts do.
+ */
+if (
+  import.meta.url !== pathToFileURL(realpathSync(process.argv[1] ?? "")).href
+) {
+  throw new Error(
+    "refresh-baseline.ts writes files and must be run, not imported. Export a function instead.",
+  );
+}
 
 const require = createRequire(import.meta.url);
 const here = dirname(fileURLToPath(import.meta.url));

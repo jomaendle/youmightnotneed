@@ -66,6 +66,10 @@ import { webShare } from "./web-share.ts";
 function withResolvedClaims(rule: Rule): Rule {
   return {
     ...rule,
+    // title and native render in page titles, OG cards, the CLI header and
+    // every finding. They were left out once and a token shipped raw.
+    title: resolveSupportClaims(rule.title),
+    native: resolveSupportClaims(rule.native),
     human: {
       ...rule.human,
       explainer: resolveSupportClaims(rule.human.explainer),

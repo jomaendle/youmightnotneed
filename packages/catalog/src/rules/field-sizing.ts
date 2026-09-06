@@ -34,7 +34,7 @@ input[type="text"] {
   agent: {
     when: "a textarea or input should grow to fit what the user has typed",
     unless: [
-      "Your support target reaches below Chrome {{chrome:field-sizing}}, Firefox {{firefox:field-sizing}} or Safari {{safari:field-sizing}}. Every engine ships field-sizing now, but Firefox and Safari only in 2026, so an older target still needs the fallback.",
+      "Your support target reaches below Chrome {{chrome:field-sizing}}, Firefox {{firefox:field-sizing}} or Safari {{safari:field-sizing}}. Every engine ships field-sizing now, but Safari only at the end of 2025 and Firefox in 2026, so an older target still needs the fallback.",
       "You need the measured height in JavaScript, for example to sync a neighbouring element.",
       "You need to animate the height change. field-sizing resizes without a transition.",
     ],

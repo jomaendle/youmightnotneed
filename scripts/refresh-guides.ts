@@ -13,10 +13,25 @@
  *
  * Run: pnpm refresh:guides
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { gunzipSync } from "node:zlib";
+
+/**
+ * This script writes committed snapshots at module scope. Importing it would
+ * regenerate them as a side effect, which is exactly how a gate that imports a
+ * refresh script would end up repairing the drift it exists to detect. Fail
+ * loudly instead: a caller that needs the data should export a function from
+ * here, the way build-skill.ts and refresh-support.ts do.
+ */
+if (
+  import.meta.url !== pathToFileURL(realpathSync(process.argv[1] ?? "")).href
+) {
+  throw new Error(
+    "refresh-guides.ts writes files and must be run, not imported. Export a function instead.",
+  );
+}
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outFile = join(here, "../packages/catalog/src/generated/guides.ts");

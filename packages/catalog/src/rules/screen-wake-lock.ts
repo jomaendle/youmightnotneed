@@ -19,7 +19,7 @@ await lock.release();`,
   agent: {
     when: "keeping the screen from sleeping while a page is active, such as during a recipe, presentation, or workout",
     unless: [
-      "You support Safari before 16.4 on desktop or before 18.4 on iOS. The phone cases this rule is for, a recipe or a workout screen, are exactly the ones iOS could not do until 18.4.",
+      "You support Safari below {{safari:api.WakeLock}} on desktop or below {{safari_ios:api.WakeLock}} on iOS. The phone cases this rule is for, a recipe or a workout screen, are exactly the ones iOS was last to allow.",
       "You need the lock to survive the tab losing focus. The platform releases it the moment the tab backgrounds, with no way to opt out, so a library that re-acquires on visibilitychange is doing real work.",
       "You need this in a non-secure (non-HTTPS) context, where the API isn't available at all.",
     ],

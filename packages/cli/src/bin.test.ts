@@ -262,3 +262,51 @@ describe("a file that is not a package.json", () => {
     expect(result.stderr).toContain("one or the other");
   });
 });
+
+describe("a lockfile is not a manifest", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // A lockfile's top-level `dependencies` is the whole transitive tree, so
+  // reading one reported packages nothing depends on directly.
+  it("refuses a package-lock.json rather than reporting its whole tree", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ymnn-lock-"));
+    try {
+      const file = join(dir, "package.json");
+      writeFileSync(
+        file,
+        JSON.stringify({
+          name: "app",
+          lockfileVersion: 2,
+          dependencies: { uuid: { version: "9.0.0" } },
+        }),
+      );
+      const result = spawnSync(process.execPath, [binPath, file], {
+        encoding: "utf8",
+      });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain("lockfile");
+      expect(result.stdout).not.toContain("Generating UUIDs");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("does not render a non-string name into the header", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ymnn-name-"));
+    try {
+      const file = join(dir, "package.json");
+      writeFileSync(
+        file,
+        JSON.stringify({ name: { a: 1 }, dependencies: { swiper: "^11.0.0" } }),
+      );
+      const result = spawnSync(process.execPath, [binPath, file], {
+        encoding: "utf8",
+      });
+      expect(result.status).toBe(0);
+      expect(result.stdout).not.toContain("[object Object]");
+      expect(result.stdout).toContain("Carousels");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});

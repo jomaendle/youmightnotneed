@@ -277,3 +277,27 @@ describe("dependency fields", () => {
     expect(findings[0]?.hasUnknownSizes).toBe(true);
   });
 });
+
+describe("sortFindings tie-breaking", () => {
+  // Two rules can weigh the same and sit in the same tier. The order then has
+  // to be stable and identical on every surface, so it compares codepoints
+  // rather than using the runtime's locale.
+  const finding = (title: string): Finding =>
+    ({
+      rule: { title },
+      baseline: { status: "widely" },
+      matched: [],
+      replaceableBytes: 100,
+      hasUnknownSizes: false,
+    }) as unknown as Finding;
+
+  it("orders equal-weight, equal-tier findings by title", () => {
+    const sorted = sortFindings([finding("Zebra"), finding("Apple")]);
+    expect(sorted.map((f) => f.rule.title)).toEqual(["Apple", "Zebra"]);
+  });
+
+  it("keeps identical titles adjacent rather than throwing", () => {
+    const sorted = sortFindings([finding("Same"), finding("Same")]);
+    expect(sorted).toHaveLength(2);
+  });
+});

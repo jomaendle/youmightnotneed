@@ -197,7 +197,12 @@ export function sortFindings(findings: Finding[]): Finding[] {
     if (byBytes !== 0) return byBytes;
     const byBaseline = compareBaseline(a.baseline.status, b.baseline.status);
     if (byBaseline !== 0) return byBaseline;
-    return a.rule.title.localeCompare(b.rule.title);
+    // Codepoint order, not localeCompare: collation varies by runtime locale
+    // and ICU build, and two surfaces rendering the same report must not
+    // order a tie differently.
+    if (a.rule.title < b.rule.title) return -1;
+    if (a.rule.title > b.rule.title) return 1;
+    return 0;
   });
 }
 

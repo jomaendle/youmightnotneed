@@ -214,7 +214,23 @@ function readPackageJson(file: string): PackageJsonLike {
     process.exit(1);
   }
 
-  return parsed as PackageJsonLike;
+  const record = parsed as Record<string, unknown>;
+
+  // A lockfile's top-level `dependencies` is the whole transitive tree, so
+  // reading one would report hundreds of packages nothing here depends on
+  // directly, dev-only entries included.
+  if ("lockfileVersion" in record) {
+    console.error(
+      `${file} is a lockfile, not a package.json. Point at the manifest instead.`,
+    );
+    process.exit(1);
+  }
+
+  // `name` is whatever the file says. Anything but a string would render as
+  // "[object Object]" in the report header.
+  if (typeof record.name !== "string") delete record.name;
+
+  return record as PackageJsonLike;
 }
 
 function readOwnVersion(): string {

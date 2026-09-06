@@ -1,6 +1,7 @@
 import { formatBytes } from "@jomae/catalog";
 import { ImageResponse } from "next/og";
 import type { NextRequest } from "next/server";
+import { site } from "@/lib/site";
 
 /**
  * The OG card. The headline number and the project name are the distribution,
@@ -46,7 +47,7 @@ export function GET(request: NextRequest) {
     >
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div style={{ display: "flex", fontSize: 30, color: ACCENT }}>
-          youmightnotneed.dev
+          {site.domain}
         </div>
         <div
           style={{ display: "flex", fontSize: 26, color: MUTED, marginTop: 8 }}
@@ -65,7 +66,7 @@ export function GET(request: NextRequest) {
               letterSpacing: "-0.03em",
             }}
           >
-            Nothing here that CSS
+            Nothing here the
           </div>
           <div
             style={{
@@ -75,7 +76,7 @@ export function GET(request: NextRequest) {
               letterSpacing: "-0.03em",
             }}
           >
-            covers yet
+            platform covers yet
           </div>
         </div>
       ) : (
@@ -103,7 +104,7 @@ export function GET(request: NextRequest) {
               marginTop: 10,
             }}
           >
-            that CSS now does natively
+            that the platform now does natively
           </div>
         </div>
       )}

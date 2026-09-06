@@ -44,7 +44,11 @@ interface WebFeature {
 }
 interface BcdSupport {
   version_added?: string | boolean | null;
+  version_removed?: string | boolean | null;
   flags?: unknown[];
+  prefix?: string;
+  alternative_name?: string;
+  partial_implementation?: boolean;
 }
 interface BcdNode {
   __compat?: { support?: Record<string, BcdSupport | BcdSupport[]> };
@@ -86,18 +90,41 @@ function bcdNode(path: string): BcdNode | undefined {
   return node;
 }
 
+/** A definite release number. Rejects "preview", "≤18" and the like. */
+const RELEASE_VERSION = /^\d+(?:\.\d+)*$/;
+
 /**
- * The first unflagged version a browser shipped something in. A `true` means
- * BCD knows it is supported but not since when, which is not a number we can
- * put in front of a reader, so it fails alongside `false` and null.
+ * The first version a browser shipped something in, unqualified.
+ *
+ * Every qualifier here would put something false in front of a reader:
+ * `flags` is behind a switch nobody has flipped, `prefix` and
+ * `alternative_name` mean the unprefixed name this rule recommends is not
+ * what shipped, `version_removed` means it is gone again, and
+ * `partial_implementation` means it is there but not all of it. A
+ * non-numeric `version_added` such as "preview" or "≤18" is not a version
+ * anyone can act on. All of them return null, which fails the refresh rather
+ * than shipping the value.
  */
+function isUnqualified(entry: BcdSupport): boolean {
+  return !(
+    (entry.flags && entry.flags.length > 0) ||
+    entry.prefix ||
+    entry.alternative_name ||
+    entry.version_removed ||
+    entry.partial_implementation
+  );
+}
+
 function bcdVersion(path: string, browser: string): string | null {
   const support = bcdNode(path)?.__compat?.support?.[browser];
   if (!support) return null;
-  const entries = Array.isArray(support) ? support : [support];
-  for (const entry of entries) {
-    if (entry.flags && entry.flags.length > 0) continue;
-    if (typeof entry.version_added === "string") return entry.version_added;
+
+  for (const entry of Array.isArray(support) ? support : [support]) {
+    if (!isUnqualified(entry)) continue;
+    const version = entry.version_added;
+    if (typeof version === "string" && RELEASE_VERSION.test(version)) {
+      return version;
+    }
   }
   return null;
 }

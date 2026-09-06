@@ -303,11 +303,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 529,
       "version": "1.2.0"
     },
-    "fitty": {
-      "gzip": 1420,
-      "raw": 3596,
-      "version": "2.4.2"
-    },
     "flatpickr": {
       "gzip": 14362,
       "raw": 50265,
@@ -343,11 +338,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3020,
       "version": "5.2.1"
     },
-    "format-duration": {
-      "gzip": 455,
-      "raw": 757,
-      "version": "4.0.0"
-    },
     "format-number": {
       "gzip": 1107,
       "raw": 3262,
@@ -362,11 +352,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 3107,
       "raw": 8177,
       "version": "1.0.0"
-    },
-    "highlight-words-core": {
-      "gzip": 951,
-      "raw": 2329,
-      "version": "1.2.3"
     },
     "humanize-duration": {
       "gzip": 6799,
@@ -542,11 +527,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 8517,
       "raw": 35290,
       "version": "4.0.3"
-    },
-    "no-scroll": {
-      "gzip": 517,
-      "raw": 1007,
-      "version": "2.1.1"
     },
     "nosleep.js": {
       "gzip": 6559,
@@ -773,11 +753,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 5454,
       "version": "2.3.0"
     },
-    "react-resizable-panels": {
-      "gzip": 11141,
-      "raw": 34377,
-      "version": "4.12.3"
-    },
     "react-resize-detector": {
       "gzip": 1483,
       "raw": 3228,
@@ -792,11 +767,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 7438,
       "raw": 30421,
       "version": "1.9.3"
-    },
-    "react-scrolllock": {
-      "gzip": 2600,
-      "raw": 9930,
-      "version": "5.0.1"
     },
     "react-select": {
       "gzip": 29804,
@@ -833,11 +803,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 11015,
       "version": "4.0.1"
     },
-    "react-split-pane": {
-      "gzip": 3893,
-      "raw": 10021,
-      "version": "3.2.0"
-    },
     "react-spring": {
       "gzip": 19978,
       "raw": 52063,
@@ -857,11 +822,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1605,
       "raw": 3579,
       "version": "8.5.9"
-    },
-    "react-textfit": {
-      "gzip": 3352,
-      "raw": 9084,
-      "version": "1.1.1"
     },
     "react-timeago": {
       "gzip": 1061,
@@ -938,11 +898,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 9829,
       "version": "2.0.13"
     },
-    "scroll-lock": {
-      "gzip": 3328,
-      "raw": 12636,
-      "version": "2.1.5"
-    },
     "scrollmagic": {
       "gzip": 7645,
       "raw": 22529,
@@ -993,11 +948,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 5746,
       "version": "2.0.8"
     },
-    "splitpanes": {
-      "gzip": 3887,
-      "raw": 11298,
-      "version": "4.1.2"
-    },
     "sticky-js": {
       "gzip": 1917,
       "raw": 6977,
@@ -1037,11 +987,6 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 9232,
       "raw": 26552,
       "version": "4.10.0"
-    },
-    "textfit": {
-      "gzip": 1474,
-      "raw": 3448,
-      "version": "2.4.0"
     },
     "timeago.js": {
       "gzip": 1037,

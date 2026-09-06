@@ -14,7 +14,7 @@ export const urlSearchParams: Rule = {
   native: "URLSearchParams and the URL constructor",
   human: {
     explainer:
-      "URLSearchParams reads and writes query strings, handles percent-encoding in both directions, and gives you get, getAll, set, append and delete. new URL() does the same job for a whole address, so the hostname, the pathname and the search params come apart without a regular expression. Both have been in every browser since 2016 and in Node since v10, and both are what these libraries call underneath once you strip the option handling.",
+      "URLSearchParams reads and writes query strings, handles percent-encoding in both directions, and gives you get, getAll, set, append and delete. new URL() does the same job for a whole address, so the hostname, the pathname and the search params come apart without a regular expression. Both have been in every browser since 2017 and in Node for as long, and both are what these libraries call underneath once you strip the option handling.",
     snippet: `const url = new URL("/search?tag=css&tag=html&page=2", location.origin);
 
 url.searchParams.getAll("tag"); // ["css", "html"]
