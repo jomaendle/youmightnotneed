@@ -93,3 +93,20 @@ describe("tools.ts stays pure", () => {
     expect(source).not.toMatch(/new Date\(/);
   });
 });
+
+describe("guide hand-off", () => {
+  it("resolves a rule's guides to fetchable URLs", () => {
+    const result = getRule({ id: "carousel-scroll-markers" });
+    if (!result.found) throw new Error("expected the carousel rule");
+    expect(result.guides.length).toBeGreaterThan(0);
+    expect(result.guides[0]?.url).toMatch(/^https:\/\//);
+    expect(result.guides[0]?.command).toContain("modern-web-guidance");
+  });
+
+  it("attaches guides and their provenance to an analysis", () => {
+    const result = analyzeDependencies({ dependencies: { swiper: "^11.0.0" } });
+    expect(result.findings[0]?.guides.length).toBeGreaterThan(0);
+    expect(result.provenance.guidesVersion).not.toBe("");
+    expect(result.guideSource.licence).toBe("Apache-2.0");
+  });
+});

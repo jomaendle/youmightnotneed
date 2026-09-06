@@ -20,7 +20,7 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-09-04",
+  "fetchedOn": "2026-09-06",
   "source": "bundlephobia.com",
   "sizes": {
     "@capacitor-community/bluetooth-le": {
@@ -59,9 +59,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "3.4.0"
     },
     "@mui/x-date-pickers": {
-      "gzip": 58097,
-      "raw": 206962,
-      "version": "9.12.0"
+      "gzip": 58100,
+      "raw": 206963,
+      "version": "9.13.0"
     },
     "@ng-select/ng-select": {
       "gzip": 33247,
@@ -238,6 +238,21 @@ export const packageSizes: SizeSnapshot = {
       "raw": 39659,
       "version": "5.2.2"
     },
+    "focus-lock": {
+      "gzip": 3800,
+      "raw": 10089,
+      "version": "1.3.6"
+    },
+    "focus-trap": {
+      "gzip": 6603,
+      "raw": 19752,
+      "version": "8.2.2"
+    },
+    "focus-trap-react": {
+      "gzip": 8457,
+      "raw": 27262,
+      "version": "12.0.3"
+    },
     "focus-visible": {
       "gzip": 1013,
       "raw": 3020,
@@ -252,6 +267,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 62291,
       "raw": 185909,
       "version": "13.2.0"
+    },
+    "highlight-words-core": {
+      "gzip": 951,
+      "raw": 2329,
+      "version": "1.2.3"
     },
     "javascript-time-ago": {
       "gzip": 8948,
@@ -297,6 +317,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1477,
       "raw": 4839,
       "version": "1.5.0"
+    },
+    "mark.js": {
+      "gzip": 5786,
+      "raw": 16902,
+      "version": "8.11.1"
     },
     "masonry-layout": {
       "gzip": 6870,
@@ -434,9 +459,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "5.0.2"
     },
     "react-aspect-ratio": {
-      "gzip": 823,
-      "raw": 2148,
-      "version": "1.1.9"
+      "gzip": 553,
+      "raw": 928,
+      "version": "2.0.1"
     },
     "react-autosize-textarea": {
       "gzip": 2984,
@@ -493,15 +518,30 @@ export const packageSizes: SizeSnapshot = {
       "raw": 52175,
       "version": "4.0.11"
     },
+    "react-focus-lock": {
+      "gzip": 7990,
+      "raw": 22752,
+      "version": "2.13.7"
+    },
     "react-full-screen": {
       "gzip": 1014,
       "raw": 2921,
       "version": "1.1.1"
     },
+    "react-highlight-words": {
+      "gzip": 1785,
+      "raw": 4976,
+      "version": "0.21.0"
+    },
+    "react-highlighter": {
+      "gzip": 3817,
+      "raw": 10317,
+      "version": "0.4.3"
+    },
     "react-in-viewport": {
-      "gzip": 1638,
-      "raw": 4199,
-      "version": "1.0.0-beta.9"
+      "gzip": 2459,
+      "raw": 6888,
+      "version": "1.0.0-beta.10"
     },
     "react-intersection-observer": {
       "gzip": 2074,
@@ -873,6 +913,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 21718,
       "version": "4.5.5"
     },
+    "vue-focus-lock": {
+      "gzip": 6086,
+      "raw": 19473,
+      "version": "2.0.7"
+    },
     "vue-fullscreen": {
       "gzip": 3012,
       "raw": 9760,
@@ -957,6 +1002,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 8355,
       "raw": 23861,
       "version": "0.17.0"
+    },
+    "wicg-inert": {
+      "gzip": 2531,
+      "raw": 8367,
+      "version": "3.1.3"
     },
     "wow.js": {
       "gzip": 2739,

@@ -32,4 +32,5 @@ export const textBoxTrim: Rule = {
     ],
     snippet: "h1 { text-box: trim-both cap alphabetic; }",
   },
+  guides: ["precise-text-alignment"],
 };

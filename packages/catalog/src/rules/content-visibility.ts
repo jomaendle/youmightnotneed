@@ -34,4 +34,5 @@ export const contentVisibility: Rule = {
     snippet:
       ".row { content-visibility: auto; contain-intrinsic-size: auto 48px; }",
   },
+  guides: ["defer-rendering-heavy-content"],
 };

@@ -39,6 +39,10 @@ New file at `packages/catalog/src/rules/<id>.ts`, one `Rule` object (see
   Nice-to-have features go in `agent.unless` instead, not here, or the
   rule understates itself.
 - `human.explainer`: 2 to 4 sentences, `human.snippet`: copy-pasteable.
+- `guides` (optional): IDs from GoogleChrome/modern-web-guidance covering the
+  implementation. Check `packages/catalog/src/generated/guides.ts` for the
+  ID, or run `pnpm refresh:guides` if the guide is newer than the snapshot.
+  An unknown ID fails `catalog.test.ts` and `check:freshness`.
 - `agent.when` / `agent.unless`: the LLM-facing projection. `unless` cannot
   be empty. This is the most important field in the schema: write it before
   anything else if you're unsure the rule is real. An empty or weak `unless`
@@ -58,7 +62,12 @@ Order in the array is not significant.
 ```
 pnpm refresh:baseline   # pulls featureIds' status into generated/baseline.ts
 pnpm refresh:sizes       # fetches bundlephobia sizes for every claimed package
+pnpm refresh:guides      # snapshots the modern-web-guidance index
+pnpm refresh:skill       # regenerates the skill's catalog reference
 ```
+
+`pnpm refresh` runs all four. The skill reference must be regenerated for any
+new rule, or `check:freshness` fails.
 
 Both are safe to run even when nothing else changed: existing entries survive
 a failed fetch. Check the output of `refresh:sizes` for "No size for N

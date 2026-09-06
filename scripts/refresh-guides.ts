@@ -1,0 +1,174 @@
+/**
+ * Snapshots the guide index of GoogleChrome/modern-web-guidance.
+ *
+ * A rule may point at one or more of their guides for the long-form
+ * implementation. We store only the IDs on the rule, the same way Baseline
+ * status stores only web-features IDs, and resolve the category and the URL
+ * from this snapshot. A guide that gets renamed or dropped upstream then fails
+ * the catalog tests instead of turning into a dead link in a published report.
+ *
+ * The source is the published npm tarball rather than the GitHub API: it is
+ * the artifact their CLI actually serves, it needs no token, and it pins the
+ * version the snapshot was taken from.
+ *
+ * Run: pnpm refresh:guides
+ */
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { gunzipSync } from "node:zlib";
+
+const here = dirname(fileURLToPath(import.meta.url));
+const outFile = join(here, "../packages/catalog/src/generated/guides.ts");
+
+const PACKAGE = "modern-web-guidance";
+const REGISTRY = "https://registry.npmjs.org";
+const REPO = "https://github.com/GoogleChrome/modern-web-guidance";
+const USER_AGENT =
+  "youmightnotneed/refresh-guides (+https://github.com/jomaendle/youmightnotneed)";
+
+/** Guides live at skills/modern-web-guidance/guides/<category>/<id>.md. */
+const GUIDE_PATH = /\/guides\/([a-z0-9-]+)\/([a-z0-9-]+)\.md$/;
+
+/**
+ * Lists the file paths in a gzipped tarball. Only the headers are read, so
+ * this walks the 512-byte blocks and skips over every file body. Enough for an
+ * index, and it keeps the script free of a tar dependency.
+ */
+function listTarballPaths(gzipped: Buffer): string[] {
+  const buf = gunzipSync(gzipped);
+  const paths: string[] = [];
+  let offset = 0;
+
+  while (offset + 512 <= buf.length) {
+    const name = buf
+      .toString("utf8", offset, offset + 100)
+      .replace(/\0.*/s, "");
+    if (name === "") {
+      // A run of zero blocks marks the end, but padding shows up mid-file too.
+      offset += 512;
+      continue;
+    }
+    const rawSize = buf
+      .toString("ascii", offset + 124, offset + 136)
+      .replace(/\0.*/s, "")
+      .trim();
+    const size = Number.parseInt(rawSize, 8) || 0;
+    // Long paths are split across a prefix field and the name field.
+    const prefix = buf
+      .toString("utf8", offset + 345, offset + 500)
+      .replace(/\0.*/s, "");
+    paths.push(prefix === "" ? name : `${prefix}/${name}`);
+    offset += 512 + Math.ceil(size / 512) * 512;
+  }
+
+  return paths;
+}
+
+/** Reads the previous snapshot so a failed fetch keeps the committed data. */
+function readExisting(): Record<string, string> {
+  if (!existsSync(outFile)) return {};
+  const source = readFileSync(outFile, "utf8");
+  const start = source.indexOf("{", source.indexOf("guideSnapshot"));
+  if (start === -1) return {};
+  try {
+    const parsed = JSON.parse(
+      source.slice(start, source.lastIndexOf("}") + 1),
+    ) as {
+      guides?: Record<string, string>;
+    };
+    return parsed.guides ?? {};
+  } catch {
+    return {};
+  }
+}
+
+async function getJson(url: string): Promise<unknown> {
+  const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+  if (!res.ok) throw new Error(`${url} returned ${res.status}`);
+  return res.json();
+}
+
+console.info(`Fetching the ${PACKAGE} guide index...`);
+
+let version: string;
+let guides: Record<string, string>;
+
+try {
+  const meta = (await getJson(`${REGISTRY}/${PACKAGE}`)) as {
+    "dist-tags"?: { latest?: string };
+    versions?: Record<string, { dist?: { tarball?: string } }>;
+  };
+  const latest = meta["dist-tags"]?.latest;
+  const tarball = latest ? meta.versions?.[latest]?.dist?.tarball : undefined;
+  if (!(latest && tarball)) {
+    throw new Error(`${PACKAGE} has no resolvable latest tarball`);
+  }
+
+  const res = await fetch(tarball, { headers: { "User-Agent": USER_AGENT } });
+  if (!res.ok) throw new Error(`${tarball} returned ${res.status}`);
+
+  const found: Record<string, string> = {};
+  for (const path of listTarballPaths(Buffer.from(await res.arrayBuffer()))) {
+    const match = GUIDE_PATH.exec(path);
+    if (!match) continue;
+    const [, category, id] = match;
+    if (category && id) found[id] = category;
+  }
+
+  if (Object.keys(found).length === 0) {
+    throw new Error(
+      "the tarball contained no guides, the layout may have moved",
+    );
+  }
+
+  version = latest;
+  guides = found;
+} catch (error) {
+  const existing = readExisting();
+  if (Object.keys(existing).length === 0) throw error;
+  console.error(`${(error as Error).message}. Keeping the committed snapshot.`);
+  process.exit(1);
+}
+
+const ordered: Record<string, string> = {};
+for (const id of Object.keys(guides).sort()) {
+  const category = guides[id];
+  if (category) ordered[id] = category;
+}
+
+const fetchedOn = new Date().toISOString().slice(0, 10);
+const categories = new Set(Object.values(ordered)).size;
+
+writeFileSync(
+  outFile,
+  `// Generated by scripts/refresh-guides.ts. Do not edit by hand.
+// Run \`pnpm refresh:guides\` to update.
+
+export interface GuideSnapshot {
+  /** Date the index was taken, YYYY-MM-DD. */
+  fetchedOn: string;
+  /** The npm version the index was read from. */
+  version: string;
+  /** Repository the guides are published from. */
+  repo: string;
+  /** Guide ID to the category directory it lives in. */
+  guides: Record<string, string>;
+}
+
+/**
+ * The guide index of GoogleChrome/modern-web-guidance, Apache-2.0.
+ * IDs and categories only. None of their prose is vendored here.
+ */
+export const guideSnapshot: GuideSnapshot = ${JSON.stringify(
+    { fetchedOn, version, repo: REPO, guides: ordered },
+    null,
+    2,
+  )};
+`,
+  "utf8",
+);
+
+console.info(
+  `Wrote ${Object.keys(ordered).length} guides across ${categories} categories from ${PACKAGE}@${version}.`,
+);

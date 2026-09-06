@@ -1,0 +1,15 @@
+{
+  "name": "jomaendle",
+  "owner": {
+    "name": "Johannes Mändle",
+    "url": "https://www.jomaendle.com"
+  },
+  "plugins": [
+    {
+      "name": "youmightnotneed",
+      "source": "./",
+      "description": "Check whether a JavaScript dependency has a native CSS, HTML or Web API equivalent",
+      "version": "0.1.5"
+    }
+  ]
+}

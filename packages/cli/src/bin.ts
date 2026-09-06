@@ -31,6 +31,8 @@ Usage
                   directory upwards.
 
 Options
+  -p, --package   Check one npm package by name instead of reading a
+                  package.json. Use it before you install something.
   -v, --verbose   Print every condition under which the dependency is still
                   the right call. Recommended before you change anything.
       --json      Machine-readable output.
@@ -45,8 +47,10 @@ Notes
   youmightnotneed command only works after a global install.
 `;
 
-interface Args {
+export interface Args {
   path: string | undefined;
+  /** A single npm package to check, instead of reading a package.json. */
+  package: string | undefined;
   verbose: boolean;
   json: boolean;
   color: boolean;
@@ -54,9 +58,39 @@ interface Args {
   version: boolean;
 }
 
-function parseArgs(argv: readonly string[]): Args {
+/**
+ * Reads --package, the one flag that takes a value. Accepts both
+ * `--package name` and `--package=name`. Returns how many argv entries it
+ * consumed, or 0 when this argument is not the package flag.
+ */
+function readPackageFlag(
+  args: Args,
+  argv: readonly string[],
+  index: number,
+): number {
+  const arg = argv[index] as string;
+
+  if (arg.startsWith("--package=")) {
+    args.package = arg.slice("--package=".length);
+    return 1;
+  }
+  if (arg !== "-p" && arg !== "--package") return 0;
+
+  const value = argv[index + 1];
+  if (value === undefined || value.startsWith("-")) {
+    console.error(
+      "--package needs a package name, for example: --package swiper",
+    );
+    process.exit(2);
+  }
+  args.package = value;
+  return 2;
+}
+
+export function parseArgs(argv: readonly string[]): Args {
   const args: Args = {
     path: undefined,
+    package: undefined,
     verbose: false,
     json: false,
     color: !process.env.NO_COLOR,
@@ -64,7 +98,15 @@ function parseArgs(argv: readonly string[]): Args {
     version: false,
   };
 
-  for (const arg of argv) {
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i] as string;
+
+    const consumed = readPackageFlag(args, argv, i);
+    if (consumed > 0) {
+      i += consumed - 1;
+      continue;
+    }
+
     switch (arg) {
       case "-v":
       case "--verbose":
@@ -194,8 +236,14 @@ function main(): void {
     process.exit(0);
   }
 
-  const target = resolveTarget(args.path);
-  const pkg = readPackageJson(target);
+  // --package builds a one-entry dependency map so a single lookup goes
+  // through exactly the same detect() and renderers as a whole project.
+  const single = args.package;
+  const target = single === undefined ? resolveTarget(args.path) : null;
+  const pkg: PackageJsonLike =
+    single === undefined
+      ? readPackageJson(target as string)
+      : { name: single, dependencies: { [single]: "*" } };
   const report = analyze(pkg);
 
   if (args.json) {
@@ -205,7 +253,8 @@ function main(): void {
     console.info(
       renderReport(report, {
         palette: createPalette(useColor),
-        projectName: pkg.name ?? basename(dirname(target)),
+        subject: single === undefined ? "project" : "package",
+        projectName: single ?? pkg.name ?? basename(dirname(target as string)),
         provenance: {
           baselineOn: BASELINE_DATA_DATE,
           webFeaturesVersion: WEB_FEATURES_VERSION,

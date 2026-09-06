@@ -41,4 +41,5 @@ export const sticky: Rule = {
     snippet: `.header { position: sticky; top: 0; z-index: 10; }
 .sidebar { position: sticky; top: 5rem; align-self: start; }`,
   },
+  guides: ["state-aware-sticky-headers", "scroll-position-aware-elements"],
 };

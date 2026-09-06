@@ -6,7 +6,11 @@
  *
  *   1. Any rule with a `manualBaseline` older than 90 days is an error.
  *   2. A rule whose featureIds are missing from the snapshot is an error.
- *   3. A snapshot older than 45 days, or generated from an older web-features
+ *   3. A rule pointing at a modern-web-guidance guide that no longer exists
+ *      upstream is an error, so a report never links to a dead guide.
+ *   4. The agent skill's generated catalog reference falling behind the rules
+ *      is an error, so the skill can never describe a catalog that moved on.
+ *   5. A snapshot older than 45 days, or generated from an older web-features
  *      than the one installed, is a warning telling you to run the refresh.
  *
  * Run: pnpm check:freshness
@@ -14,15 +18,18 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
+import { guideSnapshot } from "../packages/catalog/src/generated/guides.ts";
 import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
 
 const MANUAL_BASELINE_MAX_AGE_DAYS = 90;
 const SNAPSHOT_WARN_AGE_DAYS = 45;
 const SIZES_WARN_AGE_DAYS = 120;
+const GUIDES_WARN_AGE_DAYS = 90;
 
 const require = createRequire(import.meta.url);
 const errors: string[] = [];
@@ -67,7 +74,39 @@ for (const id of NATIVE_FEATURE_IDS) {
   }
 }
 
-// 4. Snapshot age and version drift are warnings, not failures.
+// 4. Guide references must still exist upstream.
+for (const rule of rules) {
+  for (const id of rule.guides ?? []) {
+    if (!guideSnapshot.guides[id]) {
+      errors.push(
+        `Rule "${rule.id}" points at modern-web-guidance guide "${id}", which is not in the snapshot. Run \`pnpm refresh:guides\`, and drop or repoint the reference if it was renamed upstream.`,
+      );
+    }
+  }
+}
+
+// 5. The skill's generated catalog reference must match the catalog.
+const skillCatalog = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../skills/youmightnotneed/references/catalog.md",
+);
+try {
+  const listing = readFileSync(skillCatalog, "utf8");
+  const missing = rules.filter((rule) => !listing.includes(`\`${rule.id}\``));
+  if (missing.length > 0) {
+    errors.push(
+      `The skill's catalog reference is missing ${missing.length} rule(s): ${missing
+        .map((r) => r.id)
+        .join(", ")}. Run \`pnpm refresh:skill\`.`,
+    );
+  }
+} catch {
+  errors.push(
+    "skills/youmightnotneed/references/catalog.md is missing. Run `pnpm refresh:skill`.",
+  );
+}
+
+// 6. Snapshot age and version drift are warnings, not failures.
 const snapshotAge = daysSince(baselineSnapshot.generatedOn);
 if (snapshotAge > SNAPSHOT_WARN_AGE_DAYS) {
   warnings.push(
@@ -99,6 +138,13 @@ function installedWebFeaturesVersion(): string | null {
     dir = dirname(dir);
   }
   return null;
+}
+
+const guidesAge = daysSince(guideSnapshot.fetchedOn);
+if (guidesAge > GUIDES_WARN_AGE_DAYS) {
+  warnings.push(
+    `The modern-web-guidance index was taken ${guidesAge} days ago (${guideSnapshot.fetchedOn}, v${guideSnapshot.version}). Run \`pnpm refresh:guides\`.`,
+  );
 }
 
 const installed = installedWebFeaturesVersion();

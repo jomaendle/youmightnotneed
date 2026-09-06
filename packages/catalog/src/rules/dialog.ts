@@ -55,4 +55,10 @@ export const dialog: Rule = {
 <script>document.querySelector("#d").showModal();</script>
 <style>dialog::backdrop { background: rgb(0 0 0 / 0.5); }</style>`,
   },
+  guides: [
+    "light-dismiss-a-dialog",
+    "declarative-dialog-popover-control",
+    "platform-controls-dismiss-dialog",
+    "animate-to-from-top-layer",
+  ],
 };

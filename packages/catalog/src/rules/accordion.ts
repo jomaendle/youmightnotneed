@@ -51,4 +51,5 @@ export const accordion: Rule = {
   <p>Body</p>
 </details>`,
   },
+  guides: ["search-hidden-content"],
 };

@@ -39,7 +39,7 @@ export function createServer(): McpServer {
     {
       title: "Analyze dependencies",
       description:
-        "Matches a package.json's dependencies against the youmightnotneed catalog. Returns findings (a matched rule per dependency with a native replacement), a summary, and provenance for when the underlying data was captured. Every finding is conditional: read the rule's agent.unless conditions before suggesting a removal.",
+        "Matches a package.json's dependencies against the youmightnotneed catalog. Returns findings (a matched rule per dependency with a native replacement), a summary, and provenance for when the underlying data was captured. Every finding is conditional: read the rule's agent.unless conditions before suggesting a removal. A finding may carry `guides`, which are modern-web-guidance guide IDs. Run each guide's `command` before writing the replacement code, because this catalog gives you the one-line swap and the guide gives you the fallbacks and the gotchas.",
       inputSchema: {
         dependencies: z.record(z.string(), z.string()).optional(),
         devDependencies: z.record(z.string(), z.string()).optional(),
@@ -81,7 +81,7 @@ export function createServer(): McpServer {
     {
       title: "Get rule",
       description:
-        "Looks up one catalog rule by its id or by an npm package name it replaces. Returns the full explainer, code snippet, agent.unless conditions, and resolved Baseline support status. Returns { found: false } rather than an error when nothing matches. If both id and package are given, id wins.",
+        "Looks up one catalog rule by its id or by an npm package name it replaces. Returns the full explainer, code snippet, agent.unless conditions, resolved Baseline support status, and any long-form `guides` with the command to retrieve them. Returns { found: false } rather than an error when nothing matches. If both id and package are given, id wins.",
       inputSchema: {
         id: z.string().optional(),
         package: z.string().optional(),

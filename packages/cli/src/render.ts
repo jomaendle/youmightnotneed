@@ -4,7 +4,9 @@ import {
   type Finding,
   formatBytes,
   formatHeadline,
+  guideCommand,
   type Report,
+  resolveGuides,
 } from "@jomae/catalog";
 import type { ColorName, Palette } from "./colors.ts";
 
@@ -57,6 +59,11 @@ export interface RenderOptions {
   palette: Palette;
   /** Shown in the header, usually the package.json name field. */
   projectName?: string | undefined;
+  /**
+   * What was scanned. A single --package lookup that matches nothing needs
+   * different wording from a whole project that matches nothing.
+   */
+  subject?: "project" | "package" | undefined;
   provenance: {
     baselineOn: string;
     webFeaturesVersion: string;
@@ -110,17 +117,37 @@ function renderFinding(finding: Finding, options: RenderOptions): string[] {
     );
   }
 
+  // The catalog says which dependency has a native equivalent. It does not
+  // try to be the tutorial, so point at the one that is.
+  if (options.verbose) {
+    const guides = resolveGuides(finding.rule).filter((g) => g.url !== null);
+    if (guides.length > 0) {
+      lines.push(
+        `    ${palette("dim", "guides    ")}${palette(
+          "grey",
+          guides.map((g) => g.id).join(", "),
+        )}`,
+      );
+    }
+  }
+
   lines.push("");
   return lines;
 }
 
-function footer(options: RenderOptions): string {
+function footer(options: RenderOptions, hasGuides: boolean): string {
   const { provenance } = options;
-  return [
+  const lines = [
     `Baseline from web-features@${provenance.webFeaturesVersion}, captured ${provenance.baselineOn}.`,
     `Sizes from bundlephobia, captured ${provenance.sizesOn}.`,
-    "Details and live demos: https://youmightnotneed-web.vercel.app",
-  ].join("\n");
+  ];
+  if (hasGuides) {
+    lines.push(
+      `Guides are from modern-web-guidance, Apache-2.0. Read one with ${guideCommand(["<id>"])}.`,
+    );
+  }
+  lines.push("Details and live demos: https://youmightnotneed-web.vercel.app");
+  return lines.join("\n");
 }
 
 export function renderReport(report: Report, options: RenderOptions): string {
@@ -139,13 +166,18 @@ export function renderReport(report: Report, options: RenderOptions): string {
 
   if (findings.length === 0) {
     lines.push(
-      `  ${palette("green", "Nothing in this package.json has a native equivalent in the catalog.")}`,
+      `  ${palette(
+        "green",
+        options.subject === "package"
+          ? `The catalog has no rule for ${options.projectName ?? "that package"}.`
+          : "Nothing in this package.json has a native equivalent in the catalog.",
+      )}`,
     );
     lines.push(
       `  ${palette("grey", "The catalog only covers cases where the platform replaces a library outright.")}`,
     );
     lines.push("");
-    lines.push(palette("grey", footer(options)));
+    lines.push(palette("grey", footer(options, false)));
     lines.push("");
     return lines.join("\n");
   }
@@ -179,7 +211,10 @@ export function renderReport(report: Report, options: RenderOptions): string {
     }
   }
 
-  lines.push(palette("grey", footer(options)));
+  const hasGuides =
+    options.verbose &&
+    findings.some((f) => resolveGuides(f.rule).some((g) => g.url !== null));
+  lines.push(palette("grey", footer(options, hasGuides)));
   lines.push("");
   return lines.join("\n");
 }
@@ -209,6 +244,9 @@ export function renderJson(report: Report): string {
         unless: finding.rule.agent.unless,
         snippet: finding.rule.agent.snippet,
         demoUrl: finding.rule.human.demoUrl ?? null,
+        guides: resolveGuides(finding.rule)
+          .filter((g) => g.url !== null)
+          .map((g) => ({ id: g.id, category: g.category, url: g.url })),
       })),
     },
     null,

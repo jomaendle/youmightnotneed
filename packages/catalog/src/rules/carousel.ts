@@ -81,4 +81,9 @@ export const carousel: Rule = {
 .carousel > *::scroll-marker { content: ""; }
 .carousel > *::scroll-marker:target-current { opacity: 1; }`,
   },
+  guides: [
+    "carousel-snap-highlights",
+    "carousel-slide-effects",
+    "scroll-snap-state-sync",
+  ],
 };

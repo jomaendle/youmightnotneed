@@ -9,6 +9,7 @@ import { colorFunctions } from "./color-functions.ts";
 import { compressionStreams } from "./compression-streams.ts";
 import { containerQueries } from "./container-queries.ts";
 import { contentVisibility } from "./content-visibility.ts";
+import { customHighlight } from "./custom-highlight.ts";
 import { dateTimeInput } from "./date-time-input.ts";
 import { dialog } from "./dialog.ts";
 import { discreteTransitions } from "./discrete-transitions.ts";
@@ -18,6 +19,7 @@ import { fluidType } from "./fluid-type.ts";
 import { focusVisible } from "./focus-visible.ts";
 import { fullscreen } from "./fullscreen.ts";
 import { heightAnimation } from "./height-animation.ts";
+import { inert } from "./inert.ts";
 import { intersectionObserver } from "./intersection-observer.ts";
 import { lazyLoading } from "./lazy-loading.ts";
 import { lineClamp } from "./line-clamp.ts";
@@ -59,6 +61,7 @@ export const rules: readonly Rule[] = [
   compressionStreams,
   containerQueries,
   contentVisibility,
+  customHighlight,
   dateTimeInput,
   dialog,
   discreteTransitions,
@@ -68,6 +71,7 @@ export const rules: readonly Rule[] = [
   focusVisible,
   fullscreen,
   heightAnimation,
+  inert,
   intersectionObserver,
   lazyLoading,
   lineClamp,

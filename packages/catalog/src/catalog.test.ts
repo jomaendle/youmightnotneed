@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { resolveBaseline, resolveFeature } from "./baseline.ts";
 import { baselineSnapshot } from "./generated/baseline.ts";
+import { isKnownGuide, resolveGuide, resolveGuides } from "./guides.ts";
 import { rules, rulesByPackage } from "./rules/index.ts";
 import { catalogSchema } from "./schema.ts";
 
@@ -183,6 +184,7 @@ describe("detect stays pure", () => {
     "baseline.ts",
     "schema.ts",
     "format.ts",
+    "guides.ts",
     "rules/index.ts",
   ];
 
@@ -194,5 +196,45 @@ describe("detect stays pure", () => {
     expect(source).not.toMatch(/\bprocess\./);
     expect(source).not.toMatch(/\bDate\.now\(/);
     expect(source).not.toMatch(/new Date\(/);
+  });
+});
+
+describe("guide references", () => {
+  const withGuides = rules.filter((r) => (r.guides ?? []).length > 0);
+
+  it("points at least a few rules to a long-form guide", () => {
+    expect(withGuides.length).toBeGreaterThan(0);
+  });
+
+  it.each(
+    rules.flatMap((r) => (r.guides ?? []).map((g) => [r.id, g] as const)),
+  )("%s references the real modern-web-guidance guide %s", (_id, guideId) => {
+    // A guide renamed or dropped upstream should fail here rather than ship
+    // as a dead link. Run `pnpm refresh:guides` after an upstream release.
+    expect(isKnownGuide(guideId)).toBe(true);
+  });
+
+  it.each(withGuides.map((r) => [r.id, r] as const))(
+    "%s lists each guide once",
+    (_id, rule) => {
+      const guides = rule.guides ?? [];
+      expect(new Set(guides).size).toBe(guides.length);
+    },
+  );
+
+  it.each(withGuides.map((r) => [r.id, r] as const))(
+    "%s resolves every guide to an https URL",
+    (_id, rule) => {
+      for (const guide of resolveGuides(rule)) {
+        expect(guide.url).toMatch(/^https:\/\//);
+        expect(guide.category).not.toBe("");
+      }
+    },
+  );
+
+  it("returns a null URL for an unknown guide rather than throwing", () => {
+    const guide = resolveGuide("not-a-real-guide");
+    expect(guide.url).toBeNull();
+    expect(guide.category).toBe("");
   });
 });

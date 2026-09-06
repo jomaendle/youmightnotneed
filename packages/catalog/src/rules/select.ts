@@ -63,4 +63,10 @@ export const select: Rule = {
   select, select::picker(select) { appearance: base-select; }
 </style>`,
   },
+  guides: [
+    "animated-select-picker",
+    "branded-select-styling",
+    "custom-select-picker-layouts",
+    "select-menu-interaction",
+  ],
 };

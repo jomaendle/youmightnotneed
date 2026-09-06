@@ -43,4 +43,5 @@ input[type="text"] {
   max-height: 12lh;
 }`,
   },
+  guides: ["form-fields-automatically-fit-contents"],
 };

@@ -99,6 +99,16 @@ export const ruleSchema = z
       snippet: z.string().min(1),
     }),
 
+    /**
+     * IDs of GoogleChrome/modern-web-guidance guides that cover the
+     * implementation in depth. Their guides are keyed by use case, ours by
+     * package name, so this is the hand-off from "which dependency can go" to
+     * "how to build the thing properly". IDs only: the category and the URL
+     * are resolved from the committed snapshot in guides.ts, so a guide that
+     * is renamed upstream fails a test instead of shipping as a dead link.
+     */
+    guides: z.array(slug).optional(),
+
     manualBaseline: manualBaselineSchema.optional(),
   })
   .superRefine((rule, ctx) => {

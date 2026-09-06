@@ -24,4 +24,5 @@ rtf.format(-5, "minute"); // "5 minutes ago"`,
     snippet:
       'new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(-5, "minute");',
   },
+  guides: ["format-human-readable-durations"],
 };

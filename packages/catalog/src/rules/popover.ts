@@ -64,4 +64,9 @@ export const popover: Rule = {
   }
 </style>`,
   },
+  guides: [
+    "position-aware-tooltips",
+    "interest-triggered-tooltips",
+    "resilient-context-menus-and-nested-dropdowns",
+  ],
 };

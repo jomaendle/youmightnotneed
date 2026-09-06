@@ -2,8 +2,11 @@ import {
   baselineLabel,
   combinedSupport,
   formatBytes,
+  GUIDE_SOURCE,
   packageSizes,
+  type ResolvedGuide,
   resolveBaseline,
+  resolveGuides,
   rules,
   rulesById,
 } from "@jomae/catalog";
@@ -145,9 +148,50 @@ export default async function RulePage({ params }: PageProps) {
           </ul>
         </section>
 
+        <GuideList guides={resolveGuides(rule)} />
+
         <PackageTable replaces={rule.replaces} />
       </article>
     </>
+  );
+}
+
+/** "carousel-snap-highlights" reads as "Carousel snap highlights". */
+function guideTitle(id: string): string {
+  const words = id.split("-").join(" ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/**
+ * The long-form guides for this rule. The catalog answers which dependency has
+ * a native equivalent and stops there, so the implementation is a link out.
+ */
+function GuideList({ guides }: { guides: readonly ResolvedGuide[] }) {
+  const linkable = guides.filter((guide) => guide.url !== null);
+  if (linkable.length === 0) return null;
+
+  return (
+    <section className="hairline pt-8">
+      <h2 className="mb-2 text-section">Building it</h2>
+      <p className="mb-4 max-w-[62ch] text-compact text-fg-muted">
+        This catalog stops at the swap. These guides go through the
+        implementation and the fallbacks. They come from Google Chrome's{" "}
+        <a href={GUIDE_SOURCE.repo} target="_blank" rel="noreferrer">
+          modern-web-guidance
+        </a>
+        , Apache-2.0.
+      </p>
+      <ul className="max-w-[68ch] space-y-2">
+        {linkable.map((guide) => (
+          <li key={guide.id} className="flex flex-wrap items-baseline gap-x-3">
+            <a href={guide.url ?? undefined} target="_blank" rel="noreferrer">
+              {guideTitle(guide.id)}
+            </a>
+            <span className="text-compact text-fg-muted">{guide.category}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

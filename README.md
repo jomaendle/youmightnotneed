@@ -6,7 +6,8 @@ Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.
 Website, CLI, MCP server, and one rule catalog underneath all three.
 
 ```
-npx youmightnotneed
+npx youmightnotneed              # audit the nearest package.json
+npx youmightnotneed --package swiper --verbose
 ```
 
 `npx` works whether or not the package is installed. It resolves a local
@@ -49,6 +50,24 @@ Where a feature has no `web-features` ID yet, a rule may carry a
 `manualBaseline` with a `verifiedOn` date. CI fails once that date is more than
 90 days old.
 
+## Guides for the part this does not cover
+
+A rule says which dependency has a native equivalent and gives one snippet. It
+does not try to be the tutorial. Where someone else has already written that,
+a rule points at it: `guides` holds IDs from Google Chrome's
+[modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance),
+Apache-2.0, and `--verbose` prints them.
+
+```
+npx -y modern-web-guidance@latest retrieve "carousel-snap-highlights"
+```
+
+Their guides are keyed by use case and ours by package name, so the two meet
+without overlapping. Only the IDs are stored here. The index is snapshotted
+from their published npm package by `pnpm refresh:guides`, and a rule pointing
+at a guide that no longer exists fails the freshness check rather than
+shipping as a dead link.
+
 ## Layout
 
 ```
@@ -56,6 +75,7 @@ packages/catalog   @jomae/catalog, MIT, published to npm
 packages/cli       npx youmightnotneed
 packages/mcp       npx youmightnotneed-mcp, an MCP server for agents
 apps/web           youmightnotneed.dev
+skills             the agent skill, with a generated catalog reference
 scripts            snapshot generators and the freshness check
 ```
 
@@ -73,7 +93,7 @@ pnpm verify          # lint, typecheck, test, freshness
 pnpm dev             # the website
 pnpm cli             # the CLI, against this repo
 pnpm mcp             # the MCP server, over stdio
-pnpm refresh         # re-snapshot Baseline data and bundle sizes
+pnpm refresh         # re-snapshot Baseline data, sizes, guides and the skill
 ```
 
 ## Adding a rule
@@ -84,6 +104,9 @@ The schema will tell you what is missing. The parts worth thinking about:
 - `replaces` takes exact npm names, and each package may be claimed by one rule
   only, so a report never lists the same dependency twice. Check the name
   exists: `pnpm refresh:sizes` reports anything it cannot find.
+- `guides` is optional and holds modern-web-guidance IDs. Run
+  `pnpm refresh:guides` first if the guide is newer than the snapshot, or the
+  freshness check will reject the ID.
 - `featureIds` lists only the features the replacement *requires*. A feature
   that merely makes the snippet nicer would understate the rule's support, so
   mention those in `unless` instead.

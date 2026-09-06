@@ -30,7 +30,7 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-04",
+  "generatedOn": "2026-09-06",
   "webFeaturesVersion": "3.36.0",
   "features": {
     "aborting": {
@@ -278,6 +278,32 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "105",
         "firefox": "121",
         "safari": "15.4"
+      }
+    },
+    "highlight": {
+      "name": "Custom highlights",
+      "baseline": "low",
+      "lowDate": "2026-03-24",
+      "highDate": null,
+      "spec": "https://drafts.csswg.org/css-highlight-api-1/",
+      "support": {
+        "chrome": "105",
+        "edge": "105",
+        "firefox": "149",
+        "safari": "17.2"
+      }
+    },
+    "inert": {
+      "name": "inert",
+      "baseline": "high",
+      "lowDate": "2023-04-11",
+      "highDate": "2025-10-11",
+      "spec": "https://html.spec.whatwg.org/multipage/interaction.html#inert-subtrees",
+      "support": {
+        "chrome": "102",
+        "edge": "102",
+        "firefox": "112",
+        "safari": "15.5"
       }
     },
     "input-date-time": {

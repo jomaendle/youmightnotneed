@@ -121,3 +121,59 @@ describe("unmeasured packages", () => {
     expect(output).not.toContain("0 B");
   });
 });
+
+describe("guide references", () => {
+  it("lists the long-form guides in verbose mode", () => {
+    const output = render({ dependencies: { swiper: "^11.0.0" } }, true);
+    expect(output).toContain("guides");
+    expect(output).toContain("carousel-snap-highlights");
+    expect(output).toContain("modern-web-guidance");
+  });
+
+  it("keeps them out of the short output", () => {
+    const output = render({ dependencies: { swiper: "^11.0.0" } }, false);
+    expect(output).not.toContain("carousel-snap-highlights");
+  });
+
+  it("puts the guide URLs in --json", () => {
+    const parsed = JSON.parse(
+      renderJson(analyze({ dependencies: { swiper: "^11.0.0" } })),
+    ) as {
+      findings: { guides: { id: string; category: string; url: string }[] }[];
+    };
+    const guides = parsed.findings[0]?.guides ?? [];
+    expect(guides.length).toBeGreaterThan(0);
+    expect(guides[0]?.url).toMatch(/^https:\/\//);
+    expect(guides[0]?.category).not.toBe("");
+  });
+});
+
+describe("a single --package lookup", () => {
+  it("names the package when the catalog has no rule for it", () => {
+    const output = renderReport(
+      analyze({ dependencies: { lodash: "^4.0.0" } }),
+      {
+        palette: createPalette(false),
+        projectName: "lodash",
+        subject: "package",
+        provenance,
+        verbose: true,
+      },
+    );
+    expect(output).toContain("The catalog has no rule for lodash.");
+    expect(output).not.toContain("Nothing in this package.json");
+  });
+
+  it("falls back to a generic noun when the name is missing", () => {
+    const output = renderReport(
+      analyze({ dependencies: { lodash: "^4.0.0" } }),
+      {
+        palette: createPalette(false),
+        subject: "package",
+        provenance,
+        verbose: true,
+      },
+    );
+    expect(output).toContain("no rule for that package");
+  });
+});

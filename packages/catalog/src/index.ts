@@ -41,6 +41,16 @@ export {
   formatList,
 } from "./format.ts";
 export { packageSizes, type SizeSnapshot } from "./generated/sizes.ts";
+export {
+  GUIDE_SOURCE,
+  type GuideSnapshot,
+  guideCommand,
+  guideSnapshot,
+  isKnownGuide,
+  type ResolvedGuide,
+  resolveGuide,
+  resolveGuides,
+} from "./guides.ts";
 export { rules, rulesById, rulesByPackage } from "./rules/index.ts";
 export {
   type BaselineStatus,

@@ -30,4 +30,5 @@ export const fluidType: Rule = {
     snippet: `h1 { font-size: clamp(2rem, 1.5rem + 2.5vw, 4rem); }
 .card h2 { font-size: clamp(1.25rem, 0.9rem + 2cqi, 2rem); }`,
   },
+  guides: ["fluid-scaling"],
 };

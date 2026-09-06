@@ -59,4 +59,11 @@ export const scrollAnimations: Rule = {
   }
 }`,
   },
+  guides: [
+    "parallax-scroll-effects",
+    "scrollytelling",
+    "scroll-entry-exit-effects",
+    "scroll-progress-indicator",
+    "shrinking-header-on-scroll",
+  ],
 };

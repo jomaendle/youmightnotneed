@@ -2,11 +2,15 @@ import {
   analyze,
   BASELINE_DATA_DATE,
   type BaselineInfo,
+  type Finding,
+  GUIDE_SOURCE,
   type PackageJsonLike,
   packageSizes,
   type Report,
+  type ResolvedGuide,
   type Rule,
   resolveBaseline,
+  resolveGuides,
   rules,
   rulesById,
   rulesByPackage,
@@ -17,10 +21,23 @@ interface Provenance {
   baselineOn: string;
   webFeaturesVersion: string;
   sizesOn: string;
+  guidesOn: string;
+  guidesVersion: string;
 }
 
-export interface AnalyzeDependenciesResult extends Report {
+/**
+ * A finding with its long-form guides resolved. The catalog answers which
+ * dependency has a native equivalent; the guides are the implementation an
+ * agent should read before writing the replacement.
+ */
+interface GuidedFinding extends Finding {
+  guides: ResolvedGuide[];
+}
+
+export interface AnalyzeDependenciesResult extends Omit<Report, "findings"> {
+  findings: GuidedFinding[];
   provenance: Provenance;
+  guideSource: typeof GUIDE_SOURCE;
 }
 
 /**
@@ -33,11 +50,18 @@ export function analyzeDependencies(
   const report = analyze(input);
   return {
     ...report,
+    findings: report.findings.map((finding) => ({
+      ...finding,
+      guides: resolveGuides(finding.rule).filter((g) => g.url !== null),
+    })),
     provenance: {
       baselineOn: BASELINE_DATA_DATE,
       webFeaturesVersion: WEB_FEATURES_VERSION,
       sizesOn: packageSizes.fetchedOn,
+      guidesOn: GUIDE_SOURCE.fetchedOn,
+      guidesVersion: GUIDE_SOURCE.version,
     },
+    guideSource: GUIDE_SOURCE,
   };
 }
 
@@ -63,7 +87,12 @@ export function listRules(): { rules: RuleSummary[] } {
 export type GetRuleInput = { id: string } | { package: string };
 
 export type GetRuleResult =
-  | { found: true; rule: Rule; baseline: BaselineInfo }
+  | {
+      found: true;
+      rule: Rule;
+      baseline: BaselineInfo;
+      guides: ResolvedGuide[];
+    }
   | { found: false };
 
 /**
@@ -77,5 +106,10 @@ export function getRule(input: GetRuleInput): GetRuleResult {
     "id" in input ? rulesById.get(input.id) : rulesByPackage.get(input.package);
 
   if (!rule) return { found: false };
-  return { found: true, rule, baseline: resolveBaseline(rule) };
+  return {
+    found: true,
+    rule,
+    baseline: resolveBaseline(rule),
+    guides: resolveGuides(rule).filter((g) => g.url !== null),
+  };
 }

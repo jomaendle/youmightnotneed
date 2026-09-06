@@ -33,11 +33,14 @@ packages/catalog   the rules, schema, baseline resolution, detect()
 packages/cli       npx youmightnotneed
 packages/mcp       npx youmightnotneed-mcp
 apps/web           youmightnotneed.dev
+skills             the distributable agent skill
 scripts            snapshot generators, freshness check
 ```
 
-`packages/catalog/src/generated/` is written by the refresh scripts. Do not
-edit it by hand, and do run `pnpm refresh` rather than patching numbers.
+`packages/catalog/src/generated/` and
+`skills/youmightnotneed/references/catalog.md` are written by the refresh
+scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
+patching numbers.
 
 ## Conventions
 
@@ -49,6 +52,15 @@ edit it by hand, and do run `pnpm refresh` rather than patching numbers.
   and the README, load `.claude/skills/writing-voice/SKILL.md`. No em dashes.
 - `pnpm verify` runs lint, typecheck, tests and the freshness check. Run it
   before you call anything done.
+
+## Guides are references, never copies
+
+A rule may carry `guides`, which are IDs from GoogleChrome/modern-web-guidance
+(Apache-2.0). Their guides are keyed by use case, ours by package name, so
+they cover the implementation this catalog deliberately leaves out. Store IDs
+only. `scripts/refresh-guides.ts` snapshots their index from the published npm
+package and the freshness check rejects an ID that no longer exists. Do not
+vendor their prose: the catalog is a lookup table, not a documentation mirror.
 
 ## The `unless` field
 

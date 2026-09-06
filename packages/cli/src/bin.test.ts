@@ -9,7 +9,7 @@ import {
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { findPackageJson, resolveTarget } from "./bin.ts";
+import { findPackageJson, parseArgs, resolveTarget } from "./bin.ts";
 
 const ownVersion = (
   JSON.parse(
@@ -124,5 +124,30 @@ describe.skipIf(!canSymlink)("entry point detection through a symlink", () => {
     });
 
     expect(result.status).toBe(2);
+  });
+});
+
+describe("parseArgs", () => {
+  it("reads --package with a separate value", () => {
+    expect(parseArgs(["--package", "swiper"]).package).toBe("swiper");
+  });
+
+  it("reads --package= with an attached value", () => {
+    expect(parseArgs(["--package=react-modal"]).package).toBe("react-modal");
+  });
+
+  it("reads the -p short form", () => {
+    expect(parseArgs(["-p", "swiper", "--verbose"])).toMatchObject({
+      package: "swiper",
+      verbose: true,
+    });
+  });
+
+  it("leaves package undefined and keeps the path when the flag is absent", () => {
+    expect(parseArgs(["./app", "--json"])).toMatchObject({
+      package: undefined,
+      path: "./app",
+      json: true,
+    });
   });
 });

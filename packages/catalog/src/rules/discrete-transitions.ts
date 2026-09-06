@@ -57,4 +57,5 @@ export const discreteTransitions: Rule = {
 @starting-style { .el { opacity: 0; } }
 .el[hidden] { display: none; opacity: 0; }`,
   },
+  guides: ["animate-element-entry-exit"],
 };
