@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { SearchField } from "@/components/search-field";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -65,6 +66,23 @@ function SiteIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m16 16 5 5" />
+    </svg>
+  );
+}
+
 function GitHubIcon() {
   return (
     <svg
@@ -99,7 +117,20 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </span>
               youmightnotneed
             </Link>
+
+            {/* Hidden below sm, where the icon link in the nav takes over. */}
+            <SearchField variant="header" />
+
             <ul className="flex items-center gap-1 text-metadata sm:gap-5">
+              <li className="sm:hidden">
+                <Link
+                  href="/search"
+                  className="plain flex items-center gap-1.5 whitespace-nowrap p-1.5 text-fg-muted no-underline hover:text-fg"
+                >
+                  <SearchIcon />
+                  <span className="sr-only">Search</span>
+                </Link>
+              </li>
               {NAV.map((item) => (
                 <li key={item.href}>
                   <Link

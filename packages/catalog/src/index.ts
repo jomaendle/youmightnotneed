@@ -76,3 +76,8 @@ export {
   ruleSchema,
   SCHEMA_VERSION,
 } from "./schema.ts";
+export {
+  type SearchOptions,
+  type SearchResult,
+  searchRules,
+} from "./search.ts";
