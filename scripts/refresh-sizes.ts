@@ -109,6 +109,25 @@ for (let i = 0; i < packages.length; i += CONCURRENCY) {
 }
 process.stdout.write("\n");
 
+// A run where every fetch failed is indistinguishable from a clean no-change
+// run once the file is rewritten: the old values are copied forward and
+// fetchedOn is stamped today, which clears the staleness warning that should
+// have fired. Bail instead, so the committed snapshot keeps its real date.
+const fetched = packages.length - failed.length;
+if (fetched === 0 && packages.length > 0) {
+  console.error(
+    `\nEvery one of the ${packages.length} fetches failed. Leaving the committed snapshot alone.`,
+  );
+  process.exit(1);
+}
+
+// Belt and braces: never write an empty map. If the previous file failed to
+// parse and the network is also down, this is the path that would erase it.
+if (Object.keys(sizes).length === 0) {
+  console.error("\nNo sizes to write. Leaving the committed snapshot alone.");
+  process.exit(1);
+}
+
 const ordered: Record<string, SizeEntry> = {};
 for (const key of Object.keys(sizes).sort()) {
   const value = sizes[key];

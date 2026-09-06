@@ -8,6 +8,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { rules } from "@jomae/catalog";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { findPackageJson, parseArgs, resolveTarget } from "./bin.ts";
 
@@ -181,4 +182,83 @@ describe("--package rejects a missing value", () => {
       expect(result.stdout).toContain("Carousels");
     },
   );
+});
+
+describe("stdout survives a pipe", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // process.exit(0) after console.info discarded whatever stdout still had
+  // buffered, so --json past the 64 KiB pipe buffer arrived as invalid JSON
+  // with exit 0. spawnSync's captured stdio does not reproduce it; a real
+  // pipe does.
+  it("emits complete JSON through a shell pipe", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ymnn-pipe-"));
+    try {
+      const dependencies: Record<string, string> = {};
+      for (const rule of rules) {
+        for (const name of rule.replaces) dependencies[name] = "*";
+      }
+      const manifest = join(dir, "package.json");
+      writeFileSync(manifest, JSON.stringify({ name: "big", dependencies }));
+
+      const result = spawnSync(
+        "/bin/sh",
+        ["-c", `"${process.execPath}" "${binPath}" "${manifest}" --json | cat`],
+        { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
+      );
+
+      expect(result.status).toBe(0);
+      expect(result.stdout.length).toBeGreaterThan(65_536);
+      expect(() => JSON.parse(result.stdout)).not.toThrow();
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("puts provenance in --json, like the human footer and the MCP server", () => {
+    const result = spawnSync(
+      process.execPath,
+      [binPath, "--package", "swiper", "--json"],
+      { encoding: "utf8" },
+    );
+    const parsed = JSON.parse(result.stdout) as {
+      provenance?: { baselineOn: string; webFeaturesVersion: string };
+    };
+    expect(parsed.provenance?.baselineOn).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(parsed.provenance?.webFeaturesVersion).toBeTruthy();
+  });
+});
+
+describe("a file that is not a package.json", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // typeof [] is "object", so an array used to pass the shape check and
+  // produce a confident "nothing found" for a file that is not a manifest.
+  it.each([["[1,2,3]"], ['"hello"'], ["42"]])(
+    "rejects %s rather than reporting a clean run",
+    (contents) => {
+      const dir = mkdtempSync(join(tmpdir(), "ymnn-shape-"));
+      try {
+        const file = join(dir, "package.json");
+        writeFileSync(file, contents);
+        const result = spawnSync(process.execPath, [binPath, file], {
+          encoding: "utf8",
+        });
+        expect(result.status).toBe(1);
+        expect(result.stdout).not.toContain("Nothing in this package.json");
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    },
+  );
+
+  it("refuses --package together with a path instead of ignoring the path", () => {
+    const result = spawnSync(
+      process.execPath,
+      [binPath, "--package", "swiper", "./somewhere/package.json"],
+      { encoding: "utf8" },
+    );
+    expect(result.status).toBe(2);
+    expect(result.stderr).toContain("one or the other");
+  });
 });

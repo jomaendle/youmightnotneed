@@ -244,3 +244,33 @@ describe("sortFindings tie-breaking", () => {
     expect(input.map((f) => f.rule.title)).toEqual(before);
   });
 });
+
+describe("dependency fields", () => {
+  it("reads optionalDependencies, which are installed like any other", () => {
+    const findings = detect({ optionalDependencies: { swiper: "^11.0.0" } });
+    expect(findings).toHaveLength(1);
+    expect(findings[0]?.matched[0]?.fields).toEqual(["optionalDependencies"]);
+  });
+
+  // packageSizes.sizes is a plain object, so a bare index would find Object
+  // and report a confident 0 bytes instead of an unknown size.
+  it("does not read a size off the prototype chain", () => {
+    const rule: Rule = {
+      id: "proto",
+      title: "Proto",
+      replaces: ["constructor"],
+      featureIds: ["dialog"],
+      native: "n",
+      human: { explainer: "e", snippet: "s" },
+      agent: { when: "w", unless: ["u"], snippet: "s" },
+    };
+
+    const findings = detect(
+      { dependencies: { constructor: "^1.0.0" } },
+      { rules: [rule] },
+    );
+    expect(findings[0]?.matched[0]?.gzip).toBeNull();
+    expect(findings[0]?.replaceableBytes).toBeNull();
+    expect(findings[0]?.hasUnknownSizes).toBe(true);
+  });
+});

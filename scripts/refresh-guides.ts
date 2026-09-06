@@ -113,12 +113,32 @@ try {
     const match = GUIDE_PATH.exec(path);
     if (!match) continue;
     const [, category, id] = match;
-    if (category && id) found[id] = category;
+    if (!(category && id)) continue;
+    // Keyed by id alone, so two categories carrying the same id would resolve
+    // to whichever tar order happened to win. There are none upstream today.
+    const existing = found[id];
+    if (existing !== undefined && existing !== category) {
+      throw new Error(
+        `guide id "${id}" appears in both ${existing} and ${category}; the snapshot cannot key on id alone any more`,
+      );
+    }
+    found[id] = category;
   }
 
   if (Object.keys(found).length === 0) {
     throw new Error(
       "the tarball contained no guides, the layout may have moved",
+    );
+  }
+
+  // A partial read is the dangerous case: writing 2 of 139 guides succeeds
+  // silently and then every rule's guide reference fails the freshness check,
+  // pointing the maintainer back at this very command. Upstream removing a
+  // fifth of its catalogue in one release is not plausible; a broken parse is.
+  const previous = Object.keys(readExisting()).length;
+  if (previous > 0 && Object.keys(found).length < previous * 0.8) {
+    throw new Error(
+      `the tarball yielded ${Object.keys(found).length} guides but the committed snapshot has ${previous}. That is a bigger drop than an upstream release explains, so this looks like a parse failure`,
     );
   }
 

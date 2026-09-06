@@ -15,9 +15,10 @@ export interface Demo {
    */
   allow?: string;
   /**
-   * Extra sandbox token(s) beyond the default "allow-scripts allow-modals",
-   * e.g. "allow-fullscreen". The Fullscreen API is suppressed in a sandboxed
-   * iframe without this token even when Permissions-Policy allows it.
+   * Extra sandbox token(s) beyond the default "allow-scripts allow-modals".
+   * Note that there is no "allow-fullscreen" token: fullscreen moved to
+   * Permissions Policy, so the `allow` attribute above is what grants it and
+   * an invented token here only earns a console warning.
    */
   extraSandbox?: string;
 }
@@ -71,7 +72,7 @@ export const demos: Partial<Record<string, Demo>> = {
       `
 <div style="display:flex; flex-direction:column; gap:0.625rem; width:100%; max-width:340px;">
   <input id="in" value="caffè ☕" aria-label="Text to encode" />
-  <p class="demo-hint" style="margin:0;">btoa() alone throws on both of those characters.</p>
+  <p class="demo-hint" style="margin:0;">btoa() alone throws on the emoji, and quietly mangles the accent.</p>
   <pre id="enc" class="mono"></pre>
   <pre id="dec" class="mono"></pre>
 </div>
@@ -353,6 +354,8 @@ input { font:inherit; width:100%; padding:0.5rem 0.625rem; color:var(--c-fg); ba
 `,
       `
 .page, .panel { width:100%; border:1px solid var(--c-border); border-radius:0.5rem; padding:0.75rem; background:var(--c-bg-subtle); display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; }
+/* Author display:flex outranks the UA [hidden] rule, so restate it. */
+.panel[hidden] { display:none; }
 .page { flex-direction:column; align-items:flex-start; }
 .page[inert] { opacity:0.4; }
 a { color:var(--c-accent); }
@@ -1304,8 +1307,10 @@ button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); 
 
   fullscreen: {
     height: 220,
+    // The `allow` attribute is the real grant. There is no "allow-fullscreen"
+    // sandbox token, so setting one only earned a console warning on every
+    // page carrying this demo.
     allow: "fullscreen",
-    extraSandbox: "allow-fullscreen",
     html: wrapDemo(
       `
 <div>

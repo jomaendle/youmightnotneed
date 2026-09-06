@@ -103,7 +103,12 @@ function sinceDate(
  * `unknown`, which is where this is meant to be caught.
  */
 export function resolveFeature(id: string): ResolvedFeature {
-  const entry = baselineSnapshot.features[id];
+  // Object.hasOwn, not a bare index: the snapshot is a plain object, so an ID
+  // of "constructor" would otherwise resolve to Object and badge the rule
+  // "limited availability" with a fabricated feature name.
+  const entry = Object.hasOwn(baselineSnapshot.features, id)
+    ? baselineSnapshot.features[id]
+    : undefined;
   if (!entry) {
     return {
       id,

@@ -36,8 +36,26 @@ const findings = detect(packageJson); // Finding[]
 const summary = summarize(findings);
 ```
 
-`dependencies`, `devDependencies` and `peerDependencies` are all read. Version
-ranges are ignored.
+`dependencies`, `devDependencies`, `peerDependencies` and
+`optionalDependencies` are all read. Version ranges are ignored.
+
+## Guides
+
+A rule may carry `guides`: IDs of
+[modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance)
+guides, Apache-2.0, that cover the implementation this catalog leaves out.
+`resolveGuides(rule)` turns them into a category, a URL and the command that
+pulls one into an agent's context. Only IDs are stored, and they are checked
+against a committed snapshot, so a guide renamed upstream fails a test rather
+than shipping as a dead link.
+
+```ts
+import { resolveGuides } from "@jomae/catalog";
+
+for (const guide of resolveGuides(rule)) {
+  console.log(guide.url, guide.command);
+}
+```
 
 ## Every finding carries its caveats
 

@@ -32,7 +32,18 @@ export const SKILL_CATALOG_FILE = join(
  * rather than spot-checking that the rule ids are present.
  */
 export function renderCatalogReference(): string {
-  const sorted = [...rules].sort((a, b) => a.title.localeCompare(b.title));
+  /**
+   * Codepoint order, not localeCompare: check-freshness byte-compares this file,
+   * and collation differs by locale and by ICU build. A maintainer on lt_LT
+   * would otherwise regenerate a file that fails CI with no data change.
+   */
+  function byText(a: string, b: string): number {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  }
+
+  const sorted = [...rules].sort((a, b) => byText(a.title, b.title));
 
   /**
    * The index that makes this file useful before a dependency exists. Keyed by
@@ -41,7 +52,7 @@ export function renderCatalogReference(): string {
    * swiper is the package it was reaching for.
    */
   const index = [...rules]
-    .sort((a, b) => a.agent.when.localeCompare(b.agent.when))
+    .sort((a, b) => byText(a.agent.when, b.agent.when))
     .map((rule) => {
       const status = baselineShortLabel(resolveBaseline(rule).status);
       return `| ${rule.agent.when} | ${rule.native} | ${status} | \`${rule.id}\` |`;

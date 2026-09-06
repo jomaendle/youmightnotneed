@@ -199,16 +199,22 @@ function readPackageJson(file: string): PackageJsonLike {
     process.exit(1);
   }
 
+  let parsed: unknown;
   try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (typeof parsed !== "object" || parsed === null) {
-      throw new Error("not an object");
-    }
-    return parsed as PackageJsonLike;
+    parsed = JSON.parse(raw);
   } catch {
     console.error(`${file} is not valid JSON.`);
     process.exit(1);
   }
+
+  // typeof [] is "object", so an array would otherwise pass and produce a
+  // confident "nothing found" for a file that is not a manifest at all.
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    console.error(`${file} is valid JSON but not a package.json object.`);
+    process.exit(1);
+  }
+
+  return parsed as PackageJsonLike;
 }
 
 function readOwnVersion(): string {
@@ -225,14 +231,25 @@ function readOwnVersion(): string {
 function main(): void {
   const args = parseArgs(process.argv.slice(2));
 
+  // Never process.exit(0) after writing: stdout to a pipe is asynchronous in
+  // Node, and exiting discards whatever is still buffered. That silently
+  // truncated --json past the 64 KiB pipe buffer. Returning lets Node flush
+  // and exit 0 on its own.
   if (args.help) {
     console.info(HELP);
-    process.exit(0);
+    return;
   }
 
   if (args.version) {
     console.info(readOwnVersion());
-    process.exit(0);
+    return;
+  }
+
+  if (args.package !== undefined && args.path !== undefined) {
+    console.error(
+      "--package checks one name and ignores a path. Pass one or the other.",
+    );
+    process.exit(2);
   }
 
   // --package builds a one-entry dependency map so a single lookup goes
@@ -244,9 +261,14 @@ function main(): void {
       ? readPackageJson(target as string)
       : { name: single, dependencies: { [single]: "*" } };
   const report = analyze(pkg);
+  const provenance = {
+    baselineOn: BASELINE_DATA_DATE,
+    webFeaturesVersion: WEB_FEATURES_VERSION,
+    sizesOn: packageSizes.fetchedOn,
+  };
 
   if (args.json) {
-    console.info(renderJson(report));
+    console.info(renderJson(report, provenance));
   } else {
     const useColor = args.color && process.stdout.isTTY === true;
     console.info(
@@ -254,19 +276,14 @@ function main(): void {
         palette: createPalette(useColor),
         subject: single === undefined ? "project" : "package",
         projectName: single ?? pkg.name ?? basename(dirname(target as string)),
-        provenance: {
-          baselineOn: BASELINE_DATA_DATE,
-          webFeaturesVersion: WEB_FEATURES_VERSION,
-          sizesOn: packageSizes.fetchedOn,
-        },
+        provenance,
         verbose: args.verbose,
       }),
     );
   }
 
-  // The report is informational, so a clean run always exits 0. A CI-friendly
-  // threshold flag can come later, once the catalog has settled.
-  process.exit(0);
+  // The report is informational, so a clean run always exits 0, which is what
+  // returning gives us. See the note above on why this is not process.exit(0).
 }
 
 // Only run as a side effect when this file is the process entry point, not

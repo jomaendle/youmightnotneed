@@ -73,8 +73,14 @@ export interface ReportPayload {
  * `1.<name,name,...>` with an optional `~<projectName>` suffix, base64url'd.
  */
 export function encodeReport(payload: ReportPayload): string {
-  const names = [...new Set(payload.packages)].sort().join(",");
-  const label = payload.projectName?.trim();
+  // The same caps decodeReport applies on the way out. Without them a long
+  // name built a 50 KB URL that a CDN rejects with 414 before the reader ever
+  // sees the report, and decode would have thrown the excess away regardless.
+  const names = [...new Set(payload.packages)]
+    .sort()
+    .slice(0, MAX_PACKAGES)
+    .join(",");
+  const label = payload.projectName?.trim().slice(0, MAX_PROJECT_NAME);
   const raw = label ? `${names}~${label}` : names;
   return `${VERSION}.${toBase64Url(raw)}`;
 }

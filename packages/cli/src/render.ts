@@ -55,6 +55,12 @@ const TIERS: Tier[] = [
   },
 ];
 
+export interface Provenance {
+  baselineOn: string;
+  webFeaturesVersion: string;
+  sizesOn: string;
+}
+
 export interface RenderOptions {
   palette: Palette;
   /** Shown in the header, usually the package.json name field. */
@@ -64,11 +70,7 @@ export interface RenderOptions {
    * different wording from a whole project that matches nothing.
    */
   subject?: "project" | "package" | undefined;
-  provenance: {
-    baselineOn: string;
-    webFeaturesVersion: string;
-    sizesOn: string;
-  };
+  provenance: Provenance;
   /** Print the full unless list. When false, print only a count. */
   verbose: boolean;
 }
@@ -220,9 +222,12 @@ export function renderReport(report: Report, options: RenderOptions): string {
 }
 
 /** --json, so scripts and agents get the data without parsing terminal text. */
-export function renderJson(report: Report): string {
+export function renderJson(report: Report, provenance?: Provenance): string {
   return JSON.stringify(
     {
+      // The human footer states the data vintage; without it here a script or
+      // an agent consuming --json cannot tell how old the snapshot is.
+      provenance,
       summary: report.summary,
       findings: report.findings.map((finding) => ({
         ruleId: finding.rule.id,
@@ -238,6 +243,7 @@ export function renderJson(report: Report): string {
           name: m.name,
           fields: m.fields,
           gzip: m.gzip,
+          measuredVersion: m.measuredVersion,
         })),
         replaceableBytes: finding.replaceableBytes,
         when: finding.rule.agent.when,
@@ -246,7 +252,12 @@ export function renderJson(report: Report): string {
         demoUrl: finding.rule.human.demoUrl ?? null,
         guides: resolveGuides(finding.rule)
           .filter((g) => g.url !== null)
-          .map((g) => ({ id: g.id, category: g.category, url: g.url })),
+          .map((g) => ({
+            id: g.id,
+            category: g.category,
+            url: g.url,
+            command: g.command,
+          })),
       })),
     },
     null,

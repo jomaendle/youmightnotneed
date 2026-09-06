@@ -29,7 +29,7 @@ export const contentVisibility: Rule = {
       "You need the DOM node count itself reduced for a very large list. content-visibility still keeps every row in the DOM; it only skips the layout and paint work for the ones off-screen.",
       "You need data fetched in pages as the user scrolls. That is application logic a virtualization library's scroll callback gives you; content-visibility does not fetch anything.",
       "Your rows vary a lot in height and you cannot estimate contain-intrinsic-size well. A wrong estimate makes the scrollbar and scroll position jump when the real size is measured.",
-      "You support Safari below version 18 or Firefox below 125. Both shipped content-visibility: auto only recently.",
+      "You support Safari below version 26 or Firefox below 130. content-visibility: auto landed there long after Chrome 108, so on an older target the property is ignored and the long list costs exactly what it did before.",
     ],
     snippet:
       ".row { content-visibility: auto; contain-intrinsic-size: auto 48px; }",

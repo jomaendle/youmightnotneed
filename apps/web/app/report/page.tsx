@@ -2,6 +2,7 @@ import {
   analyze,
   BASELINE_DATA_DATE,
   formatBytes,
+  formatHeadline,
   packageSizes,
   WEB_FEATURES_VERSION,
 } from "@jomae/catalog";
@@ -18,6 +19,13 @@ interface PageProps {
   searchParams: Promise<{ d?: string }>;
 }
 
+/** The <title>. Never "Up to 0 B", which is what unmeasured packages gave. */
+function metadataHeadline(bytes: number, packages: number): string {
+  if (packages === 0) return "No replaceable dependencies found";
+  if (bytes === 0) return formatHeadline(0, packages);
+  return `Up to ${formatBytes(bytes)} replaceable`;
+}
+
 export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
@@ -25,10 +33,10 @@ export async function generateMetadata({
   if (!payload) return { title: "Report" };
 
   const { summary } = analyze(toPackageJsonLike(payload));
-  const headline =
-    summary.packageCount === 0
-      ? "No replaceable dependencies found"
-      : `Up to ${formatBytes(summary.replaceableBytes)} replaceable`;
+  const headline = metadataHeadline(
+    summary.replaceableBytes,
+    summary.packageCount,
+  );
 
   const ogParams = new URLSearchParams({
     bytes: String(summary.replaceableBytes),
@@ -142,6 +150,24 @@ function Headline({
   categories: number;
   unknown: boolean;
 }) {
+  // Six catalog packages have no published size. A report made only of those
+  // would otherwise lead with "up to 0 B", so fall back to the phrasing the
+  // catalog already uses for this case and the CLI already prints.
+  if (bytes === 0) {
+    return (
+      <>
+        <h1 className="mb-4 max-w-[26ch] text-page-title">
+          {formatHeadline(0, packages)}
+        </h1>
+        <p className="max-w-[58ch] text-fg-muted text-lede">
+          Across {categories} {categories === 1 ? "category" : "categories"}.
+          None of them has a published size, so there is no weight to quote,
+          only the swap itself.
+        </p>
+      </>
+    );
+  }
+
   return (
     <>
       <p className="mb-2 text-fg-faint text-metadata">up to</p>

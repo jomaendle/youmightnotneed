@@ -297,6 +297,14 @@ Sorted by title.
 - **replaces**: `pako`, `lz-string`
 - **when**: compressing or decompressing bytes with gzip or deflate before sending or storing them
 
+### HTTP requests
+
+- **id**: `fetch`
+- **native**: fetch()
+- **support**: widely available
+- **replaces**: `axios`, `superagent`, `redaxios`, `whatwg-fetch`, `unfetch`, `isomorphic-fetch`, `cross-fetch`
+- **when**: making HTTP requests from the browser or from Node 18 and up
+
 ### Hashing and encryption
 
 - **id**: `web-crypto`
@@ -313,14 +321,6 @@ Sorted by title.
 - **replaces**: `mark.js`, `react-highlight-words`, `highlight-words-core`, `react-highlighter`
 - **when**: highlighting search matches or ranges of text without changing the markup
 - **guides**: highlight-text-ranges
-
-### HTTP requests
-
-- **id**: `fetch`
-- **native**: fetch()
-- **support**: widely available
-- **replaces**: `axios`, `superagent`, `redaxios`, `whatwg-fetch`, `unfetch`, `isomorphic-fetch`, `cross-fetch`
-- **when**: making HTTP requests from the browser or from Node 18 and up
 
 ### Human-readable durations
 

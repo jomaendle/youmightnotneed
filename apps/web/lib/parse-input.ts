@@ -79,7 +79,16 @@ export function parsePackageJson(input: string): ParseResult {
   const hasBlock = DEPENDENCY_BLOCKS.some(
     (key) => typeof record[key] === "object" && record[key] !== null,
   );
-  if (hasBlock) return { ok: true, pkg: record as PackageJsonLike };
+  if (hasBlock) {
+    // `name` is whatever the file says. A number or an object here reached
+    // encodeReport and threw on .trim(), which is a server error rather than
+    // the message ParseResult exists to return.
+    const pkg = record as PackageJsonLike;
+    return {
+      ok: true,
+      pkg: typeof record.name === "string" ? pkg : { ...pkg, name: undefined },
+    };
+  }
 
   // A bare dependency map is a reasonable thing to paste, so accept it.
   if (looksLikeDependencyMap(record)) {

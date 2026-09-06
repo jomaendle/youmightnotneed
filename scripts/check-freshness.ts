@@ -44,12 +44,21 @@ function daysSince(isoDate: string): number {
   return Math.floor((Date.now() - then) / 86_400_000);
 }
 
+/** A date in the future makes every `age > limit` test below unreachable. */
+function isInTheFuture(isoDate: string): boolean {
+  return daysSince(isoDate) < 0;
+}
+
 // 1. Hand-verified claims expire.
 for (const rule of rules) {
   const manual = rule.manualBaseline;
   if (!manual) continue;
   const age = daysSince(manual.verifiedOn);
-  if (age > MANUAL_BASELINE_MAX_AGE_DAYS) {
+  if (isInTheFuture(manual.verifiedOn)) {
+    errors.push(
+      `Rule "${rule.id}" has a manualBaseline verified on ${manual.verifiedOn}, which is in the future. That date can never expire, so the claim would never be re-checked.`,
+    );
+  } else if (age > MANUAL_BASELINE_MAX_AGE_DAYS) {
     errors.push(
       `Rule "${rule.id}" has a manualBaseline verified ${age} days ago (limit is ${MANUAL_BASELINE_MAX_AGE_DAYS}). Re-check the support and update verifiedOn, or move it onto a web-features ID.`,
     );
@@ -77,7 +86,28 @@ for (const id of NATIVE_FEATURE_IDS) {
   }
 }
 
-// 4. Guide references must still exist upstream.
+// 4. Every claimed package needs a measurement, or a typo in `replaces` just
+// contributes 0 to the headline kilobytes and nothing ever says so.
+const UNSIZEABLE = new Set([
+  // Real packages bundlephobia cannot build, checked by hand. Not typos.
+  "cordova-plugin-ble-central",
+  "react-page-transition",
+  "sticky-kit",
+  "svelte-intersection-observer",
+  "svelte-modals",
+  "svelte-select",
+]);
+
+for (const rule of rules) {
+  for (const pkg of rule.replaces) {
+    if (packageSizes.sizes[pkg] || UNSIZEABLE.has(pkg)) continue;
+    errors.push(
+      `Rule "${rule.id}" claims "${pkg}", which has no size measurement. Run \`pnpm refresh:sizes\`; if the name is right and bundlephobia simply cannot build it, add it to UNSIZEABLE in this script.`,
+    );
+  }
+}
+
+// 5. Guide references must still exist upstream.
 for (const rule of rules) {
   for (const id of rule.guides ?? []) {
     if (!Object.hasOwn(guideSnapshot.guides, id)) {
@@ -88,7 +118,7 @@ for (const rule of rules) {
   }
 }
 
-// 5. The skill's generated catalog reference must match the catalog exactly.
+// 6. The skill's generated catalog reference must match the catalog exactly.
 // Comparing against a fresh render, rather than grepping for rule ids, is what
 // catches an edited `when` line or a moved support tier.
 try {
@@ -104,7 +134,7 @@ try {
   );
 }
 
-// 6. The hand-written part of the skill must not restate a generated number.
+// 7. The hand-written part of the skill must not restate a generated number.
 const skillDoc = join(
   dirname(fileURLToPath(import.meta.url)),
   "../skills/youmightnotneed/SKILL.md",
@@ -121,7 +151,8 @@ try {
   errors.push("skills/youmightnotneed/SKILL.md is missing.");
 }
 
-// 7. Snapshot age and version drift are warnings, not failures.
+// 8. Snapshot age is a warning. A version mismatch is not: it means the
+// committed data and its source have actually diverged.
 const snapshotAge = daysSince(baselineSnapshot.generatedOn);
 if (snapshotAge > SNAPSHOT_WARN_AGE_DAYS) {
   warnings.push(
@@ -164,7 +195,10 @@ if (guidesAge > GUIDES_WARN_AGE_DAYS) {
 
 const installed = installedWebFeaturesVersion();
 if (installed && installed !== baselineSnapshot.webFeaturesVersion) {
-  warnings.push(
+  // Nothing else compares the committed snapshot against web-features, so this
+  // is the only signal that the two have diverged. A warning is invisible in a
+  // green check.
+  errors.push(
     `The snapshot came from web-features@${baselineSnapshot.webFeaturesVersion} but web-features@${installed} is installed. Run \`pnpm refresh:baseline\`.`,
   );
 }

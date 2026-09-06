@@ -66,13 +66,22 @@ describe("the catalog", () => {
 describe("honesty rules", () => {
   // Section 5 of the handover: a dependency in package.json is not proof of
   // what it is used for, so no surface may phrase a finding as an instruction.
+  // These were far too narrow to enforce what CLAUDE.md says they enforce:
+  // "Delete swiper", "Saves you 20 kB", "This will save 20 kB" and "You should
+  // remove swiper" all walked through the previous set. Calibrated so that all
+  // 56 rules pass unchanged while every one of those is caught.
   const imperatives = [
-    /\bdelete\s+(this|your|the)\b/i,
-    /\bremove\s+(this|your)\s+depend/i,
-    /\byou will save\b/i,
-    /\byou'll save\b/i,
-    /\bjust replace\b/i,
-    /\bsimply replace\b/i,
+    // "Drop this dependency", "Remove the package", "Delete your library".
+    /\b(?:delete|uninstall|remove|drop)\s+(?:this|your|the|it)?\s*(?:depend\w*|librar\w*|package|import|module)\b/i,
+    // A sentence opening "Delete swiper" or "Uninstall swiper". "Drop" and
+    // "remove" are excluded here: both open legitimate sentences about markup.
+    /(^|[.!?]\s+)(?:delete|uninstall)\s+[`'"]?@?[a-z][\w.@/-]*/i,
+    /\b(?:remove|delete|drop)\s+it\s+from\s+your\b/i,
+    /\byou\s+(?:should|can|must)\s+(?:delete|remove|uninstall|drop)\b/i,
+    // Sizes are "up to", never a promise. Catches "you will save", "you'll
+    // save", "saves you", "this will save" and "saving you".
+    /\b(?:you(?:'ll| will)?\s+save|saves?\s+you|will\s+save|saving\s+you)\b/i,
+    /\b(?:just|simply|merely)\s+(?:replace|swap|drop|delete|remove)\b/i,
   ];
 
   it.each(rules.map((r) => [r.id, r] as const))(
@@ -176,26 +185,107 @@ describe("writing voice", () => {
 });
 
 describe("detect stays pure", () => {
-  // The handover locks detect() as a pure function: no filesystem, no network,
-  // no process. A static check is cheap and catches the mistake at review time
-  // rather than when a surface breaks.
-  const pureModules = [
-    "detect.ts",
-    "baseline.ts",
-    "schema.ts",
-    "format.ts",
-    "guides.ts",
-    "rules/index.ts",
-  ];
+  // CLAUDE.md locks detect() as a pure function: no filesystem, no network, no
+  // process, no clock. Listing a handful of files by hand did not enforce it:
+  // detect() transitively imports every rule file and all three generated
+  // snapshots, none of which were scanned. So walk the real import graph.
+  /** Comments out, template literals out. Leaves real import lines intact. */
+  function forImports(source: string): string {
+    return source
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/\/\/[^\n]*/g, " ")
+      .replace(/`(?:\\.|[^`\\])*`/g, '""');
+  }
 
-  it.each(pureModules)("%s imports nothing impure", (file) => {
+  function importsOf(source: string): string[] {
+    const specifiers: string[] = [];
+    // Anchored to the start of a line, because rule prose legitimately says
+    // things like: the usual range from "1 hour, 30 minutes" down to "1h 30m".
+    // Covers `import x from "y"`, a bare side-effect `import "y"`, and
+    // `export ... from "y"`.
+    for (const match of forImports(source).matchAll(
+      /^\s*(?:import|export)\b[^\n]*?["']([^"']+)["']/gm,
+    )) {
+      const specifier = match[1];
+      if (specifier !== undefined) specifiers.push(specifier);
+    }
+    return specifiers;
+  }
+
+  /** The relative files one module pulls in, as paths under srcDir. */
+  function localImportsOf(file: string): string[] {
     const source = readFileSync(join(srcDir, file), "utf8");
-    expect(source).not.toMatch(/from\s+["']node:/);
-    expect(source).not.toMatch(/require\(/);
-    expect(source).not.toMatch(/\bfetch\(/);
-    expect(source).not.toMatch(/\bprocess\./);
-    expect(source).not.toMatch(/\bDate\.now\(/);
-    expect(source).not.toMatch(/new Date\(/);
+    return importsOf(source)
+      .filter((specifier) => specifier.startsWith("."))
+      .map((specifier) => join(dirname(file), specifier).replace(/^\.\//, ""));
+  }
+
+  /** Everything detect() pulls in, transitively, from the package sources. */
+  function reachableFrom(entry: string): string[] {
+    const seen = new Set<string>();
+    const queue = [entry];
+
+    while (queue.length > 0) {
+      const file = queue.pop() as string;
+      if (seen.has(file)) continue;
+      seen.add(file);
+      queue.push(...localImportsOf(file));
+    }
+
+    return [...seen];
+  }
+
+  /** The only non-relative imports a pure module may carry. */
+  const ALLOWED_PACKAGES = new Set(["zod"]);
+
+  /**
+   * Comments and string literals out, so the call-site checks below read code
+   * rather than rule prose. Without this, a rule explaining that "fetch
+   * resolves for any response" would fail the fetch check.
+   */
+  function codeOnly(source: string): string {
+    return source
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/\/\/[^\n]*/g, " ")
+      .replace(/`(?:\\.|[^`\\])*`/g, '""')
+      .replace(/'(?:\\.|[^'\\\n])*'/g, '""')
+      .replace(/"(?:\\.|[^"\\\n])*"/g, '""');
+  }
+
+  const reachable = reachableFrom("detect.ts");
+
+  it("reaches the rule data and the generated snapshots", () => {
+    // Guards the walker itself: if this stops finding the rules, the purity
+    // check silently narrows back to a handful of files.
+    expect(reachable).toContain("rules/index.ts");
+    expect(reachable).toContain("generated/sizes.ts");
+    expect(reachable.length).toBeGreaterThan(50);
+  });
+
+  it.each(reachableFrom("detect.ts"))("%s imports nothing impure", (file) => {
+    const source = readFileSync(join(srcDir, file), "utf8");
+
+    // An allowlist, not a blocklist: `from "fs"` without the node: prefix is a
+    // legal specifier and walked straight through the old check.
+    for (const specifier of importsOf(source)) {
+      if (specifier.startsWith(".")) continue;
+      expect(
+        ALLOWED_PACKAGES.has(specifier),
+        `${file} imports ${specifier}`,
+      ).toBe(true);
+    }
+
+    const code = codeOnly(source);
+    // A dynamic import can name anything at runtime, so it is banned outright
+    // rather than allowlisted.
+    expect(code, file).not.toMatch(/\bimport\s*\(/);
+    expect(code, file).not.toMatch(/\brequire\(/);
+    expect(code, file).not.toMatch(/\bfetch\s*\(/);
+    expect(code, file).not.toMatch(/\bprocess\s*[.[]/);
+    expect(code, file).not.toMatch(/\bDate\.now\s*\(/);
+    expect(code, file).not.toMatch(/new\s+Date\s*\(/);
+    expect(code, file).not.toMatch(/\bperformance\.now\s*\(/);
+    expect(code, file).not.toMatch(/\bglobalThis\b/);
   });
 });
 

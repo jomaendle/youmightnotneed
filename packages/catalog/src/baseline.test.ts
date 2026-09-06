@@ -219,3 +219,18 @@ describe("data provenance", () => {
     expect(WEB_FEATURES_VERSION).toMatch(/^\d+\.\d+\.\d+/);
   });
 });
+
+describe("prototype keys are not features", () => {
+  // baselineSnapshot.features is a plain object, so a bare index resolved
+  // "constructor" to Object and badged the rule "limited availability" with a
+  // fabricated feature name, passing the catalog test that looks for
+  // "unknown".
+  it.each(["constructor", "toString", "hasOwnProperty", "valueOf"])(
+    "%s resolves to unknown, not to something off Object.prototype",
+    (id) => {
+      const feature = resolveFeature(id);
+      expect(feature.status).toBe("unknown");
+      expect(feature.name).toBe(id);
+    },
+  );
+});

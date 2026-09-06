@@ -29,6 +29,11 @@ Add it to an MCP client's config:
   package name it replaces. Returns `{ found: false }` rather than an
   error when nothing matches.
 
+A finding and a `get_rule` result may both carry `guides`: modern-web-guidance
+guide IDs with the URL and the command that retrieves one. This catalog gives
+the one-line swap; the guide gives the fallbacks and the gotchas, so read one
+before writing the replacement.
+
 Data is a static snapshot, the same one `npx youmightnotneed` and
 youmightnotneed.dev use. No network calls happen at tool-call time.
 

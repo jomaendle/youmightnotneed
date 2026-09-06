@@ -26,7 +26,17 @@ jobs:
       - run: pnpm update web-features --latest
       - run: pnpm refresh:baseline
       - run: pnpm refresh:sizes
-      - run: pnpm test
+
+      # A tier change re-renders the skill's catalog reference, since it prints
+      # a support label per rule. Without this the PR is born stale and
+      # check:freshness rejects the one PR whose whole purpose is a tier change.
+      - run: pnpm refresh:guides
+      - run: pnpm refresh:skill
+
+      # Run the gates here rather than trusting the PR to be checked. A PR
+      # opened with the default GITHUB_TOKEN does not trigger workflows, so
+      # ci.yml may never run on this branch at all.
+      - run: pnpm verify
 
       - uses: peter-evans/create-pull-request@v7
         with:
