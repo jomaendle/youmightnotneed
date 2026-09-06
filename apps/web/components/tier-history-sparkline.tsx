@@ -1,5 +1,10 @@
-import type { BaselineHistoryEntry } from "@jomae/catalog";
+import type {
+  BaselineHistoryEntry,
+  BaselineStatus,
+  TierShare,
+} from "@jomae/catalog";
 import { tierShareOf } from "@jomae/catalog";
+import { BaselineBadge } from "@/components/baseline-badge";
 
 const MONTH_NAMES = [
   "January",
@@ -25,6 +30,38 @@ function formatMonth(month: string): string {
 const WIDTH = 480;
 const HEIGHT = 96;
 const PADDING = 4;
+
+/**
+ * One line per tier. Each gets a dash pattern as well as a colour, because
+ * the rest of the site never lets colour carry a tier on its own (the badges
+ * give each one a different glyph shape), and these three colours are the
+ * green, amber and red that are hardest to tell apart.
+ */
+const LINES = [
+  {
+    status: "widely",
+    stroke: "var(--c-widely)",
+    dash: undefined,
+    pick: (share: TierShare) => share.widely,
+  },
+  {
+    status: "newly",
+    stroke: "var(--c-newly)",
+    dash: "6 3",
+    pick: (share: TierShare) => share.newly,
+  },
+  {
+    status: "limited",
+    stroke: "var(--c-limited)",
+    dash: "2 3",
+    pick: (share: TierShare) => share.limited,
+  },
+] as const satisfies readonly {
+  status: BaselineStatus;
+  stroke: string;
+  dash: string | undefined;
+  pick: (share: TierShare) => number;
+}[];
 
 function points(
   entries: readonly BaselineHistoryEntry[],
@@ -89,25 +126,29 @@ export function TierHistorySparkline({
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="h-24 w-full max-w-[480px]"
       >
-        <polyline
-          points={points(entries, (share) => share.widely)}
-          fill="none"
-          stroke="var(--c-widely)"
-          strokeWidth="2"
-        />
-        <polyline
-          points={points(entries, (share) => share.newly)}
-          fill="none"
-          stroke="var(--c-newly)"
-          strokeWidth="2"
-        />
-        <polyline
-          points={points(entries, (share) => share.limited)}
-          fill="none"
-          stroke="var(--c-limited)"
-          strokeWidth="2"
-        />
+        {LINES.map((line) => (
+          <polyline
+            key={line.status}
+            points={points(entries, line.pick)}
+            fill="none"
+            stroke={line.stroke}
+            strokeWidth="2"
+            strokeDasharray={line.dash}
+          />
+        ))}
       </svg>
+
+      {/* The badges carry each tier's glyph shape and spelled-out label, and
+          the dash pattern matches its line, so the chart is still readable
+          without telling the colours apart. */}
+      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        {LINES.map((line) => (
+          <li key={line.status}>
+            <BaselineBadge status={line.status} short={true} />
+          </li>
+        ))}
+      </ul>
+
       <p className="mt-2 text-fg-faint text-metadata">
         Tracked since {formatMonth(first.month)}.
       </p>
