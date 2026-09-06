@@ -59,6 +59,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": null
       }
     },
+    "array-group": {
+      "name": "Array grouping",
+      "baseline": "low",
+      "lowDate": "2024-03-05",
+      "highDate": null,
+      "spec": "https://tc39.es/ecma262/multipage/abstract-operations.html#sec-groupby",
+      "support": {
+        "chrome": "117",
+        "edge": "117",
+        "firefox": "119",
+        "safari": "17.4"
+      }
+    },
     "aspect-ratio": {
       "name": "aspect-ratio",
       "baseline": "high",
@@ -83,6 +96,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "127",
         "safari": "13.1"
+      }
+    },
+    "base64encodedecode": {
+      "name": "Base64 encoding and decoding",
+      "baseline": "high",
+      "lowDate": "2016-09-20",
+      "highDate": "2019-03-20",
+      "spec": "https://html.spec.whatwg.org/multipage/webappapis.html#atob",
+      "support": {
+        "chrome": "30",
+        "edge": "12",
+        "firefox": "4",
+        "safari": "10"
       }
     },
     "broadcast-channel": {
@@ -228,6 +254,32 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "4"
       }
     },
+    "events": {
+      "name": "Events",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://html.spec.whatwg.org/multipage/indices.html#events-2",
+      "support": {
+        "chrome": "1",
+        "edge": "12",
+        "firefox": "1",
+        "safari": "1"
+      }
+    },
+    "fetch": {
+      "name": "Fetch",
+      "baseline": "high",
+      "lowDate": "2017-03-27",
+      "highDate": "2019-09-27",
+      "spec": "https://fetch.spec.whatwg.org/",
+      "support": {
+        "chrome": "42",
+        "edge": "14",
+        "firefox": "39",
+        "safari": "10.1"
+      }
+    },
     "field-sizing": {
       "name": "field-sizing",
       "baseline": "low",
@@ -356,6 +408,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "29",
         "safari": "10"
+      }
+    },
+    "intl-duration-format": {
+      "name": "Intl.DurationFormat",
+      "baseline": "low",
+      "lowDate": "2025-03-04",
+      "highDate": null,
+      "spec": "https://tc39.es/proposal-intl-duration-format/",
+      "support": {
+        "chrome": "129",
+        "edge": "129",
+        "firefox": "136",
+        "safari": "16.4"
       }
     },
     "intl-relative-time-format": {
@@ -631,6 +696,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "18.2"
       }
     },
+    "server-sent-events": {
+      "name": "Server-sent events",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events",
+      "support": {
+        "chrome": "6",
+        "edge": "79",
+        "firefox": "6",
+        "safari": "5"
+      }
+    },
     "share": {
       "name": "navigator.share()",
       "baseline": false,
@@ -722,6 +800,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "18.2"
       }
     },
+    "text-encoding": {
+      "name": "Text encoding and decoding",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://encoding.spec.whatwg.org/",
+      "support": {
+        "chrome": "38",
+        "edge": "79",
+        "firefox": "19",
+        "safari": "10.1"
+      }
+    },
     "text-wrap-balance": {
       "name": "text-wrap: balance",
       "baseline": "low",
@@ -748,6 +839,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "17.4"
       }
     },
+    "url": {
+      "name": "URL",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://url.spec.whatwg.org/",
+      "support": {
+        "chrome": "32",
+        "edge": "12",
+        "firefox": "19",
+        "safari": "7"
+      }
+    },
     "view-transitions": {
       "name": "View transitions",
       "baseline": "low",
@@ -772,6 +876,19 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": null,
         "safari": null
+      }
+    },
+    "web-cryptography": {
+      "name": "Web Cryptography",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://w3c.github.io/webcrypto/",
+      "support": {
+        "chrome": "37",
+        "edge": "12",
+        "firefox": "34",
+        "safari": "11"
       }
     }
   }

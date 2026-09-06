@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 46 of them, covering 206 npm packages.
+Every rule, 56 of them, covering 252 npm packages.
 Sorted by title. Support is the Baseline tier of the least-supported feature
 the replacement needs, so a rule reads as limited if any one part of it is.
 
@@ -54,6 +54,14 @@ output and in the MCP server's `get_rule`.
 - **when**: stopping a heading or short blurb from breaking with one word on the last line
 - **guides**: improve-text-layout-and-legibility
 
+### Base64 encoding
+
+- **id**: `base64`
+- **native**: btoa() and atob(), with TextEncoder for text
+- **support**: widely available
+- **replaces**: `js-base64`, `base-64`, `abab`
+- **when**: encoding or decoding base64 in the browser
+
 ### Bluetooth device access
 
 - **id**: `web-bluetooth`
@@ -67,7 +75,7 @@ output and in the MCP server's `get_rule`.
 - **id**: `abort-controller`
 - **native**: AbortController and AbortSignal
 - **support**: widely available
-- **replaces**: `p-cancelable`, `cancelable-promise`
+- **replaces**: `p-cancelable`, `cancelable-promise`, `abortcontroller-polyfill`
 - **when**: cancelling an in-flight fetch or other signal-aware async operation
 
 ### Carousels
@@ -92,7 +100,7 @@ output and in the MCP server's `get_rule`.
 - **id**: `clipboard`
 - **native**: navigator.clipboard.writeText()
 - **support**: newly available
-- **replaces**: `copy-to-clipboard`, `clipboard-copy`, `clipboard.js`, `react-copy-to-clipboard`, `vue-clipboard3`, `vue-clipboard2`, `ngx-clipboard`
+- **replaces**: `copy-to-clipboard`, `clipboard-copy`, `clipboard.js`, `react-copy-to-clipboard`, `vue-clipboard3`, `vue-clipboard2`, `ngx-clipboard`, `clipboard-polyfill`
 - **when**: copying text to the clipboard on a button click or similar user action
 
 ### Cross-tab messaging
@@ -125,7 +133,7 @@ output and in the MCP server's `get_rule`.
 - **id**: `structured-clone`
 - **native**: structuredClone()
 - **support**: widely available
-- **replaces**: `lodash.clonedeep`, `rfdc`, `clone`, `klona`
+- **replaces**: `lodash.clonedeep`, `rfdc`, `clone`, `klona`, `clone-deep`, `fast-copy`, `just-clone`
 - **when**: deep-copying plain data such as arrays, objects, Maps, Sets, and dates
 
 ### Element resize tracking
@@ -153,6 +161,14 @@ output and in the MCP server's `get_rule`.
 - **replaces**: `framer-motion`, `motion`, `react-transition-group`, `react-spring`
 - **when**: fading or sliding an element in and out as it is added to or removed from the DOM
 - **guides**: animate-element-entry-exit
+
+### Event emitters
+
+- **id**: `event-target`
+- **native**: EventTarget with CustomEvent
+- **support**: widely available
+- **replaces**: `mitt`, `tiny-emitter`, `nanoevents`, `eventemitter3`, `event-emitter`
+- **when**: passing messages between parts of an app through a small event bus
 
 ### Fixed aspect ratios
 
@@ -188,6 +204,22 @@ output and in the MCP server's `get_rule`.
 - **replaces**: `screenfull`, `react-full-screen`, `vue-fullscreen`
 - **when**: toggling an element, such as a video player or image viewer, into and out of fullscreen
 
+### Generating UUIDs
+
+- **id**: `random-uuid`
+- **native**: crypto.randomUUID()
+- **support**: widely available
+- **replaces**: `uuid`, `uuidv4`, `@lukeed/uuid`, `uuid-random`
+- **when**: generating a random v4 UUID
+
+### Grouping a list by key
+
+- **id**: `array-grouping`
+- **native**: Object.groupBy() and Map.groupBy()
+- **support**: newly available
+- **replaces**: `lodash.groupby`, `just-group-by`, `group-array`
+- **when**: bucketing an array into groups keyed by a property of each item
+
 ### Gzip and deflate in the browser
 
 - **id**: `compression-streams`
@@ -195,6 +227,14 @@ output and in the MCP server's `get_rule`.
 - **support**: widely available
 - **replaces**: `pako`, `lz-string`
 - **when**: compressing or decompressing bytes with gzip or deflate before sending or storing them
+
+### Hashing and encryption
+
+- **id**: `web-crypto`
+- **native**: crypto.subtle
+- **support**: widely available
+- **replaces**: `crypto-js`, `js-sha256`, `crypto-hash`
+- **when**: hashing, signing, or encrypting with SHA-2, HMAC, AES or RSA
 
 ### Highlighting search matches
 
@@ -204,6 +244,23 @@ output and in the MCP server's `get_rule`.
 - **replaces**: `mark.js`, `react-highlight-words`, `highlight-words-core`, `react-highlighter`
 - **when**: highlighting search matches or ranges of text without changing the markup
 - **guides**: highlight-text-ranges
+
+### HTTP requests
+
+- **id**: `fetch`
+- **native**: fetch()
+- **support**: widely available
+- **replaces**: `axios`, `superagent`, `redaxios`, `whatwg-fetch`, `unfetch`, `isomorphic-fetch`, `cross-fetch`
+- **when**: making HTTP requests from the browser or from Node 18 and up
+
+### Human-readable durations
+
+- **id**: `duration-format`
+- **native**: Intl.DurationFormat
+- **support**: newly available
+- **replaces**: `humanize-duration`, `pretty-ms`, `format-duration`
+- **when**: rendering a length of time as text, such as "1 hour, 30 minutes"
+- **guides**: format-human-readable-durations
 
 ### Keeping the screen awake
 
@@ -251,7 +308,7 @@ output and in the MCP server's `get_rule`.
 - **id**: `dialog-element`
 - **native**: <dialog> with showModal()
 - **support**: widely available
-- **replaces**: `react-modal`, `react-responsive-modal`, `react-aria-modal`, `@reach/dialog`, `micromodal`, `a11y-dialog`, `vue-js-modal`, `vue-final-modal`, `svelte-modals`
+- **replaces**: `react-modal`, `react-responsive-modal`, `react-aria-modal`, `@reach/dialog`, `micromodal`, `a11y-dialog`, `vue-js-modal`, `vue-final-modal`, `svelte-modals`, `dialog-polyfill`
 - **when**: building a modal dialog, confirmation prompt or alert
 - **guides**: light-dismiss-a-dialog, declarative-dialog-popover-control, platform-controls-dismiss-dialog, animate-to-from-top-layer
 
@@ -262,6 +319,14 @@ output and in the MCP server's `get_rule`.
 - **support**: widely available
 - **replaces**: `react-clamp-lines`, `react-line-clamp`, `clamp-js`, `line-clamp`, `vue-clamp`
 - **when**: truncating a block of text to a fixed number of lines with an ellipsis
+
+### Natural and locale-aware sorting
+
+- **id**: `natural-sort`
+- **native**: Intl.Collator with numeric: true
+- **support**: widely available
+- **replaces**: `natural-compare`, `natural-compare-lite`, `natural-orderby`, `string-natural-compare`
+- **when**: sorting strings that contain numbers, or sorting for a human reader
 
 ### Off-screen rendering
 
@@ -280,6 +345,14 @@ output and in the MCP server's `get_rule`.
 - **replaces**: `next-view-transitions`, `react-page-transition`, `barba.js`, `swup`
 - **when**: cross-fading between two states, or growing a thumbnail into a hero image across a navigation
 - **guides**: same-document-transitions, cross-document-transitions, faster-spa-view-transitions
+
+### Query string parsing
+
+- **id**: `url-search-params`
+- **native**: URLSearchParams and the URL constructor
+- **support**: widely available
+- **replaces**: `query-string`, `qs`, `querystringify`, `url-parse`
+- **when**: reading or building a query string, or pulling a URL apart
 
 ### Relative time formatting
 
@@ -322,6 +395,14 @@ output and in the MCP server's `get_rule`.
 - **replaces**: `aos`, `scrollreveal`, `wowjs`, `wow.js`, `scrollmagic`, `rellax`
 - **when**: fading or moving elements in as they scroll into view, or driving a reading-progress bar
 - **guides**: parallax-scroll-effects, scrollytelling, scroll-entry-exit-effects, scroll-progress-indicator, shrinking-header-on-scroll
+
+### Server-sent events
+
+- **id**: `server-sent-events`
+- **native**: EventSource
+- **support**: widely available
+- **replaces**: `eventsource`, `event-source-polyfill`
+- **when**: subscribing to a one-way stream of updates from a server
 
 ### Sharing to other apps
 
@@ -380,7 +461,7 @@ output and in the MCP server's `get_rule`.
 - **id**: `popover-anchor-positioning`
 - **native**: The Popover API with CSS anchor positioning
 - **support**: limited (capped by Anchor positioning)
-- **replaces**: `@floating-ui/react`, `@floating-ui/react-dom`, `@floating-ui/dom`, `@popperjs/core`, `popper.js`, `tippy.js`, `@tippyjs/react`, `react-popper`, `react-tooltip`, `floating-vue`, `v-tooltip`
+- **replaces**: `@floating-ui/react`, `@floating-ui/react-dom`, `@floating-ui/dom`, `@popperjs/core`, `popper.js`, `tippy.js`, `@tippyjs/react`, `react-popper`, `react-tooltip`, `floating-vue`, `v-tooltip`, `@oddbird/popover-polyfill`
 - **when**: building a tooltip, dropdown menu or popover anchored to a trigger
 - **guides**: position-aware-tooltips, interest-triggered-tooltips, resilient-context-menus-and-nested-dropdowns
 
@@ -398,7 +479,7 @@ output and in the MCP server's `get_rule`.
 - **id**: `intersection-observer`
 - **native**: IntersectionObserver
 - **support**: widely available
-- **replaces**: `react-intersection-observer`, `react-visibility-sensor`, `react-in-viewport`, `svelte-intersection-observer`
+- **replaces**: `react-intersection-observer`, `react-visibility-sensor`, `react-in-viewport`, `svelte-intersection-observer`, `intersection-observer`
 - **when**: running code when an element scrolls into or out of view, such as triggering analytics, infinite scroll, or an entrance animation
 
 ### Voice input

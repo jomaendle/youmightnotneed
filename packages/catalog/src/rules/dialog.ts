@@ -13,6 +13,7 @@ export const dialog: Rule = {
     "vue-js-modal",
     "vue-final-modal",
     "svelte-modals",
+    "dialog-polyfill",
   ],
   featureIds: ["dialog"],
   native: "<dialog> with showModal()",

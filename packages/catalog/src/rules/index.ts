@@ -1,7 +1,9 @@
 import type { Rule } from "../schema.ts";
 import { abortController } from "./abort-controller.ts";
 import { accordion } from "./accordion.ts";
+import { arrayGrouping } from "./array-grouping.ts";
 import { aspectRatio } from "./aspect-ratio.ts";
+import { base64 } from "./base64.ts";
 import { broadcastChannel } from "./broadcast-channel.ts";
 import { carousel } from "./carousel.ts";
 import { clipboard } from "./clipboard.ts";
@@ -14,6 +16,9 @@ import { dateTimeInput } from "./date-time-input.ts";
 import { dialog } from "./dialog.ts";
 import { discreteTransitions } from "./discrete-transitions.ts";
 import { dragAndDrop } from "./drag-and-drop.ts";
+import { durationFormat } from "./duration-format.ts";
+import { eventTarget } from "./event-target.ts";
+import { fetchRule } from "./fetch.ts";
 import { fieldSizing } from "./field-sizing.ts";
 import { fluidType } from "./fluid-type.ts";
 import { focusVisible } from "./focus-visible.ts";
@@ -24,9 +29,11 @@ import { intersectionObserver } from "./intersection-observer.ts";
 import { lazyLoading } from "./lazy-loading.ts";
 import { lineClamp } from "./line-clamp.ts";
 import { masonry } from "./masonry.ts";
+import { naturalSort } from "./natural-sort.ts";
 import { numberFormat } from "./number-format.ts";
 import { pageVisibility } from "./page-visibility.ts";
 import { popover } from "./popover.ts";
+import { randomUuid } from "./random-uuid.ts";
 import { relativeTime } from "./relative-time.ts";
 import { resizablePanels } from "./resizable-panels.ts";
 import { resizeObserver } from "./resize-observer.ts";
@@ -35,6 +42,7 @@ import { scrollAnimations } from "./scroll-animations.ts";
 import { scrollLock } from "./scroll-lock.ts";
 import { scrollbars } from "./scrollbars.ts";
 import { select } from "./select.ts";
+import { serverSentEvents } from "./server-sent-events.ts";
 import { smoothScroll } from "./smooth-scroll.ts";
 import { speechRecognition } from "./speech-recognition.ts";
 import { speechSynthesis } from "./speech-synthesis.ts";
@@ -42,8 +50,10 @@ import { sticky } from "./sticky.ts";
 import { structuredCloneRule } from "./structured-clone.ts";
 import { textBoxTrim } from "./text-box-trim.ts";
 import { textWrapBalance } from "./text-wrap-balance.ts";
+import { urlSearchParams } from "./url-search-params.ts";
 import { viewTransitions } from "./view-transitions.ts";
 import { webBluetooth } from "./web-bluetooth.ts";
+import { webCrypto } from "./web-crypto.ts";
 import { webShare } from "./web-share.ts";
 
 /**
@@ -97,6 +107,16 @@ export const rules: readonly Rule[] = [
   viewTransitions,
   webBluetooth,
   webShare,
+  arrayGrouping,
+  base64,
+  durationFormat,
+  eventTarget,
+  fetchRule,
+  naturalSort,
+  randomUuid,
+  serverSentEvents,
+  urlSearchParams,
+  webCrypto,
 ];
 
 /** Lookup by rule id. */

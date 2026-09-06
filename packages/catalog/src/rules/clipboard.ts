@@ -11,6 +11,7 @@ export const clipboard: Rule = {
     "vue-clipboard3",
     "vue-clipboard2",
     "ngx-clipboard",
+    "clipboard-polyfill",
   ],
   featureIds: ["async-clipboard"],
   native: "navigator.clipboard.writeText()",

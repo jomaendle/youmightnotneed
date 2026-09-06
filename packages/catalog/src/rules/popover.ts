@@ -15,6 +15,7 @@ export const popover: Rule = {
     "react-tooltip",
     "floating-vue",
     "v-tooltip",
+    "@oddbird/popover-polyfill",
   ],
   featureIds: ["popover", "anchor-positioning"],
   native: "The Popover API with CSS anchor positioning",
