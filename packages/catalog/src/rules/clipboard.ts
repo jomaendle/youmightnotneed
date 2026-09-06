@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const clipboard: Rule = {
   id: "clipboard",
   title: "Copy and paste",
+  category: "device-apis",
   replaces: [
     "copy-to-clipboard",
     "clipboard-copy",

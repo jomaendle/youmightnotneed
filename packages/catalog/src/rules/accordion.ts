@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const accordion: Rule = {
   id: "exclusive-accordion",
   title: "Accordions",
+  category: "forms",
   replaces: ["react-accessible-accordion", "react-collapsible", "accordion-js"],
   featureIds: ["details-name"],
   native: "<details name> for an exclusive accordion",

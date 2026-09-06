@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const abortController: Rule = {
   id: "abort-controller",
   title: "Cancelling async work",
+  category: "async-data",
   replaces: ["p-cancelable", "cancelable-promise", "abortcontroller-polyfill"],
   featureIds: ["aborting"],
   native: "AbortController and AbortSignal",

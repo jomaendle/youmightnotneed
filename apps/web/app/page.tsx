@@ -1,5 +1,6 @@
 import {
   BASELINE_DATA_DATE,
+  baselineHistory,
   packageSizes,
   resolveBaseline,
   rules,
@@ -10,6 +11,7 @@ import { FeaturedCarousel } from "@/components/featured-carousel";
 import { MethodologyDialog } from "@/components/methodology-dialog";
 import { ScanForm } from "@/components/scan-form";
 import { TierHelp } from "@/components/tier-help";
+import { TierHistorySparkline } from "@/components/tier-history-sparkline";
 import { demos } from "@/lib/demos";
 
 function weight(rule: (typeof rules)[number]): number {
@@ -62,7 +64,9 @@ export default function HomePage() {
         </p>
       </section>
 
-      <section>
+      {/* The form is a reading-width thing, so it keeps its own column
+          rather than stretching to the full shell. */}
+      <section className="max-w-[52rem]">
         <ScanForm />
       </section>
 
@@ -86,6 +90,8 @@ export default function HomePage() {
             tier="tier-limited"
           />
         </dl>
+
+        <TierHistorySparkline entries={baselineHistory.entries} />
       </section>
 
       <section>

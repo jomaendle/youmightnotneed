@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const durationFormat: Rule = {
   id: "duration-format",
   title: "Human-readable durations",
+  category: "formatting",
   replaces: ["humanize-duration", "pretty-ms", "format-duration"],
   featureIds: ["intl-duration-format"],
   native: "Intl.DurationFormat",

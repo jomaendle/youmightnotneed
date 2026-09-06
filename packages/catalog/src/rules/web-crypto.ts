@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const webCrypto: Rule = {
   id: "web-crypto",
   title: "Hashing and encryption",
+  category: "async-data",
   replaces: ["crypto-js", "js-sha256", "crypto-hash"],
   featureIds: ["web-cryptography"],
   native: "crypto.subtle",

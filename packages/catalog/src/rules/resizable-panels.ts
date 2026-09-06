@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const resizablePanels: Rule = {
   id: "resizable-panels",
   title: "Resizable panels",
+  category: "layout",
   replaces: [
     "react-resizable-panels",
     "re-resizable",

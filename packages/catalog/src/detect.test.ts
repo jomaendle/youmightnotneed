@@ -12,6 +12,7 @@ const testRules: Rule[] = [
   {
     id: "test-dialog",
     title: "Dialogs",
+    category: "forms",
     replaces: ["react-modal", "a11y-dialog"],
     featureIds: ["dialog"],
     native: "<dialog>",
@@ -21,6 +22,7 @@ const testRules: Rule[] = [
   {
     id: "test-carousel",
     title: "Carousels",
+    category: "scrolling",
     replaces: ["swiper"],
     featureIds: ["scroll-buttons"],
     native: "::scroll-button()",
@@ -258,6 +260,7 @@ describe("dependency fields", () => {
     const rule: Rule = {
       id: "proto",
       title: "Proto",
+      category: "async-data",
       replaces: ["constructor"],
       featureIds: ["dialog"],
       native: "n",

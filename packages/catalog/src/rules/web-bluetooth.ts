@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const webBluetooth: Rule = {
   id: "web-bluetooth",
   title: "Bluetooth device access",
+  category: "device-apis",
   replaces: ["@capacitor-community/bluetooth-le", "cordova-plugin-ble-central"],
   featureIds: ["web-bluetooth"],
   native: "navigator.bluetooth.requestDevice()",

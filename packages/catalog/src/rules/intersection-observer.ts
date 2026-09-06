@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const intersectionObserver: Rule = {
   id: "intersection-observer",
   title: "Visibility tracking",
+  category: "async-data",
   replaces: [
     "react-intersection-observer",
     "react-visibility-sensor",

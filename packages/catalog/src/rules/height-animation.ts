@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const heightAnimation: Rule = {
   id: "height-auto-animation",
   title: "Animating to height auto",
+  category: "animation",
   replaces: ["react-collapse", "react-animate-height", "react-smooth-collapse"],
   featureIds: ["interpolate-size", "calc-size"],
   native: "interpolate-size: allow-keywords, or calc-size()",

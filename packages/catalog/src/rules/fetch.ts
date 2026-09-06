@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const fetchRule: Rule = {
   id: "fetch",
   title: "HTTP requests",
+  category: "async-data",
   replaces: [
     "axios",
     "superagent",

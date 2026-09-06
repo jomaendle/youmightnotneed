@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const inert: Rule = {
   id: "inert",
   title: "Focus trapping",
+  category: "forms",
   replaces: [
     "focus-trap",
     "focus-trap-react",

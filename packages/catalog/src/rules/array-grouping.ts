@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const arrayGrouping: Rule = {
   id: "array-grouping",
   title: "Grouping a list by key",
+  category: "async-data",
   replaces: ["lodash.groupby", "just-group-by", "group-array"],
   featureIds: ["array-group"],
   native: "Object.groupBy() and Map.groupBy()",

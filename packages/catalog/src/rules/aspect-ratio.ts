@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const aspectRatio: Rule = {
   id: "aspect-ratio",
   title: "Fixed aspect ratios",
+  category: "layout",
   replaces: ["react-aspect-ratio"],
   featureIds: ["aspect-ratio"],
   native: "aspect-ratio",

@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const customHighlight: Rule = {
   id: "custom-highlight",
   title: "Highlighting search matches",
+  category: "typography",
   replaces: [
     "mark.js",
     "react-highlight-words",

@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const screenWakeLock: Rule = {
   id: "screen-wake-lock",
   title: "Keeping the screen awake",
+  category: "device-apis",
   replaces: ["nosleep.js", "react-use-wake-lock"],
   featureIds: ["screen-wake-lock"],
   native: 'navigator.wakeLock.request("screen")',

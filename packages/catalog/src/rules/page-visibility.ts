@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const pageVisibility: Rule = {
   id: "page-visibility",
   title: "Tab visibility",
+  category: "async-data",
   replaces: ["react-page-visibility", "visibilityjs"],
   featureIds: ["page-visibility"],
   native: "document.visibilityState and the visibilitychange event",

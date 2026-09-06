@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const sticky: Rule = {
   id: "sticky-positioning",
   title: "Sticky headers and sidebars",
+  category: "layout",
   replaces: [
     "sticky-js",
     "stickyfill",

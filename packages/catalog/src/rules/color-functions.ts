@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const colorFunctions: Rule = {
   id: "css-color-functions",
   title: "Colour manipulation",
+  category: "typography",
   replaces: [
     "polished",
     "color2k",

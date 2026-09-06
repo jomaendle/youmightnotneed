@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const compressionStreams: Rule = {
   id: "compression-streams",
   title: "Gzip and deflate in the browser",
+  category: "async-data",
   replaces: ["pako", "lz-string"],
   featureIds: ["compression-streams"],
   native: "CompressionStream and DecompressionStream",

@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const naturalSort: Rule = {
   id: "natural-sort",
   title: "Natural and locale-aware sorting",
+  category: "formatting",
   replaces: [
     "natural-compare",
     "natural-compare-lite",

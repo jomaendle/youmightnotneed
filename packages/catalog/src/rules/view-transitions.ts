@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const viewTransitions: Rule = {
   id: "view-transitions",
   title: "Page and state transitions",
+  category: "animation",
   replaces: [
     "next-view-transitions",
     "react-page-transition",

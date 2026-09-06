@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const base64: Rule = {
   id: "base64",
   title: "Base64 encoding",
+  category: "async-data",
   replaces: ["js-base64", "base-64", "abab"],
   featureIds: ["base64encodedecode", "text-encoding"],
   native: "btoa() and atob(), with TextEncoder for text",

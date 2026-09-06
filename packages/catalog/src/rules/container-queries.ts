@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const containerQueries: Rule = {
   id: "container-queries",
   title: "Element size queries",
+  category: "layout",
   replaces: [
     "react-resize-detector",
     "react-use-measure",

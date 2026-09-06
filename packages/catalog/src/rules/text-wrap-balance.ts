@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const textWrapBalance: Rule = {
   id: "text-wrap-balance",
   title: "Balanced headings",
+  category: "typography",
   replaces: ["react-wrap-balancer", "balance-text"],
   featureIds: ["text-wrap-balance"],
   native: "text-wrap: balance",

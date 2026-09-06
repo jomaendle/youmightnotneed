@@ -254,19 +254,6 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "4"
       }
     },
-    "events": {
-      "name": "Events",
-      "baseline": "high",
-      "lowDate": "2015-07-29",
-      "highDate": "2018-01-29",
-      "spec": "https://html.spec.whatwg.org/multipage/indices.html#events-2",
-      "support": {
-        "chrome": "1",
-        "edge": "12",
-        "firefox": "1",
-        "safari": "1"
-      }
-    },
     "fetch": {
       "name": "Fetch",
       "baseline": "high",
@@ -837,19 +824,6 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "117",
         "firefox": "129",
         "safari": "17.4"
-      }
-    },
-    "url": {
-      "name": "URL",
-      "baseline": "high",
-      "lowDate": "2015-07-29",
-      "highDate": "2018-01-29",
-      "spec": "https://url.spec.whatwg.org/",
-      "support": {
-        "chrome": "32",
-        "edge": "12",
-        "firefox": "19",
-        "safari": "7"
       }
     },
     "view-transitions": {

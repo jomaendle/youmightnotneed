@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const eventTarget: Rule = {
   id: "event-target",
   title: "Event emitters",
+  category: "async-data",
   replaces: [
     "mitt",
     "tiny-emitter",

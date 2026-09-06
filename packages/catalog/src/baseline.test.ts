@@ -17,6 +17,7 @@ function ruleWith(overrides: Partial<Rule>): Rule {
   return {
     id: "fixture",
     title: "Fixture",
+    category: "forms",
     replaces: ["some-package"],
     featureIds: ["dialog"],
     native: "<dialog>",

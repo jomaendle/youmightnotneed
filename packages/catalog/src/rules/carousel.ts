@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const carousel: Rule = {
   id: "carousel-scroll-markers",
   title: "Carousels",
+  category: "scrolling",
   replaces: [
     "swiper",
     "embla-carousel",

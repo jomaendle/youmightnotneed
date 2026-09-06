@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const relativeTime: Rule = {
   id: "relative-time",
   title: "Relative time formatting",
+  category: "formatting",
   replaces: ["javascript-time-ago", "timeago.js", "react-timeago"],
   featureIds: ["intl-relative-time-format"],
   native: "Intl.RelativeTimeFormat",

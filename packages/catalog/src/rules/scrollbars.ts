@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const scrollbars: Rule = {
   id: "styled-scrollbars",
   title: "Styled scrollbars",
+  category: "scrolling",
   replaces: [
     "react-custom-scrollbars",
     "react-custom-scrollbars-2",

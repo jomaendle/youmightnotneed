@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { categorySchema } from "./categories.ts";
 
 /**
  * Bumped whenever the shape of a rule changes in a way that breaks consumers.
@@ -89,6 +90,8 @@ export const ruleSchema = z
     id: slug,
     /** Short human label, e.g. "Carousels". */
     title: z.string().min(1),
+    /** Which entry in packages/catalog/src/categories.ts this rule belongs to. */
+    category: categorySchema,
 
     /** npm packages this rule can replace. Exact names, lowercase. */
     replaces: z.array(packageName).min(1),

@@ -79,6 +79,20 @@ only. `scripts/refresh-guides.ts` snapshots their index from the published npm
 package and the freshness check rejects an ID that no longer exists. Do not
 vendor their prose: the catalog is a lookup table, not a documentation mirror.
 
+Read a guide before linking it. A plausible ID is not evidence: a review found
+three links wrong, each one pointing at an adjacent topic rather than the
+rule's own. `.claude/skills/adding-a-rule/SKILL.md` has the method and the
+three worked examples. Most rules have no guide, which is fine.
+
+## Categories
+
+Every rule carries a `category` from `packages/catalog/src/categories.ts`,
+which drives the sidebar and the filters. It is picked by hand like `title`,
+and the closed union means a typo fails to type-check rather than creating a
+silent ninth group. Match what comparable rules already use: Web Crypto and
+data handling sit under `async-data`, anything `Intl` under `formatting`,
+focus and overlays under `forms`.
+
 ## The `unless` field
 
 The most important field in the schema. An agent that always answers "the platform covers it"

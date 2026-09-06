@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const fluidType: Rule = {
   id: "fluid-type-clamp",
   title: "Fluid type scales",
+  category: "typography",
   replaces: ["fitty", "fittext.js", "textfit", "react-textfit"],
   featureIds: ["min-max-clamp"],
   native: "clamp() with a viewport-relative middle value",

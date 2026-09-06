@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const numberFormat: Rule = {
   id: "number-format",
   title: "Locale-aware number and currency formatting",
+  category: "formatting",
   replaces: ["numeral", "accounting", "currency.js", "format-number"],
   featureIds: ["intl"],
   native: "Intl.NumberFormat",

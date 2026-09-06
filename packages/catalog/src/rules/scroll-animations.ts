@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const scrollAnimations: Rule = {
   id: "scroll-driven-animations",
   title: "Scroll-triggered animations",
+  category: "animation",
   replaces: ["aos", "scrollreveal", "wowjs", "wow.js", "scrollmagic", "rellax"],
   featureIds: ["scroll-driven-animations"],
   native: "animation-timeline: view() and scroll()",

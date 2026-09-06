@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const popover: Rule = {
   id: "popover-anchor-positioning",
   title: "Tooltips, dropdowns and popovers",
+  category: "forms",
   replaces: [
     "@floating-ui/react",
     "@floating-ui/react-dom",

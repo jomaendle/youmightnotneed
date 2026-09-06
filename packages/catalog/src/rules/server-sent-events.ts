@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const serverSentEvents: Rule = {
   id: "server-sent-events",
   title: "Server-sent events",
+  category: "async-data",
   replaces: ["eventsource", "event-source-polyfill"],
   featureIds: ["server-sent-events"],
   native: "EventSource",

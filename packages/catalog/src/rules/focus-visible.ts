@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const focusVisible: Rule = {
   id: "focus-visible",
   title: "Keyboard-only focus styling",
+  category: "forms",
   replaces: ["focus-visible"],
   featureIds: ["focus-visible"],
   native: ":focus-visible",

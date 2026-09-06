@@ -3,8 +3,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { resolveBaseline, resolveFeature } from "./baseline.ts";
+import { CATEGORIES, categorySchema } from "./categories.ts";
 import { baselineSnapshot } from "./generated/baseline.ts";
 import { isKnownGuide, resolveGuide, resolveGuides } from "./guides.ts";
+import { tierShareOf } from "./history.ts";
 import { rules, rulesByPackage } from "./rules/index.ts";
 import { catalogSchema } from "./schema.ts";
 import { hasUnresolvedClaim, supportClaims } from "./support.ts";
@@ -61,6 +63,63 @@ describe("the catalog", () => {
   it("exposes every claimed package in the lookup map", () => {
     const total = rules.reduce((n, r) => n + r.replaces.length, 0);
     expect(rulesByPackage.size).toBe(total);
+  });
+
+  it("uses every declared category at least once", () => {
+    const used = new Set(rules.map((r) => r.category));
+    const unused = CATEGORIES.filter((c) => !used.has(c.id));
+    expect(unused).toEqual([]);
+  });
+
+  // CATEGORIES_BY_ID is typed as a total Record, so a category id that the
+  // schema accepts but CATEGORIES omits would be a lookup returning
+  // undefined behind a type that promises otherwise.
+  it("describes every id the schema accepts", () => {
+    const described = new Set(CATEGORIES.map((c) => c.id));
+    const missing = categorySchema.options.filter((id) => !described.has(id));
+    expect(missing).toEqual([]);
+  });
+
+  it("rejects a category the taxonomy does not declare", () => {
+    expect(categorySchema.safeParse("not-a-category").success).toBe(false);
+  });
+});
+
+describe("tierShareOf", () => {
+  const entry = (
+    ruleCount: number,
+    tally: { widely: number; newly: number; limited: number; unknown: number },
+  ) => ({
+    month: "2026-09",
+    generatedOn: "2026-09-05",
+    webFeaturesVersion: "0.0.0",
+    ruleCount,
+    tally,
+  });
+
+  it("reports each tier as a percentage of the catalog", () => {
+    const share = tierShareOf(
+      entry(40, { widely: 20, newly: 10, limited: 8, unknown: 2 }),
+    );
+    expect(share).toEqual({ widely: 50, newly: 25, limited: 20, unknown: 5 });
+  });
+
+  // The whole reason the share is computed rather than stored: adding rules
+  // must not read as support getting worse.
+  it("holds steady when the catalog grows but support does not change", () => {
+    const before = tierShareOf(
+      entry(10, { widely: 5, newly: 3, limited: 2, unknown: 0 }),
+    );
+    const after = tierShareOf(
+      entry(20, { widely: 10, newly: 6, limited: 4, unknown: 0 }),
+    );
+    expect(after).toEqual(before);
+  });
+
+  it("returns zeroes rather than dividing by zero on an empty catalog", () => {
+    expect(
+      tierShareOf(entry(0, { widely: 0, newly: 0, limited: 0, unknown: 0 })),
+    ).toEqual({ widely: 0, newly: 0, limited: 0, unknown: 0 });
   });
 });
 
@@ -253,17 +312,27 @@ describe("detect stays pure", () => {
       .replace(/"(?:\\.|[^"\\\n])*"/g, '""');
   }
 
-  const reachable = reachableFrom("detect.ts");
+  /**
+   * Roots of the pure graph. detect() is the one CLAUDE.md names; history.ts
+   * is pure too but nothing imports it from detect(), so it needs naming or
+   * the walk would never reach it.
+   */
+  const PURE_ROOTS = ["detect.ts", "history.ts"];
 
-  it("reaches the rule data and the generated snapshots", () => {
+  const reachable = [
+    ...new Set(PURE_ROOTS.flatMap((root) => reachableFrom(root))),
+  ];
+
+  it("reaches the rule data, the generated snapshots and history.ts", () => {
     // Guards the walker itself: if this stops finding the rules, the purity
     // check silently narrows back to a handful of files.
     expect(reachable).toContain("rules/index.ts");
     expect(reachable).toContain("generated/sizes.ts");
+    expect(reachable).toContain("history.ts");
     expect(reachable.length).toBeGreaterThan(50);
   });
 
-  it.each(reachableFrom("detect.ts"))("%s imports nothing impure", (file) => {
+  it.each(reachable)("%s imports nothing impure", (file) => {
     const source = readFileSync(join(srcDir, file), "utf8");
 
     // An allowlist, not a blocklist: `from "fs"` without the node: prefix is a

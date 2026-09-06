@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const urlSearchParams: Rule = {
   id: "url-search-params",
   title: "Query string parsing",
+  category: "async-data",
   replaces: ["query-string", "qs", "querystringify", "url-parse"],
   featureIds: [],
   manualBaseline: {

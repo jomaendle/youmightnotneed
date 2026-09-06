@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const randomUuid: Rule = {
   id: "random-uuid",
   title: "Generating UUIDs",
+  category: "async-data",
   replaces: ["uuid", "uuidv4", "@lukeed/uuid", "uuid-random"],
   featureIds: [],
   manualBaseline: {
