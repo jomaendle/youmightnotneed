@@ -4,8 +4,8 @@
 # The catalog
 
 Every rule, 56 of them, covering 252 npm packages.
-Sorted by title. Support is the Baseline tier of the least-supported feature
-the replacement needs, so a rule reads as limited if any one part of it is.
+Support is the Baseline tier of the least-supported feature the replacement
+needs, so a rule reads as limited if any one part of it is.
 
 To check a single package without reading this file:
 
@@ -13,10 +13,79 @@ To check a single package without reading this file:
 npx -y youmightnotneed@latest --package <name> --verbose
 ```
 
-The `when` line is the case the native approach covers. It is not the only
-case the package is used for, which is why every rule also carries conditions
-where the dependency is still right. Those are in the CLI's `--verbose`
-output and in the MCP server's `get_rule`.
+## By use case
+
+Read this before reaching for a package. The left column is the case the
+native approach covers, so it is searchable without knowing which library you
+were about to install.
+
+| Building | The platform does | Support | Rule |
+| --- | --- | --- | --- |
+| a component needs to change layout based on its own width rather than the viewport | Container queries | widely available | `container-queries` |
+| a header, sidebar or table head should stick while its container scrolls | position: sticky | widely available | `sticky-positioning` |
+| a heading or display type should scale between a minimum and maximum size with the viewport | clamp() with a viewport-relative middle value | widely available | `fluid-type-clamp` |
+| a textarea or input should grow to fit what the user has typed | field-sizing: content | newly available | `field-sizing` |
+| animating a collapsible panel open and closed to its natural height | interpolate-size: allow-keywords, or calc-size() | limited | `height-auto-animation` |
+| bucketing an array into groups keyed by a property of each item | Object.groupBy() and Map.groupBy() | newly available | `array-grouping` |
+| building a horizontal gallery with prev/next buttons and dot indicators | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited | `carousel-scroll-markers` |
+| building a modal dialog, confirmation prompt or alert | <dialog> with showModal() | widely available | `dialog-element` |
+| building a tooltip, dropdown menu or popover anchored to a trigger | The Popover API with CSS anchor positioning | limited | `popover-anchor-positioning` |
+| building an FAQ or accordion where opening one panel should close the others | <details name> for an exclusive accordion | newly available | `exclusive-accordion` |
+| cancelling an in-flight fetch or other signal-aware async operation | AbortController and AbortSignal | widely available | `abort-controller` |
+| capturing a speech-to-text transcript directly in the browser | SpeechRecognition | limited | `speech-recognition` |
+| collecting a single date or time value from a form | <input type="date"> and <input type="time"> | widely available | `date-time-input` |
+| compressing or decompressing bytes with gzip or deflate before sending or storing them | CompressionStream and DecompressionStream | widely available | `compression-streams` |
+| connecting to a Bluetooth Low Energy device directly from a web page | navigator.bluetooth.requestDevice() | limited | `web-bluetooth` |
+| copying text to the clipboard on a button click or similar user action | navigator.clipboard.writeText() | newly available | `clipboard` |
+| cross-fading between two states, or growing a thumbnail into a hero image across a navigation | The View Transitions API | newly available | `view-transitions` |
+| deep-copying plain data such as arrays, objects, Maps, Sets, and dates | structuredClone() | widely available | `structured-clone` |
+| deferring offscreen images or iframes so they load as the user scrolls to them | loading="lazy" | widely available | `lazy-loading` |
+| deriving hover, border or muted shades from a single brand colour | color-mix(), oklch() and relative colour syntax | widely available | `css-color-functions` |
+| encoding or decoding base64 in the browser | btoa() and atob(), with TextEncoder for text | widely available | `base64` |
+| fading or moving elements in as they scroll into view, or driving a reading-progress bar | animation-timeline: view() and scroll() | limited | `scroll-driven-animations` |
+| fading or sliding an element in and out as it is added to or removed from the DOM | @starting-style with transition-behavior: allow-discrete | newly available | `discrete-transitions` |
+| formatting a number as currency, a percentage, a unit, or a locale-correct thousands-grouped number for display | Intl.NumberFormat | widely available | `number-format` |
+| formatting a timestamp as relative text, such as "5 minutes ago" or "in 2 days" | Intl.RelativeTimeFormat | widely available | `relative-time` |
+| generating a random v4 UUID | crypto.randomUUID() | widely available | `random-uuid` |
+| hashing, signing, or encrypting with SHA-2, HMAC, AES or RSA | crypto.subtle | widely available | `web-crypto` |
+| highlighting search matches or ranges of text without changing the markup | the CSS Custom Highlight API | newly available | `custom-highlight` |
+| keeping a box at a fixed ratio, such as a 16/9 video wrapper or a square thumbnail | aspect-ratio | widely available | `aspect-ratio` |
+| keeping keyboard focus inside an open modal, drawer or menu | the inert attribute | widely available | `inert` |
+| keeping the screen from sleeping while a page is active, such as during a recipe, presentation, or workout | navigator.wakeLock.request("screen") | newly available | `screen-wake-lock` |
+| laying out a gallery of items with varying heights into columns with no vertical gaps | CSS masonry item placement | limited | `css-masonry` |
+| letting someone drag-resize a single panel, such as a sidebar or a textarea | resize | limited | `resizable-panels` |
+| letting someone reorder a list by dragging an item with a mouse | draggable and the drag events | widely available | `drag-and-drop` |
+| letting someone share the current page or a piece of content to whatever app they choose | navigator.share() | limited | `web-share` |
+| making HTTP requests from the browser or from Node 18 and up | fetch() | widely available | `fetch` |
+| making in-page anchor links scroll smoothly to their target | scroll-behavior: smooth with scroll-margin-top | widely available | `smooth-scroll` |
+| passing messages between parts of an app through a small event bus | EventTarget with CustomEvent | widely available | `event-target` |
+| pausing or resuming work, such as polling or video playback, based on whether the tab is visible | document.visibilityState and the visibilitychange event | widely available | `page-visibility` |
+| reading or building a query string, or pulling a URL apart | URLSearchParams and the URL constructor | widely available | `url-search-params` |
+| reading text aloud with the browser's own text-to-speech engine | SpeechSynthesis and SpeechSynthesisUtterance | widely available | `speech-synthesis` |
+| removing a font's built-in leading so text sits flush in its box | text-box-trim and text-box-edge | limited | `text-box-trim` |
+| rendering a length of time as text, such as "1 hour, 30 minutes" | Intl.DurationFormat | newly available | `duration-format` |
+| rendering a long list where only the rows near the viewport need to cost anything | content-visibility: auto | newly available | `content-visibility` |
+| restyling a scrollbar to match a dark theme, or stopping layout shift when a scrollbar appears | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available | `styled-scrollbars` |
+| running code when an element scrolls into or out of view, such as triggering analytics, infinite scroll, or an entrance animation | IntersectionObserver | widely available | `intersection-observer` |
+| running code when an element's own box changes size, not just the viewport | ResizeObserver | widely available | `resize-observer` |
+| sending a message from one open tab to other tabs on the same site | BroadcastChannel | widely available | `broadcast-channel` |
+| showing a focus ring only for keyboard or other non-pointer focus, not for a mouse click | :focus-visible | widely available | `focus-visible` |
+| sorting strings that contain numbers, or sorting for a human reader | Intl.Collator with numeric: true | widely available | `natural-sort` |
+| stopping a heading or short blurb from breaking with one word on the last line | text-wrap: balance | newly available | `text-wrap-balance` |
+| stopping the page behind a modal or drawer from scrolling when the overlay reaches its end | overscroll-behavior: contain | limited | `overscroll-behavior` |
+| styling a select's options with markup, such as a flag or a two-line label | appearance: base-select on <select> | limited | `customizable-select` |
+| subscribing to a one-way stream of updates from a server | EventSource | widely available | `server-sent-events` |
+| toggling an element, such as a video player or image viewer, into and out of fullscreen | Element.requestFullscreen() | limited | `fullscreen` |
+| truncating a block of text to a fixed number of lines with an ellipsis | -webkit-line-clamp | widely available | `line-clamp` |
+
+A match here is a starting point, not a verdict. Every rule also carries the
+conditions where the dependency is still right, and those are not in this
+file: run `--package <name> --verbose`, or call `get_rule` on the MCP
+server, and read them before deciding.
+
+## Every rule
+
+Sorted by title.
 
 ### Accordions
 

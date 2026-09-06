@@ -23,6 +23,19 @@ const outFile = join(here, "../skills/youmightnotneed/references/catalog.md");
 
 const sorted = [...rules].sort((a, b) => a.title.localeCompare(b.title));
 
+/**
+ * The index that makes this file useful before a dependency exists. Keyed by
+ * `agent.when`, which is the use case rather than the package name, so an
+ * agent about to build a carousel can find the rule without knowing that
+ * swiper is the package it was reaching for.
+ */
+const index = [...rules]
+  .sort((a, b) => a.agent.when.localeCompare(b.agent.when))
+  .map((rule) => {
+    const status = baselineShortLabel(resolveBaseline(rule).status);
+    return `| ${rule.agent.when} | ${rule.native} | ${status} | \`${rule.id}\` |`;
+  });
+
 const rows = sorted.map((rule) => {
   const baseline = resolveBaseline(rule);
   const guides = resolveGuides(rule)
@@ -54,8 +67,8 @@ writeFileSync(
 # The catalog
 
 Every rule, ${rules.length} of them, covering ${packageCount} npm packages.
-Sorted by title. Support is the Baseline tier of the least-supported feature
-the replacement needs, so a rule reads as limited if any one part of it is.
+Support is the Baseline tier of the least-supported feature the replacement
+needs, so a rule reads as limited if any one part of it is.
 
 To check a single package without reading this file:
 
@@ -63,10 +76,24 @@ To check a single package without reading this file:
 npx -y youmightnotneed@latest --package <name> --verbose
 \`\`\`
 
-The \`when\` line is the case the native approach covers. It is not the only
-case the package is used for, which is why every rule also carries conditions
-where the dependency is still right. Those are in the CLI's \`--verbose\`
-output and in the MCP server's \`get_rule\`.
+## By use case
+
+Read this before reaching for a package. The left column is the case the
+native approach covers, so it is searchable without knowing which library you
+were about to install.
+
+| Building | The platform does | Support | Rule |
+| --- | --- | --- | --- |
+${index.join("\n")}
+
+A match here is a starting point, not a verdict. Every rule also carries the
+conditions where the dependency is still right, and those are not in this
+file: run \`--package <name> --verbose\`, or call \`get_rule\` on the MCP
+server, and read them before deciding.
+
+## Every rule
+
+Sorted by title.
 
 ${rows.join("\n\n")}
 `,

@@ -10,7 +10,9 @@
  *      upstream is an error, so a report never links to a dead guide.
  *   4. The agent skill's generated catalog reference falling behind the rules
  *      is an error, so the skill can never describe a catalog that moved on.
- *   5. A snapshot older than 45 days, or generated from an older web-features
+ *   5. The skill's hand-written SKILL.md restating a count that the generated
+ *      reference already carries is an error, because it goes stale silently.
+ *   6. A snapshot older than 45 days, or generated from an older web-features
  *      than the one installed, is a warning telling you to run the refresh.
  *
  * Run: pnpm check:freshness
@@ -106,7 +108,24 @@ try {
   );
 }
 
-// 6. Snapshot age and version drift are warnings, not failures.
+// 6. The hand-written part of the skill must not restate a generated number.
+const skillDoc = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../skills/youmightnotneed/SKILL.md",
+);
+try {
+  const doc = readFileSync(skillDoc, "utf8");
+  const hardcoded = doc.match(/\b\d+\s+(?:rules|packages)\b/);
+  if (hardcoded) {
+    errors.push(
+      `skills/youmightnotneed/SKILL.md hardcodes "${hardcoded[0]}". Counts live in the generated references/catalog.md, or they go stale the next time a rule lands.`,
+    );
+  }
+} catch {
+  errors.push("skills/youmightnotneed/SKILL.md is missing.");
+}
+
+// 7. Snapshot age and version drift are warnings, not failures.
 const snapshotAge = daysSince(baselineSnapshot.generatedOn);
 if (snapshotAge > SNAPSHOT_WARN_AGE_DAYS) {
   warnings.push(

@@ -68,6 +68,18 @@ from their published npm package by `pnpm refresh:guides`, and a rule pointing
 at a guide that no longer exists fails the freshness check rather than
 shipping as a dead link.
 
+## Two skills, pointing opposite ways
+
+`.claude/skills/` is for working on this repo: how to add a rule, and the
+house voice. It is never published.
+
+`skills/youmightnotneed/` is for an agent using the catalog on someone else's
+codebase. `SKILL.md` stays short, `references/reading-a-finding.md` covers how
+to act on a report without overstating it, and `references/catalog.md` is
+generated from the rules by `pnpm refresh:skill`, with a use-case index at the
+top so an agent can find the platform answer before it installs anything.
+Install it with `/plugin marketplace add jomaendle/youmightnotneed`.
+
 ## Layout
 
 ```

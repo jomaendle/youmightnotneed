@@ -1,32 +1,45 @@
 ---
 name: youmightnotneed
-description: Check whether a JavaScript dependency has a native CSS, HTML or Web API equivalent, before adding it or while auditing what is already installed. Use when about to install a frontend package, when asked whether a library is still needed, when reviewing a package.json for weight, or when picking between a library and a platform feature for carousels, dialogs, tooltips, popovers, scroll effects, transitions, date pickers, drag and drop, clipboard, or text truncation.
+description: Find the CSS, HTML or Web API that covers a case before reaching for a library, and check what an existing package.json could drop. Use when about to install a frontend package, when building a UI behaviour that might already be native, when asked whether a library is still needed, or when reviewing dependencies for weight. Covers carousels, dialogs, tooltips, popovers, scroll effects, transitions, date pickers, drag and drop, clipboard, text truncation, HTTP requests, UUIDs, query strings, hashing, event emitters, and date and number formatting.
 ---
 
 # youmightnotneed
 
-A lookup table from npm package names to the platform feature that covers the
-same case. It matches exact dependency names against a catalog of 46 rules, so
-there is no model in the loop and no guessing about what a package does.
+A lookup table from a use case, or an npm package name, to the platform
+feature that covers it. Matching is exact and there is no model in the loop,
+so it never guesses what a package does.
 
-## Before adding a frontend dependency
+Two directions, and the first is the one that saves the most.
+
+## Starting from what you are building
+
+Before installing anything for a UI behaviour or a small utility, check
+whether the platform covers it. Load `references/catalog.md` and read the
+**By use case** table at the top. It is keyed by the case, not the package,
+so "building a horizontal gallery with prev/next buttons and dot indicators"
+is findable without knowing that swiper was the thing you were about to
+reach for.
+
+A row is a starting point, not a verdict. Take the rule id from it and read
+the conditions before deciding:
 
 ```sh
 npx -y youmightnotneed@latest --package <name> --verbose
 ```
 
-Nothing printed under "keep it if" means nothing to weigh. If a rule fires,
-read those conditions before deciding. They are the point of the tool.
+## Starting from a package
 
-## Auditing a project
+Checking one name, or auditing what is already installed:
 
 ```sh
+npx -y youmightnotneed@latest --package axios --verbose
 npx -y youmightnotneed@latest --verbose          # nearest package.json
 npx -y youmightnotneed@latest ./app --json       # machine-readable
 ```
 
-Both work offline once npx has the package, and neither sends the
-package.json anywhere.
+Nothing under "keep it if" means there is nothing to weigh. Both work offline
+once npx has fetched the package, and neither sends the package.json
+anywhere.
 
 ## What a finding actually claims
 
@@ -40,7 +53,7 @@ A dependency being in package.json is not evidence of how it is used. Someone
 installs Framer Motion for layout animations, not for fade-ins. So:
 
 - Read every "keep it if" line. One that applies means the dependency stays,
-  and that is a finished answer, not a failure.
+  and that is a finished answer.
 - Check the Baseline tier against the project's own support target. `widely
   available` is safe, `newly available` is a decision, `limited` needs a
   fallback written before anything is swapped.
@@ -53,7 +66,7 @@ time, or whenever a finding is borderline.
 
 ## Writing the replacement
 
-The catalog gives the swap in one line and stops there. A finding may list
+The catalog gives the swap in one line and stops there. A rule may list
 `guides`, which are IDs from Google Chrome's modern-web-guidance and carry the
 implementation, the fallbacks and the platform quirks:
 
@@ -61,15 +74,9 @@ implementation, the fallbacks and the platform quirks:
 npx -y modern-web-guidance@latest retrieve "<id>"
 ```
 
-## Looking something up without running anything
-
-`references/catalog.md` lists every rule, the packages it claims, its support
-tier and its guide IDs. Load it when checking several packages at once, or
-when there is no shell available.
-
 ## Through MCP instead
 
 `npx -y youmightnotneed-mcp` serves the same catalog over stdio with three
 tools: `analyze_dependencies` takes a dependency map, `get_rule` takes an id
 or a package name, and `list_rules` returns every rule in summary form. The
-data is identical, because all four surfaces call one pure `detect()`.
+data is identical, because every surface calls one pure `detect()`.

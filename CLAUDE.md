@@ -33,9 +33,19 @@ packages/catalog   the rules, schema, baseline resolution, detect()
 packages/cli       npx youmightnotneed
 packages/mcp       npx youmightnotneed-mcp
 apps/web           youmightnotneed.dev
-skills             the distributable agent skill
+skills             the distributable agent skill, for people using the catalog
 scripts            snapshot generators, freshness check
 ```
+
+There are two kinds of skill here and they point in opposite directions.
+`.claude/skills/` is for working *on* this repo: `adding-a-rule` and
+`writing-voice`, never published. `skills/youmightnotneed/` is for agents
+*using* the catalog in someone else's codebase, installed through
+`.claude-plugin/`. A change to the rules affects the second one, so
+`pnpm refresh:skill` regenerates its catalog reference and the freshness
+check fails if it drifts. Do not put counts or rule names in its hand-written
+SKILL.md: the generated `references/catalog.md` carries those, and the
+freshness check rejects a hardcoded count.
 
 `packages/catalog/src/generated/` and
 `skills/youmightnotneed/references/catalog.md` are written by the refresh
