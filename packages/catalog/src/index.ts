@@ -76,3 +76,9 @@ export {
   ruleSchema,
   SCHEMA_VERSION,
 } from "./schema.ts";
+export {
+  MIN_QUERY_LENGTH,
+  type SearchOptions,
+  type SearchResult,
+  searchRules,
+} from "./search.ts";

@@ -8,7 +8,7 @@ import { site } from "@/lib/site";
  * page's bare URL would not go in a sitemap either.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = ["", "/rules", "/native"].map((path) => ({
+  const staticRoutes = ["", "/rules", "/packages", "/native"].map((path) => ({
     url: `${site.url}${path}`,
   }));
 
