@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const discreteTransitions: Rule = {
   id: "discrete-transitions",
   title: "Enter and exit transitions",
+  category: "animation",
   replaces: [
     "framer-motion",
     "motion",

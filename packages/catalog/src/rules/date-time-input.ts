@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const dateTimeInput: Rule = {
   id: "date-time-input",
   title: "Date and time pickers",
+  category: "forms",
   replaces: [
     "react-datepicker",
     "flatpickr",

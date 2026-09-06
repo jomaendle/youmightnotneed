@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const dragAndDrop: Rule = {
   id: "drag-and-drop",
   title: "Reordering a list by dragging",
+  category: "forms",
   replaces: ["sortablejs", "react-sortablejs"],
   featureIds: ["draganddrop"],
   native: "draggable and the drag events",

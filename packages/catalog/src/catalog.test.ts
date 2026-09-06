@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { resolveBaseline, resolveFeature } from "./baseline.ts";
+import { CATEGORIES } from "./categories.ts";
 import { baselineSnapshot } from "./generated/baseline.ts";
 import { rules, rulesByPackage } from "./rules/index.ts";
 import { catalogSchema } from "./schema.ts";
@@ -59,6 +60,12 @@ describe("the catalog", () => {
   it("exposes every claimed package in the lookup map", () => {
     const total = rules.reduce((n, r) => n + r.replaces.length, 0);
     expect(rulesByPackage.size).toBe(total);
+  });
+
+  it("uses every declared category at least once", () => {
+    const used = new Set(rules.map((r) => r.category));
+    const unused = CATEGORIES.filter((c) => !used.has(c.id));
+    expect(unused).toEqual([]);
   });
 });
 
@@ -184,6 +191,7 @@ describe("detect stays pure", () => {
     "schema.ts",
     "format.ts",
     "rules/index.ts",
+    "history.ts",
   ];
 
   it.each(pureModules)("%s imports nothing impure", (file) => {

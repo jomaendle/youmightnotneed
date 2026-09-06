@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const resizeObserver: Rule = {
   id: "resize-observer",
   title: "Element resize tracking",
+  category: "async-data",
   replaces: ["resize-observer-polyfill", "@juggle/resize-observer"],
   featureIds: ["resize-observer"],
   native: "ResizeObserver",

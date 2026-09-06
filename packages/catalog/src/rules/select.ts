@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const select: Rule = {
   id: "customizable-select",
   title: "Custom select menus",
+  category: "forms",
   replaces: [
     "react-select",
     "choices.js",

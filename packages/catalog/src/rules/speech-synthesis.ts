@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const speechSynthesis: Rule = {
   id: "speech-synthesis",
   title: "Text to speech",
+  category: "device-apis",
   replaces: ["speak-tts", "react-text-to-speech"],
   featureIds: ["speech-synthesis"],
   native: "SpeechSynthesis and SpeechSynthesisUtterance",

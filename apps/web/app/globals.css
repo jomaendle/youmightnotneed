@@ -24,6 +24,13 @@
 :root {
   color-scheme: dark light;
 
+  /*
+   * One width for the whole site: the header, main column and footer all
+   * read it, so the masthead never shifts sideways as you move between
+   * pages. Pages constrain their own prose from the inside instead.
+   */
+  --shell-max: 76rem;
+
   --c-accent: light-dark(oklch(52% 0.2 258), oklch(70% 0.16 250));
   --c-bg: light-dark(oklch(99% 0 0), oklch(15% 0.005 260));
   --c-bg-subtle: light-dark(oklch(97.5% 0.002 260), oklch(18% 0.006 260));
@@ -575,7 +582,65 @@ dialog[open]::backdrop {
 }
 
 /* ---------------------------------------------------------------------------
-   CSS-only tier filter on the rules index.
+   The rules index.
+   Narrow screens get the filters as two scrollable strips pinned under the
+   masthead, so the rules themselves are on screen immediately and the
+   filters stay reachable while you scroll. Wide screens promote the same
+   markup to a sticky sidebar.
+--------------------------------------------------------------------------- */
+
+.rules-shell {
+  display: grid;
+  /* minmax(0, 1fr) rather than the default auto: a grid track sized to
+     auto takes its max-content width, and the multi-column rule list has
+     no natural maximum, so the whole page would scroll sideways. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.rules-sidebar {
+  position: sticky;
+  /* Clears the masthead, which is 3.4rem tall. */
+  inset-block-start: 3.4rem;
+  z-index: 20;
+  /* Bleed into the page gutters so the strips can scroll edge to edge. */
+  margin-inline: -1.5rem;
+  border-block-end: 1px solid var(--c-border);
+  background: var(--c-bg);
+  padding: 0.5rem 1.5rem 0.75rem;
+}
+
+@media (width >= 64rem) {
+  .rules-shell {
+    grid-template-columns: 15rem minmax(0, 1fr);
+    gap: 3.5rem;
+  }
+
+  .rules-sidebar {
+    inset-block-start: 6rem;
+    margin-inline: 0;
+    border-block-end: 0;
+    background: none;
+    padding: 0;
+  }
+}
+
+/* A rule list wide enough to earn a second column reflows into one, with
+   the divider between items following reading order rather than geometry:
+   the same technique the rest of the site would rather use than a grid of
+   cards. */
+.rule-columns {
+  column-width: 21rem;
+  column-gap: 3rem;
+}
+
+.rule-columns > li {
+  break-inside: avoid;
+}
+
+/* ---------------------------------------------------------------------------
+   CSS-only tier and category filters on the rules index.
    Radios plus :has() do the whole thing. No JavaScript is loaded for it.
 --------------------------------------------------------------------------- */
 
@@ -585,32 +650,136 @@ dialog[open]::backdrop {
   pointer-events: none;
 }
 
-.filter-label {
+/* A fieldset carries a UA min-inline-size of min-content, so without this
+   it refuses to shrink and the widest pill pushes the page sideways. */
+.sidebar-group {
+  min-inline-size: 0;
+}
+
+.sidebar-group + .sidebar-group {
+  margin-block-start: 0.4rem;
+}
+
+.sidebar-heading {
+  margin-block-end: 0.3rem;
+  color: var(--c-fg-faint);
+  font-size: var(--text-metadata);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/*
+ * Narrow: one horizontal strip per group. scroll-padding keeps the first
+ * pill clear of the gutter when a strip is scrolled back to the start.
+ */
+.sidebar-options {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-inline: -1.5rem;
+  padding-inline: 1.5rem;
+  scroll-padding-inline: 1.5rem;
+}
+
+.sidebar-options::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-row {
+  display: flex;
   cursor: pointer;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
   border: 1px solid var(--c-border);
   border-radius: 999px;
-  padding: 0.3rem 0.75rem;
-  font-size: var(--text-metadata);
+  padding: 0.3rem 0.7rem;
   color: var(--c-fg-muted);
+  font-size: var(--text-compact);
   transition:
+    background 0.15s ease,
     border-color 0.15s ease,
     color 0.15s ease;
 }
 
-.filter-label:hover {
+.sidebar-row:hover {
   color: var(--c-fg);
   border-color: var(--c-border-strong);
 }
 
-.filter-input:checked + .filter-label {
+.filter-input:checked + .sidebar-row {
   color: var(--c-fg);
   border-color: var(--c-fg-muted);
-  background: color-mix(in oklch, var(--c-fg) 6%, transparent);
+  background: color-mix(in oklch, var(--c-fg) 8%, transparent);
+  font-weight: 560;
 }
 
-.filter-input:focus-visible + .filter-label {
+.filter-input:focus-visible + .sidebar-row {
   outline: 2px solid var(--c-accent);
   outline-offset: 2px;
+}
+
+/* The tier legend is a desktop-only aside: on a strip it would be one more
+   thing to scroll past before reaching the rules. */
+.sidebar-aside {
+  display: none;
+}
+
+/* Wide: the same radios become a vertical list of full-width rows. */
+@media (width >= 64rem) {
+  .sidebar-group + .sidebar-group {
+    margin-block-start: 1.75rem;
+  }
+
+  .sidebar-heading {
+    margin-block-end: 0.4rem;
+  }
+
+  .sidebar-options {
+    display: block;
+    overflow-x: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .sidebar-row {
+    gap: 0.55rem;
+    border: 0;
+    border-radius: 6px;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .filter-input:checked + .sidebar-row {
+    background: color-mix(in oklch, var(--c-fg) 8%, transparent);
+  }
+
+  .sidebar-row:hover {
+    background: color-mix(in oklch, var(--c-fg) 5%, transparent);
+  }
+
+  .sidebar-aside {
+    display: block;
+    margin-block-start: 0.5rem;
+    padding-inline-start: 0.5rem;
+  }
+}
+
+.sidebar-row-dot {
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background: var(--tier, var(--c-border-strong));
+  flex: none;
+}
+
+.sidebar-row-label {
+  flex: 1;
+}
+
+.sidebar-row-count {
+  color: var(--c-fg-faint);
+  font-variant-numeric: tabular-nums;
 }
 
 .catalog:has(#filter-widely:checked) [data-tier]:not([data-tier="widely"]),
@@ -624,5 +793,21 @@ dialog[open]::backdrop {
 .catalog:has(#filter-newly:checked) [data-tier-group]:not([data-tier-group="newly"]),
 .catalog:has(#filter-limited:checked)
   [data-tier-group]:not([data-tier-group="limited"]) {
+  display: none;
+}
+
+/*
+  Category filter, same CSS-only idiom as the tier filter above. It composes
+  with the tier filter as an AND: each independently sets display: none, so
+  a rule only shows once both filters agree it belongs.
+*/
+.catalog:has(#cat-filter-layout:checked) [data-category]:not([data-category="layout"]),
+.catalog:has(#cat-filter-scrolling:checked) [data-category]:not([data-category="scrolling"]),
+.catalog:has(#cat-filter-animation:checked) [data-category]:not([data-category="animation"]),
+.catalog:has(#cat-filter-typography:checked) [data-category]:not([data-category="typography"]),
+.catalog:has(#cat-filter-forms:checked) [data-category]:not([data-category="forms"]),
+.catalog:has(#cat-filter-device-apis:checked) [data-category]:not([data-category="device-apis"]),
+.catalog:has(#cat-filter-async-data:checked) [data-category]:not([data-category="async-data"]),
+.catalog:has(#cat-filter-formatting:checked) [data-category]:not([data-category="formatting"]) {
   display: none;
 }

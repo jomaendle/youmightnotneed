@@ -1,4 +1,5 @@
 import {
+  CATEGORIES,
   formatBytes,
   packageSizes,
   resolveBaseline,
@@ -8,7 +9,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { TierHelp } from "@/components/tier-help";
-import { TIERS } from "@/lib/tiers";
+import { TIERS, TIERS_BY_STATUS } from "@/lib/tiers";
 
 export const metadata: Metadata = {
   title: "Rules",
@@ -23,18 +24,28 @@ function weight(replaces: readonly string[]): number {
   );
 }
 
-const FILTERS = [
-  { id: "filter-all", label: "All" },
-  { id: "filter-widely", label: "Safe today" },
-  { id: "filter-newly", label: "Newly available" },
-  { id: "filter-limited", label: "Bleeding edge" },
-] as const;
+/** The statuses a reader can actually filter by. "unknown" is a data gap,
+ * not a choice, so it is left out, matching TierHelp. */
+const FILTERABLE_STATUSES = ["widely", "newly", "limited"] as const;
 
 export default function RulesPage() {
   const withBaseline = rules.map((rule) => ({
     rule,
     status: resolveBaseline(rule).status,
   }));
+
+  const tierCounts = new Map<string, number>();
+  for (const entry of withBaseline) {
+    tierCounts.set(entry.status, (tierCounts.get(entry.status) ?? 0) + 1);
+  }
+
+  const categoryCounts = new Map<string, number>();
+  for (const rule of rules) {
+    categoryCounts.set(
+      rule.category,
+      (categoryCounts.get(rule.category) ?? 0) + 1,
+    );
+  }
 
   return (
     <div className="space-y-10">
@@ -48,80 +59,151 @@ export default function RulesPage() {
       </header>
 
       {/*
-        The filter is radios plus :has() in globals.css. It ships no
-        JavaScript, and it keeps working with JavaScript disabled.
-      */}
-      <div className="catalog">
-        <fieldset className="hairline flex flex-wrap items-center gap-2 pt-6 pb-2">
-          <legend className="sr-only">Filter by support tier</legend>
-          {FILTERS.map((filter, index) => (
-            <span key={filter.id} className="relative">
-              <input
-                type="radio"
-                name="tier-filter"
-                id={filter.id}
-                className="filter-input"
-                defaultChecked={index === 0}
-              />
-              <label htmlFor={filter.id} className="filter-label">
-                {filter.label}
-              </label>
-            </span>
-          ))}
-          <span className="ml-auto">
-            <TierHelp />
-          </span>
-        </fieldset>
-
-        {TIERS.map((tier) => {
-          const inTier = withBaseline
-            .filter((entry) => entry.status === tier.status)
-            .sort((a, b) => weight(b.rule.replaces) - weight(a.rule.replaces));
-          if (inTier.length === 0) return null;
-
-          return (
-            <section
-              key={tier.status}
-              data-tier-group={tier.status}
-              className="pt-10"
-            >
-              <div className="mb-1 flex flex-wrap items-baseline gap-x-3">
-                <h2 className="text-section">{tier.verdict}</h2>
-                <BaselineBadge status={tier.status} short={true} />
+          The filter is radios plus :has() in globals.css, scoped to the
+          .catalog wrapper below. It ships no JavaScript, and it keeps
+          working with JavaScript disabled.
+        */}
+      <div className="catalog rules-shell">
+        <aside className="rules-sidebar">
+          <fieldset className="sidebar-group">
+            <legend className="sidebar-heading">Support tier</legend>
+            <div className="sidebar-options">
+              <div className="relative">
+                <input
+                  type="radio"
+                  name="tier-filter"
+                  id="filter-all"
+                  className="filter-input"
+                  defaultChecked={true}
+                />
+                <label htmlFor="filter-all" className="sidebar-row">
+                  <span className="sidebar-row-label">All tiers</span>
+                  <span className="sidebar-row-count">{rules.length}</span>
+                </label>
               </div>
-              <p className="mb-2 max-w-[60ch] text-compact text-fg-muted">
-                {tier.note}
-              </p>
+              {FILTERABLE_STATUSES.map((status) => {
+                const tier = TIERS_BY_STATUS[status];
+                return (
+                  <div key={status} className="relative">
+                    <input
+                      type="radio"
+                      name="tier-filter"
+                      id={`filter-${status}`}
+                      className="filter-input"
+                    />
+                    <label htmlFor={`filter-${status}`} className="sidebar-row">
+                      <span
+                        className={`sidebar-row-dot ${tier.cssTier}`}
+                        aria-hidden="true"
+                      />
+                      <span className="sidebar-row-label">{tier.verdict}</span>
+                      <span className="sidebar-row-count">
+                        {tierCounts.get(status) ?? 0}
+                      </span>
+                    </label>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="sidebar-aside">
+              <TierHelp />
+            </div>
+          </fieldset>
 
-              <ul className="rule-list">
-                {inTier.map(({ rule, status }) => (
-                  <li key={rule.id} data-tier={status}>
-                    <Link
-                      href={`/rules/${rule.id}`}
-                      className="plain group flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3.5 no-underline"
+          <fieldset className="sidebar-group">
+            <legend className="sidebar-heading">Category</legend>
+            <div className="sidebar-options">
+              <div className="relative">
+                <input
+                  type="radio"
+                  name="cat-filter"
+                  id="cat-filter-all"
+                  className="filter-input"
+                  defaultChecked={true}
+                />
+                <label htmlFor="cat-filter-all" className="sidebar-row">
+                  <span className="sidebar-row-label">All categories</span>
+                  <span className="sidebar-row-count">{rules.length}</span>
+                </label>
+              </div>
+              {CATEGORIES.map((category) => (
+                <div key={category.id} className="relative">
+                  <input
+                    type="radio"
+                    name="cat-filter"
+                    id={`cat-filter-${category.id}`}
+                    className="filter-input"
+                  />
+                  <label
+                    htmlFor={`cat-filter-${category.id}`}
+                    className="sidebar-row"
+                  >
+                    <span className="sidebar-row-label">{category.name}</span>
+                    <span className="sidebar-row-count">
+                      {categoryCounts.get(category.id) ?? 0}
+                    </span>
+                  </label>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+        </aside>
+
+        <div>
+          {TIERS.map((tier) => {
+            const inTier = withBaseline
+              .filter((entry) => entry.status === tier.status)
+              .sort(
+                (a, b) => weight(b.rule.replaces) - weight(a.rule.replaces),
+              );
+            if (inTier.length === 0) return null;
+
+            return (
+              <section
+                key={tier.status}
+                data-tier-group={tier.status}
+                className="pt-10 first:pt-0"
+              >
+                <div className="mb-1 flex flex-wrap items-baseline gap-x-3">
+                  <h2 className="text-section">{tier.verdict}</h2>
+                  <BaselineBadge status={tier.status} short={true} />
+                </div>
+                <p className="mb-2 max-w-[60ch] text-compact text-fg-muted">
+                  {tier.note}
+                </p>
+
+                <ul className="rule-list rule-columns">
+                  {inTier.map(({ rule, status }) => (
+                    <li
+                      key={rule.id}
+                      data-tier={status}
+                      data-category={rule.category}
                     >
-                      <span className="flex-1 basis-64">
+                      <Link
+                        href={`/rules/${rule.id}`}
+                        className="plain group flex flex-col gap-y-1 py-3.5 no-underline"
+                      >
                         <span className="block group-hover:underline">
                           {rule.title}
                         </span>
                         <span className="block font-mono text-accent text-metadata">
                           {rule.native}
                         </span>
-                      </span>
-                      <span className="text-fg-faint text-metadata tabular-nums">
-                        {rule.replaces.length}{" "}
-                        {rule.replaces.length === 1 ? "package" : "packages"}
-                        {weight(rule.replaces) > 0
-                          ? ` · up to ${formatBytes(weight(rule.replaces))}`
-                          : ""}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          );
-        })}
+                        <span className="text-fg-faint text-metadata tabular-nums">
+                          {rule.replaces.length}{" "}
+                          {rule.replaces.length === 1 ? "package" : "packages"}
+                          {weight(rule.replaces) > 0
+                            ? ` · up to ${formatBytes(weight(rule.replaces))}`
+                            : ""}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
       </div>
 
       <section className="hairline pt-8">

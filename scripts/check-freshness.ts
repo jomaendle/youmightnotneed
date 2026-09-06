@@ -17,6 +17,7 @@ import { dirname, join } from "node:path";
 
 import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
+import { baselineHistory } from "../packages/catalog/src/generated/baseline-history.ts";
 import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
 
@@ -105,6 +106,15 @@ const installed = installedWebFeaturesVersion();
 if (installed && installed !== baselineSnapshot.webFeaturesVersion) {
   warnings.push(
     `The snapshot came from web-features@${baselineSnapshot.webFeaturesVersion} but web-features@${installed} is installed. Run \`pnpm refresh:baseline\`.`,
+  );
+}
+
+// 5. The history snapshot should track the current run, not a stale/hand-edited one.
+const lastHistoryMonth = baselineHistory.entries.at(-1)?.month ?? null;
+const currentMonth = baselineSnapshot.generatedOn.slice(0, 7);
+if (lastHistoryMonth !== currentMonth) {
+  warnings.push(
+    `The history snapshot's last entry (${lastHistoryMonth ?? "none"}) does not match the current baseline snapshot month (${currentMonth}). Run \`pnpm refresh:baseline\`.`,
   );
 }
 

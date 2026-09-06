@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const broadcastChannel: Rule = {
   id: "broadcast-channel",
   title: "Cross-tab messaging",
+  category: "device-apis",
   replaces: ["broadcast-channel"],
   featureIds: ["broadcast-channel"],
   native: "BroadcastChannel",

@@ -6,6 +6,7 @@ function validRule() {
   return {
     id: "example-rule",
     title: "Example",
+    category: "forms",
     replaces: ["some-package"],
     featureIds: ["dialog"],
     native: "<dialog>",

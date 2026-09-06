@@ -3,6 +3,7 @@ import type { Rule } from "../schema.ts";
 export const masonry: Rule = {
   id: "css-masonry",
   title: "Masonry layouts",
+  category: "layout",
   replaces: [
     "react-masonry-css",
     "masonry-layout",

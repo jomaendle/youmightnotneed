@@ -21,6 +21,12 @@ export {
   WEB_FEATURES_VERSION,
 } from "./baseline.ts";
 export {
+  CATEGORIES,
+  CATEGORIES_BY_ID,
+  type CategoryId,
+  categorySchema,
+} from "./categories.ts";
+export {
   analyze,
   DEPENDENCY_FIELDS,
   type DependencyField,
@@ -40,7 +46,13 @@ export {
   formatHeadline,
   formatList,
 } from "./format.ts";
+export {
+  type BaselineHistory,
+  type BaselineHistoryEntry,
+  baselineHistory,
+} from "./generated/baseline-history.ts";
 export { packageSizes, type SizeSnapshot } from "./generated/sizes.ts";
+export { type TierShare, tierShareOf } from "./history.ts";
 export { rules, rulesById, rulesByPackage } from "./rules/index.ts";
 export {
   type BaselineStatus,

@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" className={inter.variable}>
       <body className="min-h-dvh">
         <header className="sticky top-0 z-40 border-border border-b bg-bg/85 backdrop-blur-sm">
-          <nav className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3.5 sm:gap-6 sm:px-6">
+          <nav className="mx-auto flex max-w-[var(--shell-max)] items-center justify-between gap-3 px-4 py-3.5 sm:gap-6 sm:px-6">
             <Link
               href="/"
               className="plain flex shrink-0 items-center gap-2 whitespace-nowrap font-medium font-mono text-[0.9375rem] tracking-tight no-underline"
@@ -126,9 +126,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </nav>
         </header>
 
-        <main className="mx-auto max-w-4xl px-6 py-14">{children}</main>
+        <main className="mx-auto max-w-[var(--shell-max)] px-6 py-14">
+          {children}
+        </main>
 
-        <footer className="mx-auto max-w-4xl px-6 pt-10 pb-16">
+        <footer className="mx-auto max-w-[var(--shell-max)] px-6 pt-10 pb-16">
           <div className="hairline space-y-2 pt-6 text-fg-faint text-metadata">
             <p>
               Support data comes from{" "}
