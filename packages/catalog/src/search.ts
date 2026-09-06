@@ -38,8 +38,12 @@ export interface SearchOptions {
 /**
  * Two characters. One is a substring of most of the catalog, and a list of
  * everything is what `/rules` is for.
+ *
+ * Exported because an empty result means two different things. A surface that
+ * cannot tell "no rule covers this" from "the search declined to run" tells
+ * the reader the catalog has nothing for a query it never ran.
  */
-const MIN_QUERY_LENGTH = 2;
+export const MIN_QUERY_LENGTH = 2;
 
 function scorePackage(name: string, query: string): number {
   const lower = name.toLowerCase();

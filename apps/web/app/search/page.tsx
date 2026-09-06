@@ -1,6 +1,5 @@
 import {
-  formatBytes,
-  packageSizes,
+  MIN_QUERY_LENGTH,
   resolveBaseline,
   rules,
   type SearchResult,
@@ -11,10 +10,11 @@ import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { SearchField } from "@/components/search-field";
 import { ALL_PACKAGES } from "@/lib/packages";
+import { readQuery } from "@/lib/search-query";
 import { site } from "@/lib/site";
 
 interface PageProps {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }
 
 /** Package names people are most likely to recognise, one per area. */
@@ -29,10 +29,10 @@ const EXAMPLES = [
 export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
-  const query = (await searchParams).q?.trim();
+  const query = readQuery((await searchParams).q);
 
   return {
-    title: query ? `Search: ${query}` : "Search",
+    title: query === "" ? "Search" : `Search: ${query}`,
     description: `Look up one of the ${ALL_PACKAGES.length} npm packages in the catalog and see which native feature covers it.`,
     /*
      * A result page per query is thin, near-duplicate content, and the query
@@ -44,7 +44,7 @@ export async function generateMetadata({
 }
 
 export default async function SearchPage({ searchParams }: PageProps) {
-  const query = ((await searchParams).q ?? "").trim();
+  const query = readQuery((await searchParams).q);
   const results = searchRules(query);
 
   return (
@@ -73,6 +73,7 @@ function Body({
   results: readonly SearchResult[];
 }) {
   if (query === "") return <Prompt />;
+  if (query.length < MIN_QUERY_LENGTH) return <TooShort />;
   if (results.length === 0) return <NoMatch query={query} />;
 
   return (
@@ -90,11 +91,22 @@ function Body({
 }
 
 function Headline({ query, count }: { query: string; count: number }) {
+  if (query.length < MIN_QUERY_LENGTH) return <>Search the catalog</>;
   if (count === 0) return <>Nothing matches {query}</>;
   return (
     <>
       {count} {count === 1 ? "rule" : "rules"} for {query}
     </>
+  );
+}
+
+function TooShort() {
+  return (
+    <p className="max-w-[58ch] text-fg-muted">
+      One letter matches most of the catalog, so the search waits for{" "}
+      {MIN_QUERY_LENGTH}. Keep typing, or{" "}
+      <Link href="/packages">browse the {ALL_PACKAGES.length} names</Link>.
+    </p>
   );
 }
 
@@ -157,10 +169,6 @@ function NoMatch({ query }: { query: string }) {
 
 function Result({ result }: { result: SearchResult }) {
   const { rule, packages } = result;
-  const bytes = packages.reduce(
-    (total, name) => total + (packageSizes.sizes[name]?.gzip ?? 0),
-    0,
-  );
 
   return (
     <li>
@@ -178,7 +186,6 @@ function Result({ result }: { result: SearchResult }) {
         {packages.length === 0 ? null : (
           <span className="block font-mono text-fg-faint text-metadata">
             {packages.join(", ")}
-            {bytes > 0 ? ` · up to ${formatBytes(bytes)}` : ""}
           </span>
         )}
       </Link>
