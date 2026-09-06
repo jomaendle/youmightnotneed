@@ -13,11 +13,13 @@ export {
   baselineShortLabel,
   combinedSupport,
   compareBaseline,
+  hasNoVersions,
   type ResolvedFeature,
   resolveBaseline,
   resolveFeature,
   TRACKED_BROWSERS,
   type TrackedBrowser,
+  unpublishedSupport,
   WEB_FEATURES_VERSION,
 } from "./baseline.ts";
 export {

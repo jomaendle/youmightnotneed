@@ -6,9 +6,11 @@ import {
   baselineShortLabel,
   combinedSupport,
   compareBaseline,
+  hasNoVersions,
   resolveBaseline,
   resolveFeature,
   TRACKED_BROWSERS,
+  unpublishedSupport,
   WEB_FEATURES_VERSION,
 } from "./baseline.ts";
 import type { Rule } from "./schema.ts";
@@ -234,4 +236,53 @@ describe("prototype keys are not features", () => {
       expect(feature.name).toBe(id);
     },
   );
+});
+
+describe("features web-features publishes no aggregate for", () => {
+  // Anchor positioning is the case this exists for: 319 of its 325 compat
+  // keys are Baseline, six are not, so the feature reports support: {} and a
+  // version row would render as four dashes meaning "no engine has this".
+  const anchor = resolveFeature("anchor-positioning");
+
+  it("has no aggregate versions", () => {
+    expect(hasNoVersions(anchor.support)).toBe(true);
+  });
+
+  it("carries the stand-in part instead, named", () => {
+    expect(anchor.partialSupport?.key).toBe("css.properties.anchor-name");
+    // Not asserted as literals: the point is that the numbers exist and come
+    // from the snapshot, not that they are any particular version today.
+    for (const browser of TRACKED_BROWSERS) {
+      expect(anchor.partialSupport?.support[browser], browser).not.toBeNull();
+    }
+  });
+
+  it("is reported by unpublishedSupport so a caller can explain the gap", () => {
+    const dialog = resolveFeature("dialog");
+    expect(unpublishedSupport([dialog, anchor]).map((f) => f.id)).toEqual([
+      "anchor-positioning",
+    ]);
+  });
+
+  it("leaves a feature with a real support row alone", () => {
+    const dialog = resolveFeature("dialog");
+    expect(hasNoVersions(dialog.support)).toBe(false);
+    expect(unpublishedSupport([dialog])).toEqual([]);
+  });
+
+  it("does not claim a stand-in for a feature that has no data at all", () => {
+    // web-features tracks masonry with zero compat keys, so there is no part
+    // to stand in and nothing to show. Saying "no engine has this" would be a
+    // claim the source does not make.
+    const masonry = resolveFeature("masonry");
+    expect(hasNoVersions(masonry.support)).toBe(true);
+    expect(masonry.partialSupport).toBeNull();
+    expect(unpublishedSupport([masonry])).toEqual([]);
+  });
+
+  it("treats an unknown feature as having no versions", () => {
+    expect(hasNoVersions(resolveFeature("not-a-real-feature-id").support)).toBe(
+      true,
+    );
+  });
 });

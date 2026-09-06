@@ -57,6 +57,11 @@ interface WebFeature {
     baseline_low_date?: string;
     baseline_high_date?: string;
     support?: Record<string, string>;
+    /** Per-BCD-key status, which a feature carries even when the aggregate does not. */
+    by_compat_key?: Record<
+      string,
+      { baseline?: "high" | "low" | false; support?: Record<string, string> }
+    >;
   };
   spec?: string | string[];
 }
@@ -126,17 +131,102 @@ function trackedSupport(
   return result;
 }
 
+/**
+ * A feature that is not Baseline as a whole gets no aggregate `support` from
+ * web-features, even when almost all of its parts have shipped everywhere.
+ * Anchor positioning is the case that exposed this: 319 of its 325 compat keys
+ * are Baseline since 2026-01-13, six are not, and the feature therefore
+ * publishes `support: {}`. Rendered as four dashes, that reads as "no engine
+ * has this", which is the opposite of the truth.
+ *
+ * So a feature with no aggregate names one compat key that stands in for it,
+ * and the versions come from web-features' own `by_compat_key`. Nothing is
+ * computed across keys and nothing is typed by hand: the stand-in is a
+ * pointer, and if a feature loses its aggregate without one being named here,
+ * the refresh fails rather than shipping a row of dashes.
+ *
+ * Pick the key a reader would look up: the property or interface the rules
+ * actually write, not the widest or the narrowest part of the feature.
+ */
+const SUPPORT_STANDINS: Record<string, string> = {
+  // The property that establishes an anchor. Chrome's own docs badge the API
+  // with these versions. position-anchor is deliberately not the stand-in: it
+  // shipped with a non-standard initial value and BCD only counts it from
+  // Chrome 151.
+  "anchor-positioning": "css.properties.anchor-name",
+  // The pseudo-element itself. Its `next` and `prev` arguments have no data
+  // anywhere, which is what empties the aggregate.
+  "scroll-buttons": "css.selectors.scroll-button",
+};
+
+/**
+ * Features with no aggregate support and no per-key data either, so there is
+ * nothing to stand in. Masonry is the whole set today: web-features tracks it
+ * with zero compat features because the syntax is not settled.
+ */
+const NO_SUPPORT_DATA = new Set(["masonry"]);
+
+function hasNoTrackedVersion(support: Record<string, string | null>): boolean {
+  return TRACKED_BROWSERS.every((browser) => support[browser] === null);
+}
+
+/**
+ * Resolves the stand-in row for a feature whose aggregate is empty. Returns
+ * null when the aggregate is fine, and exits when a feature needs a stand-in
+ * that nobody declared.
+ */
+function partialSupport(
+  id: string,
+  feature: WebFeature,
+  aggregate: Record<string, string | null>,
+): { key: string; support: Record<string, string | null> } | null {
+  if (!hasNoTrackedVersion(aggregate)) return null;
+  if (NO_SUPPORT_DATA.has(id)) return null;
+
+  const key = SUPPORT_STANDINS[id];
+  const byKey = feature.status?.by_compat_key;
+  if (!(key && byKey)) {
+    console.error(
+      `web-features publishes no aggregate support for "${id}", so its row would render as dashes in every browser. Name a compat key for it in SUPPORT_STANDINS in this script, or add it to NO_SUPPORT_DATA if it genuinely has no data. Its keys with data:\n  ${suggestKeys(byKey).join("\n  ")}`,
+    );
+    process.exit(1);
+  }
+
+  const entry = byKey[key];
+  if (!entry?.support) {
+    console.error(
+      `SUPPORT_STANDINS points "${id}" at "${key}", which web-features@${webFeaturesVersion} does not carry support data for. Pick another key.`,
+    );
+    process.exit(1);
+  }
+
+  return { key, support: trackedSupport(entry.support) };
+}
+
+/** The first few compat keys that do have versions, to make the error actionable. */
+function suggestKeys(
+  byKey: Record<string, { support?: Record<string, string> }> | undefined,
+): string[] {
+  if (!byKey) return ["(none: the feature has no compat keys at all)"];
+  return Object.entries(byKey)
+    .filter(([, v]) => v.support && Object.keys(v.support).length > 0)
+    .slice(0, 8)
+    .map(([k, v]) => `${k} ${JSON.stringify(v.support)}`);
+}
+
 const snapshot: Record<string, unknown> = {};
 for (const id of referenced) {
   const feature = features[id];
   if (!feature) continue;
+  const support = trackedSupport(feature.status?.support);
   snapshot[id] = {
     name: feature.name ?? id,
     baseline: feature.status?.baseline ?? false,
     lowDate: cleanDate(feature.status?.baseline_low_date),
     highDate: cleanDate(feature.status?.baseline_high_date),
     spec: firstSpec(feature.spec),
-    support: trackedSupport(feature.status?.support),
+    support,
+    partialSupport: partialSupport(id, feature, support),
   };
 }
 
@@ -163,6 +253,16 @@ export interface BaselineSnapshotEntry {
    * because the feature never shipped there).
    */
   support: Record<string, string | null>;
+  /**
+   * Set only when web-features publishes no aggregate support for the feature.
+   * \`key\` names one of its BCD compat keys and \`support\` is that key's own
+   * versions, straight from web-features. It describes a part of the feature,
+   * never the whole, so it is shown with the part named next to it.
+   */
+  partialSupport: {
+    key: string;
+    support: Record<string, string | null>;
+  } | null;
 }
 
 export interface BaselineSnapshot {

@@ -4,13 +4,16 @@ import {
   combinedSupport,
   formatBytes,
   GUIDE_SOURCE,
+  hasNoVersions,
   packageSizes,
+  type ResolvedFeature,
   type ResolvedGuide,
   type Rule,
   resolveBaseline,
   resolveGuides,
   rules,
   rulesById,
+  unpublishedSupport,
 } from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -173,13 +176,44 @@ function RuleHeader({
           {baseline.note}
         </p>
       )}
-      {baseline.features.length === 0 ? null : (
-        <div className="mt-4">
-          <BrowserSupport support={combinedSupport(baseline.features)} />
-        </div>
-      )}
+      <HeaderSupport features={baseline.features} />
     </header>
   );
+}
+
+/**
+ * The one-line version row for the whole rule: the highest minimum across its
+ * features. It goes missing entirely when any feature has no published
+ * versions, because a row of dashes there reads as "no engine has this" when
+ * the truth is "web-features publishes no number for the feature as a whole".
+ * The feature table below says which part is missing and what it needs.
+ */
+function HeaderSupport({ features }: { features: readonly ResolvedFeature[] }) {
+  if (features.length === 0) return null;
+
+  const combined = combinedSupport(features);
+  if (!hasNoVersions(combined)) {
+    return (
+      <div className="mt-4">
+        <BrowserSupport support={combined} />
+      </div>
+    );
+  }
+
+  const unpublished = unpublishedSupport(features);
+  return (
+    <p className="mt-4 max-w-[62ch] text-fg-muted text-metadata">
+      {unpublished.length === 0
+        ? "web-features tracks no browser versions for this feature yet."
+        : `web-features publishes no single version for ${listNames(unpublished)}, so there is no one row for this rule. The versions its parts do have are below.`}
+    </p>
+  );
+}
+
+function listNames(features: readonly ResolvedFeature[]): string {
+  const names = features.map((feature) => feature.name);
+  if (names.length <= 1) return names[0] ?? "";
+  return `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
 }
 
 /** "carousel-snap-highlights" reads as "Carousel snap highlights". */
@@ -285,13 +319,7 @@ function FeatureTable({
   cappedBy,
   status,
 }: {
-  features: readonly {
-    id: string;
-    name: string;
-    status: Parameters<typeof baselineLabel>[0];
-    since: string | null;
-    spec: string | null;
-  }[];
+  features: readonly ResolvedFeature[];
   cappedBy: string | null;
   status: Parameters<typeof baselineLabel>[0];
 }) {
@@ -319,6 +347,21 @@ function FeatureTable({
               )}
             </span>
             <BaselineBadge status={feature.status} short={true} />
+            {feature.partialSupport === null ||
+            !hasNoVersions(feature.support) ? null : (
+              <div className="w-full">
+                <p className="mb-2 max-w-[62ch] text-fg-muted text-metadata">
+                  web-features publishes no version for {feature.name} as a
+                  whole, because a small part of it has not shipped anywhere.
+                  These are the versions for{" "}
+                  <code className="font-mono">
+                    {feature.partialSupport.key}
+                  </code>
+                  , the part this rule is built on.
+                </p>
+                <BrowserSupport support={feature.partialSupport.support} />
+              </div>
+            )}
           </li>
         ))}
       </ul>
