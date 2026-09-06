@@ -10,7 +10,12 @@
  * The header copy of this field cannot be filled in with the current query:
  * a layout in the App Router is not given searchParams. That is why the
  * search page renders its own copy underneath its heading.
+ *
+ * Autocomplete comes from a <datalist> of every package name the catalog
+ * covers. See components/package-datalist.tsx.
  */
+import { DATALIST_ID } from "@/lib/packages";
+
 export function SearchField({
   variant,
   defaultValue,
@@ -33,9 +38,10 @@ export function SearchField({
           type="search"
           id={id}
           name="q"
+          // The option list itself is rendered once, in the layout.
+          list={DATALIST_ID}
           defaultValue={defaultValue}
           placeholder="swiper, uuid, axios"
-          autoComplete="off"
           spellCheck={false}
           className={`block w-full rounded-md border border-border bg-bg-subtle font-mono outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint ${
             onPage

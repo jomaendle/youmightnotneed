@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { SearchField } from "@/components/search-field";
+import { ALL_PACKAGES } from "@/lib/packages";
 import { site } from "@/lib/site";
 
 interface PageProps {
@@ -25,8 +26,6 @@ const EXAMPLES = [
   "@floating-ui/react",
 ] as const;
 
-const packageCount = new Set(rules.flatMap((rule) => rule.replaces)).size;
-
 export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
@@ -34,7 +33,7 @@ export async function generateMetadata({
 
   return {
     title: query ? `Search: ${query}` : "Search",
-    description: `Look up one of the ${packageCount} npm packages in the catalog and see which native feature covers it.`,
+    description: `Look up one of the ${ALL_PACKAGES.length} npm packages in the catalog and see which native feature covers it.`,
     /*
      * A result page per query is thin, near-duplicate content, and the query
      * string is open to anything a crawler cares to invent. The rule pages
@@ -103,8 +102,13 @@ function Prompt() {
   return (
     <div className="space-y-5">
       <p className="max-w-[58ch] text-fg-muted text-lede">
-        {packageCount} package names across {rules.length} rules. Type one you
-        have installed, or the feature you are looking for.
+        {ALL_PACKAGES.length} package names across {rules.length} rules. Type
+        one you have installed, or the feature you are looking for.
+      </p>
+      <p className="text-compact">
+        <Link href="/packages">
+          Browse all {ALL_PACKAGES.length} package names
+        </Link>
       </p>
       <p className="flex flex-wrap items-baseline gap-x-3 gap-y-2 text-metadata">
         <span className="text-fg-faint">Try</span>
@@ -128,7 +132,7 @@ function NoMatch({ query }: { query: string }) {
   return (
     <div className="max-w-[58ch] space-y-3 text-fg-muted">
       <p>
-        The catalog has {packageCount} package names in it and{" "}
+        The catalog has {ALL_PACKAGES.length} package names in it and{" "}
         <span className="font-mono text-fg">{query}</span> is not one of them.
         That is a gap in the catalog rather than a verdict on the package.
       </p>
@@ -141,10 +145,11 @@ function NoMatch({ query }: { query: string }) {
         </a>
         .
       </p>
-      <p>
-        <Link href="/rules" className="text-compact">
-          Browse all {rules.length} rules
+      <p className="text-compact">
+        <Link href="/packages">
+          Browse all {ALL_PACKAGES.length} package names
         </Link>
+        , or <Link href="/rules">all {rules.length} rules</Link>.
       </p>
     </div>
   );

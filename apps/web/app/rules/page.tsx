@@ -9,6 +9,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { TierHelp } from "@/components/tier-help";
+import { ALL_PACKAGES } from "@/lib/packages";
 import { TIERS, TIERS_BY_STATUS } from "@/lib/tiers";
 
 export const metadata: Metadata = {
@@ -93,6 +94,11 @@ export default function RulesPage() {
           {rules.length} rules. Each maps a set of npm packages to the native
           approach that covers the same ground, and states where the package is
           still the better choice.
+        </p>
+        <p className="mt-3 text-compact">
+          <Link href="/packages">
+            Or browse the {ALL_PACKAGES.length} package names
+          </Link>
         </p>
       </header>
 

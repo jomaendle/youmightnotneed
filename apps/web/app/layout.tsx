@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { PackageDatalist } from "@/components/package-datalist";
 import { SearchField } from "@/components/search-field";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -156,6 +157,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </ul>
           </nav>
         </header>
+
+        {/* One per document, referenced by id from every search field. */}
+        <PackageDatalist />
 
         <main className="mx-auto max-w-[var(--shell-max)] px-6 py-14">
           {children}
