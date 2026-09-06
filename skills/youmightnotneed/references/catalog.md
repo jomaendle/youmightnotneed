@@ -154,7 +154,7 @@ Sorted by title.
 - **support**: limited (capped by ::scroll-button)
 - **replaces**: `swiper`, `embla-carousel`, `embla-carousel-react`, `react-slick`, `slick-carousel`, `keen-slider`, `flickity`, `vue3-carousel`, `ngx-owl-carousel-o`, `vue-awesome-swiper`
 - **when**: building a horizontal gallery with prev/next buttons and dot indicators
-- **guides**: carousel-snap-highlights, carousel-slide-effects, scroll-snap-state-sync
+- **guides**: carousel-snap-highlights, carousel-slide-effects, scroll-snap-state-sync, scroll-snap-realtime-feedback
 
 ### Colour manipulation
 
@@ -229,7 +229,7 @@ Sorted by title.
 - **support**: newly available
 - **replaces**: `framer-motion`, `motion`, `react-transition-group`, `react-spring`
 - **when**: fading or sliding an element in and out as it is added to or removed from the DOM
-- **guides**: animate-element-entry-exit
+- **guides**: animate-element-entry-exit, physics-based-easing, dynamic-sibling-animations
 
 ### Event emitters
 
@@ -413,7 +413,7 @@ Sorted by title.
 - **support**: newly available
 - **replaces**: `next-view-transitions`, `react-page-transition`, `barba.js`, `swup`
 - **when**: cross-fading between two states, or growing a thumbnail into a hero image across a navigation
-- **guides**: same-document-transitions, cross-document-transitions, faster-spa-view-transitions
+- **guides**: same-document-transitions, cross-document-transitions, faster-spa-view-transitions, consistent-cross-document-transitions, directional-navigation-transitions, group-element-transitions
 
 ### Query string parsing
 

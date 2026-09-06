@@ -86,5 +86,6 @@ export const carousel: Rule = {
     "carousel-snap-highlights",
     "carousel-slide-effects",
     "scroll-snap-state-sync",
+    "scroll-snap-realtime-feedback",
   ],
 };
