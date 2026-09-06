@@ -138,12 +138,27 @@ export function TierHistorySparkline({
         ))}
       </svg>
 
-      {/* The badges carry each tier's glyph shape and spelled-out label, and
-          the dash pattern matches its line, so the chart is still readable
-          without telling the colours apart. */}
+      {/* Each row pairs a swatch drawn with its line's own dash pattern with
+          the badge's glyph shape and spelled-out label, so a reader can match
+          a line to a tier without telling the three colours apart. */}
       <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
         {LINES.map((line) => (
-          <li key={line.status}>
+          <li key={line.status} className="flex items-center gap-2">
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 2"
+              className="h-0.5 w-6 flex-none"
+            >
+              <line
+                x1="0"
+                y1="1"
+                x2="24"
+                y2="1"
+                stroke={line.stroke}
+                strokeWidth="2"
+                strokeDasharray={line.dash}
+              />
+            </svg>
             <BaselineBadge status={line.status} short={true} />
           </li>
         ))}

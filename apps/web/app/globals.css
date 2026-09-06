@@ -671,13 +671,21 @@ dialog[open]::backdrop {
 /*
  * Narrow: one horizontal strip per group. scroll-padding keeps the first
  * pill clear of the gutter when a strip is scrolled back to the start.
+ *
+ * The block padding is not decoration. overflow-x: auto makes overflow-y
+ * compute to auto too, so without headroom the strip clips the focus ring
+ * of whichever pill is focused, and on this width that ring is the only
+ * focus cue a keyboard gets. The negative margin gives it back, leaving
+ * the strip's outer box where it was.
  */
 .sidebar-options {
   display: flex;
   gap: 0.4rem;
   overflow-x: auto;
   scrollbar-width: none;
+  margin-block: -0.3rem;
   margin-inline: -1.5rem;
+  padding-block: 0.3rem;
   padding-inline: 1.5rem;
   scroll-padding-inline: 1.5rem;
 }
@@ -739,7 +747,9 @@ dialog[open]::backdrop {
   .sidebar-options {
     display: block;
     overflow-x: visible;
+    margin-block: 0;
     margin-inline: 0;
+    padding-block: 0;
     padding-inline: 0;
   }
 
@@ -834,4 +844,64 @@ dialog[open]::backdrop {
 .catalog:has(#cat-filter-async-data:checked) [data-tier-group]:not(:has([data-category="async-data"])),
 .catalog:has(#cat-filter-formatting:checked) [data-tier-group]:not(:has([data-category="formatting"])) {
   display: none;
+}
+
+/*
+  The hairline over a rule is a separator, so it belongs on every rule that
+  still has a visible one above it. `li + li` said that only while the whole
+  list was on screen: once a category is chosen, the first surviving rule in
+  a group keeps a DOM sibling above it and draws a border over nothing. So
+  restate the rule in terms of the chosen category, where `~` reads as "has
+  an earlier rule that also survives the filter".
+*/
+.catalog:has(
+    :is(
+      #cat-filter-layout,
+      #cat-filter-scrolling,
+      #cat-filter-animation,
+      #cat-filter-typography,
+      #cat-filter-forms,
+      #cat-filter-device-apis,
+      #cat-filter-async-data,
+      #cat-filter-formatting
+    ):checked
+  )
+  .rule-list
+  > li + li {
+  border-block-start: 0;
+}
+
+.catalog:has(#cat-filter-layout:checked)
+  .rule-list
+  > li[data-category="layout"]
+  ~ li[data-category="layout"],
+.catalog:has(#cat-filter-scrolling:checked)
+  .rule-list
+  > li[data-category="scrolling"]
+  ~ li[data-category="scrolling"],
+.catalog:has(#cat-filter-animation:checked)
+  .rule-list
+  > li[data-category="animation"]
+  ~ li[data-category="animation"],
+.catalog:has(#cat-filter-typography:checked)
+  .rule-list
+  > li[data-category="typography"]
+  ~ li[data-category="typography"],
+.catalog:has(#cat-filter-forms:checked)
+  .rule-list
+  > li[data-category="forms"]
+  ~ li[data-category="forms"],
+.catalog:has(#cat-filter-device-apis:checked)
+  .rule-list
+  > li[data-category="device-apis"]
+  ~ li[data-category="device-apis"],
+.catalog:has(#cat-filter-async-data:checked)
+  .rule-list
+  > li[data-category="async-data"]
+  ~ li[data-category="async-data"],
+.catalog:has(#cat-filter-formatting:checked)
+  .rule-list
+  > li[data-category="formatting"]
+  ~ li[data-category="formatting"] {
+  border-block-start: 1px solid var(--c-border);
 }

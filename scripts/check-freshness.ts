@@ -110,11 +110,22 @@ if (installed && installed !== baselineSnapshot.webFeaturesVersion) {
 }
 
 // 5. The history snapshot should track the current run, not a stale/hand-edited one.
-const lastHistoryMonth = baselineHistory.entries.at(-1)?.month ?? null;
+const lastEntry = baselineHistory.entries.at(-1) ?? null;
+const lastHistoryMonth = lastEntry?.month ?? null;
 const currentMonth = baselineSnapshot.generatedOn.slice(0, 7);
 if (lastHistoryMonth !== currentMonth) {
   warnings.push(
     `The history snapshot's last entry (${lastHistoryMonth ?? "none"}) does not match the current baseline snapshot month (${currentMonth}). Run \`pnpm refresh:baseline\`.`,
+  );
+}
+
+// The month is too coarse on its own: add a rule in the same month as the
+// last refresh and the check above stays quiet while the homepage prints
+// live rule counts next to percentages taken from a snapshot that no longer
+// describes the catalog. The entry stores its rule count for exactly this.
+if (lastEntry && lastEntry.ruleCount !== rules.length) {
+  warnings.push(
+    `The history snapshot's last entry counts ${lastEntry.ruleCount} rules but the catalog has ${rules.length}. Run \`pnpm refresh:baseline\`.`,
   );
 }
 

@@ -174,7 +174,13 @@ export default function RulesPage() {
           </fieldset>
         </aside>
 
-        <div>
+        {/*
+            A flex gap rather than padding on each group. Both filters hide
+            groups with display: none, which takes them out of flex layout
+            altogether, so the space only ever falls between two groups that
+            are actually on screen. Padding could not tell the difference.
+          */}
+        <div className="flex flex-col gap-10">
           <p className="catalog-empty max-w-[52ch] text-fg-muted">
             No rule sits in both of those. Widen either filter to see the rest
             of the catalog.
@@ -189,11 +195,7 @@ export default function RulesPage() {
             if (inTier.length === 0) return null;
 
             return (
-              <section
-                key={tier.status}
-                data-tier-group={tier.status}
-                className="pt-10 first:pt-0"
-              >
+              <section key={tier.status} data-tier-group={tier.status}>
                 <div className="mb-1 flex flex-wrap items-baseline gap-x-3">
                   <h2 className="text-section">{tier.verdict}</h2>
                   <BaselineBadge status={tier.status} short={true} />
