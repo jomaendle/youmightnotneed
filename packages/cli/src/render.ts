@@ -145,7 +145,7 @@ function footer(options: RenderOptions, hasGuides: boolean): string {
       `Guides are from modern-web-guidance, Apache-2.0. Read one with ${guideCommand(["<id>"])}.`,
     );
   }
-  lines.push("Details and live demos: https://youmightnotneed-web.vercel.app");
+  lines.push("Details and live demos: https://youmightnotneed.dev");
   return lines.join("\n");
 }
 

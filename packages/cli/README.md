@@ -1,6 +1,7 @@
 # youmightnotneed
 
 Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.
+The same catalog runs at [youmightnotneed.dev](https://youmightnotneed.dev).
 
 ```
 npx youmightnotneed

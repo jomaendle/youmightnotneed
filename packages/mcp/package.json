@@ -5,7 +5,7 @@
   "description": "MCP server exposing the youmightnotneed rule catalog to AI agents.",
   "license": "MIT",
   "author": "Johannes Maendle",
-  "homepage": "https://youmightnotneed-web.vercel.app",
+  "homepage": "https://youmightnotneed.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jomaendle/youmightnotneed.git",

@@ -5,6 +5,8 @@ Is it CSS yet?
 Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.
 Website, CLI, MCP server, and one rule catalog underneath all three.
 
+[youmightnotneed.dev](https://youmightnotneed.dev)
+
 ```
 npx youmightnotneed              # audit the nearest package.json
 npx youmightnotneed --package swiper --verbose
