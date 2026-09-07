@@ -44,7 +44,9 @@ export async function generateMetadata({
     openGraph: {
       title: `${rule.title}: ${rule.native}`,
       description: rule.agent.when,
+      images: [{ url: `/api/og?rule=${rule.id}`, width: 1200, height: 630 }],
     },
+    alternates: { canonical: `/rules/${rule.id}` },
   };
 }
 

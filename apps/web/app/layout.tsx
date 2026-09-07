@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Mark } from "@/components/logo";
 import { PackageDatalist } from "@/components/package-datalist";
 import { SearchField } from "@/components/search-field";
 import { site } from "@/lib/site";
@@ -22,12 +23,18 @@ export const metadata: Metadata = {
     template: `%s · ${site.name}`,
   },
   description: site.description,
+  /*
+   * The default card, inherited by every route that does not set its own.
+   * Without it, summary_large_image renders an empty frame, which is what
+   * every share of this site did until now.
+   */
   openGraph: {
     title: `${site.name} · ${site.tagline}`,
     description: site.description,
     url: site.url,
     siteName: site.name,
     type: "website",
+    images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
 };
@@ -113,9 +120,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               href="/"
               className="plain flex shrink-0 items-center gap-2 whitespace-nowrap font-medium font-mono text-[0.9375rem] tracking-tight no-underline"
             >
-              <span className="text-fg-faint" aria-hidden="true">
-                {"</>"}
-              </span>
+              <Mark size={18} className="text-accent" />
               youmightnotneed
             </Link>
 

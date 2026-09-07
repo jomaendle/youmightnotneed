@@ -1,8 +1,14 @@
 import { ImageResponse } from "next/og";
+import { MARK_PATH, MARK_VIEWBOX } from "@/components/logo";
 
 /**
- * Generated, not drawn: a curly brace, the one character every CSS rule on
- * this site actually needs. Same palette as the OG card in api/og/route.tsx.
+ * The browser-tab icon: the same brace as the header, on the brand tile.
+ *
+ * Satori draws this rather than a browser. The geometry still comes from
+ * components/logo.tsx, so the tab and the header cannot drift apart.
+ *
+ * The stroke is heavier than the header's. At 32px, scaled down to 16 by the
+ * browser, the header weight thins out to nothing.
  */
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
@@ -23,17 +29,19 @@ export default function Icon() {
         borderRadius: 7,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          fontSize: 24,
-          fontWeight: 700,
-          color: ACCENT,
-          fontFamily: "sans-serif",
-        }}
+      <svg
+        width={24}
+        height={24}
+        viewBox={MARK_VIEWBOX}
+        fill="none"
+        stroke={ACCENT}
+        strokeWidth={2.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
       >
-        {"{}"}
-      </div>
+        <path d={MARK_PATH} />
+      </svg>
     </div>,
     size,
   );

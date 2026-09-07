@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FindingCard } from "@/components/finding-card";
 import { MethodologyDialog } from "@/components/methodology-dialog";
+import { ShareReport } from "@/components/share-report";
 import { TierHelp } from "@/components/tier-help";
 import { decodeReport, toPackageJsonLike } from "@/lib/permalink";
 import { site } from "@/lib/site";
@@ -85,6 +86,15 @@ export default async function ReportPage({ searchParams }: PageProps) {
             unknown={summary.hasUnknownSizes}
           />
         )}
+        <div className="mt-6">
+          <ShareReport
+            title={
+              payload.projectName === undefined
+                ? "youmightnotneed report"
+                : `youmightnotneed: ${payload.projectName}`
+            }
+          />
+        </div>
       </header>
 
       {findings.length === 0 ? null : (
@@ -121,8 +131,8 @@ export default async function ReportPage({ searchParams }: PageProps) {
           Sizes captured {packageSizes.fetchedOn}.
         </p>
         <p>
-          This report is encoded entirely in its URL. Copy the address bar to
-          share it. Nothing was stored.
+          This report is encoded entirely in its URL, so the link carries the
+          whole thing. Nothing was stored.
         </p>
         <div className="flex flex-wrap gap-x-4 pt-1">
           <MethodologyDialog

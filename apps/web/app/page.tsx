@@ -6,6 +6,7 @@ import {
   rules,
   WEB_FEATURES_VERSION,
 } from "@jomae/catalog";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { MethodologyDialog } from "@/components/methodology-dialog";
@@ -13,6 +14,17 @@ import { ScanForm } from "@/components/scan-form";
 import { TierHelp } from "@/components/tier-help";
 import { TierHistorySparkline } from "@/components/tier-history-sparkline";
 import { demos } from "@/lib/demos";
+
+/*
+ * The .vercel.app domain is still attached so old links resolve, which means
+ * two hostnames serve identical pages. The canonical is what stops them
+ * competing for the same search results. It is set per route rather than in
+ * the layout, because a canonical in a layout is inherited by every child and
+ * would declare each of them a duplicate of one page.
+ */
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 function weight(rule: (typeof rules)[number]): number {
   return rule.replaces.reduce(
