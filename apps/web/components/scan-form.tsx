@@ -1,17 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { type ScanState, scan } from "@/app/actions";
-
-const EXAMPLE = `{
-  "dependencies": {
-    "swiper": "^11.0.0",
-    "@floating-ui/react": "^0.26.0",
-    "react-wrap-balancer": "^1.1.1",
-    "react-modal": "^3.16.1",
-    "polished": "^4.3.1"
-  }
-}`;
+import { EXAMPLE_PACKAGE_JSON } from "@/lib/example-scan";
 
 /**
  * The textarea uses field-sizing: content, so it grows as you paste instead of
@@ -21,7 +13,7 @@ const EXAMPLE = `{
  * The hint under the button is shown and hidden by :has() reading the
  * textarea's :placeholder-shown state. No React state for it.
  */
-export function ScanForm() {
+export function ScanForm({ examplePayload }: { examplePayload: string }) {
   const [state, formAction, pending] = useActionState<ScanState, FormData>(
     scan,
     {},
@@ -45,7 +37,7 @@ export function ScanForm() {
         spellCheck={false}
         value={pasted}
         onChange={(event) => setPasted(event.target.value)}
-        placeholder={EXAMPLE}
+        placeholder={EXAMPLE_PACKAGE_JSON}
         className="paste-area w-full rounded-lg border border-border bg-bg-subtle px-4 py-3.5 font-mono text-compact outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint"
       />
 
@@ -57,8 +49,16 @@ export function ScanForm() {
         >
           {pending ? "Checking" : "Check dependencies"}
         </button>
+        <Link
+          // A UrlObject, because typed routes reject a query string spliced
+          // into the path.
+          href={{ pathname: "/report", query: { d: examplePayload } }}
+          className="plain text-fg-muted text-metadata no-underline hover:text-fg hover:underline"
+        >
+          See an example report
+        </Link>
         <span className="submit-hint text-fg-faint text-metadata transition-opacity duration-200">
-          Or paste over the example above
+          Paste yours over it
         </span>
       </div>
 
@@ -76,7 +76,12 @@ export function ScanForm() {
   );
 }
 
-/** A public repo URL as the alternative input. Read without signing in. */
+/**
+ * A public repo as the other way in. Typing owner/repo is a far smaller ask
+ * than finding and pasting a file, so this is on the page rather than behind
+ * a disclosure. It stays visually secondary: one line, muted, under the
+ * primary action.
+ */
 function RepoField({
   value,
   onChange,
@@ -85,33 +90,28 @@ function RepoField({
   onChange: (value: string) => void;
 }) {
   return (
-    <details className="disclosure hairline pt-4">
-      <summary className="text-fg-muted text-metadata">
-        Use a public repository instead
-      </summary>
-      <div className="pt-3">
-        <label
-          htmlFor="repo"
-          className="mb-1.5 block text-fg-muted text-metadata"
-        >
-          Owner and repository, or a github.com URL
-        </label>
-        <input
-          id="repo"
-          name="repo"
-          type="text"
-          autoComplete="off"
-          spellCheck={false}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder="vercel/next.js"
-          className="w-full rounded-md border border-border bg-bg-subtle px-3 py-2 font-mono text-compact outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint"
-        />
-        <p className="mt-1.5 text-fg-faint text-metadata">
-          Read unauthenticated, so GitHub rate limits it. Paste the file if it
-          fails.
-        </p>
-      </div>
-    </details>
+    <div className="hairline pt-4">
+      <label
+        htmlFor="repo"
+        className="mb-1.5 block text-fg-muted text-metadata"
+      >
+        Or check a public repository, no paste needed
+      </label>
+      <input
+        id="repo"
+        name="repo"
+        type="text"
+        autoComplete="off"
+        spellCheck={false}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder="vercel/next.js"
+        className="w-full max-w-[26rem] rounded-md border border-border bg-bg-subtle px-3 py-2 font-mono text-compact outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint"
+      />
+      <p className="mt-1.5 text-fg-faint text-metadata">
+        Read unauthenticated, so GitHub rate limits it. Paste the file if it
+        fails.
+      </p>
+    </div>
   );
 }
