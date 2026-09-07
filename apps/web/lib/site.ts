@@ -1,11 +1,12 @@
 /** Single source of truth for site identity and metadata copy. */
 export const site = {
   name: "youmightnotneed",
-  // youmightnotneed.dev isn't wired up yet. Point at the live Vercel
-  // deployment until it is; youmightnotneed.vercel.app (no -web) is a
-  // squatted, unrelated site, not ours.
-  domain: "youmightnotneed-web.vercel.app",
-  url: "https://youmightnotneed-web.vercel.app",
+  // The .vercel.app deployment URL still resolves and is still attached, so
+  // old links keep working. Nothing should point at it any more:
+  // youmightnotneed.vercel.app (no -web) is a squatted, unrelated site, and
+  // one wrong hyphen is all that separates the two.
+  domain: "youmightnotneed.dev",
+  url: "https://youmightnotneed.dev",
   tagline: "Is it CSS yet?",
   description:
     "Find the CSS, HTML, or Web API that replaces your JavaScript dependencies. Paste a package.json and see what the platform now does natively.",

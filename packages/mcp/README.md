@@ -2,7 +2,8 @@
 
 An MCP server that gives an agent direct access to the youmightnotneed rule
 catalog: whether a dependency already has a native replacement, and what
-that replacement looks like.
+that replacement looks like. The catalog is browsable at
+[youmightnotneed.dev](https://youmightnotneed.dev).
 
 Add it to an MCP client's config:
 
