@@ -1,6 +1,12 @@
 import { ImageResponse } from "next/og";
+import { MARK_PATH, MARK_VIEWBOX } from "@/components/logo";
 
-/** Same mark as icon.tsx, scaled up for iOS home-screen bookmarks. */
+/**
+ * The same mark, scaled up for iOS home-screen bookmarks. iOS applies its own
+ * corner radius, so this tile is square. The stroke is lighter than the
+ * favicon's: nothing is shrinking this one, so it can carry the header's
+ * proportions.
+ */
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
@@ -19,17 +25,19 @@ export default function AppleIcon() {
         background: BG,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          fontSize: 130,
-          fontWeight: 700,
-          color: ACCENT,
-          fontFamily: "sans-serif",
-        }}
+      <svg
+        width={124}
+        height={124}
+        viewBox={MARK_VIEWBOX}
+        fill="none"
+        stroke={ACCENT}
+        strokeWidth={2.1}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
       >
-        {"{}"}
-      </div>
+        <path d={MARK_PATH} />
+      </svg>
     </div>,
     size,
   );

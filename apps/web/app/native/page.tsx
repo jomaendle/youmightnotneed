@@ -6,6 +6,13 @@ import { BrowserSupport } from "@/components/browser-support";
 import { NATIVE_USAGE, type Usage } from "@/lib/native-usage";
 
 export const metadata: Metadata = {
+  openGraph: {
+    title: "What this site uses",
+    description:
+      "The platform features this site runs on, and what each one replaced.",
+    url: "/native",
+  },
+  alternates: { canonical: "/native" },
   title: "What this site uses",
   description:
     "This site is built from the same catalog it publishes. Here is which native feature does what, and where the fallback is.",

@@ -9,6 +9,13 @@ import {
 } from "@/lib/packages";
 
 export const metadata: Metadata = {
+  openGraph: {
+    title: "Every package covered",
+    description:
+      "Every npm package the catalog covers, and the native feature that replaces each one.",
+    url: "/packages",
+  },
+  alternates: { canonical: "/packages" },
   title: "Packages",
   description: `Every npm package the catalog covers, ${ALL_PACKAGES.length} of them, and the native feature that replaces each one.`,
 };

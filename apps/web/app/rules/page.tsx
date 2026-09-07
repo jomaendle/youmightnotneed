@@ -20,6 +20,13 @@ import {
 import { TIERS, TIERS_BY_STATUS } from "@/lib/tiers";
 
 export const metadata: Metadata = {
+  openGraph: {
+    title: "The rule catalog",
+    description:
+      "Every native replacement in the catalog, grouped by how well it is supported.",
+    url: "/rules",
+  },
+  alternates: { canonical: "/rules" },
   title: "Rules",
   description:
     "Every native replacement in the catalog, grouped by how well it is supported.",
