@@ -13,6 +13,7 @@ import { ScanForm } from "@/components/scan-form";
 import { TierHelp } from "@/components/tier-help";
 import { TierHistorySparkline } from "@/components/tier-history-sparkline";
 import { demos } from "@/lib/demos";
+import { EXAMPLE_REPORT_PAYLOAD } from "@/lib/example-report";
 
 function weight(rule: (typeof rules)[number]): number {
   return rule.replaces.reduce(
@@ -66,7 +67,7 @@ export default function HomePage() {
       {/* The form is a reading-width thing, so it keeps its own column
           rather than stretching to the full shell. */}
       <section className="max-w-[52rem]">
-        <ScanForm />
+        <ScanForm examplePayload={EXAMPLE_REPORT_PAYLOAD} />
       </section>
 
       <section className="hairline pt-10">
