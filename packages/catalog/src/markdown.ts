@@ -185,7 +185,7 @@ cover the implementation. Those are not in this file. Take the rule id from
 the table and fetch it:
 
 \`\`\`sh
-curl -sS ${ruleMarkdownUrl("<id>")}
+curl -fsS ${ruleMarkdownUrl("<id>")}
 \`\`\`
 
 That is always the live catalog, where this table is only as fresh as the
@@ -199,8 +199,9 @@ npx -y youmightnotneed@latest --package <name> --verbose
 
 ## By package
 
-Which rule covers a package you already have. This is the part that works
-with no network at all, so check it before reaching for either command above.
+Which rule covers a package you already have. This is the only lookup here
+that needs no network. It gives the rule id and stops there: the conditions
+for keeping the dependency come from the URL or the CLI above.
 
 ${renderPackageIndex()}
 `;
