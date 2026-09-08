@@ -29,8 +29,8 @@ curl -sS https://youmightnotneed.dev/rules/<id>.md
 ```
 
 That carries the native approach, the Baseline tier, every condition for
-keeping the dependency, the swap and the guides. With no network, the CLI
-gives the same conditions:
+keeping the dependency, the swap and the guides. The CLI gives the same
+conditions without the site, and works offline once npx has fetched it:
 
 ```sh
 npx -y youmightnotneed@latest --package <name> --verbose
@@ -41,7 +41,11 @@ this file is not loaded.
 
 ## Starting from a package
 
-Checking one name, or auditing what is already installed:
+The **By package** section of `references/catalog.md` maps every package the
+catalog claims to the rule that covers it. Grep it for the dependency name.
+That is the one lookup here that needs no network at all.
+
+For the conditions, and for auditing a whole package.json:
 
 ```sh
 npx -y youmightnotneed@latest --package axios --verbose

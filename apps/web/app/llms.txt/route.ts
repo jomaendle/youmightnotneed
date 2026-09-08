@@ -68,11 +68,11 @@ fallback written before anything is swapped.
 Source: ${site.repo}. ${rules.length} rules.
 `;
 
+  // No X-Robots-Tag: the index is meant to be found. Only the per-rule
+  // markdown, which duplicates an HTML page, asks not to be indexed.
   return new Response(body, {
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
-      // The index is meant to be found. Only the per-rule markdown, which
-      // duplicates an HTML page, asks not to be indexed.
       "Cache-Control": "public, max-age=0, s-maxage=3600",
     },
   });

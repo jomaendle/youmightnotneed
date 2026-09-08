@@ -22,6 +22,30 @@ describe("prefersMarkdown", () => {
     expect(prefersMarkdown("TEXT/MARKDOWN")).toBe(true);
   });
 
+  it("reads the q parameter whatever its case", () => {
+    // RFC 9110 makes parameter names case-insensitive. Missing an uppercase
+    // Q meant falling back to "no q given", which is maximum preference, so
+    // `Q=0` read as "preferred" when it means "not acceptable".
+    expect(prefersMarkdown("text/markdown;Q=0.1, text/html;q=0.9")).toBe(false);
+    expect(prefersMarkdown("text/markdown;Q=0")).toBe(false);
+    expect(prefersMarkdown("text/markdown;Q=0.9, text/html;q=0.5")).toBe(true);
+  });
+
+  it("clamps a q above 1 rather than letting it outrank", () => {
+    expect(prefersMarkdown("text/markdown;q=5, text/html")).toBe(false);
+  });
+
+  it("takes the highest q when a type is listed twice", () => {
+    expect(
+      prefersMarkdown(
+        "text/markdown;q=0.1, text/markdown;q=0.9, text/html;q=0.5",
+      ),
+    ).toBe(true);
+    expect(
+      prefersMarkdown("text/html;q=0.1, text/html;q=0.9, text/markdown;q=0.5"),
+    ).toBe(false);
+  });
+
   it("keeps HTML when the client ranks it higher", () => {
     expect(prefersMarkdown("text/markdown;q=0.5, text/html;q=0.9")).toBe(false);
     expect(prefersMarkdown("text/markdown;q=0.8, text/html")).toBe(false);
@@ -38,6 +62,10 @@ describe("prefersMarkdown", () => {
 
   it("ignores parameters that are not q", () => {
     expect(prefersMarkdown("text/markdown;charset=utf-8")).toBe(true);
+    // What a GFM-aware client sends.
+    expect(prefersMarkdown("text/markdown;variant=GFM")).toBe(true);
+    // A different media type, not a parameter on ours.
+    expect(prefersMarkdown("text/x-markdown")).toBe(false);
     expect(
       prefersMarkdown("text/html;charset=utf-8, text/markdown;q=0.9"),
     ).toBe(false);

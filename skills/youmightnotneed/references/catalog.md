@@ -84,9 +84,72 @@ curl -sS https://youmightnotneed.dev/rules/<id>.md
 ```
 
 That is always the live catalog, where this table is only as fresh as the
-version of the skill you have. Offline, or checking a package name rather
-than a use case:
+version of the skill you have. The CLI answers the same question from a
+package name, sends nothing anywhere, and works offline once npx has fetched
+it:
 
 ```sh
 npx -y youmightnotneed@latest --package <name> --verbose
 ```
+
+## By package
+
+Which rule covers a package you already have. This is the part that works
+with no network at all, so check it before reaching for either command above.
+
+- `abort-controller`: p-cancelable, cancelable-promise, abortcontroller-polyfill
+- `array-grouping`: lodash.groupby, just-group-by, group-array
+- `aspect-ratio`: react-aspect-ratio
+- `base64`: js-base64, base-64, abab
+- `broadcast-channel`: broadcast-channel
+- `carousel-scroll-markers`: swiper, embla-carousel, embla-carousel-react, react-slick, slick-carousel, keen-slider, flickity, vue3-carousel, ngx-owl-carousel-o, vue-awesome-swiper
+- `clipboard`: copy-to-clipboard, clipboard-copy, clipboard.js, react-copy-to-clipboard, vue-clipboard3, vue-clipboard2, ngx-clipboard, clipboard-polyfill
+- `compression-streams`: pako, lz-string
+- `container-queries`: react-resize-detector, react-use-measure, react-sizeme, react-container-query, element-resize-detector, vue-resize
+- `content-visibility`: react-window, react-virtualized, vue-virtual-scroller, vue-virtual-scroll-list, ngx-virtual-scroller, svelte-virtual-list
+- `css-color-functions`: polished, color2k, chroma-js, tinycolor2, color, colord
+- `css-masonry`: react-masonry-css, masonry-layout, react-masonry-component, muuri, react-photo-gallery, vue-masonry, vue-masonry-css
+- `custom-highlight`: mark.js, react-highlight-words, react-highlighter
+- `customizable-select`: react-select, choices.js, select2, tom-select, vue-select, vue-multiselect, @ng-select/ng-select, svelte-select
+- `date-time-input`: react-datepicker, flatpickr, react-flatpickr, react-day-picker, @mui/x-date-pickers, ng2-date-picker
+- `dialog-element`: react-modal, react-responsive-modal, react-aria-modal, @reach/dialog, micromodal, a11y-dialog, vue-js-modal, vue-final-modal, svelte-modals, dialog-polyfill
+- `discrete-transitions`: framer-motion, motion, react-transition-group, react-spring
+- `drag-and-drop`: sortablejs, react-sortablejs
+- `duration-format`: humanize-duration, pretty-ms
+- `event-target`: mitt, tiny-emitter, nanoevents, eventemitter3, event-emitter
+- `exclusive-accordion`: react-accessible-accordion, react-collapsible, accordion-js
+- `fetch`: axios, superagent, redaxios, whatwg-fetch, unfetch, isomorphic-fetch, cross-fetch
+- `field-sizing`: react-textarea-autosize, autosize, react-autosize-textarea, vue-textarea-autosize, ngx-autosize
+- `fluid-type-clamp`: fittext.js
+- `focus-visible`: focus-visible
+- `fullscreen`: screenfull, react-full-screen, vue-fullscreen
+- `height-auto-animation`: react-collapse, react-animate-height, react-smooth-collapse
+- `inert`: focus-trap, focus-trap-react, react-focus-lock, focus-lock, vue-focus-lock, wicg-inert
+- `intersection-observer`: react-intersection-observer, react-visibility-sensor, react-in-viewport, svelte-intersection-observer, intersection-observer
+- `lazy-loading`: lozad, lazysizes, vanilla-lazyload, react-lazyload, react-lazy-load-image-component, yall-js, vue-lazyload, v-lazy-image
+- `line-clamp`: react-clamp-lines, react-line-clamp, clamp-js, line-clamp, vue-clamp
+- `natural-sort`: natural-compare, natural-compare-lite, natural-orderby, string-natural-compare
+- `number-format`: numeral, accounting, currency.js, format-number
+- `overscroll-behavior`: body-scroll-lock
+- `page-visibility`: react-page-visibility, visibilityjs
+- `popover-anchor-positioning`: @floating-ui/react, @floating-ui/react-dom, @floating-ui/dom, @popperjs/core, popper.js, tippy.js, @tippyjs/react, react-popper, react-tooltip, floating-vue, v-tooltip, @oddbird/popover-polyfill
+- `random-uuid`: uuid, uuidv4, @lukeed/uuid, uuid-random
+- `relative-time`: javascript-time-ago, timeago.js, react-timeago
+- `resizable-panels`: re-resizable
+- `resize-observer`: resize-observer-polyfill, @juggle/resize-observer
+- `screen-wake-lock`: nosleep.js, react-use-wake-lock
+- `scroll-driven-animations`: aos, scrollreveal, wowjs, wow.js, scrollmagic, rellax
+- `server-sent-events`: eventsource, event-source-polyfill
+- `smooth-scroll`: react-scroll, smoothscroll-polyfill, scroll-behavior-polyfill, smooth-scroll, jump.js, vue-scrollto
+- `speech-recognition`: annyang, react-speech-recognition
+- `speech-synthesis`: speak-tts, react-text-to-speech
+- `sticky-positioning`: sticky-js, stickyfill, react-sticky, sticky-kit, stickybits, vue-sticky-directive, vue-sticky
+- `structured-clone`: lodash.clonedeep, rfdc, clone, klona, clone-deep, fast-copy, just-clone
+- `styled-scrollbars`: react-custom-scrollbars, react-custom-scrollbars-2, simplebar, simplebar-react, overlayscrollbars, overlayscrollbars-react, perfect-scrollbar, vue-perfect-scrollbar, overlayscrollbars-vue, ngx-perfect-scrollbar
+- `text-box-trim`: capsize, @capsizecss/core, @capsizecss/metrics
+- `text-wrap-balance`: react-wrap-balancer, balance-text
+- `url-search-params`: query-string, qs, querystringify, url-parse
+- `view-transitions`: next-view-transitions, react-page-transition, barba.js, swup
+- `web-bluetooth`: @capacitor-community/bluetooth-le, cordova-plugin-ble-central
+- `web-crypto`: crypto-js, js-sha256, crypto-hash
+- `web-share`: react-share, vue-social-sharing, ngx-sharebuttons

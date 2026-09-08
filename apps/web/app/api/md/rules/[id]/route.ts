@@ -3,8 +3,9 @@ import { renderRuleMarkdown, rules, rulesById } from "@jomae/catalog";
 /**
  * One rule as markdown.
  *
- * Internal. The public URL is `/rules/<id>.md`, which proxy.ts rewrites here,
- * and `/rules/<id>` reaches the same handler when the request asks for
+ * Not the advertised URL, and not guarded either: this answers a direct GET.
+ * What is advertised is `/rules/<id>.md`, which proxy.ts rewrites here, and
+ * `/rules/<id>`, which reaches the same handler when the request asks for
  * markdown. Both of those are what an agent guesses.
  */
 export function generateStaticParams() {
@@ -32,17 +33,16 @@ export async function GET(_request: Request, { params }: RouteContext) {
 }
 
 /**
- * noindex because this is the same content as the HTML rule page, which
- * carries the canonical. Two indexable copies of every rule is the
- * duplicate-content problem in a new coat.
+ * Content type only. The headers that depend on which URL was asked for are
+ * set by proxy.ts, because this handler cannot tell them apart: noindex on
+ * the .md alias, which duplicates the HTML page, and Vary with no-store on
+ * the negotiated response at /rules/<id>. Setting noindex here would put it
+ * on /rules/<id> too, and that URL is in the sitemap.
  *
- * No Vary here: this URL has one representation. proxy.ts adds Vary and
- * no-store to the response it negotiates at /rules/<id>, which is the only
- * one that has two.
+ * No Vary either: this URL has one representation.
  */
 function headers(contentType: string): HeadersInit {
   return {
     "Content-Type": contentType,
-    "X-Robots-Tag": "noindex",
   };
 }

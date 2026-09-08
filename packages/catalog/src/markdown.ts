@@ -7,15 +7,22 @@
  * import the other, and a second renderer would drift the first time a rule
  * changed shape.
  *
- * Pure, like format.ts. No filesystem, no clock: the file writing stays in
- * the script.
+ * Pure, and held to it: catalog.test.ts walks this module's imports the same
+ * way it walks detect()'s. No filesystem, no clock, so the file writing stays
+ * in the script.
  */
 import { baselineShortLabel, resolveBaseline } from "./baseline.ts";
 import { GUIDE_SOURCE, guideCommand, resolveGuides } from "./guides.ts";
 import { rules } from "./rules/index.ts";
 import type { Rule } from "./schema.ts";
 
-/** Where a rule is served as markdown. Interpolated into both renderers. */
+/**
+ * Where a rule is served as markdown.
+ *
+ * The second place the domain is written down, after apps/web/lib/site.ts.
+ * The catalog ships to npm and cannot import the website, so the two are tied
+ * together by a test in apps/web instead of by a shared constant.
+ */
 const RULE_MARKDOWN_BASE = "https://youmightnotneed.dev/rules";
 
 /** The markdown URL for one rule. */
@@ -130,6 +137,21 @@ ${source}`;
 }
 
 /**
+ * Every rule with the packages it claims, one line each.
+ *
+ * The reference used to carry this inside a much longer per-rule listing.
+ * Dropping that listing took the package names with it, which left an agent
+ * holding a package.json and no network unable to answer the question the
+ * skill exists for. This is the same lookup in 1/8th of the lines.
+ */
+function renderPackageIndex(): string {
+  return [...rules]
+    .sort((a, b) => byText(a.id, b.id))
+    .map((rule) => `- \`${rule.id}\`: ${rule.replaces.join(", ")}`)
+    .join("\n");
+}
+
+/**
  * The reference the agent skill loads on demand. Hybrid by design: the table
  * works offline and with no network, and the per-rule detail is fetched, so
  * the skill stops shipping a snapshot of prose that goes stale between
@@ -167,11 +189,19 @@ curl -sS ${ruleMarkdownUrl("<id>")}
 \`\`\`
 
 That is always the live catalog, where this table is only as fresh as the
-version of the skill you have. Offline, or checking a package name rather
-than a use case:
+version of the skill you have. The CLI answers the same question from a
+package name, sends nothing anywhere, and works offline once npx has fetched
+it:
 
 \`\`\`sh
 npx -y youmightnotneed@latest --package <name> --verbose
 \`\`\`
+
+## By package
+
+Which rule covers a package you already have. This is the part that works
+with no network at all, so check it before reaching for either command above.
+
+${renderPackageIndex()}
 `;
 }

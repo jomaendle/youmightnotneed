@@ -1,23 +1,56 @@
 import { describe, expect, it } from "vitest";
+import { resolveBaseline } from "./baseline.ts";
 import { resolveGuides } from "./guides.ts";
 import {
+  renderCatalogReference,
   renderRuleMarkdown,
   renderUseCaseTable,
   ruleMarkdownUrl,
 } from "./markdown.ts";
 import { rules, rulesById } from "./rules/index.ts";
 
+/**
+ * Everything under one heading, verbatim.
+ *
+ * Deliberately not "the lines that look like bullets": commenting the block
+ * out with <!-- --> or wrapping it in a code fence leaves those lines intact,
+ * so a filtered read passes while the rendered page shows nothing.
+ */
+function sectionBody(markdown: string, heading: string): string {
+  const start = markdown.indexOf(`## ${heading}`);
+  if (start === -1) return "";
+  const rest = markdown.slice(start + heading.length + 3);
+  const end = rest.indexOf("\n## ");
+  return (end === -1 ? rest : rest.slice(0, end)).trim();
+}
+
 describe("renderRuleMarkdown", () => {
-  it("emits every unless condition, for every rule", () => {
+  it("emits every unless condition, under its own heading, for every rule", () => {
     // The conditions are the reason this endpoint exists. One dropped by a
     // formatting change would turn a conditional into an instruction.
+    //
+    // Scoped to the section rather than searched for in the whole document:
+    // a substring check passes when the whole block is commented out, moved
+    // into a code fence, or filed under the wrong heading.
     for (const rule of rules) {
-      const markdown = renderRuleMarkdown(rule);
+      const body = sectionBody(
+        renderRuleMarkdown(rule),
+        "Keep the dependency if any of these apply",
+      );
+      expect(body, rule.id).toBe(
+        rule.agent.unless.map((condition) => `- ${condition}`).join("\n"),
+      );
+    }
+  });
+
+  it("keeps every condition on one line", () => {
+    // A newline inside an unless string breaks the list into bullets that
+    // read as separate conditions, and nothing else would notice.
+    for (const rule of rules) {
       for (const condition of rule.agent.unless) {
-        expect(
-          markdown.includes(`- ${condition}`),
-          `${rule.id} lost a condition: ${condition}`,
-        ).toBe(true);
+        expect(condition.includes("\n"), `${rule.id}: ${condition}`).toBe(
+          false,
+        );
       }
     }
   });
@@ -43,6 +76,19 @@ describe("renderRuleMarkdown", () => {
     }
   });
 
+  it("names the feature holding a rule back, where one does", () => {
+    // Live in the real catalog, and the tier regex above passes with or
+    // without it, so it needs its own assertion.
+    const capped = rules.filter((rule) => resolveBaseline(rule).limitedBy);
+    expect(capped.length).toBeGreaterThan(0);
+    for (const rule of capped) {
+      const name = resolveBaseline(rule).limitedBy?.name as string;
+      expect(renderRuleMarkdown(rule), rule.id).toContain(
+        `(capped by ${name})`,
+      );
+    }
+  });
+
   it("links guides exactly when the rule has a linkable one", () => {
     for (const rule of rules) {
       const linkable = resolveGuides(rule).filter((g) => g.url !== null);
@@ -59,6 +105,20 @@ describe("renderRuleMarkdown", () => {
         );
       }
     }
+  });
+
+  it("drops a guide the snapshot no longer knows", () => {
+    // Dead in the real catalog by design: check:freshness rejects an unknown
+    // id. It becomes live the moment a guide is renamed upstream, which is
+    // the case the filter exists for, so it needs a synthetic rule.
+    const base = rulesById.get("dialog-element");
+    if (!base) throw new Error("dialog-element is missing from the catalog");
+    const renamed = { ...base, guides: ["a-guide-that-moved-upstream"] };
+
+    const markdown = renderRuleMarkdown(renamed);
+    expect(markdown).not.toContain("a-guide-that-moved-upstream");
+    // And says so, rather than printing an empty heading.
+    expect(markdown).toContain("No guide covers this rule yet");
   });
 
   it("attributes the guides wherever they are mentioned", () => {
@@ -85,6 +145,47 @@ describe("renderUseCaseTable", () => {
     for (const rule of rules) {
       expect(table, rule.id).toContain(`| \`${rule.id}\` |`);
     }
+  });
+
+  it("is sorted by use case, in codepoint order", () => {
+    // check-freshness byte-compares the generated reference, so the order is
+    // load-bearing. localeCompare would pass a maintainer's machine and fail
+    // CI on another ICU build.
+    const cases = renderUseCaseTable()
+      .split("\n")
+      .slice(2)
+      .map((row) => row.split(" | ")[0]?.slice(2) as string);
+    expect(cases).toEqual([...cases].sort());
+  });
+
+  it("has no cell that would break the table", () => {
+    // A pipe splits a column silently and a newline ends the row. No rule has
+    // one today, and the schema does not forbid it.
+    for (const rule of rules) {
+      for (const field of [rule.title, rule.native, rule.agent.when]) {
+        expect(field, `${rule.id}: ${field}`).not.toMatch(/[|\n]/);
+      }
+    }
+  });
+});
+
+describe("renderCatalogReference", () => {
+  it("counts the rules and the packages it claims to", () => {
+    // check-freshness only compares this against itself, so a wrong number
+    // here would be committed and pass forever.
+    const reference = renderCatalogReference();
+    const packages = new Set(rules.flatMap((rule) => rule.replaces)).size;
+    expect(reference).toContain(
+      `Every rule, ${rules.length} of them, covering ${packages} npm packages.`,
+    );
+  });
+
+  it("tells the reader where the conditions actually live", () => {
+    // The table alone cannot answer "should this dependency go", so the file
+    // has to hand off. This is the whole point of shrinking it.
+    expect(renderCatalogReference()).toContain(
+      "https://youmightnotneed.dev/rules/<id>.md",
+    );
   });
 });
 

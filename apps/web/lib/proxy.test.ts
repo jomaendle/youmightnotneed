@@ -35,6 +35,26 @@ describe("proxy", () => {
     expect(rewrittenTo(response)).toBe("/api/md/rules/dialog-element");
   });
 
+  it("treats the suffix as case-insensitive", () => {
+    expect(rewrittenTo(proxy(request("/rules/dialog-element.MD")))).toBe(
+      "/api/md/rules/dialog-element",
+    );
+  });
+
+  it("keeps noindex on the alias and off the canonical URL", () => {
+    // /rules/<id> is in the sitemap. noindex on the alias stops two indexable
+    // copies of every rule; noindex on the negotiated response would
+    // de-index the page itself for any crawler that asks for markdown.
+    expect(
+      proxy(request("/rules/dialog-element.md")).headers.get("X-Robots-Tag"),
+    ).toBe("noindex");
+    expect(
+      proxy(request("/rules/dialog-element", "text/markdown")).headers.get(
+        "X-Robots-Tag",
+      ),
+    ).toBeNull();
+  });
+
   it("rewrites when the request asks for markdown", () => {
     const response = proxy(request("/rules/dialog-element", "text/markdown"));
     expect(rewrittenTo(response)).toBe("/api/md/rules/dialog-element");
@@ -54,6 +74,18 @@ describe("proxy", () => {
     const response = proxy(request("/rules/dialog-element.md"));
     expect(response.headers.get("Cache-Control")).toBeNull();
     expect(response.headers.get("Vary")).toBeNull();
+  });
+
+  it("leaves nested and trailing-slash paths alone", () => {
+    expect(rewrittenTo(proxy(request("/rules/a/b")))).toBeNull();
+    expect(rewrittenTo(proxy(request("/rules/dialog-element/")))).toBeNull();
+  });
+
+  it("cannot be walked out of the rules prefix", () => {
+    // The safety is NextURL's, not this regex's, so it is worth pinning.
+    expect(rewrittenTo(proxy(request("/rules/..%2f..%2fadmin.md")))).toBe(
+      "/api/md/rules/..%2f..%2fadmin",
+    );
   });
 
   it("passes an unknown id through to the handler, which 404s", () => {

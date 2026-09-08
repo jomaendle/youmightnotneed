@@ -1,7 +1,9 @@
 ---
 name: writing-voice
-description: Jo's writing voice for all copy in this repo: site text, rule explainers, CLI output, README. Use whenever writing or editing user-visible text, and when reviewing a draft that reads as AI-generated.
+description: "Jo's writing voice for all copy in this repo: site text, rule explainers, CLI output, README. Use whenever writing or editing user-visible text, and when reviewing a draft that reads as AI-generated."
 user-invocable: true
+metadata:
+  internal: true
 ---
 
 Copied from `jomaendle/personal-website-2025`. Keep the two in sync by hand.

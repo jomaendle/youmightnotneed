@@ -8,13 +8,18 @@ import { prefersMarkdown } from "@/lib/accept";
  * `Accept: text/markdown` on the page URL is the correct way to ask. Both
  * rewrite to the same handler, so there is one renderer and one body.
  *
- * Next 16 renamed Middleware to Proxy. Same file, same behaviour.
+ * Next 16 renamed middleware.ts to proxy.ts, and a proxy always runs on the
+ * Node.js runtime where middleware defaulted to the edge. Route segment
+ * config is rejected in this file for that reason.
  */
 export const config = {
   matcher: "/rules/:path*",
 };
 
-const RULE_PATH = /^\/rules\/([^/]+?)(\.md)?$/;
+// Case-insensitive on the suffix only: /rules/<id>.MD is the same request as
+// /rules/<id>.md, and rule ids are lowercase by schema, so nothing else here
+// wants to be loose about case.
+const RULE_PATH = /^\/rules\/([^/]+?)(\.md)?$/i;
 
 export function proxy(request: NextRequest) {
   const match = RULE_PATH.exec(request.nextUrl.pathname);
@@ -27,8 +32,16 @@ export function proxy(request: NextRequest) {
   url.pathname = `/api/md/rules/${id}`;
 
   // The .md URL is one representation, not a negotiated one. It needs no
-  // Vary, and it is as cacheable as the page.
-  if (match[2] !== undefined) return NextResponse.rewrite(url);
+  // Vary, and it is as cacheable as the page. noindex belongs here and only
+  // here: this is the URL that duplicates the HTML page, which carries the
+  // canonical. Setting it in the handler instead would stamp noindex on
+  // /rules/<id> itself whenever negotiation fired, and that URL is in the
+  // sitemap.
+  if (match[2] !== undefined) {
+    const alias = NextResponse.rewrite(url);
+    alias.headers.set("X-Robots-Tag", "noindex");
+    return alias;
+  }
 
   if (!prefersMarkdown(request.headers.get("accept"))) {
     return NextResponse.next();
@@ -44,9 +57,16 @@ export function proxy(request: NextRequest) {
   // Two things carry the guarantee instead. The rewrite puts the markdown
   // under its own cache key, /api/md/rules/<id>, so it is never stored as the
   // page URL, and no-store keeps any cache in front from holding it. Checked
-  // against a preview deployment by alternating an Accept: text/markdown
-  // request with a browser one, both served from the same edge, both cache
-  // hits, neither ever answering with the other's body.
+  // against a preview deployment on 2026-09-08 by alternating an
+  // Accept: text/markdown request with a browser one, both served from the
+  // same edge, both cache hits, neither answering with the other's body.
+  //
+  // That covers one direction only, which is the one that would break the
+  // site. The other stays possible: a shared cache that stored the HTML page
+  // can hand it to an agent that asked for markdown, because the page is
+  // cacheable and cannot say it varies. Such an agent gets the answer it
+  // would have got by not asking, and /rules/<id>.md is the URL that is
+  // never ambiguous. That is why the alias exists.
   response.headers.set("Vary", "Accept");
   response.headers.set("Cache-Control", "private, no-store");
   return response;

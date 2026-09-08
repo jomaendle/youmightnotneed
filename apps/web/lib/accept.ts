@@ -2,9 +2,9 @@
  * Content negotiation for the markdown mirror of a rule page.
  *
  * Browsers send `text/html,application/xhtml+xml,application/xml;q=0.9,*\/*;q=0.8`.
- * A naive `includes()` on that string, or matching the `*\/*`, would serve
- * markdown to every visitor, so this reads the quality values and only answers
- * true for an explicit `text/markdown` that outranks `text/html`.
+ * Matching the `*\/*` in that would serve markdown to every visitor, so this
+ * reads the quality values and only answers true for an explicit
+ * `text/markdown` that outranks `text/html`.
  */
 
 /** Top level so it is compiled once: proxy.ts calls this on every request. */
@@ -22,17 +22,19 @@ function parseAccept(header: string): AcceptEntry[] {
       const [type, ...parameters] = part.split(";").map((s) => s.trim());
       if (!type) return null;
 
-      // q=0 means "not acceptable", and a malformed q is ignored rather than
-      // turned into NaN, which loses every comparison it takes part in.
+      // Lowercased before the match, because RFC 9110 makes parameter names
+      // case-insensitive and an unread `Q=0` would otherwise fall through to
+      // the default of 1, turning "not acceptable" into "preferred".
       const q = parameters
-        .map((parameter) => QUALITY.exec(parameter))
+        .map((parameter) => QUALITY.exec(parameter.toLowerCase()))
         .find((match) => match !== null);
+
+      // A parameter that is not a q at all leaves the default. Clamped,
+      // because q ranges 0 to 1 and `q=5` is a malformed way to say "most
+      // preferred", not a licence to outrank a well-formed 1.
       const quality = q?.[1] === undefined ? 1 : Number(q[1]);
 
-      return {
-        type: type.toLowerCase(),
-        quality: Number.isFinite(quality) ? Math.min(quality, 1) : 1,
-      };
+      return { type: type.toLowerCase(), quality: Math.min(quality, 1) };
     })
     .filter((entry) => entry !== null);
 }
