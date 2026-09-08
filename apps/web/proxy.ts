@@ -36,14 +36,17 @@ export function proxy(request: NextRequest) {
 
   const response = NextResponse.rewrite(url);
 
-  // Vary is the correct signal, and it is not enough on its own here: Next
-  // owns the Vary on the prerendered HTML page and replays its own value from
-  // the cache entry, so the page cannot advertise that it varies. no-store
-  // closes the gap that leaves. A shared cache never stores markdown under a
-  // page URL, so it can never hand markdown to a browser, whatever it does
-  // with Vary. What it can still do is give an agent the HTML page, which is
-  // the answer it would have got by not asking, and /rules/<id>.md is the
-  // URL that is never ambiguous.
+  // Vary is the correct signal and it is not what makes this safe. Next owns
+  // the Vary on the prerendered HTML page and replays its own value from the
+  // cache entry, so the page cannot advertise that it varies, and measuring a
+  // Vercel deployment shows this Accept never reaches the client either.
+  //
+  // Two things carry the guarantee instead. The rewrite puts the markdown
+  // under its own cache key, /api/md/rules/<id>, so it is never stored as the
+  // page URL, and no-store keeps any cache in front from holding it. Checked
+  // against a preview deployment by alternating an Accept: text/markdown
+  // request with a browser one, both served from the same edge, both cache
+  // hits, neither ever answering with the other's body.
   response.headers.set("Vary", "Accept");
   response.headers.set("Cache-Control", "private, no-store");
   return response;
