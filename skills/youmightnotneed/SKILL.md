@@ -21,11 +21,23 @@ is findable without knowing that swiper was the thing you were about to
 reach for.
 
 A row is a starting point, not a verdict. Take the rule id from it and read
-the conditions before deciding:
+the conditions before deciding. The site answers in markdown for one rule,
+which is the live catalog rather than the snapshot in this file:
+
+```sh
+curl -sS https://youmightnotneed.dev/rules/<id>.md
+```
+
+That carries the native approach, the Baseline tier, every condition for
+keeping the dependency, the swap and the guides. With no network, the CLI
+gives the same conditions:
 
 ```sh
 npx -y youmightnotneed@latest --package <name> --verbose
 ```
+
+`https://youmightnotneed.dev/llms.txt` is the same table over HTTP, for when
+this file is not loaded.
 
 ## Starting from a package
 

@@ -1,6 +1,12 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  // proxy.ts imports through the same alias the app uses, and it is worth
+  // testing directly: it decides which representation a rule URL answers with.
+  resolve: {
+    alias: { "@": fileURLToPath(new URL(".", import.meta.url)) },
+  },
   test: {
     include: ["lib/**/*.test.ts"],
     coverage: {

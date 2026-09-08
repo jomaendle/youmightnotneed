@@ -65,6 +65,11 @@ export {
   resolveGuides,
 } from "./guides.ts";
 export { type TierShare, tierShareOf } from "./history.ts";
+export {
+  renderRuleMarkdown,
+  renderUseCaseTable,
+  ruleMarkdownUrl,
+} from "./markdown.ts";
 export { rules, rulesById, rulesByPackage } from "./rules/index.ts";
 export {
   type BaselineStatus,
