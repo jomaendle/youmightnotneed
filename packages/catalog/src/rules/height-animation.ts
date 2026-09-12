@@ -47,5 +47,5 @@ export const heightAnimation: Rule = {
 .panel { height: 0; overflow: hidden; transition: height 0.3s; }
 .panel[data-open] { height: auto; }`,
   },
-  guides: ["animate-to-intrinsic-sizes"],
+  guides: ["animate-to-intrinsic-sizes", "calculate-with-intrinsic-sizes"],
 };

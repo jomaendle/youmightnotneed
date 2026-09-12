@@ -21,15 +21,36 @@ is findable without knowing that swiper was the thing you were about to
 reach for.
 
 A row is a starting point, not a verdict. Take the rule id from it and read
-the conditions before deciding:
+the conditions before deciding. The site answers in markdown for one rule,
+which is the live catalog rather than the snapshot in `references/catalog.md`:
+
+```sh
+curl --fail-with-body -sS https://youmightnotneed.dev/rules/<id>.md
+```
+
+The flag matters: plain `curl -sS` exits 0 on a 404, so an error page reads as
+an answer. `--fail-with-body` exits non-zero and still prints the body, which
+for a wrong id is a line naming the id and pointing at the index.
+
+That carries the native approach, the Baseline tier, every condition for
+keeping the dependency, the swap and the guides. The CLI gives the same
+conditions without the site, and works offline once npx has fetched it:
 
 ```sh
 npx -y youmightnotneed@latest --package <name> --verbose
 ```
 
+If both fail, say the conditions could not be read, and stop there. A rule id
+says a rule exists. The conditions are what decides, and guessing them is the
+one thing this catalog exists to prevent.
+
 ## Starting from a package
 
-Checking one name, or auditing what is already installed:
+The **By package** section of `references/catalog.md` maps every package the
+catalog claims to the rule that covers it. Grep it for the dependency name.
+That is the one lookup here that needs no network at all.
+
+For the conditions, and for auditing a whole package.json:
 
 ```sh
 npx -y youmightnotneed@latest --package axios --verbose
@@ -37,8 +58,8 @@ npx -y youmightnotneed@latest --verbose          # nearest package.json
 npx -y youmightnotneed@latest ./app --json       # machine-readable
 ```
 
-Nothing under "keep it if" means there is nothing to weigh. Both work offline
-once npx has fetched the package, and neither sends the package.json
+Nothing under "keep it if" means there is nothing to weigh. These work offline
+once npx has fetched the package, and none of them sends the package.json
 anywhere.
 
 ## What a finding actually claims
@@ -76,7 +97,5 @@ npx -y modern-web-guidance@latest retrieve "<id>"
 
 ## Through MCP instead
 
-`npx -y youmightnotneed-mcp` serves the same catalog over stdio with three
-tools: `analyze_dependencies` takes a dependency map, `get_rule` takes an id
-or a package name, and `list_rules` returns every rule in summary form. The
-data is identical, because every surface calls one pure `detect()`.
+`npx -y youmightnotneed-mcp` serves the same catalog over stdio, for a host
+that prefers tools to a CLI.

@@ -7,12 +7,6 @@ Every rule, 56 of them, covering 241 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
-To check a single package without reading this file:
-
-```sh
-npx -y youmightnotneed@latest --package <name> --verbose
-```
-
 ## By use case
 
 Read this before reaching for a package. The left column is the case the
@@ -78,482 +72,85 @@ were about to install.
 | toggling an element, such as a video player or image viewer, into and out of fullscreen | Element.requestFullscreen() | limited | `fullscreen` |
 | truncating a block of text to a fixed number of lines with an ellipsis | -webkit-line-clamp | widely available | `line-clamp` |
 
-A match here is a starting point, not a verdict. Every rule also carries the
-conditions where the dependency is still right, and those are not in this
-file: run `--package <name> --verbose`, or call `get_rule` on the MCP
-server, and read them before deciding.
-
-## Every rule
-
-Sorted by title.
-
-### Accordions
-
-- **id**: `exclusive-accordion`
-- **native**: <details name> for an exclusive accordion
-- **support**: newly available
-- **replaces**: `react-accessible-accordion`, `react-collapsible`, `accordion-js`
-- **when**: building an FAQ or accordion where opening one panel should close the others
-- **guides**: search-hidden-content
-
-### Animating to height auto
-
-- **id**: `height-auto-animation`
-- **native**: interpolate-size: allow-keywords, or calc-size()
-- **support**: limited
-- **replaces**: `react-collapse`, `react-animate-height`, `react-smooth-collapse`
-- **when**: animating a collapsible panel open and closed to its natural height
-- **guides**: animate-to-intrinsic-sizes
-
-### Auto-growing textareas
-
-- **id**: `field-sizing`
-- **native**: field-sizing: content
-- **support**: newly available
-- **replaces**: `react-textarea-autosize`, `autosize`, `react-autosize-textarea`, `vue-textarea-autosize`, `ngx-autosize`
-- **when**: a textarea or input should grow to fit what the user has typed
-- **guides**: form-fields-automatically-fit-contents
-
-### Balanced headings
-
-- **id**: `text-wrap-balance`
-- **native**: text-wrap: balance
-- **support**: newly available
-- **replaces**: `react-wrap-balancer`, `balance-text`
-- **when**: stopping a heading or short blurb from breaking with one word on the last line
-- **guides**: improve-text-layout-and-legibility
-
-### Base64 encoding
-
-- **id**: `base64`
-- **native**: btoa() and atob(), with TextEncoder for text
-- **support**: widely available
-- **replaces**: `js-base64`, `base-64`, `abab`
-- **when**: encoding or decoding base64 in the browser
-
-### Bluetooth device access
-
-- **id**: `web-bluetooth`
-- **native**: navigator.bluetooth.requestDevice()
-- **support**: limited
-- **replaces**: `@capacitor-community/bluetooth-le`, `cordova-plugin-ble-central`
-- **when**: connecting to a Bluetooth Low Energy device directly from a web page
-
-### Cancelling async work
-
-- **id**: `abort-controller`
-- **native**: AbortController and AbortSignal
-- **support**: widely available
-- **replaces**: `p-cancelable`, `cancelable-promise`, `abortcontroller-polyfill`
-- **when**: cancelling an in-flight fetch or other signal-aware async operation
-
-### Carousels
-
-- **id**: `carousel-scroll-markers`
-- **native**: CSS scroll-snap with ::scroll-button() and ::scroll-marker()
-- **support**: limited (capped by ::scroll-button)
-- **replaces**: `swiper`, `embla-carousel`, `embla-carousel-react`, `react-slick`, `slick-carousel`, `keen-slider`, `flickity`, `vue3-carousel`, `ngx-owl-carousel-o`, `vue-awesome-swiper`
-- **when**: building a horizontal gallery with prev/next buttons and dot indicators
-- **guides**: carousel-snap-highlights, carousel-slide-effects, scroll-snap-state-sync, scroll-snap-realtime-feedback
-
-### Colour manipulation
-
-- **id**: `css-color-functions`
-- **native**: color-mix(), oklch() and relative colour syntax
-- **support**: widely available
-- **replaces**: `polished`, `color2k`, `chroma-js`, `tinycolor2`, `color`, `colord`
-- **when**: deriving hover, border or muted shades from a single brand colour
-
-### Copy and paste
-
-- **id**: `clipboard`
-- **native**: navigator.clipboard.writeText()
-- **support**: newly available
-- **replaces**: `copy-to-clipboard`, `clipboard-copy`, `clipboard.js`, `react-copy-to-clipboard`, `vue-clipboard3`, `vue-clipboard2`, `ngx-clipboard`, `clipboard-polyfill`
-- **when**: copying text to the clipboard on a button click or similar user action
-
-### Cross-tab messaging
-
-- **id**: `broadcast-channel`
-- **native**: BroadcastChannel
-- **support**: widely available
-- **replaces**: `broadcast-channel`
-- **when**: sending a message from one open tab to other tabs on the same site
-
-### Custom select menus
-
-- **id**: `customizable-select`
-- **native**: appearance: base-select on <select>
-- **support**: limited
-- **replaces**: `react-select`, `choices.js`, `select2`, `tom-select`, `vue-select`, `vue-multiselect`, `@ng-select/ng-select`, `svelte-select`
-- **when**: styling a select's options with markup, such as a flag or a two-line label
-- **guides**: animated-select-picker, branded-select-styling, custom-select-picker-layouts, select-menu-interaction
-
-### Date and time pickers
-
-- **id**: `date-time-input`
-- **native**: <input type="date"> and <input type="time">
-- **support**: widely available
-- **replaces**: `react-datepicker`, `flatpickr`, `react-flatpickr`, `react-day-picker`, `@mui/x-date-pickers`, `ng2-date-picker`
-- **when**: collecting a single date or time value from a form
-
-### Deep cloning
-
-- **id**: `structured-clone`
-- **native**: structuredClone()
-- **support**: widely available
-- **replaces**: `lodash.clonedeep`, `rfdc`, `clone`, `klona`, `clone-deep`, `fast-copy`, `just-clone`
-- **when**: deep-copying plain data such as arrays, objects, Maps, Sets, and dates
-
-### Element resize tracking
-
-- **id**: `resize-observer`
-- **native**: ResizeObserver
-- **support**: widely available
-- **replaces**: `resize-observer-polyfill`, `@juggle/resize-observer`
-- **when**: running code when an element's own box changes size, not just the viewport
-
-### Element size queries
-
-- **id**: `container-queries`
-- **native**: Container queries
-- **support**: widely available
-- **replaces**: `react-resize-detector`, `react-use-measure`, `react-sizeme`, `react-container-query`, `element-resize-detector`, `vue-resize`
-- **when**: a component needs to change layout based on its own width rather than the viewport
-- **guides**: size-aware-styling
-
-### Enter and exit transitions
-
-- **id**: `discrete-transitions`
-- **native**: @starting-style with transition-behavior: allow-discrete
-- **support**: newly available
-- **replaces**: `framer-motion`, `motion`, `react-transition-group`, `react-spring`
-- **when**: fading or sliding an element in and out as it is added to or removed from the DOM
-- **guides**: animate-element-entry-exit, physics-based-easing, dynamic-sibling-animations
-
-### Event emitters
-
-- **id**: `event-target`
-- **native**: EventTarget with CustomEvent
-- **support**: widely available
-- **replaces**: `mitt`, `tiny-emitter`, `nanoevents`, `eventemitter3`, `event-emitter`
-- **when**: passing messages between parts of an app through a small event bus
-
-### Fixed aspect ratios
-
-- **id**: `aspect-ratio`
-- **native**: aspect-ratio
-- **support**: widely available
-- **replaces**: `react-aspect-ratio`
-- **when**: keeping a box at a fixed ratio, such as a 16/9 video wrapper or a square thumbnail
-
-### Fluid type scales
-
-- **id**: `fluid-type-clamp`
-- **native**: clamp() with a viewport-relative middle value
-- **support**: widely available
-- **replaces**: `fittext.js`
-- **when**: a heading or display type should scale between a minimum and maximum size with the viewport
-- **guides**: fluid-scaling
-
-### Focus trapping
-
-- **id**: `inert`
-- **native**: the inert attribute
-- **support**: widely available
-- **replaces**: `focus-trap`, `focus-trap-react`, `react-focus-lock`, `focus-lock`, `vue-focus-lock`, `wicg-inert`
-- **when**: keeping keyboard focus inside an open modal, drawer or menu
-- **guides**: accessibility, navigation-drawer
-
-### Fullscreen toggling
-
-- **id**: `fullscreen`
-- **native**: Element.requestFullscreen()
-- **support**: limited
-- **replaces**: `screenfull`, `react-full-screen`, `vue-fullscreen`
-- **when**: toggling an element, such as a video player or image viewer, into and out of fullscreen
-
-### Generating UUIDs
-
-- **id**: `random-uuid`
-- **native**: crypto.randomUUID()
-- **support**: widely available
-- **replaces**: `uuid`, `uuidv4`, `@lukeed/uuid`, `uuid-random`
-- **when**: generating a random v4 UUID
-
-### Grouping a list by key
-
-- **id**: `array-grouping`
-- **native**: Object.groupBy() and Map.groupBy()
-- **support**: newly available
-- **replaces**: `lodash.groupby`, `just-group-by`, `group-array`
-- **when**: bucketing an array into groups keyed by a property of each item
-
-### Gzip and deflate in the browser
-
-- **id**: `compression-streams`
-- **native**: CompressionStream and DecompressionStream
-- **support**: widely available
-- **replaces**: `pako`, `lz-string`
-- **when**: compressing or decompressing bytes with gzip or deflate before sending or storing them
-
-### HTTP requests
-
-- **id**: `fetch`
-- **native**: fetch()
-- **support**: widely available
-- **replaces**: `axios`, `superagent`, `redaxios`, `whatwg-fetch`, `unfetch`, `isomorphic-fetch`, `cross-fetch`
-- **when**: making HTTP requests from the browser or from Node 18.0.0 and up
-
-### Hashing and encryption
-
-- **id**: `web-crypto`
-- **native**: crypto.subtle
-- **support**: widely available
-- **replaces**: `crypto-js`, `js-sha256`, `crypto-hash`
-- **when**: hashing, signing, or encrypting with SHA-2, HMAC, AES or RSA
-
-### Highlighting search matches
-
-- **id**: `custom-highlight`
-- **native**: the CSS Custom Highlight API
-- **support**: newly available
-- **replaces**: `mark.js`, `react-highlight-words`, `react-highlighter`
-- **when**: highlighting search matches or ranges of text without changing the markup
-- **guides**: highlight-text-ranges
-
-### Human-readable durations
-
-- **id**: `duration-format`
-- **native**: Intl.DurationFormat
-- **support**: newly available
-- **replaces**: `humanize-duration`, `pretty-ms`
-- **when**: rendering a length of time as text, such as "1 hour, 30 minutes"
-- **guides**: format-human-readable-durations
-
-### Keeping the screen awake
-
-- **id**: `screen-wake-lock`
-- **native**: navigator.wakeLock.request("screen")
-- **support**: newly available
-- **replaces**: `nosleep.js`, `react-use-wake-lock`
-- **when**: keeping the screen from sleeping while a page is active, such as during a recipe, presentation, or workout
-
-### Keyboard-only focus styling
-
-- **id**: `focus-visible`
-- **native**: :focus-visible
-- **support**: widely available
-- **replaces**: `focus-visible`
-- **when**: showing a focus ring only for keyboard or other non-pointer focus, not for a mouse click
-
-### Lazy-loaded images and iframes
-
-- **id**: `lazy-loading`
-- **native**: loading="lazy"
-- **support**: widely available
-- **replaces**: `lozad`, `lazysizes`, `vanilla-lazyload`, `react-lazyload`, `react-lazy-load-image-component`, `yall-js`, `vue-lazyload`, `v-lazy-image`
-- **when**: deferring offscreen images or iframes so they load as the user scrolls to them
-- **guides**: optimize-image-priority
-
-### Locale-aware number and currency formatting
-
-- **id**: `number-format`
-- **native**: Intl.NumberFormat
-- **support**: widely available
-- **replaces**: `numeral`, `accounting`, `currency.js`, `format-number`
-- **when**: formatting a number as currency, a percentage, or a locale-correct thousands-grouped number for display
-
-### Masonry layouts
-
-- **id**: `css-masonry`
-- **native**: CSS masonry item placement
-- **support**: limited
-- **replaces**: `react-masonry-css`, `masonry-layout`, `react-masonry-component`, `muuri`, `react-photo-gallery`, `vue-masonry`, `vue-masonry-css`
-- **when**: laying out a gallery of items with varying heights into columns with no vertical gaps
-
-### Modal dialogs
-
-- **id**: `dialog-element`
-- **native**: <dialog> with showModal()
-- **support**: widely available
-- **replaces**: `react-modal`, `react-responsive-modal`, `react-aria-modal`, `@reach/dialog`, `micromodal`, `a11y-dialog`, `vue-js-modal`, `vue-final-modal`, `svelte-modals`, `dialog-polyfill`
-- **when**: building a modal dialog, confirmation prompt or alert
-- **guides**: light-dismiss-a-dialog, declarative-dialog-popover-control, platform-controls-dismiss-dialog, animate-to-from-top-layer
-
-### Multi-line text truncation
-
-- **id**: `line-clamp`
-- **native**: -webkit-line-clamp
-- **support**: widely available
-- **replaces**: `react-clamp-lines`, `react-line-clamp`, `clamp-js`, `line-clamp`, `vue-clamp`
-- **when**: truncating a block of text to a fixed number of lines with an ellipsis
-
-### Natural and locale-aware sorting
-
-- **id**: `natural-sort`
-- **native**: Intl.Collator with numeric: true
-- **support**: widely available
-- **replaces**: `natural-compare`, `natural-compare-lite`, `natural-orderby`, `string-natural-compare`
-- **when**: sorting strings that contain numbers, or sorting for a human reader
-
-### Off-screen rendering
-
-- **id**: `content-visibility`
-- **native**: content-visibility: auto
-- **support**: newly available
-- **replaces**: `react-window`, `react-virtualized`, `vue-virtual-scroller`, `vue-virtual-scroll-list`, `ngx-virtual-scroller`, `svelte-virtual-list`
-- **when**: rendering a long list where only the rows near the viewport need to cost anything
-- **guides**: defer-rendering-heavy-content
-
-### Page and state transitions
-
-- **id**: `view-transitions`
-- **native**: The View Transitions API
-- **support**: newly available
-- **replaces**: `next-view-transitions`, `react-page-transition`, `barba.js`, `swup`
-- **when**: cross-fading between two states, or growing a thumbnail into a hero image across a navigation
-- **guides**: same-document-transitions, cross-document-transitions, faster-spa-view-transitions, consistent-cross-document-transitions, directional-navigation-transitions, group-element-transitions
-
-### Query string parsing
-
-- **id**: `url-search-params`
-- **native**: URLSearchParams and the URL constructor
-- **support**: widely available
-- **replaces**: `query-string`, `qs`, `querystringify`, `url-parse`
-- **when**: reading or building a query string, or pulling a URL apart
-
-### Relative time formatting
-
-- **id**: `relative-time`
-- **native**: Intl.RelativeTimeFormat
-- **support**: widely available
-- **replaces**: `javascript-time-ago`, `timeago.js`, `react-timeago`
-- **when**: formatting a timestamp as relative text, such as "5 minutes ago" or "in 2 days"
-
-### Reordering a list by dragging
-
-- **id**: `drag-and-drop`
-- **native**: draggable and the drag events
-- **support**: widely available
-- **replaces**: `sortablejs`, `react-sortablejs`
-- **when**: letting someone reorder a list by dragging an item with a mouse
-
-### Resizable panels
-
-- **id**: `resizable-panels`
-- **native**: resize
-- **support**: limited
-- **replaces**: `re-resizable`
-- **when**: letting someone drag-resize a single panel, such as a sidebar or a textarea
-
-### Scroll chaining and body scroll lock
-
-- **id**: `overscroll-behavior`
-- **native**: overscroll-behavior: contain
-- **support**: widely available
-- **replaces**: `body-scroll-lock`
-- **when**: stopping the page behind a modal or drawer from scrolling when the overlay reaches its end
-
-### Scroll-triggered animations
-
-- **id**: `scroll-driven-animations`
-- **native**: animation-timeline: view() and scroll()
-- **support**: limited
-- **replaces**: `aos`, `scrollreveal`, `wowjs`, `wow.js`, `scrollmagic`, `rellax`
-- **when**: fading or moving elements in as they scroll into view, or driving a reading-progress bar
-- **guides**: parallax-scroll-effects, scrollytelling, scroll-entry-exit-effects, scroll-progress-indicator, shrinking-header-on-scroll
-
-### Server-sent events
-
-- **id**: `server-sent-events`
-- **native**: EventSource
-- **support**: widely available
-- **replaces**: `eventsource`, `event-source-polyfill`
-- **when**: subscribing to a one-way stream of updates from a server
-
-### Sharing to other apps
-
-- **id**: `web-share`
-- **native**: navigator.share()
-- **support**: limited
-- **replaces**: `react-share`, `vue-social-sharing`, `ngx-sharebuttons`
-- **when**: letting someone share the current page or a piece of content to whatever app they choose
-
-### Smooth scrolling and scroll-to-anchor
-
-- **id**: `smooth-scroll`
-- **native**: scroll-behavior: smooth with scroll-margin-top
-- **support**: widely available
-- **replaces**: `react-scroll`, `smoothscroll-polyfill`, `scroll-behavior-polyfill`, `smooth-scroll`, `jump.js`, `vue-scrollto`
-- **when**: making in-page anchor links scroll smoothly to their target
-- **guides**: scroll-target-on-load
-
-### Sticky headers and sidebars
-
-- **id**: `sticky-positioning`
-- **native**: position: sticky
-- **support**: widely available
-- **replaces**: `sticky-js`, `stickyfill`, `react-sticky`, `sticky-kit`, `stickybits`, `vue-sticky-directive`, `vue-sticky`
-- **when**: a header, sidebar or table head should stick while its container scrolls
-- **guides**: state-aware-sticky-headers, scroll-position-aware-elements
-
-### Styled scrollbars
-
-- **id**: `styled-scrollbars`
-- **native**: scrollbar-width, scrollbar-color and scrollbar-gutter
-- **support**: newly available
-- **replaces**: `react-custom-scrollbars`, `react-custom-scrollbars-2`, `simplebar`, `simplebar-react`, `overlayscrollbars`, `overlayscrollbars-react`, `perfect-scrollbar`, `vue-perfect-scrollbar`, `overlayscrollbars-vue`, `ngx-perfect-scrollbar`
-- **when**: restyling a scrollbar to match a dark theme, or stopping layout shift when a scrollbar appears
-- **guides**: customize-scrollbar-color-and-thickness, adapt-scrollbar-to-contrast-preferences
-
-### Tab visibility
-
-- **id**: `page-visibility`
-- **native**: document.visibilityState and the visibilitychange event
-- **support**: widely available
-- **replaces**: `react-page-visibility`, `visibilityjs`
-- **when**: pausing or resuming work, such as polling or video playback, based on whether the tab is visible
-- **guides**: detect-initial-visibility-state, calculate-total-foreground-time
-
-### Text to speech
-
-- **id**: `speech-synthesis`
-- **native**: SpeechSynthesis and SpeechSynthesisUtterance
-- **support**: widely available
-- **replaces**: `speak-tts`, `react-text-to-speech`
-- **when**: reading text aloud with the browser's own text-to-speech engine
-
-### Tooltips, dropdowns and popovers
-
-- **id**: `popover-anchor-positioning`
-- **native**: The Popover API with CSS anchor positioning
-- **support**: limited (capped by Anchor positioning)
-- **replaces**: `@floating-ui/react`, `@floating-ui/react-dom`, `@floating-ui/dom`, `@popperjs/core`, `popper.js`, `tippy.js`, `@tippyjs/react`, `react-popper`, `react-tooltip`, `floating-vue`, `v-tooltip`, `@oddbird/popover-polyfill`
-- **when**: building a tooltip, dropdown menu or popover anchored to a trigger
-- **guides**: position-aware-tooltips, interest-triggered-tooltips, resilient-context-menus-and-nested-dropdowns
-
-### Trimming font leading
-
-- **id**: `text-box-trim`
-- **native**: text-box-trim and text-box-edge
-- **support**: limited
-- **replaces**: `capsize`, `@capsizecss/core`, `@capsizecss/metrics`
-- **when**: removing a font's built-in leading so text sits flush in its box
-- **guides**: precise-text-alignment
-
-### Visibility tracking
-
-- **id**: `intersection-observer`
-- **native**: IntersectionObserver
-- **support**: widely available
-- **replaces**: `react-intersection-observer`, `react-visibility-sensor`, `react-in-viewport`, `svelte-intersection-observer`, `intersection-observer`
-- **when**: running code when an element scrolls into or out of view, such as triggering analytics, infinite scroll, or an entrance animation
-
-### Voice input
-
-- **id**: `speech-recognition`
-- **native**: SpeechRecognition
-- **support**: limited
-- **replaces**: `annyang`, `react-speech-recognition`
-- **when**: capturing a speech-to-text transcript directly in the browser
+## Reading one rule
+
+A row is a starting point, not a verdict. Every rule also carries the
+conditions where the dependency is still right, the swap, and the guides that
+cover the implementation. Those are not in this file. Take the rule id from
+the table and fetch it:
+
+```sh
+curl --fail-with-body -sS https://youmightnotneed.dev/rules/<id>.md
+```
+
+That is always the live catalog, where this table is only as fresh as the
+version of the skill you have. The CLI answers the same question from a
+package name, sends nothing anywhere, and works offline once npx has fetched
+it:
+
+```sh
+npx -y youmightnotneed@latest --package <name> --verbose
+```
+
+## By package
+
+Which rule covers a package you already have. This is the only lookup here
+that needs no network. It gives the rule id and stops there: the conditions
+for keeping the dependency come from the URL or the CLI above.
+
+- `abort-controller`: p-cancelable, cancelable-promise, abortcontroller-polyfill
+- `array-grouping`: lodash.groupby, just-group-by, group-array
+- `aspect-ratio`: react-aspect-ratio
+- `base64`: js-base64, base-64, abab
+- `broadcast-channel`: broadcast-channel
+- `carousel-scroll-markers`: swiper, embla-carousel, embla-carousel-react, react-slick, slick-carousel, keen-slider, flickity, vue3-carousel, ngx-owl-carousel-o, vue-awesome-swiper
+- `clipboard`: copy-to-clipboard, clipboard-copy, clipboard.js, react-copy-to-clipboard, vue-clipboard3, vue-clipboard2, ngx-clipboard, clipboard-polyfill
+- `compression-streams`: pako, lz-string
+- `container-queries`: react-resize-detector, react-use-measure, react-sizeme, react-container-query, element-resize-detector, vue-resize
+- `content-visibility`: react-window, react-virtualized, vue-virtual-scroller, vue-virtual-scroll-list, ngx-virtual-scroller, svelte-virtual-list
+- `css-color-functions`: polished, color2k, chroma-js, tinycolor2, color, colord
+- `css-masonry`: react-masonry-css, masonry-layout, react-masonry-component, muuri, react-photo-gallery, vue-masonry, vue-masonry-css
+- `custom-highlight`: mark.js, react-highlight-words, react-highlighter
+- `customizable-select`: react-select, choices.js, select2, tom-select, vue-select, vue-multiselect, @ng-select/ng-select, svelte-select
+- `date-time-input`: react-datepicker, flatpickr, react-flatpickr, react-day-picker, @mui/x-date-pickers, ng2-date-picker
+- `dialog-element`: react-modal, react-responsive-modal, react-aria-modal, @reach/dialog, micromodal, a11y-dialog, vue-js-modal, vue-final-modal, svelte-modals, dialog-polyfill
+- `discrete-transitions`: framer-motion, motion, react-transition-group, react-spring
+- `drag-and-drop`: sortablejs, react-sortablejs
+- `duration-format`: humanize-duration, pretty-ms
+- `event-target`: mitt, tiny-emitter, nanoevents, eventemitter3, event-emitter
+- `exclusive-accordion`: react-accessible-accordion, react-collapsible, accordion-js
+- `fetch`: axios, superagent, redaxios, whatwg-fetch, unfetch, isomorphic-fetch, cross-fetch
+- `field-sizing`: react-textarea-autosize, autosize, react-autosize-textarea, vue-textarea-autosize, ngx-autosize
+- `fluid-type-clamp`: fittext.js
+- `focus-visible`: focus-visible
+- `fullscreen`: screenfull, react-full-screen, vue-fullscreen
+- `height-auto-animation`: react-collapse, react-animate-height, react-smooth-collapse
+- `inert`: focus-trap, focus-trap-react, react-focus-lock, focus-lock, vue-focus-lock, wicg-inert
+- `intersection-observer`: react-intersection-observer, react-visibility-sensor, react-in-viewport, svelte-intersection-observer, intersection-observer
+- `lazy-loading`: lozad, lazysizes, vanilla-lazyload, react-lazyload, react-lazy-load-image-component, yall-js, vue-lazyload, v-lazy-image
+- `line-clamp`: react-clamp-lines, react-line-clamp, clamp-js, line-clamp, vue-clamp
+- `natural-sort`: natural-compare, natural-compare-lite, natural-orderby, string-natural-compare
+- `number-format`: numeral, accounting, currency.js, format-number
+- `overscroll-behavior`: body-scroll-lock
+- `page-visibility`: react-page-visibility, visibilityjs
+- `popover-anchor-positioning`: @floating-ui/react, @floating-ui/react-dom, @floating-ui/dom, @popperjs/core, popper.js, tippy.js, @tippyjs/react, react-popper, react-tooltip, floating-vue, v-tooltip, @oddbird/popover-polyfill
+- `random-uuid`: uuid, uuidv4, @lukeed/uuid, uuid-random
+- `relative-time`: javascript-time-ago, timeago.js, react-timeago
+- `resizable-panels`: re-resizable
+- `resize-observer`: resize-observer-polyfill, @juggle/resize-observer
+- `screen-wake-lock`: nosleep.js, react-use-wake-lock
+- `scroll-driven-animations`: aos, scrollreveal, wowjs, wow.js, scrollmagic, rellax
+- `server-sent-events`: eventsource, event-source-polyfill
+- `smooth-scroll`: react-scroll, smoothscroll-polyfill, scroll-behavior-polyfill, smooth-scroll, jump.js, vue-scrollto
+- `speech-recognition`: annyang, react-speech-recognition
+- `speech-synthesis`: speak-tts, react-text-to-speech
+- `sticky-positioning`: sticky-js, stickyfill, react-sticky, sticky-kit, stickybits, vue-sticky-directive, vue-sticky
+- `structured-clone`: lodash.clonedeep, rfdc, clone, klona, clone-deep, fast-copy, just-clone
+- `styled-scrollbars`: react-custom-scrollbars, react-custom-scrollbars-2, simplebar, simplebar-react, overlayscrollbars, overlayscrollbars-react, perfect-scrollbar, vue-perfect-scrollbar, overlayscrollbars-vue, ngx-perfect-scrollbar
+- `text-box-trim`: capsize, @capsizecss/core, @capsizecss/metrics
+- `text-wrap-balance`: react-wrap-balancer, balance-text
+- `url-search-params`: query-string, qs, querystringify, url-parse
+- `view-transitions`: next-view-transitions, react-page-transition, barba.js, swup
+- `web-bluetooth`: @capacitor-community/bluetooth-le, cordova-plugin-ble-central
+- `web-crypto`: crypto-js, js-sha256, crypto-hash
+- `web-share`: react-share, vue-social-sharing, ngx-sharebuttons

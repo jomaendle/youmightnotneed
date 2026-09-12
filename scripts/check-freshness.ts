@@ -229,6 +229,23 @@ try {
       `skills/youmightnotneed/SKILL.md hardcodes "${hardcoded[0]}". Counts live in the generated references/catalog.md, or they go stale the next time a rule lands.`,
     );
   }
+  // And a section it sends the agent to has to exist in the generated file.
+  // SKILL.md tells an agent to grep the **By package** section for a
+  // dependency name; renaming that heading in the generator would leave the
+  // instruction pointing at nothing, and nothing else compares the two files.
+  const referenced = [...doc.matchAll(/\*\*([^*]+)\*\* (?:section|table)/g)];
+  const headings = new Set(
+    [...renderCatalogReference().matchAll(/^## (.+)$/gm)].map(
+      (match) => match[1],
+    ),
+  );
+  for (const [, name] of referenced) {
+    if (!headings.has(name as string)) {
+      errors.push(
+        `skills/youmightnotneed/SKILL.md sends the agent to a "${name}" section, which references/catalog.md does not have. Rename it back, or update SKILL.md.`,
+      );
+    }
+  }
 } catch {
   errors.push("skills/youmightnotneed/SKILL.md is missing.");
 }

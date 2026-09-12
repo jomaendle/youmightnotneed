@@ -1,6 +1,8 @@
 ---
 name: adding-a-rule
 description: Use when adding a new rule to packages/catalog (a new "you might not need X" entry), or when checking whether a candidate feature is a good fit before writing one.
+metadata:
+  internal: true
 ---
 
 # Adding a catalog rule

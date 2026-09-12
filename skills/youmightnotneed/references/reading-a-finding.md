@@ -16,6 +16,10 @@ Carousels (20.1 kB)
   guides    carousel-snap-highlights, carousel-slide-effects
 ```
 
+The rule markdown at `/rules/<id>.md` carries the same things under prose
+headings: "Keep the dependency if any of these apply" is the keep-it-if list,
+and the cap is in the support line.
+
 Five things, in the order they matter:
 
 1. **keep it if** decides whether there is anything to do at all.

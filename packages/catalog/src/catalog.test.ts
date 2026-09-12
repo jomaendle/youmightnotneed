@@ -338,6 +338,7 @@ describe("detect stays pure", () => {
     "format.ts",
     "guides.ts",
     "history.ts",
+    "markdown.ts",
     "support.ts",
   ];
 
