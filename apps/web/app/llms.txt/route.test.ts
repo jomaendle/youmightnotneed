@@ -17,6 +17,14 @@ describe("llms.txt", () => {
     }
   });
 
+  it("is cacheable at the edge", () => {
+    // It is a compile-time constant, so serving it from the origin on every
+    // agent request would be waste.
+    expect(GET().headers.get("Cache-Control")).toBe(
+      "public, max-age=0, s-maxage=3600",
+    );
+  });
+
   it("says how to fetch one rule", async () => {
     const body = await GET().text();
     expect(body).toContain("https://youmightnotneed.dev/rules/<id>.md");

@@ -7,8 +7,9 @@
  * `text/markdown` that outranks `text/html`.
  */
 
-/** Top level so it is compiled once: proxy.ts calls this on every request. */
+/** Top level so it is compiled once: proxy.ts calls this per /rules request. */
 const QUALITY = /^q=(\d*\.?\d+)$/;
+const IS_QUALITY = /^q=/;
 
 interface AcceptEntry {
   type: string;
@@ -22,21 +23,36 @@ function parseAccept(header: string): AcceptEntry[] {
       const [type, ...parameters] = part.split(";").map((s) => s.trim());
       if (!type) return null;
 
-      // Lowercased before the match, because RFC 9110 makes parameter names
-      // case-insensitive and an unread `Q=0` would otherwise fall through to
-      // the default of 1, turning "not acceptable" into "preferred".
+      // Lowercased, and whitespace stripped, before the match: RFC 9110 makes
+      // parameter names case-insensitive, and `Q = 0.1` is a spelling this
+      // has to read rather than skip.
       const q = parameters
-        .map((parameter) => QUALITY.exec(parameter.toLowerCase()))
-        .find((match) => match !== null);
+        .map((parameter) => parameter.toLowerCase().replace(/\s/g, ""))
+        .find((parameter) => IS_QUALITY.test(parameter));
 
-      // A parameter that is not a q at all leaves the default. Clamped,
-      // because q ranges 0 to 1 and `q=5` is a malformed way to say "most
-      // preferred", not a licence to outrank a well-formed 1.
-      const quality = q?.[1] === undefined ? 1 : Number(q[1]);
-
-      return { type: type.toLowerCase(), quality: Math.min(quality, 1) };
+      return {
+        type: type.toLowerCase(),
+        quality: q === undefined ? 1 : parseQuality(q),
+      };
     })
     .filter((entry) => entry !== null);
+}
+
+/**
+ * The q of a parameter already known to be one.
+ *
+ * A q this cannot read counts as zero, not as one. Every other unreadable
+ * thing here falls back to a default, and this is the one place where the
+ * obvious default is backwards: q exists to lower preference, so reading
+ * `q=1e-3` as "no q given", which means maximum preference, inverts what the
+ * client said. Unreadable means unacceptable, which fails to the HTML page.
+ */
+function parseQuality(parameter: string): number {
+  const match = QUALITY.exec(parameter);
+  if (!match?.[1]) return 0;
+  // Clamped, because q ranges 0 to 1 and `q=5` is a malformed way to say
+  // "most preferred", not a licence to outrank a well-formed 1.
+  return Math.min(Number(match[1]), 1);
 }
 
 /** The highest q for an exact type. Null when only a wildcard covers it. */
@@ -55,7 +71,9 @@ export function prefersMarkdown(header: string | null): boolean {
 
   const entries = parseAccept(header);
   const markdown = explicitQuality(entries, "text/markdown");
-  if (markdown === null || markdown === 0) return false;
+  if (markdown === null) return false;
 
+  // A markdown q of 0 needs no case of its own: it loses this comparison to
+  // the 0 an absent text/html falls back to, which is the same answer.
   return markdown > (explicitQuality(entries, "text/html") ?? 0);
 }

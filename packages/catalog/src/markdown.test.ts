@@ -90,6 +90,13 @@ describe("renderRuleMarkdown", () => {
   });
 
   it("links guides exactly when the rule has a linkable one", () => {
+    // Without this the loop below goes vacuous if the catalog ever loses its
+    // guides, and a silent pass is the failure mode it exists to prevent.
+    expect(
+      rules.filter((rule) => resolveGuides(rule).some((g) => g.url !== null))
+        .length,
+    ).toBeGreaterThan(0);
+
     for (const rule of rules) {
       const linkable = resolveGuides(rule).filter((g) => g.url !== null);
       const markdown = renderRuleMarkdown(rule);
@@ -119,6 +126,37 @@ describe("renderRuleMarkdown", () => {
     expect(markdown).not.toContain("a-guide-that-moved-upstream");
     // And says so, rather than printing an empty heading.
     expect(markdown).toContain("No guide covers this rule yet");
+  });
+
+  it("offers every guide in one retrieval command", () => {
+    // 12 rules carry more than one, and the command takes a comma-separated
+    // list, so naming only the first would quietly lose the rest.
+    const multi = rules.filter(
+      (rule) => resolveGuides(rule).filter((g) => g.url !== null).length > 1,
+    );
+    expect(multi.length).toBeGreaterThan(0);
+
+    for (const rule of multi) {
+      const ids = resolveGuides(rule)
+        .filter((guide) => guide.url !== null)
+        .map((guide) => guide.id);
+      expect(renderRuleMarkdown(rule), rule.id).toContain(ids.join(","));
+      // The category tells a reader which part of the upstream guide set
+      // this came from.
+      for (const guide of resolveGuides(rule).filter((g) => g.url !== null)) {
+        expect(renderRuleMarkdown(rule), rule.id).toContain(
+          `(${guide.category})`,
+        );
+      }
+    }
+  });
+
+  it("has no snippet that would break its own fence", () => {
+    // Same argument as the table-cell guard: no rule has one today, and
+    // nothing in the schema forbids it.
+    for (const rule of rules) {
+      expect(rule.agent.snippet, rule.id).not.toContain("```");
+    }
   });
 
   it("attributes the guides wherever they are mentioned", () => {
@@ -178,6 +216,29 @@ describe("renderCatalogReference", () => {
     expect(reference).toContain(
       `Every rule, ${rules.length} of them, covering ${packages} npm packages.`,
     );
+  });
+
+  it("carries both lookups, not just the counts", () => {
+    // Deleting either section from the render used to pass every test here:
+    // check-freshness compares this function against a file the same function
+    // wrote, so it would bless an empty one.
+    const reference = renderCatalogReference();
+    for (const rule of rules) {
+      expect(
+        reference,
+        `${rule.id} is missing from the use-case table`,
+      ).toContain(`| \`${rule.id}\` |`);
+      expect(
+        reference,
+        `${rule.id} is missing from the package index`,
+      ).toContain(`- \`${rule.id}\`: ${rule.replaces.join(", ")}`);
+    }
+  });
+
+  it("recommends a fetch that fails visibly", () => {
+    // Plain curl exits 0 on a 404, so an error page reads as an answer. This
+    // is the whole subject of the failure handling in SKILL.md.
+    expect(renderCatalogReference()).toContain("--fail-with-body");
   });
 
   it("tells the reader where the conditions actually live", () => {

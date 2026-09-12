@@ -80,7 +80,7 @@ cover the implementation. Those are not in this file. Take the rule id from
 the table and fetch it:
 
 ```sh
-curl -fsS https://youmightnotneed.dev/rules/<id>.md
+curl --fail-with-body -sS https://youmightnotneed.dev/rules/<id>.md
 ```
 
 That is always the live catalog, where this table is only as fresh as the

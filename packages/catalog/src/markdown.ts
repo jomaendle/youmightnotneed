@@ -185,7 +185,7 @@ cover the implementation. Those are not in this file. Take the rule id from
 the table and fetch it:
 
 \`\`\`sh
-curl -fsS ${ruleMarkdownUrl("<id>")}
+curl --fail-with-body -sS ${ruleMarkdownUrl("<id>")}
 \`\`\`
 
 That is always the live catalog, where this table is only as fresh as the

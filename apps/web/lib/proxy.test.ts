@@ -41,6 +41,15 @@ describe("proxy", () => {
     );
   });
 
+  it("would take an uppercase path, which the matcher never sends it", () => {
+    // Pinning what the regex does rather than what the comment wishes it did:
+    // the i flag covers the whole pattern. /RULES/<id> 404s in a real build
+    // because config.matcher is case-sensitive, so this never runs.
+    expect(rewrittenTo(proxy(request("/RULES/dialog-element.md")))).toBe(
+      "/api/md/rules/dialog-element",
+    );
+  });
+
   it("keeps noindex on the alias and off the canonical URL", () => {
     // /rules/<id> is in the sitemap. noindex on the alias stops two indexable
     // copies of every rule; noindex on the negotiated response would

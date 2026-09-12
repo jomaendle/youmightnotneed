@@ -25,11 +25,12 @@ the conditions before deciding. The site answers in markdown for one rule,
 which is the live catalog rather than the snapshot in `references/catalog.md`:
 
 ```sh
-curl -fsS https://youmightnotneed.dev/rules/<id>.md
+curl --fail-with-body -sS https://youmightnotneed.dev/rules/<id>.md
 ```
 
-`-f` matters: without it curl exits 0 on a 404 and an error page reads as an
-answer.
+The flag matters: plain `curl -sS` exits 0 on a 404, so an error page reads as
+an answer. `--fail-with-body` exits non-zero and still prints the body, which
+for a wrong id is a line naming the id and pointing at the index.
 
 That carries the native approach, the Baseline tier, every condition for
 keeping the dependency, the swap and the guides. The CLI gives the same

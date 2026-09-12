@@ -35,6 +35,28 @@ describe("prefersMarkdown", () => {
     expect(prefersMarkdown("text/markdown;q=5, text/html")).toBe(false);
   });
 
+  it("treats a q it cannot read as unacceptable, not as preferred", () => {
+    // Every one of these says "I barely want markdown, I strongly want HTML".
+    // Falling back to "no q given" would read each as maximum preference and
+    // serve markdown, which is the inverse of what was asked.
+    expect(prefersMarkdown("text/markdown;Q = 0.1, text/html;q=0.9")).toBe(
+      false,
+    );
+    expect(prefersMarkdown("text/markdown;q=1e-3, text/html;q=0.9")).toBe(
+      false,
+    );
+    expect(prefersMarkdown("text/markdown;q=, text/html;q=0.9")).toBe(false);
+    expect(prefersMarkdown("text/markdown;q=high, text/html;q=0.9")).toBe(
+      false,
+    );
+  });
+
+  it("still reads a q written with spaces around the equals", () => {
+    expect(prefersMarkdown("text/markdown;Q = 0.9, text/html;q=0.1")).toBe(
+      true,
+    );
+  });
+
   it("takes the highest q when a type is listed twice", () => {
     expect(
       prefersMarkdown(

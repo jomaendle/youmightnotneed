@@ -33,7 +33,7 @@ the dependency is still the right call. Those live on the per-rule page.
 Take a rule id from the table below:
 
 \`\`\`sh
-curl -fsS ${ruleMarkdownUrl("<id>")}
+curl --fail-with-body -sS ${ruleMarkdownUrl("<id>")}
 \`\`\`
 
 That URL answers with the native approach, the Baseline tier, every condition

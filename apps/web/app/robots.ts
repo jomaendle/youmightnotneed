@@ -3,10 +3,11 @@ import { site } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    // /api/md is where the markdown alias is rewritten to. It is prerendered
-    // and answers a direct request, so it is kept out of an index by name as
-    // well as by the noindex proxy.ts sets on the alias. /api/og stays
-    // crawlable: social scrapers fetch the card.
+    // /api/md is where the markdown alias is rewritten to. A direct request
+    // to it carries no noindex, because proxy.ts sets that on the alias URL
+    // rather than on the handler, so this line is the only thing keeping the
+    // internal path out of a crawl. Scoped to /api/md/ rather than /api/
+    // because social scrapers read robots.txt and do fetch /api/og.
     rules: { userAgent: "*", allow: "/", disallow: "/api/md/" },
     sitemap: `${site.url}/sitemap.xml`,
   };
