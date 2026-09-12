@@ -5,19 +5,26 @@ catalog: whether a dependency already has a native replacement, and what
 that replacement looks like. The catalog is browsable at
 [youmightnotneed.dev](https://youmightnotneed.dev).
 
-Running it directly prints nothing and waits. That is correct: it speaks MCP
-over stdio, so it needs a client on the other end. Register it with yours.
+## Install
 
-**Claude Code**
+Pick your client. The server needs one: run it bare in a terminal and it
+prints nothing, because a stdio server waits for a client to speak first.
 
-```sh
-claude mcp add youmightnotneed -- npx -y youmightnotneed-mcp
-```
+| Client | Command |
+|---|---|
+| Claude Code | `claude mcp add youmightnotneed -- npx -y youmightnotneed-mcp` |
+| Codex CLI | `codex mcp add youmightnotneed -- npx -y youmightnotneed-mcp` |
+| Gemini CLI | `gemini mcp add youmightnotneed npx -y youmightnotneed-mcp` |
+| VS Code, Copilot | `code --add-mcp "{\"name\":\"youmightnotneed\",\"command\":\"npx\",\"args\":[\"-y\",\"youmightnotneed-mcp\"]}"` |
 
-Add `--scope user` to get it in every project, or `--scope project` to commit
-it to the repo's `.mcp.json` for everyone.
+On Claude Code, add `--scope user` for every project, or `--scope project` to
+commit it to the repo's `.mcp.json`.
 
-**Claude Desktop**, in `claude_desktop_config.json`:
+<details>
+<summary>Editing a config file instead</summary>
+
+Claude Desktop (`claude_desktop_config.json`) and Cursor (`.cursor/mcp.json`,
+or `~/.cursor/mcp.json` for every project):
 
 ```json
 {
@@ -30,13 +37,7 @@ it to the repo's `.mcp.json` for everyone.
 }
 ```
 
-**VS Code and GitHub Copilot**
-
-```sh
-code --add-mcp "{\"name\":\"youmightnotneed\",\"command\":\"npx\",\"args\":[\"-y\",\"youmightnotneed-mcp\"]}"
-```
-
-Or `.vscode/mcp.json`, which uses `servers` rather than `mcpServers`:
+VS Code (`.vscode/mcp.json`) uses `servers`, not `mcpServers`:
 
 ```json
 {
@@ -50,21 +51,7 @@ Or `.vscode/mcp.json`, which uses `servers` rather than `mcpServers`:
 }
 ```
 
-**Cursor**, in `.cursor/mcp.json` for one project or `~/.cursor/mcp.json` for
-all of them:
-
-```json
-{
-  "mcpServers": {
-    "youmightnotneed": {
-      "command": "npx",
-      "args": ["-y", "youmightnotneed-mcp"]
-    }
-  }
-}
-```
-
-**opencode**, in `opencode.json`, where `command` is one array:
+opencode (`opencode.json`) takes `command` as one array:
 
 ```json
 {
@@ -78,21 +65,10 @@ all of them:
 }
 ```
 
-**Codex CLI**
+Keep the `-y`. Without it npx asks before installing, and a client that cannot
+answer sees a server that never starts.
 
-```sh
-codex mcp add youmightnotneed -- npx -y youmightnotneed-mcp
-```
-
-**Gemini CLI**, which takes no `--`:
-
-```sh
-gemini mcp add youmightnotneed npx -y youmightnotneed-mcp
-```
-
-The `-y` on npx matters in every one of these. Without it npx prompts before
-installing, and a client that cannot answer the prompt sees a server that
-never starts.
+</details>
 
 ## Tools
 

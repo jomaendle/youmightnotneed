@@ -23,9 +23,9 @@ For anything it flags, read that rule's conditions before touching code:
 
     npx -y youmightnotneed@latest --package <name> --verbose
 
-Every finding is conditional. Each rule lists the cases where the library is still the right call, so check those against how this codebase actually uses the package. A dependency being listed is not proof of what it is used for.
+Every finding is conditional. Each rule lists when the library is still the right call, so check those against how this codebase actually uses the package.
 
-Report back with what could go, what it weighs, and which findings need a fallback for browsers that lack the feature. Do not remove anything yet.`;
+Report what could go, what it weighs, and what needs a fallback. Do not remove anything yet.`;
 
 /** Shown beside the button so the reader knows what they are copying. */
 export const AGENT_PROMPT_SUMMARY = `Runs the CLI, reads the conditions, reports back without changing code. Needs youmightnotneed ${CLI_VERSION} or newer.`;

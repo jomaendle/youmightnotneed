@@ -48,20 +48,29 @@ that may not apply to you.
 
 ## Where the numbers come from
 
-Nothing about browser support is written by hand. Rules store `web-features`
-IDs and a build step resolves them into widely, newly or limited, so the data
-is reviewable in a diff. A rule is only as available as its least-supported
-required feature: tooltips need both the Popover API and CSS anchor
-positioning, and anchor positioning has not reached Baseline, so the whole rule
-reads as limited even though half of it is everywhere.
+No browser version and no support tier in this repo is written by hand.
 
-Versions named in prose work the same way. A rule writes
-`{{safari:api.Crypto.randomUUID}}`, and `pnpm refresh:support` resolves it from
-`web-features` or from MDN's browser-compat-data. A token no source can confirm
-fails the refresh, and a literal version in a rule file fails the tests. This
-exists because a review found seven hand-typed versions the sources
-contradicted, every one in the direction that gets someone shipping broken
-code.
+```mermaid
+flowchart LR
+  WF["web-features"] --> R["refresh scripts"]
+  BCD["browser-compat-data"] --> R
+  R --> S["committed snapshot"]
+  S --> W["website"]
+  S --> C["CLI"]
+  S --> M["MCP"]
+  S --> K["skill"]
+```
+
+A rule stores `web-features` IDs and a build step turns them into widely, newly
+or limited, so every change shows up in a diff. A rule is only as available as
+its weakest required feature: tooltips need the Popover API and CSS anchor
+positioning, so that rule reads as limited even though half of it is everywhere.
+
+Versions in prose work the same way. A rule writes
+`{{safari:api.Crypto.randomUUID}}` and `pnpm refresh:support` resolves it. A
+token no source can confirm fails the refresh, and a literal version in a rule
+file fails the tests. A review once found seven hand-typed versions the sources
+contradicted, every one in the direction that gets someone shipping broken code.
 
 The implementation is someone else's job. A rule may point at Google Chrome's
 [modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance)

@@ -165,9 +165,9 @@ export default function HomePage() {
       <section className="hairline pt-10">
         <h2 className="mb-3 text-section">Or hand it to an agent</h2>
         <p className="mb-5 max-w-[58ch] text-compact text-fg-muted">
-          The catalog is a lookup table, so an agent can read it without a model
-          guessing at what a package does. Paste this into Claude Code, Cursor,
-          Copilot or anything else that can run a command.
+          Paste this into Claude Code, Cursor, Copilot or anything that runs
+          commands. Matching is exact, so nothing guesses at what your packages
+          do.
         </p>
         <CopyPrompt
           text={AGENT_PROMPT}
@@ -178,8 +178,7 @@ export default function HomePage() {
           {AGENT_PROMPT_SUMMARY}
         </p>
         <p className="mt-5 max-w-[58ch] text-compact text-fg-muted">
-          For a permanent install there is an MCP server, currently v
-          {MCP_VERSION}, and a skill:
+          Or install it for good. MCP server v{MCP_VERSION}, or the skill:
         </p>
         <pre className="mt-3 w-fit overflow-x-auto rounded-md border border-border bg-bg-subtle px-4 py-2.5 font-mono text-compact">
           <code>
