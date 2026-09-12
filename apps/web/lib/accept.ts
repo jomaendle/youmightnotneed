@@ -39,17 +39,18 @@ function parseAccept(header: string): AcceptEntry[] {
 }
 
 /**
- * The q of a parameter already known to be one.
+ * The q of a parameter already known to be one, or NaN when it cannot be read.
  *
- * A q this cannot read counts as zero, not as one. Every other unreadable
- * thing here falls back to a default, and this is the one place where the
- * obvious default is backwards: q exists to lower preference, so reading
- * `q=1e-3` as "no q given", which means maximum preference, inverts what the
- * client said. Unreadable means unacceptable, which fails to the HTML page.
+ * NaN rather than a number, because every number here is a lie. Reading an
+ * unparseable q as 1 says "most preferred" when q exists to lower preference,
+ * and reading it as 0 says "unacceptable", which hands the decision to the
+ * other type and inverts the same way in a mirror: `text/html;q=1e0,
+ * text/markdown;q=0.1` would serve markdown to a client that plainly wants
+ * the page. prefersMarkdown refuses to negotiate on a header carrying one.
  */
 function parseQuality(parameter: string): number {
   const match = QUALITY.exec(parameter);
-  if (!match?.[1]) return 0;
+  if (!match?.[1]) return Number.NaN;
   // Clamped, because q ranges 0 to 1 and `q=5` is a malformed way to say
   // "most preferred", not a licence to outrank a well-formed 1.
   return Math.min(Number(match[1]), 1);
@@ -79,6 +80,12 @@ export function prefersMarkdown(header: string | null): boolean {
   if (!header) return false;
 
   const entries = parseAccept(header);
+
+  // One unreadable q anywhere and this stops guessing. Any number chosen for
+  // it decides the comparison on the client's behalf, in one direction or the
+  // other, so the honest answer is the one a client that said nothing gets.
+  if (entries.some((entry) => Number.isNaN(entry.quality))) return false;
+
   return (
     explicitQuality(entries, "text/markdown") >
     explicitQuality(entries, "text/html")

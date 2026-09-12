@@ -51,6 +51,17 @@ describe("prefersMarkdown", () => {
     );
   });
 
+  it("refuses to negotiate when the bad q is on text/html", () => {
+    // The mirror of the case above. Zeroing the type the unreadable q sits on
+    // would hand the decision to the other type, so a client that plainly
+    // wants the page would be served markdown.
+    expect(prefersMarkdown("text/html;q=1e0, text/markdown;q=0.1")).toBe(false);
+    expect(prefersMarkdown("text/html;q=, text/markdown;q=0.1")).toBe(false);
+    expect(prefersMarkdown("text/html;q=high, text/markdown;q=0.9")).toBe(
+      false,
+    );
+  });
+
   it("still reads a q written with spaces around the equals", () => {
     expect(prefersMarkdown("text/markdown;Q = 0.9, text/html;q=0.1")).toBe(
       true,
