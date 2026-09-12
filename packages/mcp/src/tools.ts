@@ -8,9 +8,11 @@ import {
   packageSizes,
   type Report,
   type ResolvedGuide,
+  type ResolvedLintRule,
   type Rule,
   resolveBaseline,
   resolveGuides,
+  resolveRuleLint,
   rules,
   rulesById,
   rulesByPackage,
@@ -70,17 +72,45 @@ export interface RuleSummary {
   title: string;
   replaces: string[];
   native: string;
+  /** A lint rule that already checks this shape, when one exists. */
+  lintRule?: string;
+}
+
+/**
+ * One shape someone writes by hand instead of using the native feature.
+ *
+ * Keyed by the shape rather than by the rule, because an agent reaching for
+ * this arrives holding code and not a rule id.
+ */
+export interface HandRolledShape {
+  shape: string;
+  ruleId: string;
+  native: string;
 }
 
 /** Every rule, four fields each. Pure. Use getRule() for full detail. */
-export function listRules(): { rules: RuleSummary[] } {
+export function listRules(): {
+  rules: RuleSummary[];
+  handRolledShapes: HandRolledShape[];
+} {
   return {
     rules: rules.map((rule) => ({
       id: rule.id,
       title: rule.title,
       replaces: rule.replaces,
       native: rule.native,
+      lintRule: rule.lintRule,
     })),
+    // The whole checklist in one call, so an agent holding code rather than a
+    // package name does not have to fetch 64 rules to find out which shapes
+    // are worth looking for.
+    handRolledShapes: rules.flatMap((rule) =>
+      (rule.agent.handRolled ?? []).map((shape) => ({
+        shape,
+        ruleId: rule.id,
+        native: rule.native,
+      })),
+    ),
   };
 }
 
@@ -92,6 +122,8 @@ export type GetRuleResult =
       rule: Rule;
       baseline: BaselineInfo;
       guides: ResolvedGuide[];
+      /** The lint rule that already checks this, resolved, or null. */
+      lint: ResolvedLintRule | null;
     }
   | { found: false };
 
@@ -111,5 +143,6 @@ export function getRule(input: GetRuleInput): GetRuleResult {
     rule,
     baseline: resolveBaseline(rule),
     guides: resolveGuides(rule).filter((g) => g.url !== null),
+    lint: resolveRuleLint(rule),
   };
 }

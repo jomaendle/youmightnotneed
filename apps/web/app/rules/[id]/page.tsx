@@ -11,6 +11,7 @@ import {
   type Rule,
   resolveBaseline,
   resolveGuides,
+  resolveRuleLint,
   rules,
   rulesById,
   unpublishedSupport,
@@ -129,6 +130,10 @@ export default async function RulePage({ params }: PageProps) {
             ))}
           </ul>
         </section>
+
+        <HandRolled shapes={rule.agent.handRolled ?? []} />
+
+        <LintRule rule={rule} />
 
         <GuideList guides={resolveGuides(rule)} />
 
@@ -274,6 +279,56 @@ function GuideList({ guides }: { guides: readonly ResolvedGuide[] }) {
           </li>
         ))}
       </ul>
+    </section>
+  );
+}
+
+/**
+ * The shapes people write instead of using the native feature.
+ *
+ * The half of the problem `replaces` cannot show: nothing is installed for
+ * any of these, so no package.json scan can ever surface them. Placed after
+ * the conditions on purpose, because a shape matching is a starting point and
+ * the conditions are what decide.
+ */
+function HandRolled({ shapes }: { shapes: readonly string[] }) {
+  if (shapes.length === 0) return null;
+
+  return (
+    <section className="hairline pt-8">
+      <h2 className="mb-3 text-section">Signs it was hand-rolled</h2>
+      <p className="mb-4 max-w-[62ch] text-compact text-fg-muted">
+        No package is involved in any of these, so nothing would match in a
+        package.json. If the code looks like one of them, this rule applies
+        anyway, and the conditions above still decide.
+      </p>
+      <ul className="max-w-[68ch] space-y-2.5 border-border border-l pl-5">
+        {shapes.map((shape) => (
+          <li key={shape} className="text-fg-muted">
+            {shape}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** Where a linter already checks the shape, name it instead of restating it. */
+function LintRule({ rule }: { rule: Rule }) {
+  const lint = resolveRuleLint(rule);
+  if (!lint?.url) return null;
+
+  return (
+    <section className="hairline pt-8">
+      <h2 className="mb-3 text-section">Already checked by a linter</h2>
+      <p className="max-w-[62ch] text-compact text-fg-muted">
+        <a href={lint.url} target="_blank" rel="noreferrer">
+          <code className="font-mono">{lint.name}</code>
+        </a>{" "}
+        finds this mechanically, so it belongs in CI rather than in a review.{" "}
+        <Link href="/checks">Every rule a linter covers</Link> is on one page,
+        with a config you can paste.
+      </p>
     </section>
   );
 }

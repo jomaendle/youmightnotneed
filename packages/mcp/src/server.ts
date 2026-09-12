@@ -84,7 +84,7 @@ export function createServer(): McpServer {
     {
       title: "List rules",
       description:
-        "Lists every rule in the youmightnotneed catalog: id, title, the npm packages it replaces, and the native approach in one line. Use get_rule for full detail on one rule.",
+        "Lists every rule in the youmightnotneed catalog: id, title, the npm packages it replaces, the native approach, and any lint rule that already checks it. Also returns handRolledShapes: the shapes people write by hand instead of using the native feature, each with its rule id. Use that index when you are holding code rather than a dependency list, because a hand-written focus trap or carousel installs nothing and so never appears in analyze_dependencies. Use get_rule for full detail on one rule.",
       inputSchema: {},
     },
     () => {
@@ -103,7 +103,7 @@ export function createServer(): McpServer {
     {
       title: "Get rule",
       description:
-        "Looks up one catalog rule by its id or by an npm package name it replaces. Returns the full explainer, code snippet, agent.unless conditions, resolved Baseline support status, and any long-form `guides` with the command to retrieve them. Returns { found: false } rather than an error when nothing matches. If both id and package are given, id wins.",
+        "Looks up one catalog rule by its id or by an npm package name it replaces. Returns the full explainer, code snippet, agent.unless conditions, resolved Baseline support status, any long-form `guides` with the command to retrieve them, the shapes people hand-roll instead (agent.handRolled), and a resolved `lint` rule where a linter already checks the shape mechanically. Returns { found: false } rather than an error when nothing matches. If both id and package are given, id wins.",
       inputSchema: {
         id: z.string().optional(),
         package: z.string().optional(),

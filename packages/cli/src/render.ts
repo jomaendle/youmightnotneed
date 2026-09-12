@@ -7,6 +7,7 @@ import {
   guideCommand,
   type Report,
   resolveGuides,
+  resolveRuleLint,
 } from "@jomae/catalog";
 import type { ColorName, Palette } from "./colors.ts";
 
@@ -75,6 +76,38 @@ export interface RenderOptions {
   verbose: boolean;
 }
 
+/**
+ * The two places a finding hands off to something else: a lint rule that
+ * already checks the shape mechanically, and a guide that covers the
+ * implementation. Verbose only, because both are for someone who has decided
+ * to act rather than someone skimming.
+ */
+function renderReferences(
+  finding: Finding,
+  palette: Palette,
+): readonly string[] {
+  const lines: string[] = [];
+
+  const lint = resolveRuleLint(finding.rule);
+  if (lint?.url) {
+    lines.push(
+      `    ${palette("dim", "lint      ")}${palette("grey", lint.name)}`,
+    );
+  }
+
+  const guides = resolveGuides(finding.rule).filter((g) => g.url !== null);
+  if (guides.length > 0) {
+    lines.push(
+      `    ${palette("dim", "guides    ")}${palette(
+        "grey",
+        guides.map((g) => g.id).join(", "),
+      )}`,
+    );
+  }
+
+  return lines;
+}
+
 function renderFinding(finding: Finding, options: RenderOptions): string[] {
   const { palette } = options;
   const lines: string[] = [];
@@ -116,18 +149,8 @@ function renderFinding(finding: Finding, options: RenderOptions): string[] {
     lines.push(`    ${palette("dim", `keep it if ${clause}, see --verbose`)}`);
   }
 
-  // The catalog says which dependency has a native equivalent. It does not
-  // try to be the tutorial, so point at the one that is.
   if (options.verbose) {
-    const guides = resolveGuides(finding.rule).filter((g) => g.url !== null);
-    if (guides.length > 0) {
-      lines.push(
-        `    ${palette("dim", "guides    ")}${palette(
-          "grey",
-          guides.map((g) => g.id).join(", "),
-        )}`,
-      );
-    }
+    lines.push(...renderReferences(finding, palette));
   }
 
   lines.push("");
@@ -252,6 +275,7 @@ export function renderJson(report: Report, provenance?: Provenance): string {
         unless: finding.rule.agent.unless,
         snippet: finding.rule.agent.snippet,
         demoUrl: finding.rule.human.demoUrl ?? null,
+        lintRule: finding.rule.lintRule,
         guides: resolveGuides(finding.rule)
           .filter((g) => g.url !== null)
           .map((g) => ({

@@ -47,6 +47,10 @@ html {
   scrollbar-width: thin;
   scrollbar-color: #666 transparent;
 }`,
+    handRolled: [
+      "measuring the scrollbar width from innerWidth minus documentElement.clientWidth and padding the body by it",
+      "adding a margin or padding when an overlay opens so the page does not shift sideways",
+    ],
   },
   guides: [
     "customize-scrollbar-color-and-thickness",

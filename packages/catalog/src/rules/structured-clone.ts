@@ -31,4 +31,5 @@ export const structuredCloneRule: Rule = {
     ],
     snippet: "const copy = structuredClone(original);",
   },
+  lintRule: "unicorn/prefer-structured-clone",
 };

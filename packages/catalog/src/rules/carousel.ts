@@ -81,6 +81,11 @@ export const carousel: Rule = {
 .carousel::scroll-button(inline-end) { content: "\\2192"; }
 .carousel > *::scroll-marker { content: ""; }
 .carousel > *::scroll-marker:target-current { opacity: 1; }`,
+    handRolled: [
+      "a scroll listener on a horizontal strip dividing scrollLeft by item width to work out the active index",
+      "prev and next buttons calling scrollBy, each with its own disabled state recomputed on every scroll",
+      "rendering dots from the item count and toggling an active class on whichever one is current",
+    ],
   },
   guides: [
     "carousel-snap-highlights",

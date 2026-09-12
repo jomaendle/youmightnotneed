@@ -145,6 +145,22 @@ export const ruleSchema = z
         .array(z.string().min(1))
         .min(1, "every rule must state when the dependency is still correct"),
       snippet: z.string().min(1),
+      /**
+       * Shapes someone writes by hand instead of using the native feature,
+       * one short description each.
+       *
+       * This is the half of the problem `replaces` cannot see. A hand-written
+       * focus trap installs nothing, so no package.json match can ever fire,
+       * and the shapes worth naming here are multi-line and stateful, which is
+       * why no linter has them either. Where a linter does cover the shape,
+       * name it in `lintRule` instead: this field is for the ones that need a
+       * person or a model to recognise.
+       *
+       * Prose, deliberately, and read rather than matched. An agent compares
+       * what it is looking at against these, then reads `unless` before
+       * deciding, the same as for any other finding.
+       */
+      handRolled: z.array(z.string().min(1)).min(1).optional(),
     }),
 
     /**
@@ -156,6 +172,28 @@ export const ruleSchema = z
      * is renamed upstream fails a test instead of shipping as a dead link.
      */
     guides: z.array(slug).optional(),
+
+    /**
+     * A lint rule that already checks this shape, as `<prefix>/<name>`, e.g.
+     * `unicorn/prefer-structured-clone`.
+     *
+     * Same philosophy as `guides`: references, never copies. Where a linter
+     * checks something mechanically, this catalog says so and points at it
+     * rather than growing a second implementation of the same check. It also
+     * tells a reader which migrations they can automate today and which need
+     * judgment, which is a question nothing else answers.
+     *
+     * Resolved against the snapshot in generated/lint-rules.ts, so a rule
+     * renamed upstream fails the freshness check instead of shipping as a dead
+     * link.
+     */
+    lintRule: z
+      .string()
+      .regex(
+        /^[a-z0-9-]+\/[a-z0-9-]+$/,
+        "expected a lint rule as <prefix>/<name>",
+      )
+      .optional(),
 
     manualBaseline: manualBaselineSchema.optional(),
   })

@@ -170,3 +170,54 @@ for keeping the dependency come from the URL or the CLI above.
 - `web-crypto`: crypto-js, js-sha256, crypto-hash
 - `web-locks`: async-mutex, await-lock, mutexify, p-mutex
 - `web-share`: react-share, vue-social-sharing, ngx-sharebuttons
+
+## By hand-rolled shape
+
+The half no package.json can show you. Nothing is installed for any of these,
+so nothing matches: someone wrote it out instead. Read the code you are about
+to write or have just been handed, and check it against this.
+
+A match here is a starting point exactly like a package match. Fetch the rule
+and read its conditions before changing anything.
+
+| If the code does this | Rule | Instead | Support |
+| --- | --- | --- | --- |
+| Date.now() joined to Math.random().toString(36) to make something unique enough | `random-uuid` | crypto.randomUUID() | widely available |
+| a click handler on the backdrop comparing event.target against the panel to decide whether to close | `dialog-element` | <dialog> with showModal() | widely available |
+| a div with role=dialog and aria-modal, placed with position fixed and a z-index over the page | `dialog-element` | <dialog> with showModal() | widely available |
+| a keydown handler watching for Tab and cycling focus between the first and last focusable element | `inert` | the inert attribute | widely available |
+| a keydown listener on document checking for Escape so an overlay can be dismissed | `dialog-element` | <dialog> with showModal() | widely available |
+| a querySelectorAll over a list of focusable selectors, used to decide where focus is allowed to go | `inert` | the inert attribute | widely available |
+| a scroll listener calling getBoundingClientRect to decide whether an element is in the viewport | `intersection-observer` | IntersectionObserver | widely available |
+| a scroll listener on a horizontal strip dividing scrollLeft by item width to work out the active index | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
+| a transitionend listener setting height back to auto once an opening animation has finished | `height-auto-animation` | interpolate-size: allow-keywords, or calc-size() | limited |
+| a v4 id built from Math.random() and a template string of x and y placeholders | `random-uuid` | crypto.randomUUID() | widely available |
+| a window resize listener that reads offsetWidth on an element to react to that element's own size | `resize-observer` | ResizeObserver | widely available |
+| adding a margin or padding when an overlay opens so the page does not shift sideways | `styled-scrollbars` | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available |
+| calling getBoundingClientRect on a trigger inside scroll and resize listeners to place a floating panel | `popover-anchor-positioning` | The Popover API with CSS anchor positioning | limited |
+| comparing offsetTop against window.scrollY and innerHeight to fire something as the page scrolls | `intersection-observer` | IntersectionObserver | widely available |
+| flip or shift logic comparing a panel's rect against the viewport and moving it back inside | `popover-anchor-positioning` | The Popover API with CSS anchor positioning | limited |
+| measuring text in a hidden element or on a canvas to decide where to cut a string for display | `line-clamp` | -webkit-line-clamp | widely available |
+| measuring the scrollbar width from innerWidth minus documentElement.clientWidth and padding the body by it | `styled-scrollbars` | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available |
+| polling an element's dimensions on an interval to notice when they change | `resize-observer` | ResizeObserver | widely available |
+| prev and next buttons calling scrollBy, each with its own disabled state recomputed on every scroll | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
+| reading scrollHeight and animating max-height to that pixel value to open a panel | `height-auto-animation` | interpolate-size: allow-keywords, or calc-size() | limited |
+| recording window.scrollY on open and calling scrollTo to put the page back on close | `overscroll-behavior` | overscroll-behavior: contain | widely available |
+| rendering dots from the item count and toggling an active class on whichever one is current | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
+| setting document.body.style.overflow to hidden when an overlay opens, and restoring it on close | `overscroll-behavior` | overscroll-behavior: contain | widely available |
+| slicing a string to a character count and appending an ellipsis so it fits its box | `line-clamp` | -webkit-line-clamp | widely available |
+| storing document.activeElement when an overlay opens so focus can be put back on close | `inert` | the inert attribute | widely available |
+| writing top and left onto a tooltip from a requestAnimationFrame loop | `popover-anchor-positioning` | The Popover API with CSS anchor positioning | limited |
+
+## Already checked by a linter
+
+These shapes are matched mechanically today, so they need no judgment from you
+and belong in CI rather than in a review.
+
+| Lint rule | Rule | Instead |
+| --- | --- | --- |
+| `unicorn/prefer-event-target` | `event-target` | EventTarget with CustomEvent |
+| `unicorn/prefer-group-by` | `array-grouping` | Object.groupBy() and Map.groupBy() |
+| `unicorn/prefer-promise-with-resolvers` | `promise-withresolvers` | Promise.withResolvers() |
+| `unicorn/prefer-structured-clone` | `structured-clone` | structuredClone() |
+| `unicorn/prefer-url-search-parameters` | `url-search-params` | URLSearchParams and the URL constructor |

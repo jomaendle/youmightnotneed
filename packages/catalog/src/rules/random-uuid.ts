@@ -30,5 +30,9 @@ export const randomUuid: Rule = {
       "You need identifiers shorter or differently shaped than a 36-character UUID, which is what nanoid and short-uuid are for.",
     ],
     snippet: "const id = crypto.randomUUID();",
+    handRolled: [
+      "a v4 id built from Math.random() and a template string of x and y placeholders",
+      "Date.now() joined to Math.random().toString(36) to make something unique enough",
+    ],
   },
 };

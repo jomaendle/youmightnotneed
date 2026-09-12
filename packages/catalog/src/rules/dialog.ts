@@ -56,6 +56,11 @@ export const dialog: Rule = {
 </dialog>
 <script>document.querySelector("#d").showModal();</script>
 <style>dialog::backdrop { background: rgb(0 0 0 / 0.5); }</style>`,
+    handRolled: [
+      "a div with role=dialog and aria-modal, placed with position fixed and a z-index over the page",
+      "a keydown listener on document checking for Escape so an overlay can be dismissed",
+      "a click handler on the backdrop comparing event.target against the panel to decide whether to close",
+    ],
   },
   guides: [
     "light-dismiss-a-dialog",

@@ -35,6 +35,11 @@ export const inert: Rule = {
     ],
     snippet: `page.inert = true;   // opening the overlay
 page.inert = false;  // closing it`,
+    handRolled: [
+      "a keydown handler watching for Tab and cycling focus between the first and last focusable element",
+      "a querySelectorAll over a list of focusable selectors, used to decide where focus is allowed to go",
+      "storing document.activeElement when an overlay opens so focus can be put back on close",
+    ],
   },
   guides: ["accessibility", "navigation-drawer"],
 };

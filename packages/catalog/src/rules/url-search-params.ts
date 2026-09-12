@@ -41,4 +41,5 @@ params.get("page");
 params.getAll("tag");
 new URLSearchParams({ q: "css" }).toString();`,
   },
+  lintRule: "unicorn/prefer-url-search-parameters",
 };

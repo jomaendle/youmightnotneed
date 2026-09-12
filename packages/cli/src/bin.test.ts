@@ -153,6 +153,91 @@ describe("parseArgs", () => {
   });
 });
 
+describe("--rule prints one rule", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  const run = (args: string[]) =>
+    spawnSync(process.execPath, [binPath, ...args], { encoding: "utf8" });
+
+  // The route for someone holding code rather than a package name. A
+  // hand-rolled focus trap has no dependency to look up, so without this the
+  // shape half of the catalog has no offline answer at all.
+  it.each([["--rule"], ["-r"]])(
+    "%s prints the rule and its conditions",
+    (flag) => {
+      const result = run([flag, "inert"]);
+
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("# Focus trapping");
+      expect(result.stdout).toContain("Keep the dependency if");
+      expect(result.stdout).toContain("Signs it was hand-rolled");
+    },
+  );
+
+  it("names the lint rule when one already checks the shape", () => {
+    const result = run(["--rule", "structured-clone"]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("unicorn/prefer-structured-clone");
+  });
+
+  it("exits 1 on an unknown id rather than printing nothing", () => {
+    const result = run(["--rule", "not-a-real-rule"]);
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('No rule with id "not-a-real-rule"');
+  });
+
+  it.each([["--rule="], ["--rule=-v"], ["-r"], ["--rule"]])(
+    "%s exits 2 rather than looking up an empty id",
+    (arg) => {
+      const result = run([arg]);
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("needs a rule id");
+    },
+  );
+
+  // Silently winning over the other flag is the bad outcome: the reader asked
+  // for two things and got one, with an exit code saying it worked.
+  it.each([
+    [["--rule", "inert", "--package", "uuid"], "--package"],
+    [["--rule", "inert", "--json"], "--json"],
+    [["--rule", "inert", "."], "a path"],
+  ])("%s exits 2 rather than quietly ignoring the rest", (args, mention) => {
+    const result = run(args);
+
+    expect(result.status).toBe(2);
+    expect(result.stderr).toContain(mention);
+  });
+});
+
+describe("lockfiles are refused by name", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // Only package-lock.json is JSON, so the lockfileVersion check inside the
+  // parser never sees the others: they fail as "not valid JSON", which is true
+  // and useless. The name is the only thing available before parsing.
+  it.each([
+    ["pnpm-lock.yaml"],
+    ["yarn.lock"],
+    ["bun.lock"],
+    ["package-lock.json"],
+  ])("%s says it is a lockfile rather than a JSON error", (name) => {
+    const dir = mkdtempSync(join(tmpdir(), "ymn-lock-"));
+    const file = join(dir, name);
+    writeFileSync(file, "this is not json\n");
+
+    const result = spawnSync(process.execPath, [binPath, file], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("is a lockfile");
+    expect(result.stderr).not.toContain("not valid JSON");
+  });
+});
+
 describe("--package rejects a missing value", () => {
   // parseArgs calls process.exit(2) on bad input, so these run out of process.
   const binPath = resolve(import.meta.dirname, "bin.ts");
