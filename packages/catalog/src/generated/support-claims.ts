@@ -16,7 +16,7 @@ export interface SupportClaims {
  * and MDN's browser-compat-data. No rule writes a version number by hand.
  */
 export const supportClaims: SupportClaims = {
-  "generatedOn": "2026-09-06",
+  "generatedOn": "2026-09-12",
   "webFeaturesVersion": "3.36.0",
   "bcdVersion": "8.1.0",
   "claims": {
@@ -33,9 +33,11 @@ export const supportClaims: SupportClaims = {
     "chrome:inert": "102",
     "chrome:javascript.builtins.Intl.NumberFormat.NumberFormat.options_parameter.options_unit_parameter": "77",
     "chrome:overscroll-behavior": "144",
+    "chrome:promise-withresolvers": "119",
     "chrome:scroll-driven-animations": "115",
     "chrome:speech-recognition": "139",
     "chrome:url": "32",
+    "chrome:web-locks": "69",
     "firefox:abortsignal-timeout": "100",
     "firefox:api.Clipboard.writeText": "63",
     "firefox:api.Crypto.randomUUID": "95",
@@ -51,6 +53,8 @@ export const supportClaims: SupportClaims = {
     "firefox:inert": "112",
     "firefox:javascript.builtins.Intl.NumberFormat.NumberFormat.options_parameter.options_unit_parameter": "78",
     "firefox:overscroll-behavior": "150",
+    "firefox:promise-withresolvers": "121",
+    "firefox:web-locks": "96",
     "nodejs:api.EventTarget": "15.0.0",
     "nodejs:api.fetch": "18.0.0",
     "safari:abortsignal-timeout": "16",
@@ -71,9 +75,11 @@ export const supportClaims: SupportClaims = {
     "safari:highlight": "17.2",
     "safari:inert": "15.5",
     "safari:javascript.builtins.Intl.NumberFormat.NumberFormat.options_parameter.options_unit_parameter": "14.1",
+    "safari:promise-withresolvers": "17.4",
     "safari:scroll-driven-animations": "26",
     "safari:url": "7",
     "safari:web-cryptography": "11",
+    "safari:web-locks": "15.4",
     "safari_ios:api.WakeLock": "18.4"
   }
 };

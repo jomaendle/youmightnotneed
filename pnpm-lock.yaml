@@ -81,6 +81,12 @@ importers:
       vitest:
         specifier: ^4.1.11
         version: 4.1.11(@types/node@24.13.3)(@vitest/coverage-v8@4.1.11)(vite@8.2.2(@types/node@24.13.3)(jiti@2.7.0)(yaml@2.9.0))
+      youmightnotneed:
+        specifier: workspace:*
+        version: link:../../packages/cli
+      youmightnotneed-mcp:
+        specifier: workspace:*
+        version: link:../../packages/mcp
 
   packages/catalog:
     dependencies:

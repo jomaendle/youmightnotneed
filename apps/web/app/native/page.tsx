@@ -1,8 +1,14 @@
-import { combinedSupport, resolveFeature, rulesById } from "@jomae/catalog";
+import {
+  hasNoVersions,
+  type ResolvedFeature,
+  resolveFeature,
+  rulesById,
+} from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { BrowserSupport } from "@/components/browser-support";
+import { PartialSupportNote } from "@/components/partial-support";
 import { NATIVE_USAGE, type Usage } from "@/lib/native-usage";
 
 export const metadata: Metadata = {
@@ -69,7 +75,7 @@ function UsageRow({ usage }: { usage: Usage }) {
       </div>
 
       <div className="mb-3">
-        <BrowserSupport support={combinedSupport([feature])} />
+        <UsageSupport feature={feature} />
       </div>
 
       <dl className="max-w-[66ch] space-y-1.5 text-compact">
@@ -94,4 +100,23 @@ function UsageRow({ usage }: { usage: Usage }) {
       )}
     </li>
   );
+}
+
+/**
+ * The version row for one feature. Features whose aggregate support row is
+ * empty are handled by PartialSupportNote, which explains which part the
+ * numbers belong to rather than showing four dashes.
+ */
+function UsageSupport({ feature }: { feature: ResolvedFeature }) {
+  if (hasNoVersions(feature.support)) {
+    return feature.partialSupport === null ? (
+      <p className="max-w-[62ch] text-fg-muted text-metadata">
+        web-features tracks no browser versions for {feature.name} yet.
+      </p>
+    ) : (
+      <PartialSupportNote feature={feature} subject="site" />
+    );
+  }
+
+  return <BrowserSupport support={feature.support} />;
 }

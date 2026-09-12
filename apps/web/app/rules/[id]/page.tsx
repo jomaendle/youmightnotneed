@@ -21,6 +21,7 @@ import { notFound } from "next/navigation";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { BrowserSupport } from "@/components/browser-support";
 import { LiveDemo } from "@/components/live-demo";
+import { PartialSupportNote } from "@/components/partial-support";
 import { Snippet } from "@/components/snippet";
 import { demos } from "@/lib/demos";
 
@@ -349,21 +350,7 @@ function FeatureTable({
               )}
             </span>
             <BaselineBadge status={feature.status} short={true} />
-            {feature.partialSupport === null ||
-            !hasNoVersions(feature.support) ? null : (
-              <div className="w-full">
-                <p className="mb-2 max-w-[62ch] text-fg-muted text-metadata">
-                  web-features publishes no version for {feature.name} as a
-                  whole, because a small part of it has not shipped anywhere.
-                  These are the versions for{" "}
-                  <code className="font-mono">
-                    {feature.partialSupport.key}
-                  </code>
-                  , the part this rule is built on.
-                </p>
-                <BrowserSupport support={feature.partialSupport.support} />
-              </div>
-            )}
+            <PartialSupportNote feature={feature} subject="rule" />
           </li>
         ))}
       </ul>

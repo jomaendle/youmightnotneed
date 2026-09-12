@@ -28,6 +28,8 @@
     "postcss": "^8.5.26",
     "shiki": "^4.4.3",
     "tailwindcss": "^4.3.3",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "youmightnotneed": "workspace:*",
+    "youmightnotneed-mcp": "workspace:*"
   }
 }

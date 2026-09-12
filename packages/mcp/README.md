@@ -5,18 +5,70 @@ catalog: whether a dependency already has a native replacement, and what
 that replacement looks like. The catalog is browsable at
 [youmightnotneed.dev](https://youmightnotneed.dev).
 
-Add it to an MCP client's config:
+## Install
+
+Pick your client. The server needs one: run it bare in a terminal and it
+prints nothing, because a stdio server waits for a client to speak first.
+
+| Client | Command |
+|---|---|
+| Claude Code | `claude mcp add youmightnotneed -- npx -y youmightnotneed-mcp` |
+| Codex CLI | `codex mcp add youmightnotneed -- npx -y youmightnotneed-mcp` |
+| Gemini CLI | `gemini mcp add youmightnotneed npx -y youmightnotneed-mcp` |
+| VS Code, Copilot | `code --add-mcp "{\"name\":\"youmightnotneed\",\"command\":\"npx\",\"args\":[\"-y\",\"youmightnotneed-mcp\"]}"` |
+
+On Claude Code, add `--scope user` for every project, or `--scope project` to
+commit it to the repo's `.mcp.json`.
+
+<details>
+<summary>Editing a config file instead</summary>
+
+Claude Desktop (`claude_desktop_config.json`) and Cursor (`.cursor/mcp.json`,
+or `~/.cursor/mcp.json` for every project):
 
 ```json
 {
   "mcpServers": {
     "youmightnotneed": {
       "command": "npx",
-      "args": ["youmightnotneed-mcp"]
+      "args": ["-y", "youmightnotneed-mcp"]
     }
   }
 }
 ```
+
+VS Code (`.vscode/mcp.json`) uses `servers`, not `mcpServers`:
+
+```json
+{
+  "servers": {
+    "youmightnotneed": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "youmightnotneed-mcp"]
+    }
+  }
+}
+```
+
+opencode (`opencode.json`) takes `command` as one array:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "youmightnotneed": {
+      "type": "local",
+      "command": ["npx", "-y", "youmightnotneed-mcp"]
+    }
+  }
+}
+```
+
+Keep the `-y`. Without it npx asks before installing, and a client that cannot
+answer sees a server that never starts.
+
+</details>
 
 ## Tools
 

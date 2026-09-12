@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 56 of them, covering 241 npm packages.
+Every rule, 64 of them, covering 264 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
@@ -20,6 +20,7 @@ were about to install.
 | a heading or display type should scale between a minimum and maximum size with the viewport | clamp() with a viewport-relative middle value | widely available | `fluid-type-clamp` |
 | a textarea or input should grow to fit what the user has typed | field-sizing: content | newly available | `field-sizing` |
 | animating a collapsible panel open and closed to its natural height | interpolate-size: allow-keywords, or calc-size() | limited | `height-auto-animation` |
+| animating an element's styles from JavaScript and needing a handle to control it | element.animate() | widely available | `web-animations` |
 | bucketing an array into groups keyed by a property of each item | Object.groupBy() and Map.groupBy() | newly available | `array-grouping` |
 | building a horizontal gallery with prev/next buttons and dot indicators | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited | `carousel-scroll-markers` |
 | building a modal dialog, confirmation prompt or alert | <dialog> with showModal() | widely available | `dialog-element` |
@@ -31,6 +32,8 @@ were about to install.
 | compressing or decompressing bytes with gzip or deflate before sending or storing them | CompressionStream and DecompressionStream | widely available | `compression-streams` |
 | connecting to a Bluetooth Low Energy device directly from a web page | navigator.bluetooth.requestDevice() | limited | `web-bluetooth` |
 | copying text to the clipboard on a button click or similar user action | navigator.clipboard.writeText() | newly available | `clipboard` |
+| counting, splitting or truncating text by user-perceived character, word or sentence | Intl.Segmenter | newly available | `intl-segmenter` |
+| creating a promise that something else will resolve or reject later | Promise.withResolvers() | newly available | `promise-withresolvers` |
 | cross-fading between two states, or growing a thumbnail into a hero image across a navigation | The View Transitions API | newly available | `view-transitions` |
 | deep-copying plain data such as arrays, objects, Maps, Sets, and dates | structuredClone() | widely available | `structured-clone` |
 | deferring offscreen images or iframes so they load as the user scrolls to them | loading="lazy" | widely available | `lazy-loading` |
@@ -41,8 +44,10 @@ were about to install.
 | formatting a number as currency, a percentage, or a locale-correct thousands-grouped number for display | Intl.NumberFormat | widely available | `number-format` |
 | formatting a timestamp as relative text, such as "5 minutes ago" or "in 2 days" | Intl.RelativeTimeFormat | widely available | `relative-time` |
 | generating a random v4 UUID | crypto.randomUUID() | widely available | `random-uuid` |
+| giving a cancellable operation such as fetch a deadline | AbortSignal.timeout() | newly available | `abortsignal-timeout` |
 | hashing, signing, or encrypting with SHA-2, HMAC, AES or RSA | crypto.subtle | widely available | `web-crypto` |
 | highlighting search matches or ranges of text without changing the markup | the CSS Custom Highlight API | newly available | `custom-highlight` |
+| joining several items into one phrase, such as "apples, pears, and plums" | Intl.ListFormat | widely available | `intl-list-format` |
 | keeping a box at a fixed ratio, such as a 16/9 video wrapper or a square thumbnail | aspect-ratio | widely available | `aspect-ratio` |
 | keeping keyboard focus inside an open modal, drawer or menu | the inert attribute | widely available | `inert` |
 | keeping the screen from sleeping while a page is active, such as during a recipe, presentation, or workout | navigator.wakeLock.request("screen") | newly available | `screen-wake-lock` |
@@ -52,6 +57,7 @@ were about to install.
 | letting someone share the current page or a piece of content to whatever app they choose | navigator.share() | limited | `web-share` |
 | making HTTP requests from the browser or from Node 18.0.0 and up | fetch() | widely available | `fetch` |
 | making in-page anchor links scroll smoothly to their target | scroll-behavior: smooth with scroll-margin-top | widely available | `smooth-scroll` |
+| matching a URL against a route pattern and reading the named parameters | URLPattern | newly available | `urlpattern` |
 | passing messages between parts of an app through a small event bus | EventTarget with CustomEvent | widely available | `event-target` |
 | pausing or resuming work, such as polling or video playback, based on whether the tab is visible | document.visibilityState and the visibilitychange event | widely available | `page-visibility` |
 | reading or building a query string, or pulling a URL apart | URLSearchParams and the URL constructor | widely available | `url-search-params` |
@@ -63,6 +69,7 @@ were about to install.
 | running code when an element scrolls into or out of view, such as triggering analytics, infinite scroll, or an entrance animation | IntersectionObserver | widely available | `intersection-observer` |
 | running code when an element's own box changes size, not just the viewport | ResizeObserver | widely available | `resize-observer` |
 | sending a message from one open tab to other tabs on the same site | BroadcastChannel | widely available | `broadcast-channel` |
+| serialising async work so two callers cannot run the same section at once | navigator.locks.request() | widely available | `web-locks` |
 | showing a focus ring only for keyboard or other non-pointer focus, not for a mouse click | :focus-visible | widely available | `focus-visible` |
 | sorting strings that contain numbers, or sorting for a human reader | Intl.Collator with numeric: true | widely available | `natural-sort` |
 | stopping a heading or short blurb from breaking with one word on the last line | text-wrap: balance | newly available | `text-wrap-balance` |
@@ -71,6 +78,7 @@ were about to install.
 | subscribing to a one-way stream of updates from a server | EventSource | widely available | `server-sent-events` |
 | toggling an element, such as a video player or image viewer, into and out of fullscreen | Element.requestFullscreen() | limited | `fullscreen` |
 | truncating a block of text to a fixed number of lines with an ellipsis | -webkit-line-clamp | widely available | `line-clamp` |
+| turning a country, language, script or currency code into its name in a given locale | Intl.DisplayNames | widely available | `intl-display-names` |
 
 ## Reading one rule
 
@@ -99,6 +107,7 @@ that needs no network. It gives the rule id and stops there: the conditions
 for keeping the dependency come from the URL or the CLI above.
 
 - `abort-controller`: p-cancelable, cancelable-promise, abortcontroller-polyfill
+- `abortsignal-timeout`: p-timeout, promise-timeout
 - `array-grouping`: lodash.groupby, just-group-by, group-array
 - `aspect-ratio`: react-aspect-ratio
 - `base64`: js-base64, base-64, abab
@@ -127,6 +136,9 @@ for keeping the dependency come from the URL or the CLI above.
 - `height-auto-animation`: react-collapse, react-animate-height, react-smooth-collapse
 - `inert`: focus-trap, focus-trap-react, react-focus-lock, focus-lock, vue-focus-lock, wicg-inert
 - `intersection-observer`: react-intersection-observer, react-visibility-sensor, react-in-viewport, svelte-intersection-observer, intersection-observer
+- `intl-display-names`: i18n-iso-countries, country-list, iso-639-1
+- `intl-list-format`: humanize-list
+- `intl-segmenter`: graphemer, grapheme-splitter, string-length, lodash.words, split-graphemes
 - `lazy-loading`: lozad, lazysizes, vanilla-lazyload, react-lazyload, react-lazy-load-image-component, yall-js, vue-lazyload, v-lazy-image
 - `line-clamp`: react-clamp-lines, react-line-clamp, clamp-js, line-clamp, vue-clamp
 - `natural-sort`: natural-compare, natural-compare-lite, natural-orderby, string-natural-compare
@@ -134,6 +146,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `overscroll-behavior`: body-scroll-lock
 - `page-visibility`: react-page-visibility, visibilityjs
 - `popover-anchor-positioning`: @floating-ui/react, @floating-ui/react-dom, @floating-ui/dom, @popperjs/core, popper.js, tippy.js, @tippyjs/react, react-popper, react-tooltip, floating-vue, v-tooltip, @oddbird/popover-polyfill
+- `promise-withresolvers`: p-defer, defer-promise
 - `random-uuid`: uuid, uuidv4, @lukeed/uuid, uuid-random
 - `relative-time`: javascript-time-ago, timeago.js, react-timeago
 - `resizable-panels`: re-resizable
@@ -150,7 +163,10 @@ for keeping the dependency come from the URL or the CLI above.
 - `text-box-trim`: capsize, @capsizecss/core, @capsizecss/metrics
 - `text-wrap-balance`: react-wrap-balancer, balance-text
 - `url-search-params`: query-string, qs, querystringify, url-parse
+- `urlpattern`: path-to-regexp, url-pattern, route-parser
 - `view-transitions`: next-view-transitions, react-page-transition, barba.js, swup
+- `web-animations`: animejs, popmotion, velocity-animate
 - `web-bluetooth`: @capacitor-community/bluetooth-le, cordova-plugin-ble-central
 - `web-crypto`: crypto-js, js-sha256, crypto-hash
+- `web-locks`: async-mutex, await-lock, mutexify, p-mutex
 - `web-share`: react-share, vue-social-sharing, ngx-sharebuttons
