@@ -25,5 +25,9 @@ button:focus-visible {
       "You need the exact same heuristic across every browser version, including ones that shipped :focus-visible before the spec's behavior settled. Small heuristic differences existed early on.",
     ],
     snippet: "button:focus-visible { outline: 2px solid var(--accent); }",
+    handRolled: [
+      "listening for keydown and mousedown on the document to track whether the last input was a keyboard",
+      "toggling a class such as using-keyboard on the body so focus rings can be shown conditionally",
+    ],
   },
 };

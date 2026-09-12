@@ -24,6 +24,9 @@ export const pageVisibility: Rule = {
       "You need to distinguish a window occluded by another window from a genuinely backgrounded tab. visibilityState only reports the latter.",
     ],
     snippet: `document.addEventListener("visibilitychange", () => { ... });`,
+    handRolled: [
+      "window focus and blur listeners used to pause a timer, a poll or a video",
+    ],
   },
   guides: [
     "detect-initial-visibility-state",

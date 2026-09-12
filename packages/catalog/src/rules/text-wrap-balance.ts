@@ -34,6 +34,10 @@ p {
     ],
     snippet: `h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }`,
+    handRolled: [
+      "inserting a br or a non-breaking space into a heading so its last line does not orphan a word",
+      "measuring text and re-splitting it across lines to even them up",
+    ],
   },
   guides: ["improve-text-layout-and-legibility"],
 };

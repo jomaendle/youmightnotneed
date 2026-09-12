@@ -59,5 +59,9 @@ export const masonry: Rule = {
   .gallery { columns: 16rem; }
   .gallery > * { break-inside: avoid; }
 }`,
+    handRolled: [
+      "distributing items into column arrays in JavaScript by tracking each column's running height",
+      "absolutely positioning items after measuring them so the gaps between rows close up",
+    ],
   },
 };

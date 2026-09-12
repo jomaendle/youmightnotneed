@@ -34,5 +34,9 @@ export const dateTimeInput: Rule = {
       'You need type="week" or type="month". Their browser support has not caught up to type="date" and type="time".',
     ],
     snippet: `<input type="date" min="2024-01-01" required>`,
+    handRolled: [
+      "building a month grid from Date arithmetic, with the leading blanks worked out from getDay",
+      "parsing and validating a typed date string against a format by hand",
+    ],
   },
 };

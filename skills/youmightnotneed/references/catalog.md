@@ -183,31 +183,76 @@ and read its conditions before changing anything.
 | If the code does this | Rule | Instead | Support |
 | --- | --- | --- | --- |
 | Date.now() joined to Math.random().toString(36) to make something unique enough | `random-uuid` | crypto.randomUUID() | widely available |
+| a ResizeObserver toggling size classes on an element so it can style itself by its own width | `container-queries` | Container queries | widely available |
+| a cancelled or isMounted boolean checked after each await so a stale result can be dropped | `abort-controller` | AbortController and AbortSignal | widely available |
+| a chain of millisecond thresholds turning a date difference into minutes, hours or days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
+| a chain of vendor-prefixed calls such as webkitRequestFullscreen and msRequestFullscreen | `fullscreen` | Element.requestFullscreen() | limited |
 | a click handler on the backdrop comparing event.target against the panel to decide whether to close | `dialog-element` | <dialog> with showModal() | widely available |
+| a comparator pulling digits out of strings with a regex and comparing them as numbers | `natural-sort` | Intl.Collator with numeric: true | widely available |
+| a contenteditable or off-screen element created only so a selection can be made and copied | `clipboard` | navigator.clipboard.writeText() | newly available |
 | a div with role=dialog and aria-modal, placed with position fixed and a z-index over the page | `dialog-element` | <dialog> with showModal() | widely available |
+| a div with role=listbox and children with role=option, wired to arrow keys and Enter by hand | `customizable-select` | appearance: base-select on <select> | limited |
+| a hand-written alphabet string and bit shifting to encode bytes | `base64` | btoa() and atob(), with TextEncoder for text | widely available |
+| a hidden textarea that gets the text, is selected, and then copied with document.execCommand | `clipboard` | navigator.clipboard.writeText() | newly available |
 | a keydown handler watching for Tab and cycling focus between the first and last focusable element | `inert` | the inert attribute | widely available |
 | a keydown listener on document checking for Escape so an overlay can be dismissed | `dialog-element` | <dialog> with showModal() | widely available |
+| a mousedown on a divider followed by mousemove handlers writing widths onto two panels | `resizable-panels` | resize | limited |
+| a padding-bottom percentage on a wrapper with the real content positioned absolutely inside it | `aspect-ratio` | aspect-ratio | widely available |
 | a querySelectorAll over a list of focusable selectors, used to decide where focus is allowed to go | `inert` | the inert attribute | widely available |
+| a regex inserting thousands separators into a number's string form | `number-format` | Intl.NumberFormat | widely available |
+| a requestAnimationFrame loop easing scrollTop from where it is toward a target | `smooth-scroll` | scroll-behavior: smooth with scroll-margin-top | widely available |
 | a scroll listener calling getBoundingClientRect to decide whether an element is in the viewport | `intersection-observer` | IntersectionObserver | widely available |
+| a scroll listener deciding which images are close enough to start loading | `lazy-loading` | loading="lazy" | widely available |
 | a scroll listener on a horizontal strip dividing scrollLeft by item width to work out the active index | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
+| a scroll listener setting a progress bar's width from scrollY over scrollHeight | `scroll-driven-animations` | animation-timeline: view() and scroll() | limited |
+| a scroll listener toggling a fixed class once an element passes an offset | `sticky-positioning` | position: sticky | widely available |
+| a setTimeout matching the CSS duration, so an element stays mounted long enough to animate out | `discrete-transitions` | @starting-style with transition-behavior: allow-discrete | newly available |
+| a share menu built from hardcoded intent URLs for each network, opened with window.open | `web-share` | navigator.share() | limited |
+| a table of singular and plural unit names written out to build phrases like 3 days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
 | a transitionend listener setting height back to auto once an opening animation has finished | `height-auto-animation` | interpolate-size: allow-keywords, or calc-size() | limited |
 | a v4 id built from Math.random() and a template string of x and y placeholders | `random-uuid` | crypto.randomUUID() | widely available |
 | a window resize listener that reads offsetWidth on an element to react to that element's own size | `resize-observer` | ResizeObserver | widely available |
+| absolutely positioning items after measuring them so the gaps between rows close up | `css-masonry` | CSS masonry item placement | limited |
 | adding a margin or padding when an overlay opens so the page does not shift sideways | `styled-scrollbars` | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available |
+| an IntersectionObserver that swaps a data-src attribute into src when an image nears the viewport | `lazy-loading` | loading="lazy" | widely available |
+| an easing function like easeInOutQuad written next to a scroll routine | `smooth-scroll` | scroll-behavior: smooth with scroll-margin-top | widely available |
+| an input paired with an absolutely positioned menu, plus code closing it on outside clicks | `customizable-select` | appearance: base-select on <select> | limited |
+| an isClosing or isLeaving flag held only to keep something rendered while its exit animation runs | `discrete-transitions` | @starting-style with transition-behavior: allow-discrete | newly available |
+| btoa wrapped in unescape and encodeURIComponent to survive characters outside Latin-1 | `base64` | btoa() and atob(), with TextEncoder for text | widely available |
+| building a month grid from Date arithmetic, with the leading blanks worked out from getDay | `date-time-input` | <input type="date"> and <input type="time"> | widely available |
 | calling getBoundingClientRect on a trigger inside scroll and resize listeners to place a floating panel | `popover-anchor-positioning` | The Popover API with CSS anchor positioning | limited |
 | comparing offsetTop against window.scrollY and innerHeight to fire something as the page scrolls | `intersection-observer` | IntersectionObserver | widely available |
+| computing a visible index range from scrollTop and a fixed item height, and rendering only that slice | `content-visibility` | content-visibility: auto | newly available |
+| distributing items into column arrays in JavaScript by tracking each column's running height | `css-masonry` | CSS masonry item placement | limited |
+| dividing a millisecond count into hours, minutes and seconds and joining them with unit labels | `duration-format` | Intl.DurationFormat | newly available |
 | flip or shift logic comparing a panel's rect against the viewport and moving it back inside | `popover-anchor-positioning` | The Popover API with CSS anchor positioning | limited |
+| inserting a br or a non-breaking space into a heading so its last line does not orphan a word | `text-wrap-balance` | text-wrap: balance | newly available |
+| listening for keydown and mousedown on the document to track whether the last input was a keyboard | `focus-visible` | :focus-visible | widely available |
+| mapping scroll position to a transform or an opacity on every scroll event | `scroll-driven-animations` | animation-timeline: view() and scroll() | limited |
+| measuring text and re-splitting it across lines to even them up | `text-wrap-balance` | text-wrap: balance | newly available |
 | measuring text in a hidden element or on a canvas to decide where to cut a string for display | `line-clamp` | -webkit-line-clamp | widely available |
 | measuring the scrollbar width from innerWidth minus documentElement.clientWidth and padding the body by it | `styled-scrollbars` | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available |
+| parsing and validating a typed date string against a format by hand | `date-time-input` | <input type="date"> and <input type="time"> | widely available |
+| passing a measured width down as a prop so a child can decide which layout to render | `container-queries` | Container queries | widely available |
 | polling an element's dimensions on an interval to notice when they change | `resize-observer` | ResizeObserver | widely available |
 | prev and next buttons calling scrollBy, each with its own disabled state recomputed on every scroll | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
+| reading offsetWidth and setting height from it to keep a box in proportion | `aspect-ratio` | aspect-ratio | widely available |
 | reading scrollHeight and animating max-height to that pixel value to open a panel | `height-auto-animation` | interpolate-size: allow-keywords, or calc-size() | limited |
 | recording window.scrollY on open and calling scrollTo to put the page back on close | `overscroll-behavior` | overscroll-behavior: contain | widely available |
 | rendering dots from the item count and toggling an active class on whichever one is current | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
 | setting document.body.style.overflow to hidden when an overlay opens, and restoring it on close | `overscroll-behavior` | overscroll-behavior: contain | widely available |
 | slicing a string to a character count and appending an ellipsis so it fits its box | `line-clamp` | -webkit-line-clamp | widely available |
+| spacer elements above and below a rendered window to keep the scrollbar the right size | `content-visibility` | content-visibility: auto | newly available |
+| state holding the open index, with every other panel closed whenever one opens | `exclusive-accordion` | <details name> for an exclusive accordion | newly available |
+| storing an element's original offsetTop so a placeholder can hold the gap when it goes fixed | `sticky-positioning` | position: sticky | widely available |
 | storing document.activeElement when an overlay opens so focus can be put back on close | `inert` | the inert attribute | widely available |
+| toFixed followed by string surgery to add a currency symbol and group the digits | `number-format` | Intl.NumberFormat | widely available |
+| toggling a class such as using-keyboard on the body so focus rings can be shown conditionally | `focus-visible` | :focus-visible | widely available |
+| tracking a dragging flag and removing the move listener on mouseup | `resizable-panels` | resize | limited |
+| window focus and blur listeners used to pause a timer, a poll or a video | `page-visibility` | document.visibilityState and the visibilitychange event | widely available |
+| writing to localStorage only so other tabs receive the storage event, then deleting the key | `broadcast-channel` | BroadcastChannel | widely available |
 | writing top and left onto a tooltip from a requestAnimationFrame loop | `popover-anchor-positioning` | The Popover API with CSS anchor positioning | limited |
+| zero-padding numbers inside strings so a plain sort puts item10 after item9 | `natural-sort` | Intl.Collator with numeric: true | widely available |
 
 ## Already checked by a linter
 
@@ -216,6 +261,7 @@ and belong in CI rather than in a review.
 
 | Lint rule | Rule | Instead |
 | --- | --- | --- |
+| `unicorn/prefer-abort-signal-timeout` | `abortsignal-timeout` | AbortSignal.timeout() |
 | `unicorn/prefer-event-target` | `event-target` | EventTarget with CustomEvent |
 | `unicorn/prefer-group-by` | `array-grouping` | Object.groupBy() and Map.groupBy() |
 | `unicorn/prefer-promise-with-resolvers` | `promise-withresolvers` | Promise.withResolvers() |

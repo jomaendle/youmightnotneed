@@ -52,6 +52,9 @@ export const accordion: Rule = {
   <summary>Second</summary>
   <p>Body</p>
 </details>`,
+    handRolled: [
+      "state holding the open index, with every other panel closed whenever one opens",
+    ],
   },
   guides: ["search-hidden-content"],
 };

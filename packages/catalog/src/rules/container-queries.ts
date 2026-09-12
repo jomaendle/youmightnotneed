@@ -55,6 +55,10 @@ export const containerQueries: Rule = {
 @container card (width >= 400px) {
   .card { grid-template-columns: 8rem 1fr; }
 }`,
+    handRolled: [
+      "a ResizeObserver toggling size classes on an element so it can style itself by its own width",
+      "passing a measured width down as a prop so a child can decide which layout to render",
+    ],
   },
   guides: ["size-aware-styling"],
 };

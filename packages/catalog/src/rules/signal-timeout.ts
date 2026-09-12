@@ -30,4 +30,5 @@ const response2 = await fetch(url, {
     ],
     snippet: "await fetch(url, { signal: AbortSignal.timeout(5000) });",
   },
+  lintRule: "unicorn/prefer-abort-signal-timeout",
 };

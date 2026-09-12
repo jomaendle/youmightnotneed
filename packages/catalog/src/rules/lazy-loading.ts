@@ -35,6 +35,10 @@ export const lazyLoading: Rule = {
     ],
     snippet: `<img src="/photo.jpg" alt="" loading="lazy" />
 <iframe src="/embed" loading="lazy"></iframe>`,
+    handRolled: [
+      "an IntersectionObserver that swaps a data-src attribute into src when an image nears the viewport",
+      "a scroll listener deciding which images are close enough to start loading",
+    ],
   },
   guides: ["optimize-image-priority"],
 };

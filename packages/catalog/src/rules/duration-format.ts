@@ -35,6 +35,9 @@ new Intl.DurationFormat("de", { style: "narrow" }).format({
   hours: 1,
   minutes: 30,
 });`,
+    handRolled: [
+      "dividing a millisecond count into hours, minutes and seconds and joining them with unit labels",
+    ],
   },
   guides: ["format-human-readable-durations"],
 };

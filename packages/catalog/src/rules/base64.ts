@@ -39,5 +39,9 @@ const encoded = btoa(String.fromCharCode(...bytes));
 const decoded = new TextDecoder().decode(
   Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0)),
 );`,
+    handRolled: [
+      "btoa wrapped in unescape and encodeURIComponent to survive characters outside Latin-1",
+      "a hand-written alphabet string and bit shifting to encode bytes",
+    ],
   },
 };

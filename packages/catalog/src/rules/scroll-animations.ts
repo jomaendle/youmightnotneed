@@ -59,6 +59,10 @@ export const scrollAnimations: Rule = {
     animation-range: entry 0% cover 40%;
   }
 }`,
+    handRolled: [
+      "a scroll listener setting a progress bar's width from scrollY over scrollHeight",
+      "mapping scroll position to a transform or an opacity on every scroll event",
+    ],
   },
   guides: [
     "parallax-scroll-effects",
