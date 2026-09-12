@@ -41,7 +41,9 @@ export async function GET(_request: Request, { params }: RouteContext) {
  *
  * No Vary either: this URL has one representation.
  */
-function headers(contentType: string): HeadersInit {
+function headers(
+  contentType: "text/markdown; charset=utf-8" | "text/plain; charset=utf-8",
+): HeadersInit {
   return {
     "Content-Type": contentType,
   };

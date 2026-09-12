@@ -55,11 +55,20 @@ function parseQuality(parameter: string): number {
   return Math.min(Number(match[1]), 1);
 }
 
-/** The highest q for an exact type. Null when only a wildcard covers it. */
-function explicitQuality(entries: AcceptEntry[], type: string): number | null {
-  const matches = entries.filter((entry) => entry.type === type);
-  if (matches.length === 0) return null;
-  return Math.max(...matches.map((entry) => entry.quality));
+/**
+ * The highest q the client gave this exact type, and 0 when it named only a
+ * wildcard.
+ *
+ * Never named and named as `q=0` collapse to the same number on purpose. Both
+ * mean the type is not on offer, the comparison below cannot tell them apart
+ * anyway, and keeping them apart cost a null union and two call sites that
+ * had to remember which was which.
+ */
+function explicitQuality(entries: AcceptEntry[], type: string): number {
+  const matches = entries
+    .filter((entry) => entry.type === type)
+    .map((entry) => entry.quality);
+  return matches.length === 0 ? 0 : Math.max(...matches);
 }
 
 /**
@@ -70,10 +79,8 @@ export function prefersMarkdown(header: string | null): boolean {
   if (!header) return false;
 
   const entries = parseAccept(header);
-  const markdown = explicitQuality(entries, "text/markdown");
-  if (markdown === null) return false;
-
-  // A markdown q of 0 needs no case of its own: it loses this comparison to
-  // the 0 an absent text/html falls back to, which is the same answer.
-  return markdown > (explicitQuality(entries, "text/html") ?? 0);
+  return (
+    explicitQuality(entries, "text/markdown") >
+    explicitQuality(entries, "text/html")
+  );
 }
