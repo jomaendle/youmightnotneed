@@ -91,9 +91,19 @@ describe("proxy", () => {
   });
 
   it("cannot be walked out of the rules prefix", () => {
-    // The safety is NextURL's, not this regex's, so it is worth pinning.
+    // Encoded, the dots stay inside the segment and miss every rule id.
     expect(rewrittenTo(proxy(request("/rules/..%2f..%2fadmin.md")))).toBe(
       "/api/md/rules/..%2f..%2fadmin",
+    );
+
+    // Unencoded, they do not: an id of ".." normalises the target up a level.
+    // Harmless, because the only ids that normalise are "." and "..", and
+    // both land on a path with no route rather than on one with a handler.
+    // Asserted so that stops being an accident.
+    expect(rewrittenTo(proxy(request("/rules/...md")))).toBe("/api/md");
+    expect(rewrittenTo(proxy(request("/rules/..md")))).toBe("/api/md/rules");
+    expect(rewrittenTo(proxy(request("/rules/....md")))).toBe(
+      "/api/md/rules/...",
     );
   });
 

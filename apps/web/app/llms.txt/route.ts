@@ -51,8 +51,8 @@ ${renderUseCaseTable()}
 ## Checking a package.json
 
 ${site.url} takes a pasted package.json and reports what the platform covers.
-Nothing is stored: the report is encoded in the URL. Offline, the same
-detection runs locally:
+Nothing is stored: the report is encoded in the URL. The same detection runs
+locally and sends nothing anywhere, offline once npx has fetched it:
 
 \`\`\`sh
 npx -y youmightnotneed@latest --verbose
