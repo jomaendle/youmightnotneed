@@ -1,5 +1,12 @@
 # youmightnotneed
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`2e37ee6`](https://github.com/jomaendle/youmightnotneed/commit/2e37ee64c261178d3061777e76f6c34838bdbca1)]:
+  - @jomae/catalog@0.8.0
+
 ## 0.2.1
 
 ### Patch Changes
