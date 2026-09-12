@@ -17,8 +17,8 @@ export interface GuideSnapshot {
  * IDs and categories only. None of their prose is vendored here.
  */
 export const guideSnapshot: GuideSnapshot = {
-  "fetchedOn": "2026-09-06",
-  "version": "0.0.185",
+  "fetchedOn": "2026-09-12",
+  "version": "0.0.188",
   "repo": "https://github.com/GoogleChrome/modern-web-guidance",
   "guides": {
     "accessibility": "accessibility",
@@ -86,6 +86,7 @@ export const guideSnapshot: GuideSnapshot = {
     "html": "html",
     "identify-heavy-scripts": "performance",
     "identify-inp-causes": "performance",
+    "ime-safe-enter-submit": "forms",
     "improve-next-page-load-performance": "performance",
     "improve-text-layout-and-legibility": "visual-design",
     "individual-transform-properties": "css",
@@ -122,6 +123,7 @@ export const guideSnapshot: GuideSnapshot = {
     "precise-text-alignment": "visual-design",
     "prevent-text-wrapping": "visual-design",
     "privacy": "privacy",
+    "progress-ring": "ui-components",
     "pull-to-reveal": "ui-atoms",
     "reduce-style-repetition": "css",
     "required-field-feedback": "forms",
@@ -137,6 +139,7 @@ export const guideSnapshot: GuideSnapshot = {
     "scroll-snap-state-sync": "ui-behaviors",
     "scroll-target-on-load": "ui-behaviors",
     "scrollability-affordance-hints": "ui-atoms",
+    "scrollspy": "ui-components",
     "scrollytelling": "ui-behaviors",
     "search-hidden-content": "ui-behaviors",
     "security": "security",
@@ -146,6 +149,7 @@ export const guideSnapshot: GuideSnapshot = {
     "shrinking-header-on-scroll": "ui-atoms",
     "size-aware-styling": "css",
     "soft-edge-content-fade": "visual-design",
+    "spinner": "ui-components",
     "stabilize-reactive-state": "js",
     "stack-drill-down": "ui-components",
     "state-aware-sticky-headers": "ui-atoms",

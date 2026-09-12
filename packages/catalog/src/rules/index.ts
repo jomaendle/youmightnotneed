@@ -16,6 +16,7 @@ import { customHighlight } from "./custom-highlight.ts";
 import { dateTimeInput } from "./date-time-input.ts";
 import { dialog } from "./dialog.ts";
 import { discreteTransitions } from "./discrete-transitions.ts";
+import { displayNames } from "./display-names.ts";
 import { dragAndDrop } from "./drag-and-drop.ts";
 import { durationFormat } from "./duration-format.ts";
 import { eventTarget } from "./event-target.ts";
@@ -29,6 +30,7 @@ import { inert } from "./inert.ts";
 import { intersectionObserver } from "./intersection-observer.ts";
 import { lazyLoading } from "./lazy-loading.ts";
 import { lineClamp } from "./line-clamp.ts";
+import { listFormat } from "./list-format.ts";
 import { masonry } from "./masonry.ts";
 import { naturalSort } from "./natural-sort.ts";
 import { numberFormat } from "./number-format.ts";
@@ -42,8 +44,10 @@ import { screenWakeLock } from "./screen-wake-lock.ts";
 import { scrollAnimations } from "./scroll-animations.ts";
 import { scrollLock } from "./scroll-lock.ts";
 import { scrollbars } from "./scrollbars.ts";
+import { segmenter } from "./segmenter.ts";
 import { select } from "./select.ts";
 import { serverSentEvents } from "./server-sent-events.ts";
+import { signalTimeout } from "./signal-timeout.ts";
 import { smoothScroll } from "./smooth-scroll.ts";
 import { speechRecognition } from "./speech-recognition.ts";
 import { speechSynthesis } from "./speech-synthesis.ts";
@@ -51,11 +55,15 @@ import { sticky } from "./sticky.ts";
 import { structuredCloneRule } from "./structured-clone.ts";
 import { textBoxTrim } from "./text-box-trim.ts";
 import { textWrapBalance } from "./text-wrap-balance.ts";
+import { urlPattern } from "./url-pattern.ts";
 import { urlSearchParams } from "./url-search-params.ts";
 import { viewTransitions } from "./view-transitions.ts";
+import { webAnimations } from "./web-animations.ts";
 import { webBluetooth } from "./web-bluetooth.ts";
 import { webCrypto } from "./web-crypto.ts";
+import { webLocks } from "./web-locks.ts";
 import { webShare } from "./web-share.ts";
+import { withResolvers } from "./with-resolvers.ts";
 
 /**
  * Interpolates the {{browser:key}} tokens a rule's prose uses in place of a
@@ -150,6 +158,14 @@ const rawRules: readonly Rule[] = [
   serverSentEvents,
   urlSearchParams,
   webCrypto,
+  webLocks,
+  displayNames,
+  listFormat,
+  webAnimations,
+  segmenter,
+  urlPattern,
+  withResolvers,
+  signalTimeout,
 ];
 
 /**

@@ -1676,6 +1676,340 @@ button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); 
 `,
     ),
   },
+  "intl-list-format": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button data-locale="en" data-type="conjunction">en, and</button>
+    <button data-locale="en" data-type="disjunction">en, or</button>
+    <button data-locale="de" data-type="conjunction">de, und</button>
+    <button data-locale="fr" data-type="conjunction">fr, et</button>
+  </div>
+  <p id="result" class="demo-hint" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg); text-align:center;">pick a locale</p>
+</div>
+<script>
+  const result = document.getElementById("result");
+  const items = ["apples", "pears", "plums"];
+  document.querySelectorAll("button[data-locale]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      result.textContent = new Intl.ListFormat(btn.dataset.locale, {
+        type: btn.dataset.type,
+      }).format(items);
+    });
+  });
+</script>
+`,
+    ),
+  },
+  "intl-display-names": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button data-locale="en">English</button>
+    <button data-locale="de">Deutsch</button>
+    <button data-locale="ja">日本語</button>
+  </div>
+  <ul id="out" class="names"></ul>
+</div>
+<script>
+  const out = document.getElementById("out");
+  const codes = ["DE", "JP", "BR"];
+  function render(locale) {
+    const regions = new Intl.DisplayNames([locale], { type: "region" });
+    out.innerHTML = "";
+    for (const code of codes) {
+      const li = document.createElement("li");
+      li.textContent = code + " " + regions.of(code);
+      out.append(li);
+    }
+  }
+  document.querySelectorAll("button[data-locale]").forEach((btn) => {
+    btn.addEventListener("click", () => render(btn.dataset.locale));
+  });
+  render("en");
+</script>
+`,
+      `
+.names { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.375rem; min-height:4.5rem; text-align:center; }
+.names li { font-family:ui-monospace, monospace; font-size:0.8125rem; color:var(--c-fg); }
+`,
+    ),
+  },
+  "web-animations": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
+  <div id="box" class="box"></div>
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button id="play">animate()</button>
+    <button id="reverse">reverse()</button>
+    <button id="pause">pause()</button>
+  </div>
+</div>
+<script>
+  const box = document.getElementById("box");
+  let animation = null;
+  document.getElementById("play").addEventListener("click", () => {
+    animation = box.animate(
+      [
+        { transform: "translateX(-60px) rotate(0deg)" },
+        { transform: "translateX(60px) rotate(180deg)" },
+      ],
+      { duration: 900, easing: "cubic-bezier(0.2, 0, 0, 1)", fill: "both" },
+    );
+  });
+  document.getElementById("reverse").addEventListener("click", () => {
+    if (animation) animation.reverse();
+  });
+  document.getElementById("pause").addEventListener("click", () => {
+    if (!animation) return;
+    if (animation.playState === "paused") animation.play();
+    else animation.pause();
+  });
+</script>
+`,
+      `
+.box { width:48px; height:48px; border-radius:10px; background:var(--c-accent, #3b6ea5); }
+`,
+    ),
+  },
+  "web-locks": {
+    height: 260,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button id="locked">3 tasks, with the lock</button>
+    <button id="unlocked">3 tasks, without it</button>
+  </div>
+  <ul id="log" class="log"></ul>
+</div>
+<script>
+  const log = document.getElementById("log");
+  function line(text) {
+    const li = document.createElement("li");
+    li.textContent = text;
+    log.append(li);
+  }
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  async function task(name, useLock) {
+    const body = async () => {
+      line(name + " entered");
+      await wait(400);
+      line(name + " left");
+    };
+    if (useLock && navigator.locks) {
+      await navigator.locks.request("demo", body);
+    } else {
+      await body();
+    }
+  }
+
+  function run(useLock) {
+    log.innerHTML = "";
+    if (useLock && !navigator.locks) {
+      line("navigator.locks is not available here");
+      return;
+    }
+    Promise.all([task("A", useLock), task("B", useLock), task("C", useLock)]);
+  }
+
+  document.getElementById("locked").addEventListener("click", () => run(true));
+  document.getElementById("unlocked").addEventListener("click", () => run(false));
+</script>
+`,
+      `
+.log { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.25rem; min-height:7rem; }
+.log li { font-family:ui-monospace, monospace; font-size:0.75rem; color:var(--c-fg-muted); }
+`,
+    ),
+  },
+  "intl-segmenter": {
+    height: 280,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; width:100%;">
+  <input id="text" type="text" value="👍🏽 café 👩‍👩‍👧" style="width:100%; max-width:20rem; text-align:center;" />
+  <dl id="out" class="counts"></dl>
+</div>
+<script>
+  const input = document.getElementById("text");
+  const out = document.getElementById("out");
+  const graphemes = new Intl.Segmenter("en", { granularity: "grapheme" });
+  const words = new Intl.Segmenter("en", { granularity: "word" });
+
+  function row(label, value) {
+    const dt = document.createElement("dt");
+    dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = value;
+    out.append(dt, dd);
+  }
+
+  function render() {
+    const text = input.value;
+    out.innerHTML = "";
+    row(".length", String(text.length));
+    row("graphemes", String([...graphemes.segment(text)].length));
+    const found = [...words.segment(text)]
+      .filter((part) => part.isWordLike)
+      .map((part) => part.segment);
+    row("words", found.join(" · ") || "none");
+  }
+
+  input.addEventListener("input", render);
+  render();
+</script>
+`,
+      `
+.counts { margin:0; display:grid; grid-template-columns:auto auto; gap:0.25rem 1rem; align-items:baseline; }
+.counts dt { font-size:0.75rem; color:var(--c-fg-faint); font-family:ui-monospace, monospace; text-align:right; }
+.counts dd { margin:0; font-size:0.8125rem; color:var(--c-fg); font-family:ui-monospace, monospace; }
+`,
+    ),
+  },
+  urlpattern: {
+    height: 280,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem; width:100%;">
+  <p class="demo-hint" style="margin:0; font-family:ui-monospace, monospace; font-size:0.75rem;">new URLPattern({ pathname: "/users/:id/posts/:postId" })</p>
+  <input id="url" type="text" value="https://example.com/users/42/posts/7" style="width:100%; max-width:22rem; text-align:center;" />
+  <p id="out" class="result"></p>
+</div>
+<script>
+  const input = document.getElementById("url");
+  const out = document.getElementById("out");
+
+  function render() {
+    if (typeof URLPattern !== "function") {
+      out.textContent = "URLPattern is not available in this browser";
+      return;
+    }
+    const pattern = new URLPattern({ pathname: "/users/:id/posts/:postId" });
+    let match = null;
+    try {
+      match = pattern.exec(input.value);
+    } catch {
+      out.textContent = "not a valid URL";
+      return;
+    }
+    out.textContent = match
+      ? JSON.stringify(match.pathname.groups)
+      : "no match";
+  }
+
+  input.addEventListener("input", render);
+  render();
+</script>
+`,
+      `
+.result { margin:0; font-family:ui-monospace, monospace; font-size:0.8125rem; color:var(--c-fg); min-height:1.25rem; }
+`,
+    ),
+  },
+  "promise-withresolvers": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button id="start">await promise</button>
+    <button id="resolve">resolve("ok")</button>
+    <button id="reject">reject(...)</button>
+  </div>
+  <ul id="log" class="log"></ul>
+</div>
+<script>
+  const log = document.getElementById("log");
+  let deferred = null;
+
+  function line(text) {
+    const li = document.createElement("li");
+    li.textContent = text;
+    log.append(li);
+  }
+
+  document.getElementById("start").addEventListener("click", async () => {
+    log.innerHTML = "";
+    if (typeof Promise.withResolvers !== "function") {
+      line("Promise.withResolvers is not available here");
+      return;
+    }
+    deferred = Promise.withResolvers();
+    line("waiting, nothing has settled it yet");
+    try {
+      line("resolved with " + (await deferred.promise));
+    } catch (error) {
+      line("rejected with " + error.message);
+    }
+  });
+
+  document.getElementById("resolve").addEventListener("click", () => {
+    if (deferred) deferred.resolve("ok");
+  });
+  document.getElementById("reject").addEventListener("click", () => {
+    if (deferred) deferred.reject(new Error("cancelled"));
+  });
+</script>
+`,
+      `
+.log { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.25rem; min-height:4rem; text-align:center; }
+.log li { font-family:ui-monospace, monospace; font-size:0.75rem; color:var(--c-fg-muted); }
+`,
+    ),
+  },
+  "abortsignal-timeout": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button id="fast">work takes 300ms</button>
+    <button id="slow">work takes 1500ms</button>
+  </div>
+  <p class="demo-hint" style="margin:0; font-family:ui-monospace, monospace; font-size:0.75rem;">AbortSignal.timeout(800)</p>
+  <p id="out" class="result"></p>
+</div>
+<script>
+  const out = document.getElementById("out");
+
+  // Stands in for a request: resolves late, and listens to the signal the
+  // way fetch does, so aborting actually stops it.
+  function work(ms, signal) {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => resolve("finished"), ms);
+      signal.addEventListener("abort", () => {
+        clearTimeout(timer);
+        reject(signal.reason);
+      });
+    });
+  }
+
+  async function run(ms) {
+    out.textContent = "running";
+    try {
+      out.textContent = await work(ms, AbortSignal.timeout(800));
+    } catch (error) {
+      out.textContent = error.name + ": the work was stopped";
+    }
+  }
+
+  document.getElementById("fast").addEventListener("click", () => run(300));
+  document.getElementById("slow").addEventListener("click", () => run(1500));
+</script>
+`,
+      `
+.result { margin:0; font-family:ui-monospace, monospace; font-size:0.8125rem; color:var(--c-fg); min-height:1.25rem; }
+`,
+    ),
+  },
 };
 
 /**

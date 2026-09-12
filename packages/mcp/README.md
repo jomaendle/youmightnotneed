@@ -5,18 +5,94 @@ catalog: whether a dependency already has a native replacement, and what
 that replacement looks like. The catalog is browsable at
 [youmightnotneed.dev](https://youmightnotneed.dev).
 
-Add it to an MCP client's config:
+Running it directly prints nothing and waits. That is correct: it speaks MCP
+over stdio, so it needs a client on the other end. Register it with yours.
+
+**Claude Code**
+
+```sh
+claude mcp add youmightnotneed -- npx -y youmightnotneed-mcp
+```
+
+Add `--scope user` to get it in every project, or `--scope project` to commit
+it to the repo's `.mcp.json` for everyone.
+
+**Claude Desktop**, in `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
     "youmightnotneed": {
       "command": "npx",
-      "args": ["youmightnotneed-mcp"]
+      "args": ["-y", "youmightnotneed-mcp"]
     }
   }
 }
 ```
+
+**VS Code and GitHub Copilot**
+
+```sh
+code --add-mcp "{\"name\":\"youmightnotneed\",\"command\":\"npx\",\"args\":[\"-y\",\"youmightnotneed-mcp\"]}"
+```
+
+Or `.vscode/mcp.json`, which uses `servers` rather than `mcpServers`:
+
+```json
+{
+  "servers": {
+    "youmightnotneed": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "youmightnotneed-mcp"]
+    }
+  }
+}
+```
+
+**Cursor**, in `.cursor/mcp.json` for one project or `~/.cursor/mcp.json` for
+all of them:
+
+```json
+{
+  "mcpServers": {
+    "youmightnotneed": {
+      "command": "npx",
+      "args": ["-y", "youmightnotneed-mcp"]
+    }
+  }
+}
+```
+
+**opencode**, in `opencode.json`, where `command` is one array:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "youmightnotneed": {
+      "type": "local",
+      "command": ["npx", "-y", "youmightnotneed-mcp"]
+    }
+  }
+}
+```
+
+**Codex CLI**
+
+```sh
+codex mcp add youmightnotneed -- npx -y youmightnotneed-mcp
+```
+
+**Gemini CLI**, which takes no `--`:
+
+```sh
+gemini mcp add youmightnotneed npx -y youmightnotneed-mcp
+```
+
+The `-y` on npx matters in every one of these. Without it npx prompts before
+installing, and a client that cannot answer the prompt sees a server that
+never starts.
 
 ## Tools
 

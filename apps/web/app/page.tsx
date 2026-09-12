@@ -8,13 +8,16 @@ import {
 } from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CopyPrompt } from "@/components/copy-prompt";
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { MethodologyDialog } from "@/components/methodology-dialog";
 import { ScanForm } from "@/components/scan-form";
 import { TierHelp } from "@/components/tier-help";
 import { TierHistorySparkline } from "@/components/tier-history-sparkline";
+import { AGENT_PROMPT, AGENT_PROMPT_SUMMARY } from "@/lib/agent-prompt";
 import { demos } from "@/lib/demos";
 import { EXAMPLE_REPORT_PAYLOAD } from "@/lib/example-report";
+import { CLI_VERSION, MCP_VERSION } from "@/lib/versions";
 
 /*
  * The .vercel.app domain is still attached so old links resolve, which means
@@ -145,13 +148,46 @@ export default function HomePage() {
 
       <section className="hairline pt-10">
         <h2 className="mb-3 text-section">Or run it where the code is</h2>
-        <pre className="w-fit rounded-md border border-border bg-bg-subtle px-4 py-2.5 font-mono text-compact">
-          <code>npx youmightnotneed</code>
-        </pre>
+        <div className="flex flex-wrap items-center gap-3">
+          <pre className="w-fit rounded-md border border-border bg-bg-subtle px-4 py-2.5 font-mono text-compact">
+            <code>npx youmightnotneed</code>
+          </pre>
+          <span className="font-mono text-fg-faint text-metadata tabular-nums">
+            v{CLI_VERSION}
+          </span>
+        </div>
         <p className="mt-3 max-w-[58ch] text-compact text-fg-muted">
           Same catalog, same conditions, no paste. Add <code>--verbose</code> to
           print every condition, or <code>--json</code> for scripts and agents.
         </p>
+      </section>
+
+      <section className="hairline pt-10">
+        <h2 className="mb-3 text-section">Or hand it to an agent</h2>
+        <p className="mb-5 max-w-[58ch] text-compact text-fg-muted">
+          The catalog is a lookup table, so an agent can read it without a model
+          guessing at what a package does. Paste this into Claude Code, Cursor,
+          Copilot or anything else that can run a command.
+        </p>
+        <CopyPrompt
+          text={AGENT_PROMPT}
+          label="Copy prompt"
+          copiedLabel="Prompt copied"
+        />
+        <p className="mt-3 max-w-[58ch] text-fg-faint text-metadata">
+          {AGENT_PROMPT_SUMMARY}
+        </p>
+        <p className="mt-5 max-w-[58ch] text-compact text-fg-muted">
+          For a permanent install there is an MCP server, currently v
+          {MCP_VERSION}, and a skill:
+        </p>
+        <pre className="mt-3 w-fit overflow-x-auto rounded-md border border-border bg-bg-subtle px-4 py-2.5 font-mono text-compact">
+          <code>
+            claude mcp add youmightnotneed -- npx -y youmightnotneed-mcp
+            {"\n"}
+            npx skills add jomaendle/youmightnotneed
+          </code>
+        </pre>
       </section>
     </div>
   );

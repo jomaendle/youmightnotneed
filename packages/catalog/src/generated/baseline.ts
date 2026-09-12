@@ -40,7 +40,7 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-06",
+  "generatedOn": "2026-09-12",
   "webFeaturesVersion": "3.36.0",
   "features": {
     "aborting": {
@@ -54,6 +54,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "16",
         "firefox": "57",
         "safari": "12.1"
+      },
+      "partialSupport": null
+    },
+    "abortsignal-timeout": {
+      "name": "AbortSignal.timeout()",
+      "baseline": "low",
+      "lowDate": "2024-04-18",
+      "highDate": null,
+      "spec": "https://dom.spec.whatwg.org/#dom-abortsignal-timeout",
+      "support": {
+        "chrome": "124",
+        "edge": "124",
+        "firefox": "100",
+        "safari": "16"
       },
       "partialSupport": null
     },
@@ -443,6 +457,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "intl-display-names": {
+      "name": "Intl.DisplayNames",
+      "baseline": "high",
+      "lowDate": "2021-04-26",
+      "highDate": "2023-10-26",
+      "spec": "https://tc39.es/ecma402/#intl-displaynames-objects",
+      "support": {
+        "chrome": "81",
+        "edge": "81",
+        "firefox": "86",
+        "safari": "14.1"
+      },
+      "partialSupport": null
+    },
     "intl-duration-format": {
       "name": "Intl.DurationFormat",
       "baseline": "low",
@@ -457,6 +485,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "intl-list-format": {
+      "name": "Intl.ListFormat",
+      "baseline": "high",
+      "lowDate": "2021-04-26",
+      "highDate": "2023-10-26",
+      "spec": "https://tc39.es/ecma402/#listformat-objects",
+      "support": {
+        "chrome": "72",
+        "edge": "79",
+        "firefox": "78",
+        "safari": "14.1"
+      },
+      "partialSupport": null
+    },
     "intl-relative-time-format": {
       "name": "Intl.RelativeTimeFormat",
       "baseline": "high",
@@ -468,6 +510,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "76",
         "safari": "14"
+      },
+      "partialSupport": null
+    },
+    "intl-segmenter": {
+      "name": "Intl.Segmenter",
+      "baseline": "low",
+      "lowDate": "2024-04-16",
+      "highDate": null,
+      "spec": "https://tc39.es/ecma402/#segmenter-objects",
+      "support": {
+        "chrome": "87",
+        "edge": "87",
+        "firefox": "125",
+        "safari": "14.1"
       },
       "partialSupport": null
     },
@@ -580,6 +636,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "116",
         "firefox": "125",
         "safari": "17"
+      },
+      "partialSupport": null
+    },
+    "promise-withresolvers": {
+      "name": "Promise.withResolvers()",
+      "baseline": "low",
+      "lowDate": "2024-03-05",
+      "highDate": null,
+      "spec": "https://tc39.es/ecma262/multipage/control-abstraction-objects.html#sec-promise.withResolvers",
+      "support": {
+        "chrome": "119",
+        "edge": "119",
+        "firefox": "121",
+        "safari": "17.4"
       },
       "partialSupport": null
     },
@@ -899,6 +969,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "urlpattern": {
+      "name": "URLPattern",
+      "baseline": "low",
+      "lowDate": "2025-09-15",
+      "highDate": null,
+      "spec": "https://urlpattern.spec.whatwg.org/",
+      "support": {
+        "chrome": "95",
+        "edge": "95",
+        "firefox": "142",
+        "safari": "26"
+      },
+      "partialSupport": null
+    },
     "view-transitions": {
       "name": "View transitions",
       "baseline": "low",
@@ -910,6 +994,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "111",
         "firefox": "144",
         "safari": "18"
+      },
+      "partialSupport": null
+    },
+    "web-animations": {
+      "name": "Web animations",
+      "baseline": "high",
+      "lowDate": "2020-09-16",
+      "highDate": "2023-03-16",
+      "spec": "https://drafts.csswg.org/web-animations-1/",
+      "support": {
+        "chrome": "84",
+        "edge": "84",
+        "firefox": "75",
+        "safari": "14"
       },
       "partialSupport": null
     },
@@ -938,6 +1036,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "34",
         "safari": "11"
+      },
+      "partialSupport": null
+    },
+    "web-locks": {
+      "name": "Locks",
+      "baseline": "high",
+      "lowDate": "2022-03-14",
+      "highDate": "2024-09-14",
+      "spec": "https://w3c.github.io/web-locks/",
+      "support": {
+        "chrome": "69",
+        "edge": "79",
+        "firefox": "96",
+        "safari": "15.4"
       },
       "partialSupport": null
     }

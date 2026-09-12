@@ -1,4 +1,9 @@
-import { combinedSupport, resolveFeature, rulesById } from "@jomae/catalog";
+import {
+  hasNoVersions,
+  type ResolvedFeature,
+  resolveFeature,
+  rulesById,
+} from "@jomae/catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
@@ -69,7 +74,7 @@ function UsageRow({ usage }: { usage: Usage }) {
       </div>
 
       <div className="mb-3">
-        <BrowserSupport support={combinedSupport([feature])} />
+        <UsageSupport feature={feature} />
       </div>
 
       <dl className="max-w-[66ch] space-y-1.5 text-compact">
@@ -93,5 +98,41 @@ function UsageRow({ usage }: { usage: Usage }) {
         </p>
       )}
     </li>
+  );
+}
+
+/**
+ * The version row for one feature. Rendering `feature.support` unconditionally
+ * is wrong for the handful of features web-features publishes no aggregate
+ * for, because one small part of them has not shipped anywhere: the row comes
+ * out as four dashes, which reads as "no engine has this" when the part this
+ * site is actually built on shipped in Chrome years ago. Anchor positioning
+ * and ::scroll-button are both in that state. So when the aggregate is empty
+ * and a part stands in for it, show the part's versions and name the part,
+ * which is what the rule pages already do.
+ */
+function UsageSupport({ feature }: { feature: ResolvedFeature }) {
+  if (!hasNoVersions(feature.support)) {
+    return <BrowserSupport support={feature.support} />;
+  }
+
+  if (feature.partialSupport === null) {
+    return (
+      <p className="max-w-[62ch] text-fg-muted text-metadata">
+        web-features tracks no browser versions for {feature.name} yet.
+      </p>
+    );
+  }
+
+  return (
+    <div>
+      <BrowserSupport support={feature.partialSupport.support} />
+      <p className="mt-2 max-w-[62ch] text-fg-muted text-metadata">
+        Versions are for{" "}
+        <code className="font-mono">{feature.partialSupport.key}</code>, the
+        part this site is built on. web-features publishes no single version for{" "}
+        {feature.name} as a whole.
+      </p>
+    </div>
   );
 }
