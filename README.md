@@ -3,154 +3,117 @@
 Is it CSS yet?
 
 Find the CSS, HTML, or Web API that replaces your JavaScript dependencies.
-Website, CLI, MCP server, and one rule catalog underneath all three.
+One rule catalog, read by a website, a CLI, an MCP server and an agent skill.
 
 [youmightnotneed.dev](https://youmightnotneed.dev)
 
+## Start here
+
+From the command line:
+
+```sh
+npx youmightnotneed                             # the nearest package.json
+npx youmightnotneed --package swiper --verbose  # one package, with conditions
+npx youmightnotneed ./app --json                # machine-readable
 ```
-npx youmightnotneed              # audit the nearest package.json
-npx youmightnotneed --package swiper --verbose
+
+Or paste a `package.json` at [youmightnotneed.dev](https://youmightnotneed.dev).
+Nothing is stored: the report is encoded in the URL.
+
+For an agent, whichever the host supports:
+
+```sh
+curl --fail-with-body -sS https://youmightnotneed.dev/llms.txt
+curl --fail-with-body -sS https://youmightnotneed.dev/rules/dialog-element.md
+npx youmightnotneed-mcp                         # MCP server, over stdio
+npx skills add jomaendle/youmightnotneed        # the skill
 ```
 
-`npx` works whether or not the package is installed. It resolves a local
-`node_modules/.bin` copy first. The bare `youmightnotneed` command only
-works after a global install.
+The skill also installs with `/plugin marketplace add jomaendle/youmightnotneed`.
 
-Point it at a repo and it reads `package.json`, matches your dependencies
-against the catalog, and prints what the platform now does natively, how much
-each library weighs, and how well the replacement is supported.
-
-## What it actually claims
+## What a finding claims
 
 A dependency in `package.json` is not proof of what it is used for. Someone
-installs Framer Motion for layout animations, not for fade-ins. So a finding
-here is a conditional:
+installs Framer Motion for layout animations, not for fade-ins. So a finding is
+a conditional:
 
 > If you're using `swiper` for a horizontal gallery with prev/next and dots,
 > CSS scroll-snap with `::scroll-button()` and `::scroll-marker()` covers that
 > case.
 
-Every finding ships with its Baseline status and with the conditions where the
-library is still the right call. A rule with an empty `unless` list fails the
-schema, so it cannot be added by accident. Sizes are phrased as "up to",
-because they assume a full replacement that may not apply to you.
+Every rule carries the conditions where the library is still the right call. A
+rule with an empty `unless` list fails the schema, so it cannot be added by
+accident. Sizes are phrased as "up to", because they assume a full replacement
+that may not apply to you.
 
-## Baseline status is never hardcoded
+## Where the numbers come from
 
-Browser support moves monthly and any number written by hand will eventually be
-wrong in public. Rules store `web-features` IDs. A build step resolves those
-into widely, newly or limited and commits the snapshot, so the data is
-reviewable in a diff and the published package carries no runtime dependency on
-it.
+Nothing about browser support is written by hand. Rules store `web-features`
+IDs and a build step resolves them into widely, newly or limited, so the data
+is reviewable in a diff. A rule is only as available as its least-supported
+required feature: tooltips need both the Popover API and CSS anchor
+positioning, and anchor positioning has not reached Baseline, so the whole rule
+reads as limited even though half of it is everywhere.
 
-A rule is only as available as its least-supported required feature. Tooltips
-need both the Popover API and CSS anchor positioning, and anchor positioning
-has not reached Baseline, so the whole rule reads as limited even though half
-of it is everywhere. The weakest link is what decides whether you can ship.
+Versions named in prose work the same way. A rule writes
+`{{safari:api.Crypto.randomUUID}}`, and `pnpm refresh:support` resolves it from
+`web-features` or from MDN's browser-compat-data. A token no source can confirm
+fails the refresh, and a literal version in a rule file fails the tests. This
+exists because a review found seven hand-typed versions the sources
+contradicted, every one in the direction that gets someone shipping broken
+code.
 
-Where a feature has no `web-features` ID yet, a rule may carry a
-`manualBaseline` with a `verifiedOn` date. CI fails once that date is more than
-90 days old.
-
-## Nor are the version numbers
-
-A rule's conditions often name a specific version: "below Chrome 92, Firefox 95
-or Safari 15.4". Those were typed by hand once, and a review found seven of
-them wrong, all in the direction that gets someone shipping broken code.
-
-So they are no longer typed. A rule writes a token:
-
-```ts
-"You support browsers below Safari {{safari:api.Crypto.randomUUID}}."
-```
-
-`pnpm refresh:support` resolves it from `web-features`, or from MDN's
-browser-compat-data when the claim is finer than web-features rolls up, and
-commits the result. A token the sources cannot confirm fails the refresh
-rather than shipping a guess. A committed number that stops matching its
-source fails the freshness check. A literal version anywhere in a rule file
-fails the tests. The catalog cannot state a browser version it did not get
-from the source data.
-
-## Guides for the part this does not cover
-
-A rule says which dependency has a native equivalent and gives one snippet. It
-does not try to be the tutorial. Where someone else has already written that,
-a rule points at it: `guides` holds IDs from Google Chrome's
-[modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance),
-Apache-2.0, and `--verbose` prints them.
-
-```
-npx -y modern-web-guidance@latest retrieve "carousel-snap-highlights"
-```
-
-Their guides are keyed by use case and ours by package name, so the two meet
-without overlapping. Only the IDs are stored here. The index is snapshotted
-from their published npm package by `pnpm refresh:guides`, and a rule pointing
-at a guide that no longer exists fails the freshness check rather than
-shipping as a dead link.
-
-## Two skills, pointing opposite ways
-
-`.claude/skills/` is for working on this repo: how to add a rule, and the
-house voice. It is never published.
-
-`skills/youmightnotneed/` is for an agent using the catalog on someone else's
-codebase. `SKILL.md` stays short, `references/reading-a-finding.md` covers how
-to act on a report without overstating it, and `references/catalog.md` is
-generated from the rules by `pnpm refresh:skill`, with a use-case index at the
-top so an agent can find the platform answer before it installs anything.
-Install it with `/plugin marketplace add jomaendle/youmightnotneed`.
+The implementation is someone else's job. A rule may point at Google Chrome's
+[modern-web-guidance](https://github.com/GoogleChrome/modern-web-guidance)
+(Apache-2.0) by ID, and a guide that disappears upstream fails the freshness
+check rather than shipping as a dead link.
 
 ## Layout
 
 ```
-packages/catalog   @jomae/catalog, MIT, published to npm
+packages/catalog   @jomae/catalog, the rules and detect()
 packages/cli       npx youmightnotneed
-packages/mcp       npx youmightnotneed-mcp, an MCP server for agents
+packages/mcp       npx youmightnotneed-mcp
 apps/web           youmightnotneed.dev
 skills             the agent skill, with a generated catalog reference
 scripts            snapshot generators and the freshness check
 ```
 
-`detect()` is a pure function: a parsed dependency map in, findings out. No
-filesystem, no network, no clock. Every surface calls the same one, which is
-why the CLI, the website, and the MCP server cannot disagree. A test asserts
-the purity by reading the source, so an accidental `node:fs` import fails
-the run.
+`detect()` is pure: a parsed dependency map in, findings out. No filesystem, no
+network, no clock. Every surface calls the same one, which is why they cannot
+disagree, and a test asserts the purity by reading the source.
 
-## Working on it
+## Contributing
 
-```
+```sh
 pnpm install
-pnpm verify          # lint, typecheck, test, freshness
-pnpm dev             # the website
-pnpm cli             # the CLI, against this repo
-pnpm mcp             # the MCP server, over stdio
-pnpm refresh         # re-snapshot Baseline data, sizes, guides and the skill
+pnpm verify      # lint, typecheck, tests, freshness, copy
+pnpm dev         # the website
+pnpm cli         # the CLI, against this repo
+pnpm refresh     # re-snapshot Baseline data, sizes, guides and the skill
 ```
 
-## Adding a rule
+A rule is one file in `packages/catalog/src/rules/`, exported from the index.
+The schema will say what is missing. Four fields need judgement:
 
-One file per rule in `packages/catalog/src/rules/`, exported from the index.
-The schema will tell you what is missing. The parts worth thinking about:
+- **`unless`** matters most, so write it first. An answer that always says "the
+  platform covers it" is worse than no answer. List the cases where you would
+  keep the library.
+- **`replaces`** takes exact npm names, and each package belongs to one rule
+  only, so a report never lists the same dependency twice.
+- **`featureIds`** lists only what the replacement *requires*. A feature that
+  merely makes the snippet nicer belongs in `unless`.
+- **`guides`** is optional. Read the guide before linking it: a plausible ID is
+  not evidence, and a review found three pointing at an adjacent topic.
 
-- `replaces` takes exact npm names, and each package may be claimed by one rule
-  only, so a report never lists the same dependency twice. Check the name
-  exists: `pnpm refresh:sizes` reports anything it cannot find.
-- `guides` is optional and holds modern-web-guidance IDs. Run
-  `pnpm refresh:guides` first if the guide is newer than the snapshot, or the
-  freshness check will reject the ID.
-- `featureIds` lists only the features the replacement *requires*. A feature
-  that merely makes the snippet nicer would understate the rule's support, so
-  mention those in `unless` instead.
-- `unless` is the field that matters most. An answer that always says "the platform covers it"
-  is worse than no answer. Write the cases where you would keep the library.
-
-Run `pnpm test`. Beyond the schema, the suite checks that no rule tells the
+`pnpm test` checks more than the schema. It also checks that no rule tells the
 reader to delete anything, that limited-availability rules flag their support
 in `unless`, and that the copy follows the house voice in
 `.claude/skills/writing-voice/SKILL.md`.
+
+`.claude/skills/adding-a-rule/SKILL.md` has the full method and the worked
+examples. Any change to a published package wants a changeset: run
+`pnpm changeset`.
 
 ## Licence
 
