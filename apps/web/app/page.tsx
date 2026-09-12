@@ -169,11 +169,7 @@ export default function HomePage() {
           commands. Matching is exact, so nothing guesses at what your packages
           do.
         </p>
-        <CopyPrompt
-          text={AGENT_PROMPT}
-          label="Copy prompt"
-          copiedLabel="Prompt copied"
-        />
+        <CopyPrompt text={AGENT_PROMPT} />
         <p className="mt-3 max-w-[58ch] text-fg-faint text-metadata">
           {AGENT_PROMPT_SUMMARY}
         </p>

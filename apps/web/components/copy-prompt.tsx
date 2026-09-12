@@ -13,12 +13,12 @@ import { useState } from "react";
  */
 export function CopyPrompt({
   text,
-  label,
-  copiedLabel,
+  label = "Copy prompt",
+  copiedLabel = "Prompt copied",
 }: {
   text: string;
-  label: string;
-  copiedLabel: string;
+  label?: string;
+  copiedLabel?: string;
 }) {
   const [result, setResult] = useState<"idle" | "copied" | "failed">("idle");
 

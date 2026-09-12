@@ -9,7 +9,7 @@ export const displayNames: Rule = {
   native: "Intl.DisplayNames",
   human: {
     explainer:
-      'A list of country names in one language is a small data file. In forty languages it is most of the package, which is where the weight of these libraries goes. Intl.DisplayNames reads the names the browser already ships with its locale data, so "DE" renders as "Germany" in English and "Deutschland" in German with nothing bundled. It covers regions, languages, scripts and currencies through the same constructor.',
+      'A list of country names is a data file, and one per language you support. i18n-iso-countries makes you register each locale you want; country-list and iso-639-1 carry English only. Intl.DisplayNames reads the names the browser already ships with its locale data, so "DE" renders as "Germany" in English and "Deutschland" in German with nothing bundled and nothing registered. It covers regions, languages, scripts and currencies through the same constructor.',
     snippet: `const regions = new Intl.DisplayNames(["en"], { type: "region" });
 regions.of("DE"); // "Germany"
 regions.of("JP"); // "Japan"

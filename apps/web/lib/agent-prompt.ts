@@ -1,5 +1,3 @@
-import { CLI_VERSION } from "./versions.ts";
-
 /**
  * The prompt the home page hands to an agent.
  *
@@ -27,5 +25,10 @@ Every finding is conditional. Each rule lists when the library is still the righ
 
 Report what could go, what it weighs, and what needs a fallback. Do not remove anything yet.`;
 
-/** Shown beside the button so the reader knows what they are copying. */
-export const AGENT_PROMPT_SUMMARY = `Runs the CLI, reads the conditions, reports back without changing code. Needs youmightnotneed ${CLI_VERSION} or newer.`;
+/**
+ * Shown beside the button so the reader knows what they are copying. It names
+ * no version on purpose: the prompt runs `@latest`, so a floor like "0.2.1 or
+ * newer" is satisfied by anyone who follows it and says nothing.
+ */
+export const AGENT_PROMPT_SUMMARY =
+  "Runs the CLI, reads the conditions, reports back without changing code.";

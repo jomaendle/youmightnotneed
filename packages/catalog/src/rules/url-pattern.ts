@@ -30,7 +30,6 @@ new URLPattern({ hostname: ":tenant.example.com" })
       "You are replacing the matcher inside a router you do not control. Express and React Router depend on path-to-regexp directly, so it stays in the tree regardless of what your own code uses.",
       "Your routes rely on path-to-regexp syntax that does not carry over, such as its custom match patterns or its handling of unnamed groups. The two syntaxes are close enough to look interchangeable and different enough to break quietly.",
       "The code runs on a server runtime that has no URLPattern global, which is the case for Node before it shipped one.",
-      "You support browsers below Chrome {{chrome:urlpattern}}, Firefox {{firefox:urlpattern}} or Safari {{safari:urlpattern}}.",
     ],
     snippet: `const pattern = new URLPattern({ pathname: "/users/:id" });
 const match = pattern.exec(url);

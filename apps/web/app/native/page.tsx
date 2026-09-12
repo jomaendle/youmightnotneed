@@ -8,6 +8,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { BrowserSupport } from "@/components/browser-support";
+import { PartialSupportNote } from "@/components/partial-support";
 import { NATIVE_USAGE, type Usage } from "@/lib/native-usage";
 
 export const metadata: Metadata = {
@@ -102,37 +103,20 @@ function UsageRow({ usage }: { usage: Usage }) {
 }
 
 /**
- * The version row for one feature. Rendering `feature.support` unconditionally
- * is wrong for the handful of features web-features publishes no aggregate
- * for, because one small part of them has not shipped anywhere: the row comes
- * out as four dashes, which reads as "no engine has this" when the part this
- * site is actually built on shipped in Chrome years ago. Anchor positioning
- * and ::scroll-button are both in that state. So when the aggregate is empty
- * and a part stands in for it, show the part's versions and name the part,
- * which is what the rule pages already do.
+ * The version row for one feature. Features whose aggregate support row is
+ * empty are handled by PartialSupportNote, which explains which part the
+ * numbers belong to rather than showing four dashes.
  */
 function UsageSupport({ feature }: { feature: ResolvedFeature }) {
-  if (!hasNoVersions(feature.support)) {
-    return <BrowserSupport support={feature.support} />;
-  }
-
-  if (feature.partialSupport === null) {
-    return (
+  if (hasNoVersions(feature.support)) {
+    return feature.partialSupport === null ? (
       <p className="max-w-[62ch] text-fg-muted text-metadata">
         web-features tracks no browser versions for {feature.name} yet.
       </p>
+    ) : (
+      <PartialSupportNote feature={feature} subject="site" />
     );
   }
 
-  return (
-    <div>
-      <BrowserSupport support={feature.partialSupport.support} />
-      <p className="mt-2 max-w-[62ch] text-fg-muted text-metadata">
-        Versions are for{" "}
-        <code className="font-mono">{feature.partialSupport.key}</code>, the
-        part this site is built on. web-features publishes no single version for{" "}
-        {feature.name} as a whole.
-      </p>
-    </div>
-  );
+  return <BrowserSupport support={feature.support} />;
 }

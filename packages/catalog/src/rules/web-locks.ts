@@ -27,6 +27,7 @@ await navigator.locks.request("cache", { mode: "shared" }, async () => {
       "You want the lock scoped to your module. Lock names are strings shared by the whole origin, so an unrelated script picking the same name now blocks you, and a name like 'lock' or 'queue' is a collision waiting to happen. An async-mutex instance is private to whoever holds the reference.",
       "You need a semaphore that admits more than one holder at a time. Web Locks offers exclusive and shared only, where async-mutex ships a counting Semaphore.",
       "The same task can request a lock it already holds. Web Locks is not reentrant, so a nested request for the same name waits for a release that cannot happen until the nested call returns.",
+      "The page runs on an opaque origin or outside a secure context: a sandboxed iframe without allow-same-origin, a data: or blob: document, or plain http away from localhost. navigator.locks is still present there, so a presence check passes and request() then rejects with a SecurityError. async-mutex has no such limit.",
       "You support browsers below Chrome {{chrome:web-locks}}, Firefox {{firefox:web-locks}} or Safari {{safari:web-locks}}, and calling into an undefined navigator.locks throws rather than degrading.",
     ],
     snippet: `await navigator.locks.request("sync-outbox", async () => {

@@ -36,7 +36,7 @@ const words = new Intl.Segmenter("en", { granularity: "word" });
       "You only need code points rather than grapheme clusters. Array.from(str) and the spread form already split by code point, with no Segmenter and no library.",
       "You need segmentation that cannot move. Each engine ships its own Unicode version, so a recent emoji can segment differently between browsers and can change when one updates.",
       "The same code runs on a Node build compiled with small-icu, where the locale data Segmenter depends on is largely absent.",
-      "You support browsers below Chrome {{chrome:intl-segmenter}}, Firefox {{firefox:intl-segmenter}} or Safari {{safari:intl-segmenter}}.",
+      "You measure the width of terminal output. string-length also strips ANSI escape codes before counting, and Intl.Segmenter counts them as segments, so a colourised CLI silently gets its column widths wrong.",
     ],
     snippet: `const seg = new Intl.Segmenter("en", { granularity: "grapheme" });
 const count = [...seg.segment(text)].length;`,
