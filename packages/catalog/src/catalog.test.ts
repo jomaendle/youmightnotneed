@@ -7,6 +7,7 @@ import { CATEGORIES, categorySchema } from "./categories.ts";
 import { baselineSnapshot } from "./generated/baseline.ts";
 import { isKnownGuide, resolveGuide, resolveGuides } from "./guides.ts";
 import { tierShareOf } from "./history.ts";
+import { isKnownLintRule, resolveLintRule, resolveRuleLint } from "./lint.ts";
 import { rules, rulesByPackage } from "./rules/index.ts";
 import { catalogSchema } from "./schema.ts";
 import { hasUnresolvedClaim, supportClaims } from "./support.ts";
@@ -393,6 +394,69 @@ describe("detect stays pure", () => {
     expect(code, file).not.toMatch(/\bperformance\.now\s*\(/);
     expect(code, file).not.toMatch(/\bglobalThis\b/);
   });
+});
+
+describe("lint rule references", () => {
+  const withLint = rules.filter((r) => r.lintRule !== undefined);
+  const withHandRolled = rules.filter(
+    (r) => (r.agent.handRolled ?? []).length > 0,
+  );
+
+  it("names a lint rule wherever one already checks the shape", () => {
+    expect(withLint.length).toBeGreaterThan(0);
+  });
+
+  it.each(withLint.map((r) => [r.id, r.lintRule as string] as const))(
+    "%s references the real lint rule %s",
+    (_id, name) => {
+      // A rule renamed or dropped upstream should fail here rather than ship
+      // as a dead link. Run `pnpm refresh:lint-rules` after a release.
+      expect(isKnownLintRule(name)).toBe(true);
+    },
+  );
+
+  it.each(withLint.map((r) => [r.id, r] as const))(
+    "%s resolves its lint rule to an https URL",
+    (_id, rule) => {
+      const lint = resolveRuleLint(rule);
+      expect(lint?.url).toMatch(/^https:\/\//);
+      expect(lint?.package).not.toBeNull();
+    },
+  );
+
+  it("returns a null URL for an unknown lint rule rather than throwing", () => {
+    expect(resolveLintRule("unicorn/not-a-real-rule").url).toBeNull();
+    expect(resolveLintRule("nosuchplugin/whatever").url).toBeNull();
+  });
+
+  it.each(["constructor", "toString", "hasOwnProperty", "__proto__"])(
+    "does not resolve %s off the prototype chain",
+    (name) => {
+      expect(isKnownLintRule(`unicorn/${name}`)).toBe(false);
+      expect(resolveLintRule(`unicorn/${name}`).url).toBeNull();
+    },
+  );
+
+  it("describes hand-rolled shapes for a useful number of rules", () => {
+    expect(withHandRolled.length).toBeGreaterThan(5);
+  });
+
+  // The split is the point: a shape a linter already matches belongs in
+  // lintRule, and duplicating it as prose invites the two to disagree.
+  it.each(withHandRolled.map((r) => [r.id, r] as const))(
+    "%s does not both name a lint rule and describe the shape by hand",
+    (_id, rule) => {
+      expect(rule.lintRule).toBeUndefined();
+    },
+  );
+
+  it.each(withHandRolled.map((r) => [r.id, r] as const))(
+    "%s lists each hand-rolled shape once",
+    (_id, rule) => {
+      const shapes = rule.agent.handRolled ?? [];
+      expect(new Set(shapes).size).toBe(shapes.length);
+    },
+  );
 });
 
 describe("guide references", () => {

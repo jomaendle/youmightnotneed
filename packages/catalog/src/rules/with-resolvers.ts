@@ -29,4 +29,5 @@ const firstMessage = await promise;`,
     ],
     snippet: "const { promise, resolve, reject } = Promise.withResolvers();",
   },
+  lintRule: "unicorn/prefer-promise-with-resolvers",
 };

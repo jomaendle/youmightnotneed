@@ -46,6 +46,24 @@ rule with an empty `unless` list fails the schema, so it cannot be added by
 accident. Sizes are phrased as "up to", because they assume a full replacement
 that may not apply to you.
 
+## What this is not
+
+Three questions sit next to this one and are answered better elsewhere. Naming
+them is cheaper than reimplementing them, and the catalog points at the exact
+lint rule wherever one already does the job.
+
+| Question | Use |
+| --- | --- |
+| Is this dependency used at all? | [knip](https://knip.dev) |
+| Is this CSS feature too new for my targets? | [Biome `useBaseline`](https://biomejs.dev/linter/rules/use-baseline/css/) |
+| Can a linter already find this shape? | [eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn), and [youmightnotneed.dev/checks](https://youmightnotneed.dev/checks) says which rules |
+
+What is left over is the part no linter covers: multi-line behaviour someone
+wrote by hand. A focus trap, a scroll lock, a carousel built from scroll
+listeners. Nothing is installed for any of it, so no package.json scan finds it
+either. Those shapes are on every rule that has them, and the agent skill reads
+them.
+
 ## Where the numbers come from
 
 No browser version and no support tier in this repo is written by hand.

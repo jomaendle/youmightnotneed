@@ -91,6 +91,24 @@ function SearchIcon() {
   );
 }
 
+function ChecksIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2 8.5 5.5 12 14 3.5" />
+    </svg>
+  );
+}
+
 function GitHubIcon() {
   return (
     <svg
@@ -107,6 +125,7 @@ function GitHubIcon() {
 
 const NAV = [
   { href: "/rules", label: "Rules", icon: RulesIcon },
+  { href: "/checks", label: "Checks", icon: ChecksIcon },
   { href: "/native", label: "This site", icon: SiteIcon },
 ] as const;
 

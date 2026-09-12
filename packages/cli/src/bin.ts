@@ -13,6 +13,8 @@ import {
   BASELINE_DATA_DATE,
   type PackageJsonLike,
   packageSizes,
+  renderRuleMarkdown,
+  rulesById,
   WEB_FEATURES_VERSION,
 } from "@jomae/catalog";
 import { createPalette } from "./colors.ts";
@@ -33,6 +35,9 @@ Usage
 Options
   -p, --package   Check one npm package by name instead of reading a
                   package.json. Use it before you install something.
+  -r, --rule      Print one rule in full by its id, including the conditions
+                  and the shapes people hand-roll instead. Use it when you are
+                  holding code rather than a package name.
   -v, --verbose   Print every condition under which the dependency is still
                   the right call. Recommended before you change anything.
       --json      Machine-readable output.
@@ -51,6 +56,12 @@ export interface Args {
   path: string | undefined;
   /** A single npm package to check, instead of reading a package.json. */
   package: string | undefined;
+  /**
+   * A rule id to print in full, for when you are holding code rather than a
+   * package name. This is the offline route for a hand-rolled shape: there is
+   * no package to look up, so --package cannot answer it.
+   */
+  rule: string | undefined;
   verbose: boolean;
   json: boolean;
   color: boolean;
@@ -59,37 +70,57 @@ export interface Args {
 }
 
 /**
- * Reads --package, the one flag that takes a value. Accepts both
- * `--package name` and `--package=name`. Returns how many argv entries it
- * consumed, or 0 when this argument is not the package flag.
+ * Reads a flag that takes a value, in both the `--flag value` and
+ * `--flag=value` spellings. Returns how many argv entries it consumed, or 0
+ * when this argument is not that flag.
  */
-function readPackageFlag(
-  args: Args,
+function readValueFlag(
   argv: readonly string[],
   index: number,
-): number {
+  spec: { long: string; short?: string; noun: string; example: string },
+): { value: string; consumed: number } | null {
   const arg = argv[index] as string;
+  const prefix = `${spec.long}=`;
 
-  const attached = arg.startsWith("--package=");
-  if (!(attached || arg === "-p" || arg === "--package")) return 0;
+  const attached = arg.startsWith(prefix);
+  if (!(attached || arg === spec.short || arg === spec.long)) return null;
 
   // Both spellings go through one check, or --package= and --package=-v slip
   // past it and the run reports on the empty string instead of erroring.
-  const value = attached ? arg.slice("--package=".length) : argv[index + 1];
+  const value = attached ? arg.slice(prefix.length) : argv[index + 1];
   if (value === undefined || value === "" || value.startsWith("-")) {
     console.error(
-      "--package needs a package name, for example: --package swiper",
+      `${spec.long} needs a ${spec.noun}, for example: ${spec.example}`,
     );
     process.exit(2);
   }
-  args.package = value;
-  return attached ? 1 : 2;
+  return { value, consumed: attached ? 1 : 2 };
+}
+
+/**
+ * Prints one rule in full, for `--rule <id>`.
+ *
+ * The route for someone holding code rather than a package name: a hand-rolled
+ * focus trap has no dependency to look up, so --package cannot answer it and
+ * the id is the only handle there is.
+ */
+function printRule(id: string): void {
+  const rule = rulesById.get(id);
+  if (!rule) {
+    console.error(`No rule with id "${id}".`);
+    console.error(
+      "Run without --rule to scan a package.json, or see https://youmightnotneed.dev/rules",
+    );
+    process.exit(1);
+  }
+  console.info(renderRuleMarkdown(rule));
 }
 
 export function parseArgs(argv: readonly string[]): Args {
   const args: Args = {
     path: undefined,
     package: undefined,
+    rule: undefined,
     verbose: false,
     json: false,
     color: !process.env.NO_COLOR,
@@ -100,9 +131,27 @@ export function parseArgs(argv: readonly string[]): Args {
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i] as string;
 
-    const consumed = readPackageFlag(args, argv, i);
-    if (consumed > 0) {
-      i += consumed - 1;
+    const pkgFlag = readValueFlag(argv, i, {
+      long: "--package",
+      short: "-p",
+      noun: "package name",
+      example: "--package swiper",
+    });
+    if (pkgFlag) {
+      args.package = pkgFlag.value;
+      i += pkgFlag.consumed - 1;
+      continue;
+    }
+
+    const ruleFlag = readValueFlag(argv, i, {
+      long: "--rule",
+      short: "-r",
+      noun: "rule id",
+      example: "--rule inert",
+    });
+    if (ruleFlag) {
+      args.rule = ruleFlag.value;
+      i += ruleFlag.consumed - 1;
       continue;
     }
 
@@ -244,6 +293,26 @@ function readOwnVersion(): string {
   }
 }
 
+/**
+ * The modes that print one thing and stop, rather than scanning anything.
+ * Returns true when one of them handled the run.
+ */
+function runDirectMode(args: Args): boolean {
+  if (args.help) {
+    console.info(HELP);
+    return true;
+  }
+  if (args.version) {
+    console.info(readOwnVersion());
+    return true;
+  }
+  if (args.rule !== undefined) {
+    printRule(args.rule);
+    return true;
+  }
+  return false;
+}
+
 function main(): void {
   const args = parseArgs(process.argv.slice(2));
 
@@ -251,15 +320,7 @@ function main(): void {
   // Node, and exiting discards whatever is still buffered. That silently
   // truncated --json past the 64 KiB pipe buffer. Returning lets Node flush
   // and exit 0 on its own.
-  if (args.help) {
-    console.info(HELP);
-    return;
-  }
-
-  if (args.version) {
-    console.info(readOwnVersion());
-    return;
-  }
+  if (runDirectMode(args)) return;
 
   if (args.package !== undefined && args.path !== undefined) {
     console.error(

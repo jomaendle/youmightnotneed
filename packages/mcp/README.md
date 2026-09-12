@@ -87,6 +87,13 @@ guide IDs with the URL and the command that retrieves one. This catalog gives
 the one-line swap; the guide gives the fallbacks and the gotchas, so read one
 before writing the replacement.
 
+A finding or a `get_rule` result may also carry `lintRule`, naming a lint rule
+that already checks the shape mechanically, and `agent.handRolled`, describing
+the shapes people write by hand instead. `list_rules` returns every hand-rolled
+shape in one call, which is the index to use when you are holding code rather
+than a package name. [youmightnotneed.dev/checks](https://youmightnotneed.dev/checks)
+shows which rules fall on which side.
+
 Data is a static snapshot, the same one `npx youmightnotneed` and
 youmightnotneed.dev use. No network calls happen at tool-call time.
 

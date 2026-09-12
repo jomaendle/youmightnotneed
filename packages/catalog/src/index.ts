@@ -66,6 +66,16 @@ export {
 } from "./guides.ts";
 export { type TierShare, tierShareOf } from "./history.ts";
 export {
+  isKnownLintRule,
+  LINT_RULES_FETCHED_ON,
+  LINT_SOURCES,
+  type LintRuleSnapshot,
+  lintRuleSnapshot,
+  type ResolvedLintRule,
+  resolveLintRule,
+  resolveRuleLint,
+} from "./lint.ts";
+export {
   renderRuleMarkdown,
   renderUseCaseTable,
   ruleMarkdownUrl,

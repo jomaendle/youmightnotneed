@@ -37,6 +37,7 @@ import { resolveBaseline } from "../packages/catalog/src/baseline.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
 import { baselineHistory } from "../packages/catalog/src/generated/baseline-history.ts";
 import { guideSnapshot } from "../packages/catalog/src/generated/guides.ts";
+import { lintRuleSnapshot } from "../packages/catalog/src/generated/lint-rules.ts";
 import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
 import { supportClaims } from "../packages/catalog/src/generated/support-claims.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
@@ -47,6 +48,7 @@ const MANUAL_BASELINE_MAX_AGE_DAYS = 90;
 const SNAPSHOT_WARN_AGE_DAYS = 45;
 const SIZES_WARN_AGE_DAYS = 120;
 const GUIDES_WARN_AGE_DAYS = 90;
+const LINT_RULES_WARN_AGE_DAYS = 90;
 
 const require = createRequire(import.meta.url);
 const errors: string[] = [];
@@ -129,6 +131,27 @@ for (const rule of rules) {
         `Rule "${rule.id}" points at modern-web-guidance guide "${id}", which is not in the snapshot. Run \`pnpm refresh:guides\`, and drop or repoint the reference if it was renamed upstream.`,
       );
     }
+  }
+}
+
+// 5b. Lint rule references must still exist upstream, same reasoning as the
+// guides above: a rule renamed in a linter release would otherwise ship as a
+// dead link on the site and as advice that silently does nothing in CI.
+for (const rule of rules) {
+  const name = rule.lintRule;
+  if (name === undefined) continue;
+  const [prefix = "", ruleName = ""] = name.split("/");
+  const source = lintRuleSnapshot.sources.find((s) => s.prefix === prefix);
+  if (!source) {
+    errors.push(
+      `Rule "${rule.id}" names lint rule "${name}", but "${prefix}" is not a linter the snapshot tracks. Add it to SOURCES in scripts/refresh-lint-rules.ts, or drop the reference.`,
+    );
+    continue;
+  }
+  if (!source.rules.includes(ruleName)) {
+    errors.push(
+      `Rule "${rule.id}" names lint rule "${name}", which ${source.package}@${source.version} does not publish. Run \`pnpm refresh:lint-rules\`, and drop or repoint the reference if it was renamed upstream.`,
+    );
   }
 }
 
@@ -289,6 +312,13 @@ const guidesAge = daysSince(guideSnapshot.fetchedOn);
 if (guidesAge > GUIDES_WARN_AGE_DAYS) {
   warnings.push(
     `The modern-web-guidance index was taken ${guidesAge} days ago (${guideSnapshot.fetchedOn}, v${guideSnapshot.version}). Run \`pnpm refresh:guides\`.`,
+  );
+}
+
+const lintRulesAge = daysSince(lintRuleSnapshot.fetchedOn);
+if (lintRulesAge > LINT_RULES_WARN_AGE_DAYS) {
+  warnings.push(
+    `The lint rule names were taken ${lintRulesAge} days ago (${lintRuleSnapshot.fetchedOn}). Run \`pnpm refresh:lint-rules\`.`,
   );
 }
 

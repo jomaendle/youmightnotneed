@@ -26,5 +26,9 @@ observer.observe(document.querySelector("#panel"));`,
       "You need devicePixelContentBoxSize specifically. Chrome has it from {{chrome:api.ResizeObserverEntry.devicePixelContentBoxSize}} and Firefox from {{firefox:api.ResizeObserverEntry.devicePixelContentBoxSize}}, but Safari does not implement it at all.",
     ],
     snippet: "new ResizeObserver((entries) => { ... }).observe(el);",
+    handRolled: [
+      "a window resize listener that reads offsetWidth on an element to react to that element's own size",
+      "polling an element's dimensions on an interval to notice when they change",
+    ],
   },
 };

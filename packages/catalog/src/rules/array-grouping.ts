@@ -29,4 +29,5 @@ const byCustomer = Map.groupBy(orders, (order) => order.customer);`,
     ],
     snippet: "const byStatus = Object.groupBy(items, (item) => item.status);",
   },
+  lintRule: "unicorn/prefer-group-by",
 };

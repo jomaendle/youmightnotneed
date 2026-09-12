@@ -39,5 +39,9 @@ export const lineClamp: Rule = {
     ],
     snippet:
       ".excerpt { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }",
+    handRolled: [
+      "measuring text in a hidden element or on a canvas to decide where to cut a string for display",
+      "slicing a string to a character count and appending an ellipsis so it fits its box",
+    ],
   },
 };

@@ -153,6 +153,52 @@ describe("parseArgs", () => {
   });
 });
 
+describe("--rule prints one rule", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  const run = (args: string[]) =>
+    spawnSync(process.execPath, [binPath, ...args], { encoding: "utf8" });
+
+  // The route for someone holding code rather than a package name. A
+  // hand-rolled focus trap has no dependency to look up, so without this the
+  // shape half of the catalog has no offline answer at all.
+  it.each([["--rule"], ["-r"]])(
+    "%s prints the rule and its conditions",
+    (flag) => {
+      const result = run([flag, "inert"]);
+
+      expect(result.status).toBe(0);
+      expect(result.stdout).toContain("# Focus trapping");
+      expect(result.stdout).toContain("Keep the dependency if");
+      expect(result.stdout).toContain("Signs it was hand-rolled");
+    },
+  );
+
+  it("names the lint rule when one already checks the shape", () => {
+    const result = run(["--rule", "structured-clone"]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("unicorn/prefer-structured-clone");
+  });
+
+  it("exits 1 on an unknown id rather than printing nothing", () => {
+    const result = run(["--rule", "not-a-real-rule"]);
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('No rule with id "not-a-real-rule"');
+  });
+
+  it.each([["--rule="], ["--rule=-v"], ["-r"], ["--rule"]])(
+    "%s exits 2 rather than looking up an empty id",
+    (arg) => {
+      const result = run([arg]);
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("needs a rule id");
+    },
+  );
+});
+
 describe("--package rejects a missing value", () => {
   // parseArgs calls process.exit(2) on bad input, so these run out of process.
   const binPath = resolve(import.meta.dirname, "bin.ts");

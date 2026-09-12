@@ -50,4 +50,5 @@ controller.abort();`,
 bus.addEventListener("ping", (e) => handle(e.detail), { signal });
 bus.dispatchEvent(new CustomEvent("ping", { detail: payload }));`,
   },
+  lintRule: "unicorn/prefer-event-target",
 };

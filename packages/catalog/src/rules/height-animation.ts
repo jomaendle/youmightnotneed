@@ -46,6 +46,10 @@ export const heightAnimation: Rule = {
     snippet: `:root { interpolate-size: allow-keywords; }
 .panel { height: 0; overflow: hidden; transition: height 0.3s; }
 .panel[data-open] { height: auto; }`,
+    handRolled: [
+      "reading scrollHeight and animating max-height to that pixel value to open a panel",
+      "a transitionend listener setting height back to auto once an opening animation has finished",
+    ],
   },
   guides: ["animate-to-intrinsic-sizes", "calculate-with-intrinsic-sizes"],
 };

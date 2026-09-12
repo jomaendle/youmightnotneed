@@ -13,6 +13,7 @@
  */
 import { baselineShortLabel, resolveBaseline } from "./baseline.ts";
 import { GUIDE_SOURCE, guideCommand, resolveGuides } from "./guides.ts";
+import { resolveRuleLint } from "./lint.ts";
 import { rules } from "./rules/index.ts";
 import type { Rule } from "./schema.ts";
 
@@ -79,7 +80,7 @@ export function renderRuleMarkdown(rule: Rule): string {
 - **id**: \`${rule.id}\`
 - **native**: ${rule.native}
 - **support**: Baseline ${support}
-- **replaces**: ${rule.replaces.map((pkg) => `\`${pkg}\``).join(", ")}
+- **replaces**: ${rule.replaces.map((pkg) => `\`${pkg}\``).join(", ")}${renderLintLine(rule)}
 
 ## When this applies
 
@@ -89,7 +90,7 @@ A match is a starting point, not a verdict. A package in package.json is not
 evidence of what it is used for, so read the conditions below before changing
 anything.
 
-## Keep the dependency if any of these apply
+${renderHandRolled(rule)}## Keep the dependency if any of these apply
 
 ${rule.agent.unless.map((condition) => `- ${condition}`).join("\n")}
 
@@ -102,6 +103,44 @@ ${rule.agent.snippet}
 ## How to implement it
 
 ${renderGuides(rule)}
+`;
+}
+
+/**
+ * The lint rule that already checks this shape, where there is one.
+ *
+ * Put on the fact list rather than in a section of its own, because the most
+ * useful moment to learn a check is automatable is while reading what the rule
+ * claims, not three screens later.
+ */
+function renderLintLine(rule: Rule): string {
+  const lint = resolveRuleLint(rule);
+  if (!lint?.url) return "";
+  return `\n- **lint**: [\`${lint.name}\`](${lint.url}) already catches this, so it can be enforced in CI`;
+}
+
+/**
+ * The shapes people write by hand instead of using the native feature.
+ *
+ * These exist for the half of the problem `replaces` cannot see: a hand-written
+ * focus trap installs nothing, so no package.json match can fire. They are
+ * multi-line and stateful, which is why no linter has them and why they are
+ * prose for a reader rather than a pattern for a matcher.
+ */
+function renderHandRolled(rule: Rule): string {
+  const shapes = rule.agent.handRolled ?? [];
+  if (shapes.length === 0) return "";
+
+  return `## Signs it was hand-rolled
+
+No package is involved in these. If the code you are reading looks like one of
+them, this rule applies even though nothing matched in package.json.
+
+${shapes.map((shape) => `- ${shape}`).join("\n")}
+
+The conditions below still decide. A hand-rolled version that exists for one of
+them is the right call, and saying so beats a rewrite.
+
 `;
 }
 
@@ -204,5 +243,60 @@ that needs no network. It gives the rule id and stops there: the conditions
 for keeping the dependency come from the URL or the CLI above.
 
 ${renderPackageIndex()}
+
+## By hand-rolled shape
+
+The half no package.json can show you. Nothing is installed for any of these,
+so nothing matches: someone wrote it out instead. Read the code you are about
+to write or have just been handed, and check it against this.
+
+A match here is a starting point exactly like a package match. Fetch the rule
+and read its conditions before changing anything.
+
+${renderHandRolledIndex()}
+
+## Already checked by a linter
+
+These shapes are matched mechanically today, so they need no judgment from you
+and belong in CI rather than in a review.
+
+${renderLintIndex()}
 `;
+}
+
+/**
+ * Hand-rolled shapes, keyed by the shape rather than by the rule, because the
+ * agent arrives holding code and not a rule id.
+ */
+function renderHandRolledIndex(): string {
+  const rows = rules
+    .flatMap((rule) =>
+      (rule.agent.handRolled ?? []).map(
+        (shape) =>
+          `| ${shape} | \`${rule.id}\` | ${rule.native} | ${baselineShortLabel(
+            resolveBaseline(rule).status,
+          )} |`,
+      ),
+    )
+    .sort();
+
+  return `| If the code does this | Rule | Instead | Support |
+| --- | --- | --- | --- |
+${rows.join("\n")}`;
+}
+
+/** Rules a linter already covers, so nobody writes a pattern for them twice. */
+function renderLintIndex(): string {
+  const rows = rules
+    .map((rule) => ({ rule, lint: resolveRuleLint(rule) }))
+    .filter((entry) => entry.lint?.url)
+    .map(
+      (entry) =>
+        `| \`${entry.lint?.name}\` | \`${entry.rule.id}\` | ${entry.rule.native} |`,
+    )
+    .sort();
+
+  return `| Lint rule | Rule | Instead |
+| --- | --- | --- |
+${rows.join("\n")}`;
 }
