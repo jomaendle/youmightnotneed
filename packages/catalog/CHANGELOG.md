@@ -1,5 +1,40 @@
 # @jomae/catalog
 
+## 0.7.0
+
+### Minor Changes
+
+- [#41](https://github.com/jomaendle/youmightnotneed/pull/41) [`8e0e45f`](https://github.com/jomaendle/youmightnotneed/commit/8e0e45fd828ce7812223f54fd9db2ffa14e63c14) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add `searchRules()`, a free-text lookup over the catalog. `detect()` needs a
+  whole package.json; this answers the question someone arrives with instead, a
+  single package name or feature. Exact package matches rank above prefix and
+  substring hits, and a rule can also be found by its title or its native
+  feature. It returns which package names the query matched, so a surface can
+  show them.
+
+- [#47](https://github.com/jomaendle/youmightnotneed/pull/47) [`aa13213`](https://github.com/jomaendle/youmightnotneed/commit/aa132135d0aeecd6edbc232d80615604d6b54085) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add `renderRuleMarkdown()`, `renderUseCaseTable()` and `ruleMarkdownUrl()`, the
+  markdown projection of the catalog. The rendering used to live in
+  `scripts/build-skill.ts`, where only the skill generator could reach it, so the
+  website now serves the same bytes at `/rules/<id>.md` and `/llms.txt`. A rule
+  renders with its `unless` conditions in full, which until now were reachable
+  only through the CLI's `--verbose` or the MCP server, and with the guides that
+  carry the implementation.
+  
+  The skill's generated reference is restructured rather than only extended.
+  The per-rule listing is gone, replaced by a package index that keeps the
+  offline package lookup in one line per rule instead of a block, so the file
+  holds both directions in a fraction of the length.
+  
+  `height-auto-animation` also gains the `calculate-with-intrinsic-sizes` guide.
+  The rule names `calc-size()` as one of its two native approaches and that guide
+  is the one that covers it.
+
+### Patch Changes
+
+- [#44](https://github.com/jomaendle/youmightnotneed/pull/44) [`901eef7`](https://github.com/jomaendle/youmightnotneed/commit/901eef728cf9294d10fb8be73aaa719da3ecd18b) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Point at youmightnotneed.dev. The site has its own domain now, so `homepage`
+  on all three packages, the URL the CLI prints under a report, and the README
+  links go there instead of at the Vercel deployment URL. The old URL is still
+  attached and still resolves, so existing links keep working.
+
 ## 0.6.0
 
 ### Minor Changes
