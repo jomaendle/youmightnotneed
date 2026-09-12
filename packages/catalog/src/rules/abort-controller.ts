@@ -25,7 +25,7 @@ controller.abort();`,
     snippet: `const controller = new AbortController();
 fetch(url, { signal: controller.signal });`,
     handRolled: [
-      "a cancelled or isMounted boolean checked after each await so a stale result can be dropped",
+      "an ignore or isMounted flag set in a cleanup function, guarding the result of a fetch given no signal",
     ],
   },
 };

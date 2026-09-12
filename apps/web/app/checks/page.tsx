@@ -204,20 +204,34 @@ function Elsewhere({
 }
 
 /**
- * The config block, built from the rules the catalog actually names rather
- * than written out by hand, so it cannot drift from the list above it.
+ * The config block, built from the rules the catalog actually names.
+ *
+ * The imports and the plugins key are derived from the prefixes present, not
+ * written out, because refresh-lint-rules.ts promises that adding a linter to
+ * SOURCES is all it takes for `lintRule` to accept its rules. Hardcoding
+ * unicorn here would mean the first second linter emitted a config that throws
+ * "Could not find plugin" on paste, while the provenance line below it named
+ * both packages correctly.
  */
 function eslintConfig(names: readonly string[]): string {
+  const used = LINT_SOURCES.filter((source) =>
+    names.some((name) => name.startsWith(`${source.prefix}/`)),
+  );
+
+  const imports = used
+    .map((source) => `import ${source.prefix} from "${source.package}";`)
+    .join("\n");
+  const plugins = used.map((source) => source.prefix).join(", ");
   const entries = names
     .map((name) => `      "${name}": "error",`)
     .sort()
     .join("\n");
 
-  return `import unicorn from "eslint-plugin-unicorn";
+  return `${imports}
 
 export default [
   {
-    plugins: { unicorn },
+    plugins: { ${plugins} },
     rules: {
 ${entries}
     },

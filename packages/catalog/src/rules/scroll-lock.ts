@@ -43,7 +43,6 @@ body {
 }`,
     handRolled: [
       "setting document.body.style.overflow to hidden when an overlay opens, and restoring it on close",
-      "recording window.scrollY on open and calling scrollTo to put the page back on close",
     ],
   },
 };

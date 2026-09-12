@@ -65,7 +65,6 @@ export const select: Rule = {
 </style>`,
     handRolled: [
       "a div with role=listbox and children with role=option, wired to arrow keys and Enter by hand",
-      "an input paired with an absolutely positioned menu, plus code closing it on outside clicks",
     ],
   },
   guides: [

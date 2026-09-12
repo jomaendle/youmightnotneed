@@ -49,7 +49,6 @@ html {
 }`,
     handRolled: [
       "measuring the scrollbar width from innerWidth minus documentElement.clientWidth and padding the body by it",
-      "adding a margin or padding when an overlay opens so the page does not shift sideways",
     ],
   },
   guides: [

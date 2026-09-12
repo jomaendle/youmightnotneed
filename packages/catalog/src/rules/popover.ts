@@ -68,7 +68,7 @@ export const popover: Rule = {
     handRolled: [
       "calling getBoundingClientRect on a trigger inside scroll and resize listeners to place a floating panel",
       "writing top and left onto a tooltip from a requestAnimationFrame loop",
-      "flip or shift logic comparing a panel's rect against the viewport and moving it back inside",
+      "flip logic comparing a panel's rect against the viewport and moving it to the other side of its trigger",
     ],
   },
   guides: [

@@ -35,8 +35,7 @@ export const clipboard: Rule = {
     ],
     snippet: "await navigator.clipboard.writeText(text);",
     handRolled: [
-      "a hidden textarea that gets the text, is selected, and then copied with document.execCommand",
-      "a contenteditable or off-screen element created only so a selection can be made and copied",
+      "an off-screen textarea or contenteditable element created only so text can be selected and execCommand'd",
     ],
   },
 };

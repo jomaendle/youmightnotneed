@@ -36,7 +36,7 @@ export const dateTimeInput: Rule = {
     snippet: `<input type="date" min="2024-01-01" required>`,
     handRolled: [
       "building a month grid from Date arithmetic, with the leading blanks worked out from getDay",
-      "parsing and validating a typed date string against a format by hand",
+      "a text input with a placeholder like dd/mm/yyyy and a hand-written parser checking what was typed",
     ],
   },
 };

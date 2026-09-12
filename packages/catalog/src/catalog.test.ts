@@ -360,6 +360,8 @@ describe("detect stays pure", () => {
       "guides.ts",
       "generated/guides.ts",
       "history.ts",
+      "lint.ts",
+      "generated/lint-rules.ts",
       "rules/index.ts",
       "schema.ts",
       "support.ts",
@@ -441,14 +443,16 @@ describe("lint rule references", () => {
     expect(withHandRolled.length).toBeGreaterThan(5);
   });
 
-  // The split is the point: a shape a linter already matches belongs in
-  // lintRule, and duplicating it as prose invites the two to disagree.
-  it.each(withHandRolled.map((r) => [r.id, r] as const))(
-    "%s does not both name a lint rule and describe the shape by hand",
-    (_id, rule) => {
-      expect(rule.lintRule).toBeUndefined();
-    },
-  );
+  // A rule may carry both. resize-observer is the case that proved it: a
+  // resize listener reading offsetWidth is matched by
+  // unicorn/prefer-observer-apis, and polling dimensions on an interval is
+  // not matched by anything. Forbidding the pair forced a choice between
+  // naming the linter and keeping the shape only a person can spot, and
+  // losing either is worse than the risk the two disagree.
+  //
+  // What still has to hold is that a shape is not a restatement of what the
+  // lint rule already catches. That is a judgement, so it lives in the
+  // adding-a-rule skill rather than in an assertion here.
 
   it.each(withHandRolled.map((r) => [r.id, r] as const))(
     "%s lists each hand-rolled shape once",

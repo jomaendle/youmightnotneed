@@ -25,7 +25,7 @@ export const pageVisibility: Rule = {
     ],
     snippet: `document.addEventListener("visibilitychange", () => { ... });`,
     handRolled: [
-      "window focus and blur listeners used to pause a timer, a poll or a video",
+      "a blur handler standing in for the tab being backgrounded, pausing a poll that a focus handler resumes",
     ],
   },
   guides: [

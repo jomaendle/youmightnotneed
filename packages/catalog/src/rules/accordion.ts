@@ -53,7 +53,7 @@ export const accordion: Rule = {
   <p>Body</p>
 </details>`,
     handRolled: [
-      "state holding the open index, with every other panel closed whenever one opens",
+      "an open id over a list of collapsible panels, where opening one sets every other closed",
     ],
   },
   guides: ["search-hidden-content"],

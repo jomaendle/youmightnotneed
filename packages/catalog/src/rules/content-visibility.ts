@@ -34,10 +34,6 @@ export const contentVisibility: Rule = {
     ],
     snippet:
       ".row { content-visibility: auto; contain-intrinsic-size: auto 48px; }",
-    handRolled: [
-      "computing a visible index range from scrollTop and a fixed item height, and rendering only that slice",
-      "spacer elements above and below a rendered window to keep the scrollbar the right size",
-    ],
   },
   guides: ["defer-rendering-heavy-content"],
 };

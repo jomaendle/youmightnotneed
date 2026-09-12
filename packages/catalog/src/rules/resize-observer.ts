@@ -27,8 +27,8 @@ observer.observe(document.querySelector("#panel"));`,
     ],
     snippet: "new ResizeObserver((entries) => { ... }).observe(el);",
     handRolled: [
-      "a window resize listener that reads offsetWidth on an element to react to that element's own size",
       "polling an element's dimensions on an interval to notice when they change",
     ],
   },
+  lintRule: "unicorn/prefer-observer-apis",
 };

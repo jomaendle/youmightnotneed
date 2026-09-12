@@ -41,7 +41,6 @@ const decoded = new TextDecoder().decode(
 );`,
     handRolled: [
       "btoa wrapped in unescape and encodeURIComponent to survive characters outside Latin-1",
-      "a hand-written alphabet string and bit shifting to encode bytes",
     ],
   },
 };

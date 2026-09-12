@@ -268,7 +268,7 @@ ${renderLintIndex()}
  * Hand-rolled shapes, keyed by the shape rather than by the rule, because the
  * agent arrives holding code and not a rule id.
  */
-function renderHandRolledIndex(): string {
+export function renderHandRolledIndex(): string {
   const rows = rules
     .flatMap((rule) =>
       (rule.agent.handRolled ?? []).map(
@@ -286,7 +286,7 @@ ${rows.join("\n")}`;
 }
 
 /** Rules a linter already covers, so nobody writes a pattern for them twice. */
-function renderLintIndex(): string {
+export function renderLintIndex(): string {
   const rows = rules
     .map((rule) => ({ rule, lint: resolveRuleLint(rule) }))
     .filter((entry) => entry.lint?.url)

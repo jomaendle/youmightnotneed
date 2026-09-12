@@ -76,6 +76,8 @@ export {
   resolveRuleLint,
 } from "./lint.ts";
 export {
+  renderHandRolledIndex,
+  renderLintIndex,
   renderRuleMarkdown,
   renderUseCaseTable,
   ruleMarkdownUrl,
