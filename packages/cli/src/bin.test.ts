@@ -197,6 +197,45 @@ describe("--rule prints one rule", () => {
       expect(result.stderr).toContain("needs a rule id");
     },
   );
+
+  // Silently winning over the other flag is the bad outcome: the reader asked
+  // for two things and got one, with an exit code saying it worked.
+  it.each([
+    [["--rule", "inert", "--package", "uuid"], "--package"],
+    [["--rule", "inert", "--json"], "--json"],
+    [["--rule", "inert", "."], "a path"],
+  ])("%s exits 2 rather than quietly ignoring the rest", (args, mention) => {
+    const result = run(args);
+
+    expect(result.status).toBe(2);
+    expect(result.stderr).toContain(mention);
+  });
+});
+
+describe("lockfiles are refused by name", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // Only package-lock.json is JSON, so the lockfileVersion check inside the
+  // parser never sees the others: they fail as "not valid JSON", which is true
+  // and useless. The name is the only thing available before parsing.
+  it.each([
+    ["pnpm-lock.yaml"],
+    ["yarn.lock"],
+    ["bun.lock"],
+    ["package-lock.json"],
+  ])("%s says it is a lockfile rather than a JSON error", (name) => {
+    const dir = mkdtempSync(join(tmpdir(), "ymn-lock-"));
+    const file = join(dir, name);
+    writeFileSync(file, "this is not json\n");
+
+    const result = spawnSync(process.execPath, [binPath, file], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("is a lockfile");
+    expect(result.stderr).not.toContain("not valid JSON");
+  });
 });
 
 describe("--package rejects a missing value", () => {

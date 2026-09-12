@@ -239,7 +239,29 @@ export function resolveTarget(input: string | undefined): string {
   }
 }
 
+/**
+ * Lockfiles that are not JSON, so the parse fails before the lockfileVersion
+ * check below can recognise them. Without this, pointing at pnpm-lock.yaml
+ * reports "not valid JSON", which is true and tells the reader nothing about
+ * what they did wrong.
+ */
+const LOCKFILE_NAMES = new Set([
+  "pnpm-lock.yaml",
+  "yarn.lock",
+  "bun.lock",
+  "bun.lockb",
+  "npm-shrinkwrap.json",
+  "package-lock.json",
+]);
+
 function readPackageJson(file: string): PackageJsonLike {
+  if (LOCKFILE_NAMES.has(basename(file))) {
+    console.error(
+      `${file} is a lockfile, not a package.json. Point at the manifest instead.`,
+    );
+    process.exit(1);
+  }
+
   let raw: string;
   try {
     raw = readFileSync(file, "utf8");
@@ -294,6 +316,21 @@ function readOwnVersion(): string {
 }
 
 /**
+ * What --rule was combined with, or null when it was used on its own.
+ *
+ * --rule prints one rule and reads no project, so anything selecting a project
+ * is a contradiction rather than something to quietly drop. Silently winning
+ * is the bad outcome: the reader asked for two things, got one, and the exit
+ * code said it worked.
+ */
+function ruleConflict(args: Args): string | null {
+  if (args.package !== undefined) return "--package";
+  if (args.path !== undefined) return "a path";
+  if (args.json) return "--json";
+  return null;
+}
+
+/**
  * The modes that print one thing and stop, rather than scanning anything.
  * Returns true when one of them handled the run.
  */
@@ -302,14 +339,24 @@ function runDirectMode(args: Args): boolean {
     console.info(HELP);
     return true;
   }
+
   if (args.version) {
     console.info(readOwnVersion());
     return true;
   }
+
   if (args.rule !== undefined) {
+    const conflict = ruleConflict(args);
+    if (conflict !== null) {
+      console.error(
+        `--rule prints one rule and reads no project, so it cannot be combined with ${conflict}.`,
+      );
+      process.exit(2);
+    }
     printRule(args.rule);
     return true;
   }
+
   return false;
 }
 
