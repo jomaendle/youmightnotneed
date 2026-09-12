@@ -1,5 +1,16 @@
 # youmightnotneed
 
+## 0.2.1
+
+### Patch Changes
+
+- [#44](https://github.com/jomaendle/youmightnotneed/pull/44) [`901eef7`](https://github.com/jomaendle/youmightnotneed/commit/901eef728cf9294d10fb8be73aaa719da3ecd18b) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Point at youmightnotneed.dev. The site has its own domain now, so `homepage`
+  on all three packages, the URL the CLI prints under a report, and the README
+  links go there instead of at the Vercel deployment URL. The old URL is still
+  attached and still resolves, so existing links keep working.
+- Updated dependencies [[`8e0e45f`](https://github.com/jomaendle/youmightnotneed/commit/8e0e45fd828ce7812223f54fd9db2ffa14e63c14), [`aa13213`](https://github.com/jomaendle/youmightnotneed/commit/aa132135d0aeecd6edbc232d80615604d6b54085), [`901eef7`](https://github.com/jomaendle/youmightnotneed/commit/901eef728cf9294d10fb8be73aaa719da3ecd18b)]:
+  - @jomae/catalog@0.7.0
+
 ## 0.2.0
 
 ### Minor Changes
