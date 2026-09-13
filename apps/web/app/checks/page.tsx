@@ -60,7 +60,7 @@ export default function ChecksPage() {
 
       <section className="hairline pt-8">
         <h2 className="mb-2 text-section">
-          {automated.length} a linter already finds
+          {automated.length} rules a linter already finds
         </h2>
         <p className="mb-5 max-w-[62ch] text-compact text-fg-muted">
           Turn these on and stop reviewing them by hand. This catalog names the
@@ -108,7 +108,7 @@ export default function ChecksPage() {
 
       <section className="hairline pt-8">
         <h2 className="mb-2 text-section">
-          {shapeCount} shapes that need a person
+          {shapeCount} shapes that need a person or a model
         </h2>
         <p className="mb-5 max-w-[62ch] text-compact text-fg-muted">
           No package is installed for any of these, so nothing matches in a
