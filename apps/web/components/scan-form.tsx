@@ -42,6 +42,7 @@ export function ScanForm({ examplePayload }: { examplePayload: string }) {
         id="input"
         name="input"
         spellCheck={false}
+        aria-describedby="input-hint"
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder={EXAMPLE_PACKAGE_JSON}
@@ -56,7 +57,7 @@ export function ScanForm({ examplePayload }: { examplePayload: string }) {
         >
           {pending ? "Checking" : "Check dependencies"}
         </button>
-        <span className="text-fg-muted text-metadata">
+        <span id="input-hint" className="text-fg-muted text-metadata">
           or a public repo, <code className="font-mono">vercel/next.js</code>
         </span>
         <Link

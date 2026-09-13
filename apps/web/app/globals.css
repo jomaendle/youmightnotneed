@@ -562,23 +562,14 @@ dialog[open]::backdrop {
 
 /* ---------------------------------------------------------------------------
    The scan form
-   field-sizing grows the textarea as you paste. :has() styles the form from
-   its own contents, with no state in JavaScript.
+   field-sizing grows the textarea as you paste, so no measuring library and
+   no state in JavaScript.
 --------------------------------------------------------------------------- */
 
 .paste-area {
   field-sizing: content;
   min-block-size: 7.5lh;
   max-block-size: 22lh;
-}
-
-/* The submit button dims until there is something to submit. */
-.scan-form:has(.paste-area:placeholder-shown) .submit-hint {
-  opacity: 1;
-}
-
-.scan-form:not(:has(.paste-area:placeholder-shown)) .submit-hint {
-  opacity: 0;
 }
 
 /* ---------------------------------------------------------------------------
@@ -928,7 +919,7 @@ dialog[open]::backdrop {
 .strike {
   text-decoration: line-through;
   text-decoration-thickness: 0.055em;
-  text-decoration-color: var(--c-tier-limited);
+  text-decoration-color: var(--c-limited);
   text-underline-offset: 0;
 }
 
@@ -952,11 +943,11 @@ dialog[open]::backdrop {
 }
 
 .swap-diff-minus {
-  background: color-mix(in oklch, var(--c-tier-limited) 8%, transparent);
+  background: color-mix(in oklch, var(--c-limited) 10%, transparent);
   color: var(--c-fg-muted);
 }
 .swap-diff-plus {
-  background: color-mix(in oklch, var(--c-tier-widely) 8%, transparent);
+  background: color-mix(in oklch, var(--c-widely) 10%, transparent);
   color: var(--c-fg);
 }
 
@@ -985,7 +976,11 @@ dialog[open]::backdrop {
   color: var(--tier);
 }
 
-/* The size column is the first thing to go when there is no room for it. */
+/*
+ * Below 30rem the per-row size is dropped and the total in the caption
+ * carries it. The track itself stays, because the plus line's tier verdict
+ * still needs it.
+ */
 @media (max-width: 30rem) {
   .swap-diff-minus .swap-diff-meta {
     display: none;

@@ -171,3 +171,70 @@ describe("rawPackageJsonUrl", () => {
     );
   });
 });
+
+/**
+ * The hero merged two fields into one, so `scan()` decides which kind of input
+ * it has by whether the trimmed value starts with a brace. That heuristic is
+ * the riskiest thing on the page: route a real package.json to the repository
+ * branch and the reader is told their file is not a file.
+ *
+ * The rule lives in app/actions.ts, which is a server action and cannot be
+ * imported here, so the predicate is restated. Keep the two in step.
+ */
+function looksLikeRepo(raw: string): boolean {
+  const trimmed = raw.trim();
+  return trimmed.length > 0 && !trimmed.startsWith("{");
+}
+
+describe("telling a package.json from a repository reference", () => {
+  const manifest = '{"name":"demo","dependencies":{"swiper":"^11.0.0"}}';
+
+  // Trimming is the whole point. A file copied out of an editor arrives with
+  // a leading newline more often than not, and a BOM survives a surprising
+  // number of round trips.
+  it.each([
+    ["plain", manifest],
+    ["leading newline", `\n\n${manifest}`],
+    ["leading spaces", `    ${manifest}`],
+    ["leading tab", `\t${manifest}`],
+    ["byte order mark", `﻿${manifest}`],
+    ["trailing newline", `${manifest}\n`],
+  ])("%s is read as a package.json", (_label, raw) => {
+    expect(looksLikeRepo(raw)).toBe(false);
+
+    const parsed = parsePackageJson(raw);
+    expect(parsed.ok).toBe(true);
+    if (parsed.ok) expect(parsed.pkg.dependencies).toHaveProperty("swiper");
+  });
+
+  it.each([
+    ["shorthand", "vercel/next.js"],
+    ["url", "https://github.com/vercel/next.js"],
+    ["host and path", "github.com/vercel/next.js"],
+  ])("%s is read as a repository", (_label, raw) => {
+    expect(looksLikeRepo(raw)).toBe(true);
+    expect(parseRepoInput(raw.trim())).not.toBeNull();
+  });
+
+  // An empty field takes the package.json branch, so the reader is asked to
+  // paste one rather than told their nothing is not a repository.
+  it("sends an empty field to the package.json branch", () => {
+    expect(looksLikeRepo("")).toBe(false);
+    expect(looksLikeRepo("   \n ")).toBe(false);
+
+    const parsed = parsePackageJson("");
+    expect(parsed.ok).toBe(false);
+    if (!parsed.ok) expect(parsed.error).toMatch(/package\.json/i);
+  });
+
+  // The field now accepts a whole file, so the repository branch can be handed
+  // one. The size cap is what stops a large paste being pattern-matched.
+  it("rejects a paste far too large to be a repository reference", () => {
+    expect(parseRepoInput("x".repeat(200_000))).toBeNull();
+  });
+
+  it("rejects input that is neither", () => {
+    expect(looksLikeRepo("not a repo or json !!!")).toBe(true);
+    expect(parseRepoInput("not a repo or json !!!")).toBeNull();
+  });
+});
