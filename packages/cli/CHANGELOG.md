@@ -1,5 +1,76 @@
 # youmightnotneed
 
+## 0.3.0
+
+### Minor Changes
+
+- [#52](https://github.com/jomaendle/youmightnotneed/pull/52) [`c910ed8`](https://github.com/jomaendle/youmightnotneed/commit/c910ed88b81b2f5dc6f22d3546070824d2a47f01) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Two new rule fields, for the half of the problem a package.json cannot show.
+  
+  `agent.handRolled` describes the shapes people write by hand instead of using
+  the native feature: a keydown handler cycling tabbable elements, a scroll
+  listener dividing scrollLeft by item width, `body.style.overflow = "hidden"`.
+  Nothing is installed for any of it, so no dependency scan ever fires. Ten rules
+  carry these to start, 26 shapes in all.
+  
+  `lintRule` names a lint rule that already checks a shape, rather than this
+  catalog growing a second implementation of the same check. Five rules point at
+  eslint-plugin-unicorn. The names are snapshotted by `pnpm refresh:lint-rules`
+  and verified by `check:freshness`, so a rule renamed upstream fails the build
+  instead of shipping as a dead link. All five were confirmed to actually fire on
+  the shapes claimed.
+  
+  The split is the useful part: a rule is either mechanically checkable today or
+  it needs a person, and knowing which is most of deciding how to tackle it. The
+  new /checks page says which is which, with a config to paste.
+  
+  The CLI gains `--rule <id>`, which prints one rule in full. It is the offline
+  route for a hand-rolled shape, where there is no package name to pass to
+  `--package`. `--verbose` now names the lint rule under a finding.
+  
+  The MCP server returns the resolved lint rule from `get_rule`, and `list_rules`
+  returns every hand-rolled shape in one call so an agent holding code rather
+  than a dependency list has the whole checklist.
+  
+  The agent skill gains a third direction, "starting from code you are about to
+  write or just read", and the generated reference gains a table keyed by shape.
+
+### Patch Changes
+
+- [#55](https://github.com/jomaendle/youmightnotneed/pull/55) [`31650e8`](https://github.com/jomaendle/youmightnotneed/commit/31650e8f889071f467fdf473b1fdbfea0e086bf6) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Hand-rolled shapes widened from 10 rules to 35, and corrected.
+  
+  Ten rules was too thin to test the idea that hand-written platform behaviour
+  is the larger half of what a dependency scan misses, so 27 more carry shapes
+  now, 56 in total.
+  
+  Three reviews then found how much of the widening was wrong. Six shapes
+  described work the rule's own `unless` says the native feature does not do:
+  `inert` listed storing `activeElement`, which its conditions say inert does not
+  track and you still write yourself. A shape like that tells an agent a rule
+  applies to code the rule cannot replace, which reads as confident and is
+  exactly backwards. Nine more were loose enough to match ordinary unrelated
+  code. All are fixed or gone.
+  
+  `intersection-observer`, `resize-observer` and `abortsignal-timeout` now name
+  their lint rules, taking the total to eight. `unicorn/prefer-observer-apis` was
+  already in the committed snapshot and matched two rules' shapes word for word,
+  which is the third time this work proposed prose where a linter already
+  existed.
+  
+  `lintRule` and `handRolled` may now appear on the same rule.
+  `resize-observer` is why: the resize listener is matched by a linter and the
+  interval polling is not, and losing either is worse than the risk they
+  disagree.
+  
+  The CLI no longer exits 0 when `--rule` is combined with `--version`, which
+  silently dropped the rule that was asked for. Lockfiles are refused by name, so
+  pointing at `pnpm-lock.yaml` or `yarn.lock` says it is a lockfile rather than
+  reporting invalid JSON.
+  
+  The MCP tool descriptions now mention the hand-rolled shape index and the
+  resolved lint rule, which were returned but undiscoverable from `tools/list`.
+- Updated dependencies [[`c910ed8`](https://github.com/jomaendle/youmightnotneed/commit/c910ed88b81b2f5dc6f22d3546070824d2a47f01), [`31650e8`](https://github.com/jomaendle/youmightnotneed/commit/31650e8f889071f467fdf473b1fdbfea0e086bf6)]:
+  - @jomae/catalog@0.9.0
+
 ## 0.2.2
 
 ### Patch Changes
