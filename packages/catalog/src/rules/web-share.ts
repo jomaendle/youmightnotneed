@@ -27,5 +27,8 @@ export const webShare: Rule = {
     ],
     snippet:
       "await navigator.share({ title: document.title, url: location.href });",
+    handRolled: [
+      "a share menu built from hardcoded intent URLs for each network, opened with window.open",
+    ],
   },
 };

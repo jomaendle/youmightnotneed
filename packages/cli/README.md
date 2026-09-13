@@ -20,6 +20,9 @@ npx youmightnotneed [path] [options]
   path            A package.json, or a directory holding one.
   -p, --package   Check one npm package by name instead of reading a
                   package.json. Use it before you install something.
+  -r, --rule      Print one rule in full by its id, including the conditions
+                  and the shapes people hand-roll instead. Use it when you are
+                  holding code rather than a package name.
   -v, --verbose   Print every condition where the dependency still wins.
       --json      Machine-readable output, with provenance for the data.
       --no-color  Disable colour. NO_COLOR is respected too.

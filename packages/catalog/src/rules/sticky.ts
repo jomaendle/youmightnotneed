@@ -41,6 +41,10 @@ export const sticky: Rule = {
     ],
     snippet: `.header { position: sticky; top: 0; z-index: 10; }
 .sidebar { position: sticky; top: 5rem; align-self: start; }`,
+    handRolled: [
+      "a scroll listener toggling a fixed class once an element passes an offset",
+      "storing an element's original offsetTop so a placeholder can hold the gap when it goes fixed",
+    ],
   },
   guides: ["state-aware-sticky-headers", "scroll-position-aware-elements"],
 };

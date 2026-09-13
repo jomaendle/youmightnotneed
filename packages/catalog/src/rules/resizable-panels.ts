@@ -30,5 +30,8 @@ export const resizablePanels: Rule = {
     ],
     snippet:
       ".sidebar { resize: horizontal; overflow: auto; min-width: 12rem; max-width: 32rem; }",
+    handRolled: [
+      "a mousedown on one panel's edge with mousemove handlers writing a width onto that same panel",
+    ],
   },
 };

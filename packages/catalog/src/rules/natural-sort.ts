@@ -40,5 +40,9 @@ export const naturalSort: Rule = {
     ],
     snippet: `const collator = new Intl.Collator(undefined, { numeric: true });
 list.sort(collator.compare);`,
+    handRolled: [
+      "a comparator pulling digits out of strings with a regex and comparing them as numbers",
+      "zero-padding numbers inside strings so a plain sort puts item10 after item9",
+    ],
   },
 };

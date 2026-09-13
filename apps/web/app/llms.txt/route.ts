@@ -1,4 +1,10 @@
-import { renderUseCaseTable, ruleMarkdownUrl, rules } from "@jomae/catalog";
+import {
+  renderHandRolledIndex,
+  renderLintIndex,
+  renderUseCaseTable,
+  ruleMarkdownUrl,
+  rules,
+} from "@jomae/catalog";
 import { site } from "@/lib/site";
 
 /**
@@ -47,6 +53,23 @@ The left column is the case the native approach covers, so it is searchable
 without knowing which library you were about to reach for.
 
 ${renderUseCaseTable()}
+
+## By hand-rolled shape
+
+The half no package.json can show. Nothing is installed for any of these, so
+nothing matches: someone wrote it out instead. Check code you are about to
+write, or have just been handed, against this. A match here is a starting
+point exactly like a package match, so fetch the rule and read its conditions
+before changing anything.
+
+${renderHandRolledIndex()}
+
+## Already checked by a linter
+
+These shapes are matched mechanically today, so they belong in CI rather than
+in a review.
+
+${renderLintIndex()}
 
 ## Checking a package.json
 

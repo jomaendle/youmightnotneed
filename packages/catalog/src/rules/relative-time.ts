@@ -24,5 +24,9 @@ rtf.format(-5, "minute"); // "5 minutes ago"`,
     ],
     snippet:
       'new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(-5, "minute");',
+    handRolled: [
+      "a chain of millisecond thresholds turning a date difference into minutes, hours or days ago",
+      "a table of singular and plural unit names written out to build phrases like 3 days ago",
+    ],
   },
 };

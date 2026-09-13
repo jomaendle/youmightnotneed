@@ -58,8 +58,7 @@ export const dialog: Rule = {
 <style>dialog::backdrop { background: rgb(0 0 0 / 0.5); }</style>`,
     handRolled: [
       "a div with role=dialog and aria-modal, placed with position fixed and a z-index over the page",
-      "a keydown listener on document checking for Escape so an overlay can be dismissed",
-      "a click handler on the backdrop comparing event.target against the panel to decide whether to close",
+      "a document keydown listener added when an overlay opens and removed when it closes, only to catch Escape",
     ],
   },
   guides: [

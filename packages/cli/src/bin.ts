@@ -324,6 +324,11 @@ function readOwnVersion(): string {
  * code said it worked.
  */
 function ruleConflict(args: Args): string | null {
+  // --version before the others because runDirectMode answers it first, so
+  // without this the run prints a version and exits 0 while quietly dropping
+  // the rule that was asked for. --help is deliberately not here: winning
+  // over everything is what --help is for.
+  if (args.version) return "--version";
   if (args.package !== undefined) return "--package";
   if (args.path !== undefined) return "a path";
   if (args.json) return "--json";
@@ -340,11 +345,6 @@ function runDirectMode(args: Args): boolean {
     return true;
   }
 
-  if (args.version) {
-    console.info(readOwnVersion());
-    return true;
-  }
-
   if (args.rule !== undefined) {
     const conflict = ruleConflict(args);
     if (conflict !== null) {
@@ -354,6 +354,11 @@ function runDirectMode(args: Args): boolean {
       process.exit(2);
     }
     printRule(args.rule);
+    return true;
+  }
+
+  if (args.version) {
+    console.info(readOwnVersion());
     return true;
   }
 

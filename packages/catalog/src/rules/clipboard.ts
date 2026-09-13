@@ -34,5 +34,8 @@ export const clipboard: Rule = {
       "You're running without focus or without a secure origin (HTTPS). The API rejects in both cases, so you still need a fallback path for that error.",
     ],
     snippet: "await navigator.clipboard.writeText(text);",
+    handRolled: [
+      "an off-screen textarea or contenteditable element created only so text can be selected and execCommand'd",
+    ],
   },
 };

@@ -57,6 +57,10 @@ export const discreteTransitions: Rule = {
 }
 @starting-style { .el { opacity: 0; } }
 .el[hidden] { display: none; opacity: 0; }`,
+    handRolled: [
+      "a setTimeout matching the CSS duration, so an element stays mounted long enough to animate out",
+      "an isClosing or isLeaving flag held only to keep something rendered while its exit animation runs",
+    ],
   },
   guides: [
     "animate-element-entry-exit",

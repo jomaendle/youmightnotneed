@@ -29,5 +29,8 @@ export const fullscreen: Rule = {
     ],
     snippet:
       "document.fullscreenElement ? document.exitFullscreen() : el.requestFullscreen();",
+    handRolled: [
+      "a chain of vendor-prefixed calls such as webkitRequestFullscreen and msRequestFullscreen",
+    ],
   },
 };

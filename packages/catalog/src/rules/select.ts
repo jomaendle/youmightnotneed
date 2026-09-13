@@ -63,6 +63,9 @@ export const select: Rule = {
 <style>
   select, select::picker(select) { appearance: base-select; }
 </style>`,
+    handRolled: [
+      "a div with role=listbox and children with role=option, wired to arrow keys and Enter by hand",
+    ],
   },
   guides: [
     "animated-select-picker",

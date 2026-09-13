@@ -35,6 +35,9 @@ new Intl.DurationFormat("de", { style: "narrow" }).format({
   hours: 1,
   minutes: 30,
 });`,
+    handRolled: [
+      "already-split hours, minutes and seconds joined with hardcoded unit labels and plural rules",
+    ],
   },
   guides: ["format-human-readable-durations"],
 };

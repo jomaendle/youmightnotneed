@@ -33,5 +33,9 @@ export const aspectRatio: Rule = {
     ],
     snippet: `.video { aspect-ratio: 16 / 9; width: 100%; }
 .thumb { aspect-ratio: 1; object-fit: cover; }`,
+    handRolled: [
+      "a padding-bottom percentage on a wrapper with the real content positioned absolutely inside it",
+      "reading offsetWidth and setting height from it to keep a box in proportion",
+    ],
   },
 };

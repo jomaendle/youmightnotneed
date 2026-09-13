@@ -24,5 +24,8 @@ channel.onmessage = (event) => console.log(event.data);`,
     ],
     snippet: `const channel = new BroadcastChannel("cart-updates");
 channel.postMessage({ itemCount: 3 });`,
+    handRolled: [
+      "writing to localStorage only so other tabs receive the storage event, then deleting the key",
+    ],
   },
 };

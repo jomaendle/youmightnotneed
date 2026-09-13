@@ -52,6 +52,9 @@ export const accordion: Rule = {
   <summary>Second</summary>
   <p>Body</p>
 </details>`,
+    handRolled: [
+      "an open id over a list of collapsible panels, where opening one sets every other closed",
+    ],
   },
   guides: ["search-hidden-content"],
 };

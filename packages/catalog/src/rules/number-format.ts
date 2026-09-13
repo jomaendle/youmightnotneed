@@ -27,5 +27,9 @@ export const numberFormat: Rule = {
     ],
     snippet:
       'new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);',
+    handRolled: [
+      "a regex inserting thousands separators into a number's string form",
+      "toFixed followed by string surgery to add a currency symbol and group the digits",
+    ],
   },
 };

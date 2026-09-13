@@ -34,6 +34,9 @@ p {
     ],
     snippet: `h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }`,
+    handRolled: [
+      "inserting a br or a non-breaking space between the last two words of a heading so it does not orphan one",
+    ],
   },
   guides: ["improve-text-layout-and-legibility"],
 };

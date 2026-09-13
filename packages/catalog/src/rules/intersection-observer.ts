@@ -36,9 +36,6 @@ observer.observe(document.querySelector("#target"));`,
     ],
     snippet:
       "new IntersectionObserver((entries) => { ... }, { threshold: 0.5 });",
-    handRolled: [
-      "a scroll listener calling getBoundingClientRect to decide whether an element is in the viewport",
-      "comparing offsetTop against window.scrollY and innerHeight to fire something as the page scrolls",
-    ],
   },
+  lintRule: "unicorn/prefer-observer-apis",
 };

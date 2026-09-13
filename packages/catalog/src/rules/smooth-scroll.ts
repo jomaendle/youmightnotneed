@@ -42,6 +42,10 @@ export const smoothScroll: Rule = {
   :root { scroll-behavior: smooth; }
 }
 [id] { scroll-margin-top: 5rem; }`,
+    handRolled: [
+      "a requestAnimationFrame loop easing scrollTop from where it is toward a target",
+      "an easing function like easeInOutQuad written next to a scroll routine",
+    ],
   },
   guides: ["scroll-target-on-load"],
 };
