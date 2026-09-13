@@ -6,12 +6,20 @@ import { type ScanState, scan } from "@/app/actions";
 import { EXAMPLE_PACKAGE_JSON } from "@/lib/example-scan";
 
 /**
+ * One field for both ways in.
+ *
+ * This used to be two: a textarea for a pasted package.json, and under it a
+ * second labelled input for a repository, with its own heading and its own
+ * rate-limit caveat. All of that was on screen before anyone had done
+ * anything, and it asked the reader to pick a mode first.
+ *
+ * A package.json always starts with a brace and a repository reference never
+ * does, so `scan()` tells them apart and the choice disappears. The caveat
+ * moved to where it applies, which is the error the fetch returns.
+ *
  * The textarea uses field-sizing: content, so it grows as you paste instead of
  * needing a measuring library. min-block-size and max-block-size in
  * globals.css keep it between a sensible floor and ceiling.
- *
- * The hint under the button is shown and hidden by :has() reading the
- * textarea's :placeholder-shown state. No React state for it.
  */
 export function ScanForm({ examplePayload }: { examplePayload: string }) {
   const [state, formAction, pending] = useActionState<ScanState, FormData>(
@@ -23,25 +31,24 @@ export function ScanForm({ examplePayload }: { examplePayload: string }) {
    * action completes, so returning an error from scan() would throw away
    * whatever the user had pasted or typed.
    */
-  const [pasted, setPasted] = useState("");
-  const [repo, setRepo] = useState("");
+  const [value, setValue] = useState("");
 
   return (
     <form action={formAction} className="scan-form space-y-3">
-      <label htmlFor="packageJson" className="sr-only">
-        Your package.json
+      <label htmlFor="input" className="sr-only">
+        A package.json, or a public repository
       </label>
       <textarea
-        id="packageJson"
-        name="packageJson"
+        id="input"
+        name="input"
         spellCheck={false}
-        value={pasted}
-        onChange={(event) => setPasted(event.target.value)}
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
         placeholder={EXAMPLE_PACKAGE_JSON}
         className="paste-area w-full rounded-lg border border-border bg-bg-subtle px-4 py-3.5 font-mono text-compact outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint"
       />
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <button
           type="submit"
           disabled={pending}
@@ -49,17 +56,17 @@ export function ScanForm({ examplePayload }: { examplePayload: string }) {
         >
           {pending ? "Checking" : "Check dependencies"}
         </button>
+        <span className="text-fg-muted text-metadata">
+          or a public repo, <code className="font-mono">vercel/next.js</code>
+        </span>
         <Link
           // A UrlObject, because typed routes reject a query string spliced
           // into the path.
           href={{ pathname: "/report", query: { d: examplePayload } }}
-          className="plain text-fg-muted text-metadata no-underline hover:text-fg hover:underline"
+          className="plain text-fg-faint text-metadata no-underline hover:text-fg hover:underline"
         >
-          See an example report
+          See an example
         </Link>
-        <span className="submit-hint text-fg-faint text-metadata transition-opacity duration-200">
-          Paste yours over it
-        </span>
       </div>
 
       {state.error === undefined ? null : (
@@ -70,48 +77,6 @@ export function ScanForm({ examplePayload }: { examplePayload: string }) {
           {state.error}
         </p>
       )}
-
-      <RepoField value={repo} onChange={setRepo} />
     </form>
-  );
-}
-
-/**
- * A public repo as the other way in. Typing owner/repo is a far smaller ask
- * than finding and pasting a file, so this is on the page rather than behind
- * a disclosure. It stays visually secondary: one line, muted, under the
- * primary action.
- */
-function RepoField({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="hairline pt-4">
-      <label
-        htmlFor="repo"
-        className="mb-1.5 block text-fg-muted text-metadata"
-      >
-        Or check a public repository, no paste needed
-      </label>
-      <input
-        id="repo"
-        name="repo"
-        type="text"
-        autoComplete="off"
-        spellCheck={false}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder="vercel/next.js"
-        className="w-full max-w-[26rem] rounded-md border border-border bg-bg-subtle px-3 py-2 font-mono text-compact outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint"
-      />
-      <p className="mt-1.5 text-fg-faint text-metadata">
-        Read unauthenticated, so GitHub rate limits it. Paste the file if it
-        fails.
-      </p>
-    </div>
   );
 }

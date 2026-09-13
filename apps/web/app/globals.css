@@ -905,3 +905,98 @@ dialog[open]::backdrop {
   ~ li[data-category="formatting"] {
   border-block-start: 1px solid var(--c-border);
 }
+
+/* --------------------------------------------------------------------------
+   Hero
+   -------------------------------------------------------------------------- */
+
+/*
+ * One column until there is room for two. The diff panel is the widest thing
+ * on the page and it carries long native names, so it gets the larger share
+ * rather than an even split.
+ */
+.hero {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 64rem) {
+  .hero {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+}
+
+/* The headline performs the deletion it describes. */
+.strike {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.055em;
+  text-decoration-color: var(--c-tier-limited);
+  text-underline-offset: 0;
+}
+
+/*
+ * The diff. Minus lines carry what leaves, plus lines what the browser
+ * already has, tinted from the same tier colours the rest of the site uses so
+ * red and green mean here exactly what they mean on a report.
+ */
+.swap-diff-pair + .swap-diff-pair {
+  border-block-start: 1px solid
+    color-mix(in oklch, var(--c-border) 55%, transparent);
+}
+
+.swap-diff-line {
+  display: grid;
+  grid-template-columns: 1ch minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0 0.75rem;
+  padding: 0.3rem 1rem;
+  margin: 0;
+}
+
+.swap-diff-minus {
+  background: color-mix(in oklch, var(--c-tier-limited) 8%, transparent);
+  color: var(--c-fg-muted);
+}
+.swap-diff-plus {
+  background: color-mix(in oklch, var(--c-tier-widely) 8%, transparent);
+  color: var(--c-fg);
+}
+
+.swap-diff-sign {
+  color: var(--c-fg-faint);
+  user-select: none;
+}
+
+/*
+ * Native names and package names both overflow on narrow screens. Truncating
+ * beats wrapping here: a diff that reflows to three lines per row stops
+ * reading as a diff.
+ */
+.swap-diff-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swap-diff-meta {
+  font-size: var(--text-metadata);
+  color: var(--c-fg-faint);
+  white-space: nowrap;
+}
+.swap-diff-plus .swap-diff-meta {
+  color: var(--tier);
+}
+
+/* The size column is the first thing to go when there is no room for it. */
+@media (max-width: 30rem) {
+  .swap-diff-minus .swap-diff-meta {
+    display: none;
+  }
+}
+
+.tier-dot {
+  display: inline-block;
+  inline-size: 0.45em;
+  block-size: 0.45em;
+  border-radius: 50%;
+  background: var(--tier);
+  vertical-align: 0.08em;
+}

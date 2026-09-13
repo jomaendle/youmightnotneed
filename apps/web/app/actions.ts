@@ -23,17 +23,23 @@ export async function scan(
   _previous: ScanState,
   formData: FormData,
 ): Promise<ScanState> {
-  const pasted = String(formData.get("packageJson") ?? "");
-  const repoInput = String(formData.get("repo") ?? "").trim();
+  // One field takes both inputs. A package.json always starts with a brace
+  // and a repository reference never does, so the two are told apart without
+  // asking the reader to choose a mode first. The second field this replaced
+  // came with its own heading and its own caveat, both of which were on
+  // screen before anyone had done anything.
+  const raw = String(formData.get("input") ?? "");
+  const trimmed = raw.trim();
+  const isRepo = trimmed.length > 0 && !trimmed.startsWith("{");
 
   let parsed: ReturnType<typeof parsePackageJson>;
 
-  if (repoInput.length > 0) {
-    const ref = parseRepoInput(repoInput);
+  if (isRepo) {
+    const ref = parseRepoInput(trimmed);
     if (!ref) {
       return {
         error:
-          "That does not look like a GitHub repository. Try github.com/owner/repo.",
+          "That is neither a package.json nor a repository. Paste the file, or try owner/repo.",
       };
     }
     parsed = await fetchRepoPackageJson(ref);
@@ -44,7 +50,7 @@ export async function scan(
       };
     }
   } else {
-    parsed = parsePackageJson(pasted);
+    parsed = parsePackageJson(raw);
   }
 
   if (!parsed.ok) return { error: parsed.error };

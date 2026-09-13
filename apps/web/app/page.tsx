@@ -12,6 +12,7 @@ import { CopyPrompt } from "@/components/copy-prompt";
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { MethodologyDialog } from "@/components/methodology-dialog";
 import { ScanForm } from "@/components/scan-form";
+import { SwapDiff } from "@/components/swap-diff";
 import { TierHelp } from "@/components/tier-help";
 import { TierHistorySparkline } from "@/components/tier-history-sparkline";
 import { AGENT_PROMPT, AGENT_PROMPT_SUMMARY } from "@/lib/agent-prompt";
@@ -64,23 +65,31 @@ export default function HomePage() {
 
   return (
     <div className="space-y-14">
-      <section>
-        <p className="mb-3 font-mono text-accent text-metadata">
-          Is it CSS yet?
-        </p>
-        <h1 className="mb-5 max-w-[22ch] text-display">
-          Find the native feature that replaces your dependencies
-        </h1>
-        <p className="max-w-[58ch] text-fg-muted text-lede">
-          Some of what you installed a library for is now in the platform. Paste
-          a package.json to see which of your dependencies have a native
-          equivalent, what they weigh, and how well the replacement is
-          supported.
-        </p>
+      {/*
+        The hero is a diff because the product is a deletion, and this
+        audience reads diffs without needing a caption. The panel on the right
+        is the demonstration and every number in it is derived from the
+        catalog; the column on the left is where you do it to your own file.
+      */}
+      <section className="hero grid items-center gap-x-14 gap-y-10">
+        <div>
+          <p className="mb-4 font-mono text-accent text-metadata">
+            Is it CSS yet?
+          </p>
+          <h1 className="mb-5 text-display">
+            Your <span className="strike">node_modules</span> has a browser in
+            it
+          </h1>
+          <p className="max-w-[42ch] text-fg-muted text-lede">
+            Paste a package.json, or name a public repo. Every line the platform
+            can delete, what it weighs, and whether it is safe yet.
+          </p>
+        </div>
+
+        <SwapDiff />
       </section>
 
-      {/* The form is a reading-width thing, so it keeps its own column
-          rather than stretching to the full shell. */}
+      {/* Reading width, so it keeps its own column rather than stretching. */}
       <section className="max-w-[52rem]">
         <ScanForm examplePayload={EXAMPLE_REPORT_PAYLOAD} />
       </section>
