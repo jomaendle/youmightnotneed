@@ -7,8 +7,9 @@
  * that is not here, or the other way round, so it cannot drift silently.
  *
  * Route handlers are not listed. Their paths carry a dot (llms.txt,
- * openapi.json, agents.md, .well-known/...), and the proxy matcher leaves
- * every path with a dot alone.
+ * openapi.json, agents.md, .well-known/...) or sit under api/, and the proxy
+ * matcher leaves both alone. The test does not follow route groups such as
+ * (group), which this site has none of.
  */
 export const PAGE_PATHS: ReadonlySet<string> = new Set([
   "/",

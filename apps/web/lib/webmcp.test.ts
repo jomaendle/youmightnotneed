@@ -99,4 +99,52 @@ describe("registerWebMcpTools", () => {
       isError: true,
     });
   });
+
+  it("get_rule turns a failed fetch into an error result, not a rejection", async () => {
+    const fetchRule = vi.fn().mockRejectedValue(new Error("offline"));
+    const [tool] = setup({ fetchRule }).registered.get("get_rule") ?? [];
+    expect(await tool?.execute({ id: "x" })).toEqual({
+      content: [{ type: "text", text: "Could not fetch the rule: offline" }],
+      isError: true,
+    });
+  });
+
+  it("get_rule reports the HTTP status", async () => {
+    const fetchRule = vi
+      .fn()
+      .mockResolvedValue(new Response("busy", { status: 503 }));
+    const [tool] = setup({ fetchRule }).registered.get("get_rule") ?? [];
+    expect(await tool?.execute({ id: "x" })).toMatchObject({
+      content: [{ text: "HTTP 503. busy" }],
+      isError: true,
+    });
+  });
+
+  it("scan_dependencies turns a thrown action into an error result", async () => {
+    const scan = vi
+      .fn()
+      .mockRejectedValue(new Error("Failed to find Server Action"));
+    const [tool] = setup({ scan }).registered.get("scan_dependencies") ?? [];
+    expect(await tool?.execute({ input: "x" })).toMatchObject({
+      isError: true,
+    });
+  });
+
+  it("keeps registering when one registration throws", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const names: string[] = [];
+    const context: ModelContext = {
+      registerTool: (tool) => {
+        if (tool.name === "get_rule") throw new Error("duplicate");
+        names.push(tool.name);
+      },
+    };
+    registerWebMcpTools(context, new AbortController().signal, {
+      fetchRule: vi.fn(),
+      scan: vi.fn(),
+    });
+    expect(names).toEqual(["scan_dependencies"]);
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
 });

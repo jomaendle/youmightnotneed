@@ -32,6 +32,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { gunzipSync } from "node:zlib";
 import { NATIVE_FEATURE_IDS } from "../apps/web/lib/native-usage.ts";
 import { resolveBaseline } from "../packages/catalog/src/baseline.ts";
 import { baselineSnapshot } from "../packages/catalog/src/generated/baseline.ts";
@@ -280,24 +281,36 @@ try {
 }
 
 // 8b. The published skill archive and its discovery index must be what the
-// skill directory produces now. The build is reproducible, so comparing bytes
-// is exact, and the digest in index.json is checked by the same comparison.
-try {
-  const fresh = buildSkillArchive();
-  if (!readFileSync(ARCHIVE_FILE).equals(fresh)) {
+// skill directory produces now. The tars are compared after decompression, so
+// a Node upgrade that changes zlib's output cannot flap this check. The index
+// digest is compared against the committed archive's own bytes, because those
+// are the bytes the site serves.
+function readCommitted(path: string): Buffer | null {
+  try {
+    return readFileSync(path);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw error;
+  }
+}
+
+const committedArchive = readCommitted(ARCHIVE_FILE);
+const committedIndex = readCommitted(INDEX_FILE);
+if (committedArchive === null || committedIndex === null) {
+  errors.push(
+    "The skill archive or its index.json is missing. Run `pnpm refresh:skill-archive`.",
+  );
+} else {
+  if (!gunzipSync(committedArchive).equals(gunzipSync(buildSkillArchive()))) {
     errors.push(
       "apps/web/public/.well-known/agent-skills/youmightnotneed.tar.gz does not match skills/youmightnotneed. Run `pnpm refresh:skill-archive`.",
     );
   }
-  if (readFileSync(INDEX_FILE, "utf8") !== buildSkillIndex(fresh)) {
+  if (committedIndex.toString("utf8") !== buildSkillIndex(committedArchive)) {
     errors.push(
-      "apps/web/public/.well-known/agent-skills/index.json does not match the archive digest. Run `pnpm refresh:skill-archive`.",
+      "apps/web/public/.well-known/agent-skills/index.json does not match the committed archive. Run `pnpm refresh:skill-archive`.",
     );
   }
-} catch {
-  errors.push(
-    "The skill archive or its index.json is missing. Run `pnpm refresh:skill-archive`.",
-  );
 }
 
 // 9. Snapshot age is a warning. A version mismatch is not: it means the

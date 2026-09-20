@@ -1,9 +1,9 @@
-import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { gunzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
+import { GET as getOpenApi } from "../app/openapi.json/route";
 import { buildArd } from "./ard";
 import { site } from "./site";
 
@@ -33,7 +33,9 @@ describe("ARD manifest", () => {
       // A media type, not a label.
       expect(entry.type).toMatch(/^[a-z]+\/[a-z0-9.+-]+$/);
       // Exactly one of url and data.
-      expect(Number("url" in entry) + Number("data" in entry)).toBe(1);
+      expect(
+        Number(entry.url !== undefined) + Number(entry.data !== undefined),
+      ).toBe(1);
     }
   });
 
@@ -48,6 +50,28 @@ describe("ARD manifest", () => {
       expect(servedFrom(entry.url as string), entry.url).toBe(true);
     },
   );
+
+  it("names the operations the OpenAPI document really has", async () => {
+    const spec = await getOpenApi().json();
+    const operationIds = Object.values(spec.paths).map(
+      (path) => (path as { get: { operationId: string } }).get.operationId,
+    );
+    const entry = entries.find((e) => e.identifier.endsWith(":api:openapi"));
+    expect(entry?.capabilities.sort()).toEqual(operationIds.sort());
+  });
+
+  it("names the tools the MCP server really registers", () => {
+    const source = readFileSync(
+      join(WEB, "../../packages/mcp/src/server.ts"),
+      "utf8",
+    );
+    const tools = [...source.matchAll(/registerTool\(\s*"([a-z_]+)"/g)].map(
+      (match) => match[1],
+    );
+    const entry = entries.find((e) => e.identifier.endsWith(":server:mcp"));
+    expect(tools.length).toBeGreaterThan(0);
+    expect(entry?.capabilities.sort()).toEqual(tools.sort());
+  });
 
   it("is served at both paths", () => {
     for (const name of ["ard.json", "ai-catalog.json"]) {
@@ -80,12 +104,53 @@ describe("skill archive", () => {
     expect(skill.digest).toBe(`sha256:${hex}`);
   });
 
-  it("extracts to SKILL.md plus references", () => {
-    const dir = mkdtempSync(join(tmpdir(), "skill-"));
-    execFileSync("tar", ["xzf", join(AGENT_SKILLS, "youmightnotneed.tar.gz")], {
-      cwd: dir,
-    });
-    expect(readdirSync(dir).sort()).toEqual(["SKILL.md", "references"]);
-    expect(readdirSync(join(dir, "references")).sort()).toContain("catalog.md");
+  /** The tar inside the gzip, read without shelling out. */
+  function readTar(): Map<
+    string,
+    { body: string; mtime: number; uid: number }
+  > {
+    const tar = gunzipSync(archive);
+    const files = new Map<
+      string,
+      { body: string; mtime: number; uid: number }
+    >();
+    for (let at = 0; at + 512 <= tar.length; ) {
+      const header = tar.subarray(at, at + 512);
+      if (header.every((byte) => byte === 0)) break;
+      const name = header.toString("utf8", 0, 100).replace(/\0.*$/s, "");
+      const size = Number.parseInt(header.toString("utf8", 124, 135), 8);
+      files.set(name, {
+        body: tar.toString("utf8", at + 512, at + 512 + size),
+        mtime: Number.parseInt(header.toString("utf8", 136, 147), 8),
+        uid: Number.parseInt(header.toString("utf8", 108, 115), 8),
+      });
+      at += 512 + Math.ceil(size / 512) * 512;
+    }
+    return files;
+  }
+
+  it("holds SKILL.md plus references, byte for byte what the skill directory has", () => {
+    const skillDir = join(WEB, "../../skills/youmightnotneed");
+    const expected = [
+      "SKILL.md",
+      ...readdirSync(join(skillDir, "references")).map(
+        (f) => `references/${f}`,
+      ),
+    ];
+    const files = readTar();
+    expect([...files.keys()]).toEqual([...expected].sort());
+    for (const [name, file] of files) {
+      expect(file.body, name).toBe(readFileSync(join(skillDir, name), "utf8"));
+    }
+  });
+
+  it("carries nothing that varies between runs", () => {
+    for (const [name, file] of readTar()) {
+      expect(file.mtime, name).toBe(0);
+      expect(file.uid, name).toBe(0);
+    }
+    // gzip header: no timestamp, and the OS byte is pinned to Unix.
+    expect([...archive.subarray(4, 8)]).toEqual([0, 0, 0, 0]);
+    expect(archive[9]).toBe(3);
   });
 });

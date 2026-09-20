@@ -46,6 +46,10 @@ jobs:
       - run: pnpm refresh:support
       - run: pnpm refresh:skill
 
+      # The published skill archive contains that reference, so it is rebuilt
+      # after it. Without this the PR fails the freshness check on the digest.
+      - run: pnpm refresh:skill-archive
+
       # Run the gates here rather than trusting the PR to be checked. A PR
       # opened with the default GITHUB_TOKEN does not trigger workflows, so
       # ci.yml may never run on this branch at all.

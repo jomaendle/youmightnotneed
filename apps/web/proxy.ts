@@ -21,8 +21,7 @@ export const config = {
   // A dot means a file or a route handler (llms.txt, openapi.json, agents.md,
   // .well-known/...), all of which exist or 404 on their own. /rules/x.md has
   // a dot and is what the first entry is for. Widening this makes the proxy
-  // run on every page request, and it does nothing but read one header on
-  // any request that does not ask for markdown.
+  // run on every page request, where it does a path check and one header read.
   matcher: ["/rules/:path*", "/((?!_next/|api/|.*\\..*).*)"],
 };
 
@@ -86,23 +85,23 @@ export function proxy(request: NextRequest) {
   return response;
 }
 
-/**
- * `/rules` itself and anything nested reach here as well as every other path.
- * A known page, or a rules path, has nothing to negotiate. An unknown path
- * from a client that prefers markdown is rewritten to a handler that answers
- * 404 with a markdown body, under the same cache constraints as the
- * negotiated rule page above: Vary for correctness, no-store because the
- * same URL answers a browser with the HTML not-found page.
- *
- * Trailing slashes are stripped because Next redirects /about/ to /about.
- */
+// Next redirects /about/ to /about while trailingSlash is unset.
 const TRAILING_SLASHES = /\/+$/;
 
+/**
+ * Paths that are not `/rules/<id>` reach here: the pages, `/rules` itself,
+ * anything nested under it, and everything unknown. A known page has nothing
+ * to negotiate. An unknown path from a client that prefers markdown is
+ * rewritten to a handler that answers 404 with a markdown body, under the same
+ * cache constraints as the negotiated rule page above: Vary for correctness,
+ * no-store because the same URL answers a browser with the HTML not-found page.
+ *
+ * `/rules/a/b` is unknown on purpose. A rule id is one segment.
+ */
 function unknownPathAsMarkdown(request: NextRequest) {
   const path = request.nextUrl.pathname.replace(TRAILING_SLASHES, "") || "/";
-  const isKnown = PAGE_PATHS.has(path) || path.startsWith("/rules/");
 
-  if (isKnown || !prefersMarkdown(request.headers.get("accept"))) {
+  if (PAGE_PATHS.has(path) || !prefersMarkdown(request.headers.get("accept"))) {
     return NextResponse.next();
   }
 

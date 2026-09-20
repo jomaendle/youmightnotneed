@@ -1,23 +1,29 @@
 import { site } from "./site.ts";
 
 /**
- * The Agentic Resource Discovery manifest, agenticresourcediscovery.org/spec.
+ * The Agentic Resource Discovery manifest, https://agenticresourcediscovery.org/spec.
  *
- * Read from the spec, not remembered: an entry needs `identifier`
- * (`urn:air:<publisher>:<namespace>:<name>`), `displayName`, `type` and
- * exactly one of `url` or `data`. `type` is an IANA media type, which is why
- * llms.txt is `text/markdown` and not a made-up label. The publisher segment
- * must be the domain that serves the manifest.
+ * An entry needs `identifier` (`urn:air:<publisher>:<namespace>:<name>`, where
+ * the publisher is the domain serving the manifest), `displayName`, `type` and
+ * exactly one of `url` or `data`. `type` is an IANA media type, so llms.txt is
+ * `text/markdown`. The url-or-data rule is in the type below, and ard.test.ts
+ * checks the rest.
  */
-export interface ArdEntry {
+interface ArdBase {
   identifier: string;
   displayName: string;
   type: string;
-  url?: string;
-  data?: unknown;
   description: string;
   representativeQueries: string[];
   capabilities: string[];
+}
+
+type ArdEntry =
+  | (ArdBase & { url: string; data?: never })
+  | (ArdBase & { data: unknown; url?: never });
+
+export interface ArdManifest {
+  entries: ArdEntry[];
 }
 
 const id = (namespace: string, name: string) =>
@@ -25,7 +31,7 @@ const id = (namespace: string, name: string) =>
 
 const SKILL_ARCHIVE_PATH = "/.well-known/agent-skills/youmightnotneed.tar.gz";
 
-export function buildArd(): { entries: ArdEntry[] } {
+export function buildArd(): ArdManifest {
   return {
     entries: [
       {
@@ -70,7 +76,7 @@ export function buildArd(): { entries: ArdEntry[] } {
         representativeQueries: [
           "which of my dependencies does the platform now cover",
         ],
-        capabilities: ["scan_dependencies", "get_rule"],
+        capabilities: ["analyze_dependencies", "list_rules", "get_rule"],
       },
       {
         identifier: id("skill", "youmightnotneed"),

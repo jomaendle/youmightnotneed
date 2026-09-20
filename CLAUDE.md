@@ -54,6 +54,12 @@ check fails if it drifts. Do not put counts or rule names in its hand-written
 SKILL.md: the generated `references/catalog.md` carries those, and the
 freshness check rejects a hardcoded count.
 
+The site also serves the skill as an archive, for agents that discover skills
+through `/.well-known/agent-skills/index.json`. `pnpm refresh:skill-archive`
+rebuilds `apps/web/public/.well-known/agent-skills/` from the skill directory,
+byte for byte reproducible, and the freshness check compares against it. Run
+it after any edit under `skills/youmightnotneed/`, and after `refresh:skill`.
+
 `packages/catalog/src/generated/` (Baseline, sizes, guide index, support
 claims) and `skills/youmightnotneed/references/catalog.md` are written by the
 refresh scripts. Do not edit them by hand, and do run `pnpm refresh` rather than

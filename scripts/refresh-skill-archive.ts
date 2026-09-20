@@ -10,9 +10,10 @@
  * static assets: no filesystem read at request time, no cwd dependency.
  *
  * Reproducible on purpose. check-freshness rebuilds the archive and compares
- * bytes, so entries are sorted, mtimes are zero, owners are blank and the
- * gzip header carries no timestamp. Anything that varied per run would make
- * the check flap.
+ * decompressed tars, so entries are sorted, mtimes are zero, owners are blank
+ * and the gzip header carries no timestamp. The compressed bytes also depend on
+ * the zlib bundled with Node, so a new Node can change them without changing
+ * the tar. The check tolerates that, and a refresh then commits the new bytes.
  *
  * Run: pnpm refresh:skill-archive
  */
@@ -35,6 +36,7 @@ export const SKILL_NAME = "youmightnotneed";
 export const ARCHIVE_FILE = join(OUT_DIR, `${SKILL_NAME}.tar.gz`);
 export const INDEX_FILE = join(OUT_DIR, "index.json");
 const SCHEMA = "https://schemas.agentskills.io/discovery/0.2.0/schema.json";
+// Scripts do not import from apps/web, so this repeats site.url.
 const ORIGIN = "https://youmightnotneed.dev";
 
 /** Every file under the skill, as archive paths, in byte order. */
@@ -73,14 +75,15 @@ function tarEntry(path: string, body: Buffer): Buffer {
 
 export function buildSkillArchive(): Buffer {
   const parts = listFiles(SKILL_DIR).map((path) => {
-    if (path.length > 100) throw new Error(`Path too long for ustar: ${path}`);
+    if (Buffer.byteLength(path) > 100)
+      throw new Error(`Path too long for ustar: ${path}`);
     return tarEntry(path, readFileSync(join(SKILL_DIR, path)));
   });
   // Two empty blocks end a tar stream.
   const tar = Buffer.concat([...parts, Buffer.alloc(1024)]);
   const gz = gzipSync(tar, { level: 9 });
   // zlib writes the mtime as zero already. The OS byte follows the platform,
-  // so pin it to Unix (3) and the same bytes come out on any machine.
+  // so pin it to Unix (3).
   gz[9] = 3;
   return gz;
 }

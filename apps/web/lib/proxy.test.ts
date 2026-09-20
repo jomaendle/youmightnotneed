@@ -123,6 +123,7 @@ describe("proxy", () => {
     });
 
     it("ignores a trailing slash", () => {
+      // NextURL keeps the slash on the clone; Next redirects it away first.
       expect(rewrittenTo(proxy(request("/nope/", "text/markdown")))).toMatch(
         /^\/api\/md\/not-found\/?$/,
       );
@@ -143,8 +144,14 @@ describe("proxy", () => {
       expect(rewrittenTo(proxy(request("/no-such-page")))).toBeNull();
     });
 
+    it("treats an unknown nested rules path as unknown", () => {
+      expect(rewrittenTo(proxy(request("/rules/a/b", "text/markdown")))).toBe(
+        "/api/md/not-found",
+      );
+    });
+
     it("does not touch a page that exists", () => {
-      for (const path of ["/", "/about", "/rules", "/rules/a/b"]) {
+      for (const path of ["/", "/about", "/about/", "/rules", "/report"]) {
         expect(
           rewrittenTo(proxy(request(path, "text/markdown"))),
           path,

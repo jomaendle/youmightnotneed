@@ -119,10 +119,11 @@ pnpm refresh:sizes       # fetches bundlephobia sizes for every claimed package
 pnpm refresh:guides      # snapshots the modern-web-guidance index
 pnpm refresh:support     # resolves every {{browser:key}} token in the prose
 pnpm refresh:skill       # regenerates the skill's catalog reference
+pnpm refresh:skill-archive # rebuilds the published skill archive from it
 ```
 
-`pnpm refresh` runs all five. The skill reference must be regenerated for any
-new rule, or `check:freshness` fails.
+`pnpm refresh` runs all six. The skill reference and the archive built from it
+must be regenerated for any new rule, or `check:freshness` fails.
 
 All four are safe to run even when nothing else changed: existing entries
 survive a failed fetch. Check the output of `refresh:sizes` for "No size for N

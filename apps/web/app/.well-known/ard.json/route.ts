@@ -1,7 +1,7 @@
 import { buildArd } from "@/lib/ard";
 
 /**
- * The manifest itself. /.well-known/ai-catalog.json serves the same body: it
+ * The manifest itself, per https://agenticresourcediscovery.org/spec. /.well-known/ai-catalog.json serves the same body: it
  * is the path ARD's predecessor used, and the spec lets a consumer treat both
  * as equivalent.
  *
