@@ -131,12 +131,14 @@ describe("skill archive", () => {
 
   it("holds SKILL.md plus references, byte for byte what the skill directory has", () => {
     const skillDir = join(WEB, "../../skills/youmightnotneed");
-    const expected = [
-      "SKILL.md",
-      ...readdirSync(join(skillDir, "references")).map(
-        (f) => `references/${f}`,
-      ),
-    ];
+    const expected = readdirSync(skillDir, {
+      recursive: true,
+      withFileTypes: true,
+    })
+      .filter((entry) => entry.isFile() && !entry.name.startsWith("."))
+      .map((entry) =>
+        join(entry.parentPath, entry.name).slice(skillDir.length + 1),
+      );
     const files = readTar();
     expect([...files.keys()]).toEqual([...expected].sort());
     for (const [name, file] of files) {

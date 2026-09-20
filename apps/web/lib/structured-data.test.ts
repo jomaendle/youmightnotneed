@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { rules } from "@jomae/catalog";
 import { describe, expect, it } from "vitest";
 import { site } from "./site";
@@ -36,6 +38,14 @@ describe("rules graph", () => {
     expect(dataset.license).toBe("https://opensource.org/license/mit");
     const urls = (dataset.distribution as Node[]).map((d) => d.contentUrl);
     expect(urls).toEqual([`${site.url}/llms-full.txt`, `${site.url}/llms.txt`]);
+  });
+
+  it("distributes only documents this site serves", () => {
+    const app = resolve(import.meta.dirname, "../app");
+    for (const d of dataset.distribution as Node[]) {
+      const path = new URL(d.contentUrl as string).pathname;
+      expect(existsSync(join(app, path, "route.ts")), path).toBe(true);
+    }
   });
 
   it("lists every rule once, in order, at its page", () => {
