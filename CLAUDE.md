@@ -4,6 +4,24 @@ Tells developers which JavaScript dependencies can go because the platform
 now does the job: CSS, HTML, or a Web API. The product is the rule catalog.
 Every surface is a thin adapter over it.
 
+## Why this exists
+
+Every other tool compares a codebase against itself (knip: unreferenced,
+Renovate: out of date, npm audit: vulnerable) or against a ceiling
+(`eslint-plugin-compat`: too new for your targets). Nothing compares it
+against the platform's moving floor. A dependency that is imported, current,
+maintained and redundant is invisible to all of them. It looks healthy.
+
+The join nobody else computes is `package.json × Baseline date`. The timeline
+is a commodity, webstatus.dev gives it away. Mapping npm packages to the
+features that displace them is not.
+
+Chrome's Modern Web Guidance is keyed by use case, so it helps an agent write
+new code well. This is keyed by package name, so it answers which dependency
+already installed can go. That difference is the whole strategy: package-keyed
+is the direction an agent actually travels. Do not add use-case-keyed content
+here.
+
 ## Decisions that are settled
 
 Do not relitigate these. If one looks wrong, say so in a sentence and carry on.
@@ -28,10 +46,17 @@ Do not relitigate these. If one looks wrong, say so in a sentence and carry on.
   Z covers that case", not "delete X". Sizes are "up to", never "you will
   save". Tests enforce the phrasing.
 - **Headline number is replaceable kilobytes**, minified and gzipped.
+- **Baseline dates are queryable.** `baselineSince(info)` gives the date a
+  rule reached its current tier, `splitSince(findings, date)` partitions a
+  report, and `--since` narrows the CLI. Dates are `YYYY-MM-DD` and compare
+  lexicographically, never through `Date`, which keeps them usable from the
+  pure core.
 - **Permalinks encode the report in the URL.** No database. Nobody's
   `package.json` is stored.
-- **Dark mode is the only theme.** Tailwind 4, CSS-first `@theme` in
-  `globals.css`, no `tailwind.config` file.
+- **Dark is the default, not the only theme.** `color-scheme: dark light`, so
+  a reader whose OS asks for light gets light. Colours are `light-dark()`
+  pairs on one token. Tailwind 4, CSS-first `@theme` in `globals.css`, no
+  `tailwind.config` file.
 
 ## Layout
 
@@ -77,6 +102,40 @@ and personal per machine, never commit it.
 - `pnpm verify` runs lint, typecheck, tests and the freshness check. Run it
   before you call anything done.
 
+## Guardrails the machinery enforces
+
+What `pnpm verify` catches, so you know what it does not:
+
+- `catalog.test.ts` walks imports from `PURE_ROOTS` and bans fs, network,
+  `process` and clock, so `detect()` cannot stop being pure by accident.
+- `handrolled.test.ts` flags a hand-rolled shape whose words overlap an
+  `unless` saying the feature does not cover it. A shape like that tells an
+  agent to delete code the rule cannot replace, which is the most damaging
+  thing this catalog can do. Fix the shape or waive it in writing.
+- `demos.test.ts` requires every rule to have a live demo or a written reason
+  it has none. "It would look broken" is a fine reason.
+- `check:freshness` rejects a `replaces` entry with no size. Adding a package
+  means running `pnpm refresh:sizes`. A package bundlephobia genuinely cannot
+  build, such as a CSS-only one with no `main`, goes in `UNSIZEABLE` after you
+  check it by hand.
+
+What no script checks is whether a sentence is true. So:
+
+- **Execute a claim rather than recalling it.** `Intl.PluralRules` returns a
+  category and never a word; NFD leaves the stroke on `Ł` alone; `kibibyte`
+  throws a `RangeError`. Every one of those would have been written wrong from
+  memory, and each is now a condition some rule depends on.
+- **Exercise the real binaries**, not just the tests. Build, then run
+  `packages/cli/dist/bin.js` against a fixture, and drive the MCP server over
+  stdio. For the website, `pnpm dev` and look at it: a clipped card and a
+  hover that promised a click were both invisible to types and tests.
+- **A rule has a `lintRule` or `handRolled` shapes, rarely both.** `lint.ts`
+  publishes that split as a feature: a linter finds it in CI today, or it
+  needs a person. `resize-observer` is the one exception, not the precedent.
+- **Build-time packages do not belong in a page-weight headline.** A PostCSS
+  plugin ships nothing, so counting it inflates the number. Raise it rather
+  than shipping it.
+
 ## Guides are references, never copies
 
 A rule may carry `guides`, which are IDs from GoogleChrome/modern-web-guidance
@@ -108,5 +167,10 @@ and the schema rejects an empty list. When adding a rule, write `unless` first.
 
 ## Not building
 
-VS Code extension, hosted playground, accounts, auth. The `modern-css`
-skill is Launch 2, and only if Launch 1 lands.
+VS Code extension, hosted playground, accounts, auth, ESLint plugin.
+
+Prose best practices are closed, not deferred. `docs/guidance-design.md` has
+the reasoning: guidance goes stale on a different clock than Baseline, no
+script can check it, and Chrome's Modern Web Guidance now occupies that
+ground. The `lintRule` field points at a linter that already does the job
+rather than this project growing a second implementation of the same check.
