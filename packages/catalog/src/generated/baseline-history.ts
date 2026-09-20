@@ -24,10 +24,10 @@ export const baselineHistory: BaselineHistory = {
       "month": "2026-09",
       "generatedOn": "2026-09-20",
       "webFeaturesVersion": "3.36.0",
-      "ruleCount": 65,
+      "ruleCount": 76,
       "tally": {
-        "widely": 37,
-        "newly": 16,
+        "widely": 47,
+        "newly": 17,
         "limited": 12,
         "unknown": 0
       }

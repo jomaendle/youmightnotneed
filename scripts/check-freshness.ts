@@ -108,6 +108,8 @@ const UNSIZEABLE = new Set([
   // Real packages bundlephobia cannot build, checked by hand. Not typos.
   "cordova-plugin-ble-central",
   "react-page-transition",
+  // Ships CSS only, with no main entry, so there is no module to bundle.
+  "spinkit",
   "sticky-kit",
   "svelte-intersection-observer",
   "svelte-modals",

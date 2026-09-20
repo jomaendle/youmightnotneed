@@ -191,6 +191,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "color-scheme": {
+      "name": "color-scheme",
+      "baseline": "high",
+      "lowDate": "2022-02-03",
+      "highDate": "2024-08-03",
+      "spec": "https://drafts.csswg.org/css-color-adjust-1/#color-scheme-prop",
+      "support": {
+        "chrome": "98",
+        "edge": "98",
+        "firefox": "96",
+        "safari": "13"
+      },
+      "partialSupport": null
+    },
     "compression-streams": {
       "name": "Compression streams",
       "baseline": "high",
@@ -202,6 +216,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "80",
         "firefox": "113",
         "safari": "16.4"
+      },
+      "partialSupport": null
+    },
+    "constraint-validation": {
+      "name": "Constraint validation API",
+      "baseline": "high",
+      "lowDate": "2018-12-11",
+      "highDate": "2021-06-11",
+      "spec": "https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#the-constraint-validation-api",
+      "support": {
+        "chrome": "40",
+        "edge": "18",
+        "firefox": "51",
+        "safari": "10.1"
       },
       "partialSupport": null
     },
@@ -289,6 +317,34 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "dom": {
+      "name": "DOM",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://dom.spec.whatwg.org/",
+      "support": {
+        "chrome": "1",
+        "edge": "12",
+        "firefox": "1",
+        "safari": "1"
+      },
+      "partialSupport": null
+    },
+    "download": {
+      "name": "download",
+      "baseline": "high",
+      "lowDate": "2019-09-19",
+      "highDate": "2022-03-19",
+      "spec": "https://html.spec.whatwg.org/multipage/links.html#attr-hyperlink-download",
+      "support": {
+        "chrome": "14",
+        "edge": "18",
+        "firefox": "20",
+        "safari": "10.1"
+      },
+      "partialSupport": null
+    },
     "draganddrop": {
       "name": "Drag and Drop",
       "baseline": "high",
@@ -300,6 +356,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "3.5",
         "safari": "4"
+      },
+      "partialSupport": null
+    },
+    "events": {
+      "name": "Events",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://html.spec.whatwg.org/multipage/indices.html#events-2",
+      "support": {
+        "chrome": "1",
+        "edge": "12",
+        "firefox": "1",
+        "safari": "1"
       },
       "partialSupport": null
     },
@@ -328,6 +398,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "123",
         "firefox": "152",
         "safari": "26.2"
+      },
+      "partialSupport": null
+    },
+    "file": {
+      "name": "File API",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://w3c.github.io/FileAPI/",
+      "support": {
+        "chrome": "38",
+        "edge": "79",
+        "firefox": "28",
+        "safari": "10.1"
       },
       "partialSupport": null
     },
@@ -415,6 +499,34 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "input-file": {
+      "name": "<input type=\"file\">",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://html.spec.whatwg.org/multipage/input.html#file-upload-state-(type=file)",
+      "support": {
+        "chrome": "2",
+        "edge": "12",
+        "firefox": "3",
+        "safari": "4"
+      },
+      "partialSupport": null
+    },
+    "input-file-multiple": {
+      "name": "<input type=\"file\" multiple>",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://html.spec.whatwg.org/multipage/input.html#attr-input-multiple",
+      "support": {
+        "chrome": "2",
+        "edge": "12",
+        "firefox": "3.6",
+        "safari": "4"
+      },
+      "partialSupport": null
+    },
     "interpolate-size": {
       "name": "interpolate-size",
       "baseline": false,
@@ -496,6 +608,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "78",
         "safari": "14.1"
+      },
+      "partialSupport": null
+    },
+    "intl-plural-rules": {
+      "name": "Intl.PluralRules",
+      "baseline": "high",
+      "lowDate": "2019-09-19",
+      "highDate": "2022-03-19",
+      "spec": "https://tc39.es/ecma402/#pluralrules-objects",
+      "support": {
+        "chrome": "63",
+        "edge": "18",
+        "firefox": "58",
+        "safari": "13"
       },
       "partialSupport": null
     },
@@ -583,6 +709,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "matchmedia": {
+      "name": "matchMedia",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://drafts.csswg.org/cssom-view-1/#dom-window-matchmedia",
+      "support": {
+        "chrome": "9",
+        "edge": "12",
+        "firefox": "6",
+        "safari": "5.1"
+      },
+      "partialSupport": null
+    },
     "min-max-clamp": {
       "name": "min(), max(), and clamp()",
       "baseline": "high",
@@ -636,6 +776,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "116",
         "firefox": "125",
         "safari": "17"
+      },
+      "partialSupport": null
+    },
+    "progress": {
+      "name": "<progress>",
+      "baseline": "high",
+      "lowDate": "2015-07-29",
+      "highDate": "2018-01-29",
+      "spec": "https://html.spec.whatwg.org/multipage/form-elements.html#the-progress-element",
+      "support": {
+        "chrome": "6",
+        "edge": "12",
+        "firefox": "6",
+        "safari": "6"
       },
       "partialSupport": null
     },
@@ -742,6 +896,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "115",
         "firefox": null,
         "safari": "26"
+      },
+      "partialSupport": null
+    },
+    "scroll-into-view": {
+      "name": "scrollIntoView()",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://drafts.csswg.org/cssom-view-1/#dom-element-scrollintoview",
+      "support": {
+        "chrome": "1",
+        "edge": "79",
+        "firefox": "1",
+        "safari": "3"
       },
       "partialSupport": null
     },
@@ -899,6 +1067,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "string-normalize": {
+      "name": "String normalize()",
+      "baseline": "high",
+      "lowDate": "2016-09-20",
+      "highDate": "2019-03-20",
+      "spec": "https://tc39.es/ecma262/multipage/text-processing.html#sec-string-objects",
+      "support": {
+        "chrome": "34",
+        "edge": "12",
+        "firefox": "31",
+        "safari": "10"
+      },
+      "partialSupport": null
+    },
     "structured-clone": {
       "name": "structuredClone()",
       "baseline": "high",
@@ -983,6 +1165,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "user-pseudos": {
+      "name": ":user-valid and :user-invalid",
+      "baseline": "high",
+      "lowDate": "2023-11-02",
+      "highDate": "2026-05-02",
+      "spec": "https://drafts.csswg.org/selectors-4/#user-pseudos",
+      "support": {
+        "chrome": "119",
+        "edge": "119",
+        "firefox": "88",
+        "safari": "16.5"
+      },
+      "partialSupport": null
+    },
     "view-transitions": {
       "name": "View transitions",
       "baseline": "low",
@@ -1050,6 +1246,34 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "79",
         "firefox": "96",
         "safari": "15.4"
+      },
+      "partialSupport": null
+    },
+    "webauthn": {
+      "name": "Web authentication",
+      "baseline": "high",
+      "lowDate": "2021-09-07",
+      "highDate": "2024-03-07",
+      "spec": "https://w3c.github.io/webauthn/",
+      "support": {
+        "chrome": "67",
+        "edge": "18",
+        "firefox": "60",
+        "safari": "13"
+      },
+      "partialSupport": null
+    },
+    "webauthn-public-key-easy": {
+      "name": "Web authentication easy public key access",
+      "baseline": "high",
+      "lowDate": "2023-10-24",
+      "highDate": "2026-04-24",
+      "spec": "https://w3c.github.io/webauthn/#sctn-public-key-easy",
+      "support": {
+        "chrome": "85",
+        "edge": "85",
+        "firefox": "119",
+        "safari": "16"
       },
       "partialSupport": null
     }

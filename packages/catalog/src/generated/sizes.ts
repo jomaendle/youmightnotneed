@@ -88,6 +88,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 26058,
       "version": "0.18.0"
     },
+    "@simplewebauthn/browser": {
+      "gzip": 3782,
+      "raw": 13321,
+      "version": "14.0.0"
+    },
     "@tippyjs/react": {
       "gzip": 14079,
       "raw": 42169,
@@ -243,6 +248,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 6159,
       "version": "2.10.0"
     },
+    "compute-scroll-into-view": {
+      "gzip": 1455,
+      "raw": 3026,
+      "version": "3.1.1"
+    },
     "copy-to-clipboard": {
       "gzip": 1551,
       "raw": 3299,
@@ -273,6 +283,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 10519,
       "version": "1.2.3"
     },
+    "css-has-pseudo": {
+      "gzip": 16891,
+      "raw": 71948,
+      "version": "8.0.1"
+    },
     "currency.js": {
       "gzip": 1068,
       "raw": 2250,
@@ -298,10 +313,25 @@ export const packageSizes: SizeSnapshot = {
       "raw": 344,
       "version": "3.0.1"
     },
+    "diacritics": {
+      "gzip": 2502,
+      "raw": 4699,
+      "version": "1.3.0"
+    },
     "dialog-polyfill": {
       "gzip": 3928,
       "raw": 11616,
       "version": "0.5.6"
+    },
+    "downloadjs": {
+      "gzip": 1289,
+      "raw": 2449,
+      "version": "1.4.7"
+    },
+    "dropzone": {
+      "gzip": 11906,
+      "raw": 38055,
+      "version": "6.3.4"
     },
     "element-resize-detector": {
       "gzip": 5786,
@@ -317,6 +347,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 7277,
       "raw": 17975,
       "version": "8.6.0"
+    },
+    "enquire.js": {
+      "gzip": 919,
+      "raw": 2278,
+      "version": "2.1.6"
     },
     "event-emitter": {
       "gzip": 1706,
@@ -342,6 +377,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1628,
       "raw": 4181,
       "version": "4.1.1"
+    },
+    "file-saver": {
+      "gzip": 18314,
+      "raw": 2697,
+      "version": "2.0.5"
+    },
+    "filesize": {
+      "gzip": 2282,
+      "raw": 4903,
+      "version": "11.0.24"
     },
     "fittext.js": {
       "gzip": 337,
@@ -443,10 +488,25 @@ export const packageSizes: SizeSnapshot = {
       "raw": 43587,
       "version": "2.6.4"
     },
+    "jquery": {
+      "gzip": 27619,
+      "raw": 78665,
+      "version": "4.0.0"
+    },
+    "jquery-validation": {
+      "gzip": 8212,
+      "raw": 26284,
+      "version": "1.22.1"
+    },
     "js-base64": {
       "gzip": 1789,
       "raw": 4151,
       "version": "3.9.4"
+    },
+    "js-file-download": {
+      "gzip": 429,
+      "raw": 726,
+      "version": "0.4.12"
     },
     "js-sha256": {
       "gzip": 3054,
@@ -482,6 +542,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2695,
       "raw": 7523,
       "version": "5.3.2"
+    },
+    "ldrs": {
+      "gzip": 12277,
+      "raw": 126260,
+      "version": "1.1.9"
     },
     "line-clamp": {
       "gzip": 556,
@@ -578,6 +643,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 5037,
       "version": "5.0.0"
     },
+    "next-themes": {
+      "gzip": 1554,
+      "raw": 3446,
+      "version": "0.4.6"
+    },
     "next-view-transitions": {
       "gzip": 1275,
       "raw": 3091,
@@ -622,6 +692,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 6559,
       "raw": 15092,
       "version": "0.12.0"
+    },
+    "nprogress": {
+      "gzip": 2344,
+      "raw": 4096,
+      "version": "0.2.0"
     },
     "numeral": {
       "gzip": 3897,
@@ -668,6 +743,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 43818,
       "version": "3.0.2"
     },
+    "parsleyjs": {
+      "gzip": 39265,
+      "raw": 121367,
+      "version": "2.9.2"
+    },
     "path-to-regexp": {
       "gzip": 2133,
       "raw": 5084,
@@ -677,6 +757,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 5470,
       "raw": 18520,
       "version": "1.5.6"
+    },
+    "pluralize": {
+      "gzip": 2385,
+      "raw": 5759,
+      "version": "8.0.0"
     },
     "polished": {
       "gzip": 11562,
@@ -692,6 +777,21 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 7263,
       "raw": 20652,
       "version": "1.16.1"
+    },
+    "postcss-nested": {
+      "gzip": 15443,
+      "raw": 66227,
+      "version": "8.0.1"
+    },
+    "postcss-nesting": {
+      "gzip": 17696,
+      "raw": 75631,
+      "version": "14.0.1"
+    },
+    "pretty-bytes": {
+      "gzip": 1029,
+      "raw": 2045,
+      "version": "7.1.3"
     },
     "pretty-ms": {
       "gzip": 1234,
@@ -717,6 +817,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 479,
       "raw": 771,
       "version": "2.2.0"
+    },
+    "rc-progress": {
+      "gzip": 3714,
+      "raw": 9003,
+      "version": "4.0.0"
     },
     "re-resizable": {
       "gzip": 4998,
@@ -747,6 +852,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2984,
       "raw": 7937,
       "version": "7.1.0"
+    },
+    "react-circular-progressbar": {
+      "gzip": 1699,
+      "raw": 4330,
+      "version": "2.2.0"
     },
     "react-clamp-lines": {
       "gzip": 2459,
@@ -792,6 +902,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 19305,
       "raw": 67045,
       "version": "10.0.1"
+    },
+    "react-dropzone": {
+      "gzip": 6236,
+      "raw": 17134,
+      "version": "20.1.2"
     },
     "react-flatpickr": {
       "gzip": 15069,
@@ -843,6 +958,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 28440,
       "version": "1.2.6"
     },
+    "react-loader-spinner": {
+      "gzip": 29318,
+      "raw": 112966,
+      "version": "8.0.2"
+    },
     "react-masonry-component": {
       "gzip": 16156,
       "raw": 53650,
@@ -852,6 +972,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1455,
       "raw": 3908,
       "version": "1.0.16"
+    },
+    "react-media": {
+      "gzip": 1289,
+      "raw": 3384,
+      "version": "1.10.0"
     },
     "react-modal": {
       "gzip": 7467,
@@ -877,6 +1002,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 1483,
       "raw": 3228,
       "version": "12.3.0"
+    },
+    "react-responsive": {
+      "gzip": 2529,
+      "raw": 5923,
+      "version": "10.0.1"
     },
     "react-responsive-modal": {
       "gzip": 3382,
@@ -922,6 +1052,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 3734,
       "raw": 11015,
       "version": "4.0.1"
+    },
+    "react-spinners": {
+      "gzip": 6668,
+      "raw": 40770,
+      "version": "0.17.1"
     },
     "react-spring": {
       "gzip": 19978,
@@ -998,6 +1133,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 7260,
       "version": "1.12.1"
     },
+    "remove-accents": {
+      "gzip": 1747,
+      "raw": 3805,
+      "version": "0.5.0"
+    },
     "resize-observer-polyfill": {
       "gzip": 2511,
       "raw": 7581,
@@ -1022,6 +1162,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 3620,
       "raw": 9829,
       "version": "2.0.13"
+    },
+    "scroll-into-view-if-needed": {
+      "gzip": 1706,
+      "raw": 3786,
+      "version": "3.1.0"
     },
     "scrollmagic": {
       "gzip": 7645,
@@ -1057,6 +1202,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2669,
       "raw": 6445,
       "version": "16.1.3"
+    },
+    "smooth-scroll-into-view-if-needed": {
+      "gzip": 2282,
+      "raw": 5224,
+      "version": "2.0.2"
     },
     "smoothscroll-polyfill": {
       "gzip": 1433,
@@ -1123,6 +1273,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 26552,
       "version": "4.10.0"
     },
+    "theme-change": {
+      "gzip": 1176,
+      "raw": 3433,
+      "version": "3.0.4"
+    },
     "timeago.js": {
       "gzip": 1037,
       "raw": 1830,
@@ -1162,6 +1317,16 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 2292,
       "raw": 6825,
       "version": "1.0.3"
+    },
+    "use-dark-mode": {
+      "gzip": 1274,
+      "raw": 3110,
+      "version": "2.3.1"
+    },
+    "use-media": {
+      "gzip": 847,
+      "raw": 2339,
+      "version": "1.5.0"
     },
     "uuid": {
       "gzip": 3842,

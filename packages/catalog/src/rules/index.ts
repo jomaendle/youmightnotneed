@@ -15,6 +15,7 @@ import { contentVisibility } from "./content-visibility.ts";
 import { customHighlight } from "./custom-highlight.ts";
 import { dateFormat } from "./date-format.ts";
 import { dateTimeInput } from "./date-time-input.ts";
+import { diacritics } from "./diacritics.ts";
 import { dialog } from "./dialog.ts";
 import { discreteTransitions } from "./discrete-transitions.ts";
 import { displayNames } from "./display-names.ts";
@@ -23,26 +24,36 @@ import { durationFormat } from "./duration-format.ts";
 import { eventTarget } from "./event-target.ts";
 import { fetchRule } from "./fetch.ts";
 import { fieldSizing } from "./field-sizing.ts";
+import { fileDownload } from "./file-download.ts";
+import { fileDrop } from "./file-drop.ts";
 import { fluidType } from "./fluid-type.ts";
 import { focusVisible } from "./focus-visible.ts";
+import { formValidation } from "./form-validation.ts";
 import { fullscreen } from "./fullscreen.ts";
 import { heightAnimation } from "./height-animation.ts";
 import { inert } from "./inert.ts";
 import { intersectionObserver } from "./intersection-observer.ts";
+import { jquery } from "./jquery.ts";
 import { lazyLoading } from "./lazy-loading.ts";
+import { lightDark } from "./light-dark.ts";
 import { lineClamp } from "./line-clamp.ts";
 import { listFormat } from "./list-format.ts";
 import { masonry } from "./masonry.ts";
+import { matchMedia } from "./match-media.ts";
 import { naturalSort } from "./natural-sort.ts";
 import { numberFormat } from "./number-format.ts";
 import { pageVisibility } from "./page-visibility.ts";
+import { passkeys } from "./passkeys.ts";
+import { pluralRules } from "./plural-rules.ts";
 import { popover } from "./popover.ts";
+import { progressIndicator } from "./progress-indicator.ts";
 import { randomUuid } from "./random-uuid.ts";
 import { relativeTime } from "./relative-time.ts";
 import { resizablePanels } from "./resizable-panels.ts";
 import { resizeObserver } from "./resize-observer.ts";
 import { screenWakeLock } from "./screen-wake-lock.ts";
 import { scrollAnimations } from "./scroll-animations.ts";
+import { scrollIntoView } from "./scroll-into-view.ts";
 import { scrollLock } from "./scroll-lock.ts";
 import { scrollbars } from "./scrollbars.ts";
 import { segmenter } from "./segmenter.ts";
@@ -130,6 +141,17 @@ const rawRules: readonly Rule[] = [
   lineClamp,
   masonry,
   numberFormat,
+  diacritics,
+  pluralRules,
+  lightDark,
+  fileDownload,
+  fileDrop,
+  matchMedia,
+  scrollIntoView,
+  formValidation,
+  jquery,
+  passkeys,
+  progressIndicator,
   pageVisibility,
   popover,
   relativeTime,
