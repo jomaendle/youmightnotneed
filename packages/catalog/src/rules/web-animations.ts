@@ -39,5 +39,9 @@ animation.reverse();`,
   { duration: 240, fill: "both" },
 );
 await animation.finished;`,
+    handRolled: [
+      "a requestAnimationFrame loop interpolating a style property between two values, with its own easing function",
+      "a chain of setTimeout calls stepping an element's style to fake a keyframe sequence",
+    ],
   },
 };

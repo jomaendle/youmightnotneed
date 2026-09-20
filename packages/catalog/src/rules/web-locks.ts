@@ -33,5 +33,9 @@ await navigator.locks.request("cache", { mode: "shared" }, async () => {
     snippet: `await navigator.locks.request("sync-outbox", async () => {
   await flushPendingWrites();
 });`,
+    handRolled: [
+      "a boolean flag guarding an async section, set before the work and cleared in a finally",
+      "a promise chained onto the previous one in a module-level variable, so calls run one at a time",
+    ],
   },
 };

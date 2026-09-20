@@ -222,9 +222,11 @@ and read its conditions before changing anything.
 | a SHA-256 or HMAC implementation pasted into the project as a single file of bit-shifting helpers | `web-crypto` | crypto.subtle | widely available |
 | a Uint8Array built by looping over atob output to turn a server challenge into bytes | `passkeys` | navigator.credentials with PublicKeyCredential | widely available |
 | a blur handler standing in for the tab being backgrounded, pausing a poll that a focus handler resumes | `page-visibility` | document.visibilityState and the visibilitychange event | widely available |
+| a boolean flag guarding an async section, set before the work and cleared in a finally | `web-locks` | navigator.locks.request() | widely available |
 | a canvas or offscreen span whose width is measured repeatedly to work out whether a webfont has replaced the fallback | `font-loading` | document.fonts with font-display | widely available |
 | a chain of millisecond thresholds turning a date difference into minutes, hours or days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
 | a chain of replace calls, one per accented letter the project has run into so far | `diacritics` | String.prototype.normalize("NFD") | widely available |
+| a chain of setTimeout calls stepping an element's style to fake a keyframe sequence | `web-animations` | element.animate() | widely available |
 | a chain of vendor-prefixed calls such as webkitRequestFullscreen and msRequestFullscreen | `fullscreen` | Element.requestFullscreen() | limited |
 | a comparator pulling digits out of strings with a regex and comparing them as numbers | `natural-sort` | Intl.Collator with numeric: true | widely available |
 | a count === 1 ternary picking between two words, or a bare + "s" appended to a noun | `plural-rules` | Intl.PluralRules | widely available |
@@ -236,30 +238,41 @@ and read its conditions before changing anything.
 | a document keydown listener added when an overlay opens and removed when it closes, only to catch Escape | `dialog-element` | <dialog> with showModal() | widely available |
 | a document.cookie split on semicolons with decodeURIComponent, wrapped in a getCookie helper | `cookie-store` | cookieStore | limited |
 | a hand-maintained object or array mapping accented characters to their unaccented forms | `diacritics` | String.prototype.normalize("NFD") | widely available |
+| a hand-written regex per route with named capture groups, and a loop testing each against the path | `urlpattern` | URLPattern | newly available |
 | a hidden file input triggered by click() from a styled button, wrapped in a component that forwards the change event | `file-drop` | <input type="file"> with drop events | widely available |
 | a hidden iframe or form submitted to make the browser treat a response as a download | `file-download` | a Blob object URL on a download link | widely available |
 | a hidden mirror div kept in sync with the textarea's value, measured to decide how tall the real field should be | `field-sizing` | field-sizing: content | newly available |
 | a keydown handler watching for Tab and calling preventDefault so focus cannot leave an overlay | `inert` | the inert attribute | widely available |
+| a lighten or darken helper doing arithmetic on the six characters of a hex colour | `css-color-functions` | color-mix(), oklch() and relative colour syntax | widely available |
+| a long poll: a fetch the server holds open, re-issued from its own then handler | `server-sent-events` | EventSource | widely available |
 | a lookup of irregular plurals kept next to the component that renders them | `plural-rules` | Intl.PluralRules | widely available |
 | a mousedown on one panel's edge with mousemove handlers writing a width onto that same panel | `resizable-panels` | resize | limited |
 | a mouseover or touchstart listener on links that starts fetching the target before the click lands | `speculation-rules` | speculation rules | limited |
+| a muted looping video kept playing off-screen so the display does not sleep | `screen-wake-lock` | navigator.wakeLock.request("screen") | newly available |
+| a no-op setInterval added in the hope the page keeps counting as active | `screen-wake-lock` | navigator.wakeLock.request("screen") | newly available |
 | a padding-bottom percentage on a wrapper with the real content positioned absolutely inside it | `aspect-ratio` | aspect-ratio | widely available |
 | a prefers-color-scheme media query listener in JavaScript that toggles a class on documentElement | `light-dark` | light-dark() with color-scheme | newly available |
+| a promise chained onto the previous one in a module-level variable, so calls run one at a time | `web-locks` | navigator.locks.request() | widely available |
 | a querySelectorAll over a list of focusable selectors, used to decide where focus is allowed to go | `inert` | the inert attribute | widely available |
 | a regex inserting thousands separators into a number's string form | `number-format` | Intl.NumberFormat | widely available |
+| a regex over surrogate pairs to split a string into what the author is calling characters | `intl-segmenter` | Intl.Segmenter | newly available |
 | a request helper that sets Content-Type and stringifies the body on every call, written once per project and imported everywhere | `fetch` | fetch() | widely available |
 | a requestAnimationFrame loop easing scrollTop from where it is toward a target | `smooth-scroll` | scroll-behavior: smooth with scroll-margin-top | widely available |
+| a requestAnimationFrame loop interpolating a style property between two values, with its own easing function | `web-animations` | element.animate() | widely available |
 | a resize listener comparing window.innerWidth against a breakpoint number kept in JavaScript | `match-media` | matchMedia() | widely available |
 | a scroll listener deciding which images are close enough to start loading | `lazy-loading` | loading="lazy" | widely available |
 | a scroll listener on a horizontal strip dividing scrollLeft by item width to work out the active index | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
 | a scroll listener setting a progress bar's width from scrollY over scrollHeight | `scroll-driven-animations` | animation-timeline: view() and scroll() | limited |
 | a scroll listener toggling a fixed class once an element passes an offset | `sticky-positioning` | position: sticky | widely available |
 | a scrollTop assignment computed from offsetTop minus the container's height, to centre a highlighted item | `scroll-into-view` | scrollIntoView({ block: "nearest" }) | widely available |
+| a second hex value hardcoded next to every colour token, one for the base and one for its hover state | `css-color-functions` | color-mix(), oklch() and relative colour syntax | widely available |
 | a session token, nonce or password-reset key built from Math.random(), which is not a cryptographic source and is predictable from earlier outputs | `web-crypto` | crypto.subtle | widely available |
+| a setInterval or a self-rescheduling setTimeout re-fetching an endpoint to notice changes, with the delay tuned by hand | `server-sent-events` | EventSource | widely available |
 | a setTimeout matching the CSS duration, so an element stays mounted long enough to animate out | `discrete-transitions` | @starting-style with transition-behavior: allow-discrete | newly available |
 | a setTimeout that adds a fonts-loaded class after a guessed delay, on the assumption the font has arrived by then | `font-loading` | document.fonts with font-display | widely available |
 | a share menu built from hardcoded intent URLs for each network, opened with window.open | `web-share` | navigator.share() | limited |
 | a submit handler running a regex against each field's value and collecting error strings into state | `form-validation` | constraint validation with :user-invalid | widely available |
+| a switch over locale codes returning a display string per case | `intl-display-names` | Intl.DisplayNames | widely available |
 | a table of singular and plural unit names written out to build phrases like 3 days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
 | a template string assigned to document.cookie assembling path, expires and SameSite attributes by hand | `cookie-store` | cookieStore | limited |
 | a text input with a placeholder like dd/mm/yyyy and a hand-written parser checking what was typed | `date-time-input` | <input type="date"> and <input type="time"> | widely available |
@@ -276,9 +289,11 @@ and read its conditions before changing anything.
 | an array of month names indexed by getMonth(), joined with getDate() and getFullYear() to build a display string | `date-format` | Intl.DateTimeFormat | widely available |
 | an easing function like easeInOutQuad written next to a scroll routine | `smooth-scroll` | scroll-behavior: smooth with scroll-margin-top | widely available |
 | an ignore or isMounted flag set in a cleanup function, guarding the result of a fetch given no signal | `abort-controller` | AbortController and AbortSignal | widely available |
+| an index swapped in an array when the pointer crosses a sibling, to reorder a list while a drag is in progress | `drag-and-drop` | draggable and the drag events | widely available |
 | an input handler setting style.height to auto and then to scrollHeight in pixels, so the textarea remeasures on every keystroke | `field-sizing` | field-sizing: content | newly available |
 | an isClosing or isLeaving flag held only to keep something rendered while its exit animation runs | `discrete-transitions` | @starting-style with transition-behavior: allow-discrete | newly available |
 | an isMobile flag held in state and recomputed from innerWidth inside a debounced resize handler | `match-media` | matchMedia() | widely available |
+| an object literal mapping country or language codes to English names, pasted in and extended as gaps turn up | `intl-display-names` | Intl.DisplayNames | widely available |
 | an off-screen textarea or contenteditable element created only so text can be selected and execCommand'd | `clipboard` | navigator.clipboard.writeText() | newly available |
 | an open id over a list of collapsible panels, where opening one sets every other closed | `exclusive-accordion` | <details name> for an exclusive accordion | newly available |
 | base64url encode and decode helpers written next to a credentials.create call to convert challenge and id fields | `passkeys` | navigator.credentials with PublicKeyCredential | widely available |
@@ -295,8 +310,10 @@ and read its conditions before changing anything.
 | mapping scroll position to a transform or an opacity on every scroll event | `scroll-driven-animations` | animation-timeline: view() and scroll() | limited |
 | measuring rendered text in a hidden element or on a canvas to decide where a line should visually end | `line-clamp` | -webkit-line-clamp | widely available |
 | measuring the scrollbar width from innerWidth minus documentElement.clientWidth and padding the body by it | `styled-scrollbars` | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available |
+| mousedown, mousemove and mouseup listeners tracking a pointer offset to move an element, with its original position held in state | `drag-and-drop` | draggable and the drag events | widely available |
 | padStart on getHours() and getMinutes() to assemble a HH:MM clock, usually next to a hand-written AM and PM branch | `date-format` | Intl.DateTimeFormat | widely available |
 | paired touchstart and touchend listeners reading changedTouches[0].clientX to work out a swipe direction | `pointer-events` | pointer events with touch-action | widely available |
+| pathname.split("/") compared segment by segment to work out which route matched and pull out an id | `urlpattern` | URLPattern | newly available |
 | polling an element's dimensions on an interval to notice when they change | `resize-observer` | ResizeObserver | widely available |
 | prev and next buttons calling scrollBy, each with its own disabled state recomputed on every scroll | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
 | reading offsetWidth and setting height from it to keep a box in proportion | `aspect-ratio` | aspect-ratio | widely available |
@@ -304,8 +321,10 @@ and read its conditions before changing anything.
 | rendering dots from the item count and toggling an active class on whichever one is current | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
 | separate mousedown and touchstart branches doing the same thing, written because the two event streams disagree | `pointer-events` | pointer events with touch-action | widely available |
 | setting document.body.style.overflow to hidden when an overlay opens, and restoring it on close | `overscroll-behavior` | overscroll-behavior: contain | widely available |
+| slice(0, -1).join(", ") joined to the last item with " and ", plus length checks for the one and two item cases | `intl-list-format` | Intl.ListFormat | widely available |
 | slicing a string by character count before rendering it, so a card title fits its two lines | `line-clamp` | -webkit-line-clamp | widely available |
 | storing an element's original offsetTop so a placeholder can hold the gap when it goes fixed | `sticky-positioning` | position: sticky | widely available |
+| str.length or split("") used to count characters, which counts an emoji or a combining accent as several | `intl-segmenter` | Intl.Segmenter | newly available |
 | toFixed followed by string surgery to add a currency symbol and group the digits | `number-format` | Intl.NumberFormat | widely available |
 | toggling a class such as using-keyboard on the body so focus rings can be shown conditionally | `focus-visible` | :focus-visible | widely available |
 | writing to localStorage only so other tabs receive the storage event, then deleting the key | `broadcast-channel` | BroadcastChannel | widely available |
