@@ -387,20 +387,26 @@ describe("the real catalog keeps tier and crossing date in step", () => {
     },
   );
 
-  // Guards the shape the --since filter depends on: no rule may claim a
-  // crossing date earlier than one of its own features reached that tier.
+  // Guards the shape the --since filter depends on. Equality, not >=: the
+  // bug this replaced produced a date that was too LATE, and a one-sided
+  // check passes anything later than every feature. Reintroducing the bug
+  // left this green while only the synthetic case above went red, which is
+  // the wrong way round, because this is the one that runs on real data.
   it.each(rules.map((rule) => [rule.id, rule] as const))(
-    "%s is never dated before its slowest feature",
+    "%s is dated exactly when its slowest feature reached the rule's tier",
     (_id, rule) => {
       const info = resolveBaseline(rule);
       const since = baselineSince(info);
       if (since === null) return;
 
-      const tierDates = info.features
-        .map((f) => (info.status === "widely" ? f.highDate : f.lowDate))
-        .filter((d): d is string => d !== null);
+      const tierDates = info.features.map((f) =>
+        info.status === "widely" ? f.highDate : f.lowDate,
+      );
+      // A null here means the rule should have had no date at all.
+      expect(tierDates.every((d) => d !== null)).toBe(true);
 
-      for (const crossed of tierDates) expect(since >= crossed).toBe(true);
+      const slowest = (tierDates as string[]).reduce((a, b) => (a > b ? a : b));
+      expect(since).toBe(slowest);
     },
   );
 });

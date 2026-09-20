@@ -102,3 +102,10 @@ export {
   type SearchResult,
   searchRules,
 } from "./search.ts";
+export {
+  diffTiers,
+  type TierChange,
+  type TierDirection,
+  type TierEntry,
+  tierOf,
+} from "./tier-diff.ts";

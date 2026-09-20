@@ -36,6 +36,9 @@ jobs:
       # means anything.
       - name: Report Baseline tier changes
         id: tiers
+        # A report, never a gate. If this crashes the refresh PR should still
+        # open; a missing summary is worth far less than a blocked refresh.
+        continue-on-error: true
         run: |
           {
             echo 'report<<TIERS_EOF'
