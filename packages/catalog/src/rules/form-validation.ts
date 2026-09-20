@@ -38,4 +38,5 @@ export const formValidation: Rule = {
       "a touched or dirty flag tracked per field so an error only appears after the field has been left",
     ],
   },
+  guides: ["validate-input-after-interaction", "required-field-feedback"],
 };

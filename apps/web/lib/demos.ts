@@ -37,6 +37,36 @@ const SOLID =
  * frame can show truthfully.
  */
 export const demos: Partial<Record<string, Demo>> = {
+  "pointer-events": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:.75rem;">
+  <div id="pad" style="inline-size:min(100%,20rem); block-size:7rem; display:grid; place-items:center; border:1px solid var(--c-border-strong); border-radius:.5rem; touch-action:pan-y; user-select:none;">
+    Swipe or drag across me
+  </div>
+  <p id="out" class="demo-hint" style="text-align:center;">Mouse, pen and touch all arrive as the same event.</p>
+</div>
+<script>
+  const pad = document.getElementById("pad");
+  const out = document.getElementById("out");
+  let startX = 0;
+  pad.addEventListener("pointerdown", (event) => {
+    startX = event.clientX;
+    pad.setPointerCapture(event.pointerId);
+    out.textContent = "pointerdown from " + event.pointerType;
+  });
+  pad.addEventListener("pointerup", (event) => {
+    const dx = Math.round(event.clientX - startX);
+    out.textContent =
+      Math.abs(dx) > 50
+        ? "swipe " + (dx > 0 ? "right" : "left") + " (" + dx + "px)"
+        : "moved " + dx + "px, under the 50px threshold";
+  });
+</script>
+`,
+    ),
+  },
   "plural-rules": {
     height: 230,
     html: wrapDemo(
@@ -2260,4 +2290,6 @@ export const demosNotWorthIt: Record<string, string> = {
     "A passkey ceremony needs a real authenticator and a server to issue the challenge. A fake one would teach the wrong shape.",
   jquery:
     "The swap is a syntax change with identical output, so there is nothing to see that the snippet does not already show.",
+  "font-loading":
+    "The frame would have to download a webfont over a throttled connection for the swap to be visible, and it cannot.",
 };

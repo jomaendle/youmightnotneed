@@ -4,23 +4,36 @@ Tells developers which JavaScript dependencies can go because the platform
 now does the job: CSS, HTML, or a Web API. The product is the rule catalog.
 Every surface is a thin adapter over it.
 
-## Why this exists
+## The vision
 
-Every other tool compares a codebase against itself (knip: unreferenced,
-Renovate: out of date, npm audit: vulnerable) or against a ceiling
-(`eslint-plugin-compat`: too new for your targets). Nothing compares it
-against the platform's moving floor. A dependency that is imported, current,
-maintained and redundant is invisible to all of them. It looks healthy.
+**One tool to identify and apply modern web best practices.**
 
-The join nobody else computes is `package.json × Baseline date`. The timeline
-is a commodity, webstatus.dev gives it away. Mapping npm packages to the
-features that displace them is not.
+Two halves, and they are not the same job. *Identify* is the catalog: point it
+at a real project and it says what the platform now does for you. *Apply* is
+the hand-off: the skill, the MCP server and the guides give an agent enough to
+make the change correctly instead of confidently.
 
-Chrome's Modern Web Guidance is keyed by use case, so it helps an agent write
-new code well. This is keyed by package name, so it answers which dependency
-already installed can go. That difference is the whole strategy: package-keyed
-is the direction an agent actually travels. Do not add use-case-keyed content
-here.
+Why anyone needs it. Every other tool compares a codebase against itself
+(knip: unreferenced, Renovate: out of date, npm audit: vulnerable) or against
+a ceiling (`eslint-plugin-compat`: too new for your targets). Nothing compares
+it against the platform's moving floor. A dependency that is imported,
+current, maintained and redundant is invisible to all of them. It looks
+healthy. The join nobody else computes is `package.json × Baseline date`: the
+timeline is a commodity, webstatus.dev gives it away, but mapping npm packages
+to the features that displace them is not.
+
+Coverage is the goal. Every library the platform has absorbed should have a
+rule, and reach is worth pursuing hard.
+
+**Package-keyed is how we enter, not the limit of what we cover.** A rule
+starts from something findable in a real project, a package name or a
+hand-rolled shape, because that is what makes a finding checkable and what
+keeps the tool from lecturing. Chrome's Modern Web Guidance is keyed by use
+case and covers the implementation, which is why we reference it rather than
+rewrite it. Growing toward best practices means more entry points, not
+untethered advice: a new kind of finding needs something a script can verify
+and a condition under which it does not hold. If a claim cannot be checked
+against committed data, it does not belong here yet.
 
 ## Decisions that are settled
 
@@ -169,8 +182,11 @@ and the schema rejects an empty list. When adding a rule, write `unless` first.
 
 VS Code extension, hosted playground, accounts, auth, ESLint plugin.
 
-Prose best practices are closed, not deferred. `docs/guidance-design.md` has
-the reasoning: guidance goes stale on a different clock than Baseline, no
-script can check it, and Chrome's Modern Web Guidance now occupies that
-ground. The `lintRule` field points at a linter that already does the job
-rather than this project growing a second implementation of the same check.
+Not a documentation mirror. `docs/guidance-design.md` argued against vendoring
+prose advice and that part still holds: guidance goes stale on a different
+clock than Baseline, and Chrome's Modern Web Guidance already covers the
+use-case-keyed ground with more maintenance behind it. Reference it, do not
+rewrite it. The same reasoning is why `lintRule` points at a linter that
+already does the job instead of this project growing a second implementation
+of the same check. Broadening what counts as a finding is on the table;
+shipping unverifiable advice is not.

@@ -28,6 +28,7 @@ import { fileDownload } from "./file-download.ts";
 import { fileDrop } from "./file-drop.ts";
 import { fluidType } from "./fluid-type.ts";
 import { focusVisible } from "./focus-visible.ts";
+import { fontLoading } from "./font-loading.ts";
 import { formValidation } from "./form-validation.ts";
 import { fullscreen } from "./fullscreen.ts";
 import { heightAnimation } from "./height-animation.ts";
@@ -45,6 +46,7 @@ import { numberFormat } from "./number-format.ts";
 import { pageVisibility } from "./page-visibility.ts";
 import { passkeys } from "./passkeys.ts";
 import { pluralRules } from "./plural-rules.ts";
+import { pointerEvents } from "./pointer-events.ts";
 import { popover } from "./popover.ts";
 import { progressIndicator } from "./progress-indicator.ts";
 import { randomUuid } from "./random-uuid.ts";
@@ -152,6 +154,8 @@ const rawRules: readonly Rule[] = [
   jquery,
   passkeys,
   progressIndicator,
+  fontLoading,
+  pointerEvents,
   pageVisibility,
   popover,
   relativeTime,

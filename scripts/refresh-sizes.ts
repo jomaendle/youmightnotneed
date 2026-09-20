@@ -140,7 +140,14 @@ if (fetched === 0 && packages.length > 0) {
 // produces: 1-of-N succeeds, the other 122 fall back to their old values, and
 // the file is stamped fresh anyway. A package that had a size and no longer
 // fetches one is the signal that this run should not be committed.
-const regressed = Object.keys(existing).filter((pkg) => !sizes[pkg]);
+// Only packages a rule still claims. A package dropped from `replaces` is
+// absent from `sizes` for a reason that has nothing to do with bundlephobia,
+// and counting it here made removing a rule permanently block the refresh.
+// The write below is built from `sizes`, so those keys prune themselves.
+const claimed = new Set(packages);
+const regressed = Object.keys(existing).filter(
+  (pkg) => claimed.has(pkg) && !sizes[pkg],
+);
 if (regressed.length > 0) {
   console.error(
     `\n${regressed.length} package(s) had a size and no longer fetch one: ${regressed.slice(0, 5).join(", ")}. Leaving the committed snapshot alone.`,

@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 76 of them, covering 301 npm packages.
+Every rule, 78 of them, covering 306 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
@@ -49,6 +49,7 @@ were about to install.
 | formatting a timestamp as relative text, such as "5 minutes ago" or "in 2 days" | Intl.RelativeTimeFormat | widely available | `relative-time` |
 | generating a random v4 UUID | crypto.randomUUID() | widely available | `random-uuid` |
 | giving a cancellable operation such as fetch a deadline | AbortSignal.timeout() | newly available | `abortsignal-timeout` |
+| handling swipes, drags or other pointer gestures | pointer events with touch-action | widely available | `pointer-events` |
 | hashing, signing, or encrypting with SHA-2, HMAC, AES or RSA | crypto.subtle | widely available | `web-crypto` |
 | highlighting search matches or ranges of text without changing the markup | the CSS Custom Highlight API | newly available | `custom-highlight` |
 | jQuery is used for selectors, class and attribute changes, events or simple animation | querySelectorAll(), classList and addEventListener() | widely available | `jquery` |
@@ -91,6 +92,7 @@ were about to install.
 | truncating a block of text to a fixed number of lines with an ellipsis | -webkit-line-clamp | widely available | `line-clamp` |
 | turning a country, language, script or currency code into its name in a given locale | Intl.DisplayNames | widely available | `intl-display-names` |
 | validating form fields and showing which ones are wrong | constraint validation with :user-invalid | widely available | `form-validation` |
+| waiting on a webfont before doing something, or swapping a class once it loads | document.fonts with font-display | widely available | `font-loading` |
 
 ## Reading one rule
 
@@ -148,6 +150,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `file-drop`: react-dropzone, dropzone
 - `fluid-type-clamp`: fittext.js
 - `focus-visible`: focus-visible
+- `font-loading`: fontfaceobserver, webfontloader
 - `form-validation`: jquery-validation, parsleyjs
 - `fullscreen`: screenfull, react-full-screen, vue-fullscreen
 - `height-auto-animation`: react-collapse, react-animate-height, react-smooth-collapse
@@ -167,6 +170,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `page-visibility`: react-page-visibility, visibilityjs
 - `passkeys`: @simplewebauthn/browser
 - `plural-rules`: pluralize
+- `pointer-events`: hammerjs, react-swipeable, swiped-events
 - `popover-anchor-positioning`: @floating-ui/react, @floating-ui/react-dom, @floating-ui/dom, @popperjs/core, popper.js, tippy.js, @tippyjs/react, react-popper, react-tooltip, floating-vue, v-tooltip, @oddbird/popover-polyfill
 - `progress-indicator`: react-spinners, spinkit, react-loader-spinner, ldrs, rc-progress, react-circular-progressbar, nprogress
 - `promise-withresolvers`: p-defer, defer-promise
@@ -212,6 +216,7 @@ and read its conditions before changing anything.
 | a SHA-256 or HMAC implementation pasted into the project as a single file of bit-shifting helpers | `web-crypto` | crypto.subtle | widely available |
 | a Uint8Array built by looping over atob output to turn a server challenge into bytes | `passkeys` | navigator.credentials with PublicKeyCredential | widely available |
 | a blur handler standing in for the tab being backgrounded, pausing a poll that a focus handler resumes | `page-visibility` | document.visibilityState and the visibilitychange event | widely available |
+| a canvas or offscreen span whose width is measured repeatedly to work out whether a webfont has replaced the fallback | `font-loading` | document.fonts with font-display | widely available |
 | a chain of millisecond thresholds turning a date difference into minutes, hours or days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
 | a chain of replace calls, one per accented letter the project has run into so far | `diacritics` | String.prototype.normalize("NFD") | widely available |
 | a chain of vendor-prefixed calls such as webkitRequestFullscreen and msRequestFullscreen | `fullscreen` | Element.requestFullscreen() | limited |
@@ -243,6 +248,7 @@ and read its conditions before changing anything.
 | a scrollTop assignment computed from offsetTop minus the container's height, to centre a highlighted item | `scroll-into-view` | scrollIntoView({ block: "nearest" }) | widely available |
 | a session token, nonce or password-reset key built from Math.random(), which is not a cryptographic source and is predictable from earlier outputs | `web-crypto` | crypto.subtle | widely available |
 | a setTimeout matching the CSS duration, so an element stays mounted long enough to animate out | `discrete-transitions` | @starting-style with transition-behavior: allow-discrete | newly available |
+| a setTimeout that adds a fonts-loaded class after a guessed delay, on the assumption the font has arrived by then | `font-loading` | document.fonts with font-display | widely available |
 | a share menu built from hardcoded intent URLs for each network, opened with window.open | `web-share` | navigator.share() | limited |
 | a submit handler running a regex against each field's value and collecting error strings into state | `form-validation` | constraint validation with :user-invalid | widely available |
 | a table of singular and plural unit names written out to build phrases like 3 days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
@@ -278,11 +284,13 @@ and read its conditions before changing anything.
 | measuring rendered text in a hidden element or on a canvas to decide where a line should visually end | `line-clamp` | -webkit-line-clamp | widely available |
 | measuring the scrollbar width from innerWidth minus documentElement.clientWidth and padding the body by it | `styled-scrollbars` | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available |
 | padStart on getHours() and getMinutes() to assemble a HH:MM clock, usually next to a hand-written AM and PM branch | `date-format` | Intl.DateTimeFormat | widely available |
+| paired touchstart and touchend listeners reading changedTouches[0].clientX to work out a swipe direction | `pointer-events` | pointer events with touch-action | widely available |
 | polling an element's dimensions on an interval to notice when they change | `resize-observer` | ResizeObserver | widely available |
 | prev and next buttons calling scrollBy, each with its own disabled state recomputed on every scroll | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
 | reading offsetWidth and setting height from it to keep a box in proportion | `aspect-ratio` | aspect-ratio | widely available |
 | reading scrollHeight and animating max-height to that pixel value to open a panel | `height-auto-animation` | interpolate-size: allow-keywords, or calc-size() | limited |
 | rendering dots from the item count and toggling an active class on whichever one is current | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
+| separate mousedown and touchstart branches doing the same thing, written because the two event streams disagree | `pointer-events` | pointer events with touch-action | widely available |
 | setting document.body.style.overflow to hidden when an overlay opens, and restoring it on close | `overscroll-behavior` | overscroll-behavior: contain | widely available |
 | slicing a string by character count before rendering it, so a card title fits its two lines | `line-clamp` | -webkit-line-clamp | widely available |
 | storing an element's original offsetTop so a placeholder can hold the gap when it goes fixed | `sticky-positioning` | position: sticky | widely available |

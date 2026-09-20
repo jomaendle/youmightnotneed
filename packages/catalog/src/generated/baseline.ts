@@ -429,6 +429,34 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "font-display": {
+      "name": "font-display",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://drafts.csswg.org/css-fonts-4/#font-display-desc",
+      "support": {
+        "chrome": "60",
+        "edge": "79",
+        "firefox": "58",
+        "safari": "11.1"
+      },
+      "partialSupport": null
+    },
+    "font-loading": {
+      "name": "Font loading",
+      "baseline": "high",
+      "lowDate": "2020-01-15",
+      "highDate": "2022-07-15",
+      "spec": "https://drafts.csswg.org/css-font-loading-3/",
+      "support": {
+        "chrome": "35",
+        "edge": "79",
+        "firefox": "41",
+        "safari": "10"
+      },
+      "partialSupport": null
+    },
     "fullscreen": {
       "name": "Fullscreen API",
       "baseline": false,
@@ -762,6 +790,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "12",
         "firefox": "18",
         "safari": "7"
+      },
+      "partialSupport": null
+    },
+    "pointer-events-api": {
+      "name": "Pointer Events",
+      "baseline": "high",
+      "lowDate": "2020-07-28",
+      "highDate": "2023-01-28",
+      "spec": "https://w3c.github.io/pointerevents/",
+      "support": {
+        "chrome": "55",
+        "edge": "12",
+        "firefox": "59",
+        "safari": "13"
       },
       "partialSupport": null
     },

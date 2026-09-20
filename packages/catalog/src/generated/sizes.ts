@@ -283,11 +283,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 10519,
       "version": "1.2.3"
     },
-    "css-has-pseudo": {
-      "gzip": 16891,
-      "raw": 71948,
-      "version": "8.0.1"
-    },
     "currency.js": {
       "gzip": 1068,
       "raw": 2250,
@@ -428,6 +423,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 3020,
       "version": "5.2.1"
     },
+    "fontfaceobserver": {
+      "gzip": 1639,
+      "raw": 4374,
+      "version": "2.3.0"
+    },
     "format-number": {
       "gzip": 1107,
       "raw": 3262,
@@ -452,6 +452,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 3107,
       "raw": 8177,
       "version": "1.0.0"
+    },
+    "hammerjs": {
+      "gzip": 7046,
+      "raw": 20083,
+      "version": "2.0.8"
     },
     "humanize-duration": {
       "gzip": 6841,
@@ -778,16 +783,6 @@ export const packageSizes: SizeSnapshot = {
       "raw": 20652,
       "version": "1.16.1"
     },
-    "postcss-nested": {
-      "gzip": 15443,
-      "raw": 66227,
-      "version": "8.0.1"
-    },
-    "postcss-nesting": {
-      "gzip": 17696,
-      "raw": 75631,
-      "version": "14.0.1"
-    },
     "pretty-bytes": {
       "gzip": 1029,
       "raw": 2045,
@@ -1068,6 +1063,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 8724,
       "version": "6.0.3"
     },
+    "react-swipeable": {
+      "gzip": 1555,
+      "raw": 3888,
+      "version": "7.0.2"
+    },
     "react-text-to-speech": {
       "gzip": 5747,
       "raw": 14972,
@@ -1262,6 +1262,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 150,
       "raw": 277,
       "version": "3.0.1"
+    },
+    "swiped-events": {
+      "gzip": 825,
+      "raw": 1850,
+      "version": "1.2.0"
     },
     "swiper": {
       "gzip": 20076,
@@ -1482,6 +1487,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 8355,
       "raw": 23861,
       "version": "0.17.0"
+    },
+    "webfontloader": {
+      "gzip": 4979,
+      "raw": 12204,
+      "version": "1.6.28"
     },
     "whatwg-fetch": {
       "gzip": 3512,
