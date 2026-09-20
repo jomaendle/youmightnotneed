@@ -28,6 +28,7 @@ import { PartialSupportNote } from "@/components/partial-support";
 import { Snippet } from "@/components/snippet";
 import { demos } from "@/lib/demos";
 import { site } from "@/lib/site";
+import { person } from "@/lib/structured-data";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -73,11 +74,7 @@ export default async function RulePage({ params }: PageProps) {
               headline: `${rule.title}: ${rule.native}`,
               description: rule.agent.when,
               url: `${site.url}/rules/${rule.id}`,
-              author: {
-                "@type": "Person",
-                name: site.author,
-                url: site.authorUrl,
-              },
+              author: person,
               isPartOf: { "@type": "WebSite", name: site.name, url: site.url },
             },
             {

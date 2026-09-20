@@ -16,6 +16,24 @@
  */
 import { DATALIST_ID } from "@/lib/packages";
 
+/**
+ * WebMCP declarative tool attributes, github.com/webmachinelearning/webmcp.
+ * Browsers without support ignore them. Spread from an object because React's
+ * types know no `toolname`; React 19 passes unknown lowercase attributes on
+ * DOM elements straight through to the markup.
+ *
+ * Only the header copy carries them, so a page with both fields registers one
+ * tool, not two with the same name.
+ */
+const SEARCH_TOOL = {
+  toolname: "search_packages",
+  tooldescription:
+    "Search the catalog by npm package name and list the rules that cover it.",
+};
+const SEARCH_PARAM = {
+  toolparamdescription: "An npm package name, e.g. swiper, uuid or axios",
+};
+
 export function SearchField({
   variant,
   defaultValue,
@@ -30,7 +48,7 @@ export function SearchField({
     <search
       className={onPage ? "max-w-[28rem]" : "hidden min-w-0 flex-1 sm:block"}
     >
-      <form action="/search" method="get">
+      <form action="/search" method="get" {...(onPage ? {} : SEARCH_TOOL)}>
         <label htmlFor={id} className="sr-only">
           Search the catalog by package name
         </label>
@@ -43,6 +61,7 @@ export function SearchField({
           defaultValue={defaultValue}
           placeholder="swiper, uuid, axios"
           spellCheck={false}
+          {...(onPage ? {} : SEARCH_PARAM)}
           className={`block w-full rounded-md border border-border bg-bg-subtle font-mono outline-none placeholder:text-fg-faint/55 focus-visible:border-fg-faint ${
             onPage
               ? "px-3.5 py-2.5 text-compact"

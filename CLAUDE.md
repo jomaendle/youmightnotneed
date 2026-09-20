@@ -80,8 +80,15 @@ second, so `pnpm refresh:skill` regenerates its reference and the freshness
 check fails on drift. Keep counts and rule names out of its hand-written
 SKILL.md: the generated `references/catalog.md` carries those.
 
+The site also serves the skill as an archive, for agents that discover skills
+through `/.well-known/agent-skills/index.json`. `pnpm refresh:skill-archive`
+rebuilds `apps/web/public/.well-known/agent-skills/` from the skill directory,
+byte for byte reproducible, and the freshness check compares against it. Run
+it after any edit under `skills/youmightnotneed/`, and after `refresh:skill`.
+
 `packages/catalog/src/generated/` (Baseline, Baseline history, sizes, guide
-index, lint rules, support claims) and `skills/youmightnotneed/references/catalog.md` are written by the
+index, lint rules, support claims) and
+`skills/youmightnotneed/references/catalog.md` are written by the
 refresh scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
 patching numbers.
 

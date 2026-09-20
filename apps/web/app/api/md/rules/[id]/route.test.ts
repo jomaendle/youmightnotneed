@@ -33,13 +33,17 @@ describe("the markdown handler", () => {
     expect(response.headers.get("Vary")).toBeNull();
   });
 
-  it("answers an unknown id with a plain-text 404", async () => {
+  it("answers an unknown id with a markdown 404", async () => {
     const response = await get("no-such-rule");
     expect(response.status).toBe(404);
     expect(response.headers.get("Content-Type")).toBe(
-      "text/plain; charset=utf-8",
+      "text/markdown; charset=utf-8",
     );
-    // The only recovery path an agent gets, so it is worth asserting.
-    expect(await response.text()).toContain("/llms.txt");
+    // The only recovery paths an agent gets, so they are worth asserting.
+    const body = await response.text();
+    expect(body).toContain("(/llms.txt)");
+    expect(body).toContain("(/rules)");
+    // The id is not echoed: a crafted URL should not put text in a reply.
+    expect(body).not.toContain("no-such-rule");
   });
 });

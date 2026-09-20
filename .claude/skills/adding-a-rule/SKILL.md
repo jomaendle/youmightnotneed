@@ -117,14 +117,16 @@ Order in the array is not significant.
 pnpm refresh:baseline   # pulls featureIds' status into generated/baseline.ts
 pnpm refresh:sizes       # fetches bundlephobia sizes for every claimed package
 pnpm refresh:guides      # snapshots the modern-web-guidance index
+pnpm refresh:lint-rules  # snapshots the linter rule names a rule may cite
 pnpm refresh:support     # resolves every {{browser:key}} token in the prose
 pnpm refresh:skill       # regenerates the skill's catalog reference
+pnpm refresh:skill-archive # rebuilds the published skill archive from it
 ```
 
-`pnpm refresh` runs all five. The skill reference must be regenerated for any
-new rule, or `check:freshness` fails.
+`pnpm refresh` runs all seven. The skill reference and the archive built from it
+must be regenerated for any new rule, or `check:freshness` fails.
 
-All four are safe to run even when nothing else changed: existing entries
+All of them are safe to run even when nothing else changed: existing entries
 survive a failed fetch. Check the output of `refresh:sizes` for "No size for N
 package(s)". That means a typo in `replaces`, since the rule can never match
 a package that doesn't exist on npm.

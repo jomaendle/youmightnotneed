@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "youmightnotneed",
   "description": "Check whether a JavaScript dependency has a native CSS, HTML or Web API equivalent",
   "version": "0.2.0",
