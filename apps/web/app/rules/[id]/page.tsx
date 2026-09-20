@@ -21,10 +21,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BaselineBadge } from "@/components/baseline-badge";
 import { BrowserSupport } from "@/components/browser-support";
+import { JsonLd } from "@/components/json-ld";
 import { LiveDemo } from "@/components/live-demo";
 import { PartialSupportNote } from "@/components/partial-support";
 import { Snippet } from "@/components/snippet";
 import { demos } from "@/lib/demos";
+import { site } from "@/lib/site";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -61,6 +63,37 @@ export default async function RulePage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "TechArticle",
+              headline: `${rule.title}: ${rule.native}`,
+              description: rule.agent.when,
+              url: `${site.url}/rules/${rule.id}`,
+              author: {
+                "@type": "Person",
+                name: site.author,
+                url: site.authorUrl,
+              },
+              isPartOf: { "@type": "WebSite", name: site.name, url: site.url },
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Rules",
+                  item: `${site.url}/rules`,
+                },
+                { "@type": "ListItem", position: 2, name: rule.title },
+              ],
+            },
+          ],
+        }}
+      />
       {/* Driven by animation-timeline: scroll(), so no scroll listener. */}
       <div className="progress-bar" aria-hidden="true" />
 
