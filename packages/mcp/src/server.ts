@@ -65,7 +65,7 @@ export function createServer(): McpServer {
     {
       title: "Analyze dependencies",
       description:
-        "Matches a package.json's dependencies against the youmightnotneed catalog. Returns findings (one per matched rule, each carrying every dependency of yours that it covers), a summary, and provenance for when the underlying data was captured. Every finding is conditional: read the rule's agent.unless conditions before suggesting a removal. A finding may carry `guides`, which are modern-web-guidance guide IDs. Run each guide's `command` before writing the replacement code, because this catalog gives you the one-line swap and the guide gives you the fallbacks and the gotchas.",
+        "Matches a package.json's dependencies against the youmightnotneed catalog. Returns findings (one per matched rule, each carrying every dependency of yours that it covers), a summary, and provenance for when the underlying data was captured. Every finding is conditional: read the rule's agent.unless conditions before suggesting a removal. Each finding also carries `since`, the date its native replacement reached its current Baseline status, so a question like \"what became replaceable recently\" is a filter over these findings rather than another call. A finding may carry `guides`, which are modern-web-guidance guide IDs. Run each guide's `command` before writing the replacement code, because this catalog gives you the one-line swap and the guide gives you the fallbacks and the gotchas.",
       inputSchema: dependencyFieldSchema(),
     },
     (input: PackageJsonLike) => {

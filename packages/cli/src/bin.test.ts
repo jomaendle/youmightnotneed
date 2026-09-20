@@ -413,3 +413,110 @@ describe("a lockfile is not a manifest", () => {
     }
   });
 });
+
+interface JsonReport {
+  since?: { date: string; earlier: number; undated: number };
+  summary: { replaceableBytes: number; findingCount: number };
+  findings: Array<{ ruleId: string; baseline: { since: string | null } }>;
+}
+
+describe("--since narrows the report to recent Baseline crossings", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  const run = (args: string[]) =>
+    spawnSync(process.execPath, [binPath, ...args], { encoding: "utf8" });
+
+  let projectDir: string;
+
+  beforeEach(() => {
+    projectDir = mkdtempSync(join(tmpdir(), "ymn-since-"));
+    writeFileSync(
+      join(projectDir, "package.json"),
+      JSON.stringify({
+        name: "since-fixture",
+        // axios crossed long ago, inert and content-visibility recently.
+        dependencies: {
+          axios: "^1.6.0",
+          "focus-trap": "^7.5.4",
+          "react-virtualized": "^9.22.5",
+        },
+      }),
+    );
+  });
+
+  afterEach(() => {
+    rmSync(projectDir, { recursive: true, force: true });
+  });
+
+  it("drops findings that crossed before the date", () => {
+    const all = run([projectDir, "--json"]);
+    const since = run([projectDir, "--json", "--since", "2025-06-01"]);
+
+    const allIds = (JSON.parse(all.stdout) as JsonReport).findings.map(
+      (f) => f.ruleId,
+    );
+    const sinceIds = (JSON.parse(since.stdout) as JsonReport).findings.map(
+      (f) => f.ruleId,
+    );
+
+    expect(allIds).toContain("fetch");
+    expect(sinceIds).not.toContain("fetch");
+    expect(sinceIds.length).toBeGreaterThan(0);
+    expect(sinceIds.length).toBeLessThan(allIds.length);
+  });
+
+  // The headline has to describe what is on screen. Leaving the full total
+  // next to a filtered list would attribute kilobytes to findings the reader
+  // cannot see.
+  it("recomputes the headline from what survives the filter", () => {
+    const all = JSON.parse(run([projectDir, "--json"]).stdout) as JsonReport;
+    const since = JSON.parse(
+      run([projectDir, "--json", "--since", "2025-06-01"]).stdout,
+    ) as JsonReport;
+
+    expect(since.summary.replaceableBytes).toBeLessThan(
+      all.summary.replaceableBytes,
+    );
+    expect(since.summary.findingCount).toBe(since.findings.length);
+  });
+
+  it("accounts for every finding it is not showing", () => {
+    const result = run([projectDir, "--since", "2025-06-01", "--no-color"]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("outside this view");
+  });
+
+  it("reports an empty window without claiming the catalog has no rule", () => {
+    const result = run([projectDir, "--since", "2099-01-01", "--no-color"]);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("2099-01-01");
+    expect(result.stdout).not.toContain("no native equivalent in the catalog");
+  });
+
+  it("carries the crossing date per finding even without the flag", () => {
+    const report = JSON.parse(run([projectDir, "--json"]).stdout) as JsonReport;
+    const fetchFinding = report.findings.find((f) => f.ruleId === "fetch");
+
+    expect(fetchFinding?.baseline.since).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("omits the top-level since block when the flag is absent", () => {
+    const report = JSON.parse(run([projectDir, "--json"]).stdout) as JsonReport;
+
+    expect(report.since).toBeUndefined();
+  });
+
+  // Guessing a date is worse than refusing: nothing in the output would say
+  // which date the report actually used.
+  it.each([["2026"], ["yesterday"], ["2026-02-30"], ["2026-13-01"]])(
+    "%s exits 2 rather than guessing what was meant",
+    (value) => {
+      const result = run([projectDir, "--since", value]);
+
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("YYYY-MM-DD");
+    },
+  );
+});

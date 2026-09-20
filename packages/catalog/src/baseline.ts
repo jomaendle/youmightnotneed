@@ -194,6 +194,34 @@ export function combinedSupport(
 }
 
 /**
+ * When a rule as a whole reached its current Baseline status, or null when the
+ * catalog cannot say.
+ *
+ * A rule is only as available as its weakest required feature, so the rule
+ * crossed on the date the *last* of its features crossed. Dates are
+ * YYYY-MM-DD, so the latest one is the largest string and no clock is needed
+ * to compare them, which is what keeps this callable from a pure module.
+ *
+ * Null covers two cases that both mean "no crossing to report": a feature that
+ * has not crossed at all (limited or unverified), and a manualBaseline rule,
+ * whose `verifiedOn` records a human checking rather than a feature landing.
+ * A caller that filters on a date has to name those separately instead of
+ * dropping them silently.
+ */
+export function baselineSince(info: BaselineInfo): string | null {
+  if (info.features.length === 0) return null;
+  let latest: string | null = null;
+  for (const feature of info.features) {
+    // One undated feature means the rule has no date: the rule is gated by
+    // that feature, so a date drawn from its siblings would claim the rule
+    // crossed on a day it demonstrably had not.
+    if (feature.since === null) return null;
+    if (latest === null || feature.since > latest) latest = feature.since;
+  }
+  return latest;
+}
+
+/**
  * True when a support map names no version for any tracked browser. That is
  * two different situations wearing the same face: the feature shipped nowhere,
  * or web-features publishes no aggregate for it. A caller that renders one row

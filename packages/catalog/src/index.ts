@@ -11,6 +11,7 @@ export {
   baselineLabel,
   baselineRank,
   baselineShortLabel,
+  baselineSince,
   combinedSupport,
   compareBaseline,
   hasNoVersions,
@@ -38,8 +39,10 @@ export {
   type MatchedPackage,
   type PackageJsonLike,
   type Report,
+  type SinceSplit,
   type Summary,
   sortFindings,
+  splitSince,
   summarize,
 } from "./detect.ts";
 export {

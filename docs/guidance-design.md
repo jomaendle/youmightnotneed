@@ -1,7 +1,18 @@
 # Best-practice guidance: where it goes, and why not in the catalog
 
-Status: proposal. Nothing here is built. Written so the decision is made once,
-before anyone starts.
+Status: closed, not building. Kept because the reasoning still applies to the
+next proposal shaped like this one.
+
+Two things settled it. The argument below against putting guidance in the
+catalog turned out to apply to shipping it at all under this name: it goes
+stale on a different clock than Baseline, and no script can check it. And
+Chrome shipped Modern Web Guidance in 2026 covering the same use-case-keyed
+ground, with a distribution this project cannot match.
+
+What is left is the half nobody else does. Their guidance is keyed by use
+case, so it helps an agent write new code well. This catalog is keyed by
+package name, so it answers which dependency already in a package.json can
+go, and when it cannot. That is the direction to push.
 
 ## What is being asked for
 
