@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CopyPrompt } from "@/components/copy-prompt";
 import { FeaturedCarousel } from "@/components/featured-carousel";
+import { JsonLd } from "@/components/json-ld";
 import { MethodologyDialog } from "@/components/methodology-dialog";
 import { ScanForm } from "@/components/scan-form";
 import { SwapDiff } from "@/components/swap-diff";
@@ -18,6 +19,7 @@ import { TierHistorySparkline } from "@/components/tier-history-sparkline";
 import { AGENT_PROMPT, AGENT_PROMPT_SUMMARY } from "@/lib/agent-prompt";
 import { demos } from "@/lib/demos";
 import { EXAMPLE_REPORT_PAYLOAD } from "@/lib/example-report";
+import { site } from "@/lib/site";
 import { CLI_VERSION, MCP_VERSION } from "@/lib/versions";
 
 /*
@@ -65,6 +67,40 @@ export default function HomePage() {
 
   return (
     <div className="space-y-14">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              name: site.name,
+              url: site.url,
+              description: site.description,
+              potentialAction: {
+                "@type": "SearchAction",
+                target: `${site.url}/search?q={search_term_string}`,
+                "query-input": "required name=search_term_string",
+              },
+            },
+            {
+              "@type": "SoftwareApplication",
+              name: site.name,
+              applicationCategory: "DeveloperApplication",
+              operatingSystem: "Any",
+              description: site.description,
+              url: site.url,
+              codeRepository: site.repo,
+              license: "https://opensource.org/license/mit",
+              offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+              author: {
+                "@type": "Person",
+                name: site.author,
+                url: site.authorUrl,
+              },
+            },
+          ],
+        }}
+      />
       {/*
         The hero is a diff because the product is a deletion, and this
         audience reads diffs without needing a caption. The panel on the right

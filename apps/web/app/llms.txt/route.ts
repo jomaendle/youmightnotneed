@@ -47,6 +47,12 @@ for keeping the dependency, the swap, and links to the long-form guides.
 The rule page itself answers with the same markdown when the request sends
 \`Accept: text/markdown\`, and with the HTML page otherwise.
 
+## Machine-readable
+
+- ${site.url}/llms-full.txt: every rule in one document.
+- ${site.url}/openapi.json: the read-only HTTP surface. No authentication.
+- ${site.url}/.well-known/agent-skills/index.json: the agent skill.
+
 ## By use case
 
 The left column is the case the native approach covers, so it is searchable
