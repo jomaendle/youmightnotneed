@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "youmightnotneed": {
+      "command": "npx",
+      "args": ["-y", "youmightnotneed-mcp"]
+    }
+  }
+}

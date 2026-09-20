@@ -144,5 +144,8 @@ npx -y modern-web-guidance@latest retrieve "<id>"
 
 ## Through MCP instead
 
-`npx -y youmightnotneed-mcp` serves the same catalog over stdio, for a host
-that prefers tools to a CLI.
+Installing this plugin also registers the `youmightnotneed` MCP server, so
+`analyze_dependencies`, `get_rule` and `list_rules` may already be available as
+tools rather than commands. Prefer those over shelling out to the CLI or curl
+when they are present; they read the same catalog. On a host without the
+plugin, `npx -y youmightnotneed-mcp` serves the same three tools over stdio.
