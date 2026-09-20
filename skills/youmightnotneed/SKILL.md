@@ -9,6 +9,10 @@ A lookup table from a use case, or an npm package name, to the platform
 feature that covers it. Matching is exact and there is no model in the loop,
 so it never guesses what a package does.
 
+If `analyze_dependencies`, `get_rule` and `list_rules` are available as tools,
+this plugin registered them. Use those instead of the `curl`/`npx` commands
+below; they read the same catalog.
+
 Two directions, and the first is the one that saves the most.
 
 ## Starting from what you are building
@@ -148,4 +152,4 @@ Installing this plugin also registers the `youmightnotneed` MCP server, so
 `analyze_dependencies`, `get_rule` and `list_rules` may already be available as
 tools rather than commands. Prefer those over shelling out to the CLI or curl
 when they are present; they read the same catalog. On a host without the
-plugin, `npx -y youmightnotneed-mcp` serves the same three tools over stdio.
+plugin, `npx -y youmightnotneed-mcp` serves the same tools over stdio.
