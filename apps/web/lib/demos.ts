@@ -2286,6 +2286,12 @@ export const demosNotWorthIt: Record<string, string> = {
     "EventSource needs a real streaming endpoint. Nothing in a srcdoc frame can serve one.",
   "file-download":
     'allow-downloads might let the frame save a real file, but a button that reports "Saved" whether or not it did is worse than no demo, and the sandbox gives no way to tell.',
+  temporal:
+    "Temporal is not in this browser yet unless it is Chromium, so the frame would show a broken demo to most readers and a working one to a few.",
+  "speculation-rules":
+    "Prerendering a second page needs a real site to prerender, and the win is a navigation that never happens in a frame.",
+  "cookie-store":
+    "The frame has an opaque origin, so it cannot set a cookie at all and the API would throw rather than demonstrate anything.",
   passkeys:
     "A passkey ceremony needs a real authenticator and a server to issue the challenge. A fake one would teach the wrong shape.",
   jquery:

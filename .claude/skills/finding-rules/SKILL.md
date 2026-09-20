@@ -42,6 +42,24 @@ Whatever the entry point, two things are non-negotiable:
 - **Real `unless` conditions.** Write these first. If you cannot think of two,
   you do not understand the replacement well enough to publish it yet.
 
+### Limited availability is a tier, not a rejection
+
+The catalog ships limited rules on purpose and renders them under "not in
+every engine yet, so it needs a fallback". A feature one engine has shipped
+is worth a rule: someone choosing a library today should know the platform
+is coming, and the day it crosses, the rule is already written and the
+`--since` view picks it up.
+
+Two obligations come with it. The first `unless` says plainly that this needs
+a fallback today and names which engines are missing, through
+`{{browser:feature-id}}` rather than a typed version. And the framing is
+honest about what the swap is: for a feature only Chrome has, dropping the
+library means shipping a polyfill or an enhancement, not deleting code.
+
+Where the whole value is the polyfill, say so in the explainer. A rule that
+reads as "delete this" when the honest answer is "this is coming" is the
+failure the `unless` field exists to prevent.
+
 ## 2. Where to look
 
 Ordered by hit rate.
@@ -122,9 +140,8 @@ Worked examples, all real:
 - **The fix is configuration, not a swap.** `core-js` is the largest number
   available, 52.7M weekly against 88.8 kB, but you remove it by raising your
   `browserslist` target. That is not "this dependency, that API".
-- **The feature is not Baseline.** `Temporal` is limited, Safari ships
-  nothing, so a date-arithmetic rule would be a swap-your-polyfill rule.
-  `cookieStore` is `baseline: false`, which rules out `js-cookie`.
+- **The feature has no `web-features` ID at all**, and no defensible
+  `manualBaseline`. A tier that cannot be derived is a tier someone typed.
 - **The package ships nothing to the browser.** A PostCSS plugin runs at
   build time, so counting it inflates a headline that promises page weight.
   Raise it rather than shipping it.

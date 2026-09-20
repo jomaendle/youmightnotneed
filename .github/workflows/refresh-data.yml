@@ -30,6 +30,19 @@ jobs:
       - run: pnpm update web-features --latest
       - run: pnpm update @mdn/browser-compat-data --latest
 
+      # Before the refresh, while the committed snapshot is still the old
+      # state and web-features on disk is already the new one. This is the
+      # only moment the two disagree, so it is the only moment the comparison
+      # means anything.
+      - name: Report Baseline tier changes
+        id: tiers
+        run: |
+          {
+            echo 'report<<TIERS_EOF'
+            pnpm --silent check:tiers
+            echo TIERS_EOF
+          } >> "$GITHUB_OUTPUT"
+
       - run: pnpm refresh:baseline
 
       # bundlephobia is a third-party service and it goes down. A refresh that
@@ -59,5 +72,8 @@ jobs:
           body: |
             Regenerated from the latest `web-features` and bundlephobia.
 
-            Check the diff for rules that changed tier. A rule moving from
-            limited to newly available is worth a post.
+            ${{ steps.tiers.outputs.report }}
+
+            A rule leaving limited availability is the one worth a post: its
+            first condition currently tells readers they still need a
+            fallback, and that sentence is now wrong.

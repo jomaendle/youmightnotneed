@@ -12,6 +12,7 @@ import { colorFunctions } from "./color-functions.ts";
 import { compressionStreams } from "./compression-streams.ts";
 import { containerQueries } from "./container-queries.ts";
 import { contentVisibility } from "./content-visibility.ts";
+import { cookieStore } from "./cookie-store.ts";
 import { customHighlight } from "./custom-highlight.ts";
 import { dateFormat } from "./date-format.ts";
 import { dateTimeInput } from "./date-time-input.ts";
@@ -63,10 +64,12 @@ import { select } from "./select.ts";
 import { serverSentEvents } from "./server-sent-events.ts";
 import { signalTimeout } from "./signal-timeout.ts";
 import { smoothScroll } from "./smooth-scroll.ts";
+import { speculationRules } from "./speculation-rules.ts";
 import { speechRecognition } from "./speech-recognition.ts";
 import { speechSynthesis } from "./speech-synthesis.ts";
 import { sticky } from "./sticky.ts";
 import { structuredCloneRule } from "./structured-clone.ts";
+import { temporal } from "./temporal.ts";
 import { textBoxTrim } from "./text-box-trim.ts";
 import { textWrapBalance } from "./text-wrap-balance.ts";
 import { urlPattern } from "./url-pattern.ts";
@@ -156,6 +159,9 @@ const rawRules: readonly Rule[] = [
   progressIndicator,
   fontLoading,
   pointerEvents,
+  cookieStore,
+  speculationRules,
+  temporal,
   pageVisibility,
   popover,
   relativeTime,

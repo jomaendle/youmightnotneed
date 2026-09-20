@@ -261,6 +261,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "cookie-store": {
+      "name": "Cookie store",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://cookiestore.spec.whatwg.org/",
+      "support": {
+        "chrome": "87",
+        "edge": "87",
+        "firefox": null,
+        "safari": null
+      },
+      "partialSupport": null
+    },
     "customizable-select": {
       "name": "Customizable <select>",
       "baseline": false,
@@ -1053,6 +1067,20 @@ export const baselineSnapshot: BaselineSnapshot = {
       },
       "partialSupport": null
     },
+    "speculation-rules": {
+      "name": "Speculation rules",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://html.spec.whatwg.org/multipage/speculative-loading.html#speculation-rules",
+      "support": {
+        "chrome": "109",
+        "edge": "109",
+        "firefox": null,
+        "safari": null
+      },
+      "partialSupport": null
+    },
     "speech-recognition": {
       "name": "Speech recognition",
       "baseline": false,
@@ -1134,6 +1162,20 @@ export const baselineSnapshot: BaselineSnapshot = {
         "edge": "98",
         "firefox": "94",
         "safari": "15.4"
+      },
+      "partialSupport": null
+    },
+    "temporal": {
+      "name": "Temporal",
+      "baseline": false,
+      "lowDate": null,
+      "highDate": null,
+      "spec": "https://tc39.es/proposal-temporal/",
+      "support": {
+        "chrome": "144",
+        "edge": "144",
+        "firefox": "139",
+        "safari": null
       },
       "partialSupport": null
     },

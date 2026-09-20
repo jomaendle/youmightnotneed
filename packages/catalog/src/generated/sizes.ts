@@ -23,6 +23,11 @@ export const packageSizes: SizeSnapshot = {
   "fetchedOn": "2026-09-20",
   "source": "bundlephobia.com",
   "sizes": {
+    "@a11y/focus-trap": {
+      "gzip": 1337,
+      "raw": 3669,
+      "version": "1.0.5"
+    },
     "@capacitor-community/bluetooth-le": {
       "gzip": 2659,
       "raw": 9322,
@@ -52,6 +57,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 9278,
       "raw": 24506,
       "version": "2.1.9"
+    },
+    "@js-joda/core": {
+      "gzip": 40730,
+      "raw": 195100,
+      "version": "6.1.0"
     },
     "@juggle/resize-observer": {
       "gzip": 3010,
@@ -137,6 +147,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 4700,
       "raw": 14111,
       "version": "2.3.4"
+    },
+    "aria-hidden": {
+      "gzip": 931,
+      "raw": 2095,
+      "version": "1.2.6"
     },
     "async-mutex": {
       "gzip": 1653,
@@ -473,6 +488,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 16667,
       "version": "7.14.0"
     },
+    "instant.page": {
+      "gzip": 1320,
+      "raw": 3082,
+      "version": "5.2.0"
+    },
     "intersection-observer": {
       "gzip": 3068,
       "raw": 8917,
@@ -508,10 +528,20 @@ export const packageSizes: SizeSnapshot = {
       "raw": 4151,
       "version": "3.9.4"
     },
+    "js-cookie": {
+      "gzip": 803,
+      "raw": 1574,
+      "version": "3.0.8"
+    },
     "js-file-download": {
       "gzip": 429,
       "raw": 726,
       "version": "0.4.12"
+    },
+    "js-joda": {
+      "gzip": 40107,
+      "raw": 210140,
+      "version": "1.11.0"
     },
     "js-sha256": {
       "gzip": 3054,
@@ -612,6 +642,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 20262,
       "raw": 62635,
       "version": "2.31.0"
+    },
+    "moment-timezone": {
+      "gzip": 59936,
+      "raw": 803389,
+      "version": "0.6.4"
     },
     "motion": {
       "gzip": 47708,
@@ -812,6 +847,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 479,
       "raw": 771,
       "version": "2.2.0"
+    },
+    "quicklink": {
+      "gzip": 2482,
+      "raw": 5539,
+      "version": "3.0.2"
     },
     "rc-progress": {
       "gzip": 3714,
@@ -1218,6 +1258,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 45765,
       "version": "1.15.7"
     },
+    "spacetime": {
+      "gzip": 17751,
+      "raw": 50320,
+      "version": "7.15.0"
+    },
     "speak-tts": {
       "gzip": 2086,
       "raw": 5746,
@@ -1312,6 +1357,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 555,
       "raw": 1113,
       "version": "5.0.0"
+    },
+    "universal-cookie": {
+      "gzip": 2377,
+      "raw": 6550,
+      "version": "8.1.2"
     },
     "url-parse": {
       "gzip": 2516,
