@@ -30,6 +30,30 @@ jobs:
       - run: pnpm update web-features --latest
       - run: pnpm update @mdn/browser-compat-data --latest
 
+      # Before the refresh, while the committed snapshot is still the old
+      # state and web-features on disk is already the new one. This is the
+      # only moment the two disagree, so it is the only moment the comparison
+      # means anything.
+      - name: Report Baseline tier changes
+        id: tiers
+        # A report, never a gate. If this crashes the refresh PR should still
+        # open; a missing summary is worth far less than a blocked refresh.
+        continue-on-error: true
+        # Captured first, then written. Writing the heredoc inline meant a
+        # non-zero exit aborted between the opening delimiter and the closing
+        # one, so the failure surfaced as a malformed-output parse error
+        # instead of whatever the script actually said.
+        run: |
+          report="$(pnpm --silent check:tiers)" || true
+          # Say so rather than interpolating nothing. An empty gap in the PR
+          # body is indistinguishable from the script reporting no changes.
+          report="${report:-_Tier report failed. See this step's log._}"
+          {
+            echo 'report<<TIERS_EOF'
+            echo "$report"
+            echo TIERS_EOF
+          } >> "$GITHUB_OUTPUT"
+
       - run: pnpm refresh:baseline
 
       # bundlephobia is a third-party service and it goes down. A refresh that
@@ -59,5 +83,8 @@ jobs:
           body: |
             Regenerated from the latest `web-features` and bundlephobia.
 
-            Check the diff for rules that changed tier. A rule moving from
-            limited to newly available is worth a post.
+            ${{ steps.tiers.outputs.report }}
+
+            A rule leaving limited availability is the one worth a post: its
+            first condition currently tells readers they still need a
+            fallback, and that sentence is now wrong.

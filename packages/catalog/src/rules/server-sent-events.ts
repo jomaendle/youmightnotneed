@@ -36,5 +36,9 @@ source.addEventListener("error", () => {
     snippet: `const source = new EventSource("/api/updates");
 source.addEventListener("price", (e) => update(JSON.parse(e.data)));
 source.close();`,
+    handRolled: [
+      "a setInterval or a self-rescheduling setTimeout re-fetching an endpoint to notice changes, with the delay tuned by hand",
+      "a long poll: a fetch the server holds open, re-issued from its own then handler",
+    ],
   },
 };

@@ -37,6 +37,234 @@ const SOLID =
  * frame can show truthfully.
  */
 export const demos: Partial<Record<string, Demo>> = {
+  "pointer-events": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:.75rem;">
+  <div id="pad" style="inline-size:min(100%,20rem); block-size:7rem; display:grid; place-items:center; border:1px solid var(--c-border-strong); border-radius:.5rem; touch-action:pan-y; user-select:none;">
+    Swipe or drag across me
+  </div>
+  <p id="out" class="demo-hint" style="text-align:center;">Mouse, pen and touch all arrive as the same event.</p>
+</div>
+<script>
+  const pad = document.getElementById("pad");
+  const out = document.getElementById("out");
+  let startX = 0;
+  pad.addEventListener("pointerdown", (event) => {
+    startX = event.clientX;
+    pad.setPointerCapture(event.pointerId);
+    out.textContent = "pointerdown from " + event.pointerType;
+  });
+  pad.addEventListener("pointerup", (event) => {
+    const dx = Math.round(event.clientX - startX);
+    out.textContent =
+      Math.abs(dx) > 50
+        ? "swipe " + (dx > 0 ? "right" : "left") + " (" + dx + "px)"
+        : "moved " + dx + "px, under the 50px threshold";
+  });
+</script>
+`,
+    ),
+  },
+  "plural-rules": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button data-locale="en">en</button>
+    <button data-locale="ru">ru</button>
+    <button data-locale="pl">pl</button>
+    <button data-locale="ar">ar</button>
+  </div>
+  <p id="result" class="demo-hint" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg); text-align:center;">pick a locale</p>
+</div>
+<script>
+  const result = document.getElementById("result");
+  const counts = [0, 1, 2, 3, 5, 11];
+  document.querySelectorAll("button[data-locale]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const pr = new Intl.PluralRules(btn.dataset.locale);
+      result.textContent = counts
+        .map((n) => n + " → " + pr.select(n))
+        .join("   ");
+    });
+  });
+</script>
+`,
+    ),
+  },
+  diacritics: {
+    height: 210,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <input id="src" value="Crème Brûlée, Łódź, Schön" style="inline-size:min(100%,22rem); padding:0.5rem 0.75rem;">
+  <p id="out" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg); text-align:center;"></p>
+  <p class="demo-hint" style="text-align:center;">The stroke on Ł is not a combining mark, so it stays.</p>
+</div>
+<script>
+  const src = document.getElementById("src");
+  const out = document.getElementById("out");
+  const render = () => {
+    out.textContent = src.value.normalize("NFD").replace(/\\p{Diacritic}/gu, "");
+  };
+  src.addEventListener("input", render);
+  render();
+</script>
+`,
+    ),
+  },
+  "progress-indicator": {
+    height: 220,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
+  <progress id="bar" value="0.35" style="inline-size:14rem;"></progress>
+  <progress style="inline-size:14rem;"></progress>
+  <p class="demo-hint" style="text-align:center;">Same element. The second has no value attribute.</p>
+  <button id="step">Advance</button>
+</div>
+<script>
+  const bar = document.getElementById("bar");
+  document.getElementById("step").addEventListener("click", () => {
+    const next = bar.value + 0.2;
+    bar.value = next > 1 ? 0 : next;
+  });
+</script>
+`,
+    ),
+  },
+  "form-validation": {
+    height: 240,
+    html: wrapDemo(
+      `
+<form id="f" novalidate style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <input type="email" required placeholder="you@example.com" style="inline-size:min(100%,20rem); padding:0.5rem 0.75rem;">
+  <p class="demo-hint" style="text-align:center;">Nothing is red until you have typed and left the field.</p>
+</form>
+<style>
+  #f input:user-invalid { border-color: #e06c75; outline-color: #e06c75; }
+  #f input:user-valid { border-color: #67b26f; outline-color: #67b26f; }
+</style>
+`,
+    ),
+  },
+  "scroll-into-view": {
+    height: 250,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; gap:0.75rem; align-items:center;">
+  <div id="list" style="block-size:8rem; inline-size:min(100%,18rem); overflow:auto; border:1px solid var(--c-border); border-radius:.5rem; padding:.5rem;"></div>
+  <div style="display:flex; gap:.5rem;">
+    <button data-to="3">Item 3</button>
+    <button data-to="18">Item 18</button>
+  </div>
+  <p class="demo-hint" style="text-align:center;">block: "nearest" does nothing when the item is already visible.</p>
+</div>
+<script>
+  const list = document.getElementById("list");
+  for (let i = 1; i <= 24; i += 1) {
+    const row = document.createElement("div");
+    row.textContent = "Item " + i;
+    row.id = "item-" + i;
+    row.style.padding = "0.25rem 0";
+    list.append(row);
+  }
+  document.querySelectorAll("button[data-to]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .getElementById("item-" + btn.dataset.to)
+        .scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+  });
+</script>
+`,
+    ),
+  },
+  "light-dark": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div id="panel" style="display:flex; flex-direction:column; align-items:center; gap:.75rem; padding:1.25rem; border-radius:.5rem; background:light-dark(#f4f4f5,#18181b); color:light-dark(#18181b,#f4f4f5); border:1px solid light-dark(#d4d4d8,#3f3f46);">
+  <strong>One declaration per colour</strong>
+  <p class="demo-hint" style="color:inherit; opacity:.7; text-align:center;">Both colours live in the same property. color-scheme picks.</p>
+  <div style="display:flex; gap:.5rem;">
+    <button data-scheme="light">light</button>
+    <button data-scheme="dark">dark</button>
+  </div>
+</div>
+<script>
+  const panel = document.getElementById("panel");
+  panel.style.colorScheme = "dark";
+  document.querySelectorAll("button[data-scheme]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      panel.style.colorScheme = btn.dataset.scheme;
+    });
+  });
+</script>
+`,
+    ),
+  },
+  "file-drop": {
+    height: 240,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:.75rem;">
+  <div id="zone" style="inline-size:min(100%,20rem); padding:1.25rem; text-align:center; border:1px dashed var(--c-border-strong); border-radius:.5rem;">
+    Drop files here
+  </div>
+  <input type="file" id="picker" multiple>
+  <p id="out" class="demo-hint" style="text-align:center;">No files yet.</p>
+</div>
+<script>
+  const zone = document.getElementById("zone");
+  const out = document.getElementById("out");
+  const show = (files) => {
+    out.textContent = files.length === 0
+      ? "No files yet."
+      : [...files].map((f) => f.name).join(", ");
+  };
+  zone.addEventListener("dragover", (event) => {
+    event.preventDefault();
+    zone.style.borderStyle = "solid";
+  });
+  zone.addEventListener("dragleave", () => {
+    zone.style.borderStyle = "dashed";
+  });
+  zone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    zone.style.borderStyle = "dashed";
+    show(event.dataTransfer.files);
+  });
+  document.getElementById("picker").addEventListener("change", (event) => {
+    show(event.target.files);
+  });
+</script>
+`,
+    ),
+  },
+  "match-media": {
+    height: 210,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:.75rem;">
+  <p id="out" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg);"></p>
+  <p class="demo-hint" style="text-align:center;">Resize the window. This frame reports its own width, with no resize listener.</p>
+</div>
+<script>
+  const out = document.getElementById("out");
+  const wide = matchMedia("(width >= 30rem)");
+  const apply = (event) => {
+    out.textContent = '(width >= 30rem) → ' + event.matches;
+  };
+  apply(wide);
+  wide.addEventListener("change", apply);
+</script>
+`,
+    ),
+  },
   "random-uuid": {
     height: 200,
     html: wrapDemo(
@@ -1676,6 +1904,37 @@ button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); 
 `,
     ),
   },
+  "date-format": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button data-locale="en-US">en-US</button>
+    <button data-locale="en-GB">en-GB</button>
+    <button data-locale="de-DE">de-DE</button>
+    <button data-locale="ja-JP">ja-JP</button>
+  </div>
+  <p id="result" class="demo-hint" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg); text-align:center;">pick a locale</p>
+</div>
+<script>
+  const result = document.getElementById("result");
+  // Fixed instant, so every locale formats the same moment and the only
+  // thing that changes between buttons is the locale's own convention.
+  const when = new Date("2026-09-20T13:20:00Z");
+  document.querySelectorAll("button[data-locale]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      result.textContent = new Intl.DateTimeFormat(btn.dataset.locale, {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Europe/Berlin",
+      }).format(when);
+    });
+  });
+</script>
+`,
+    ),
+  },
   "intl-list-format": {
     height: 230,
     html: wrapDemo(
@@ -2025,4 +2284,18 @@ export const demosNotWorthIt: Record<string, string> = {
     "A request needs a server to answer it. Faking one with setTimeout would demonstrate setTimeout.",
   "server-sent-events":
     "EventSource needs a real streaming endpoint. Nothing in a srcdoc frame can serve one.",
+  "file-download":
+    'allow-downloads might let the frame save a real file, but a button that reports "Saved" whether or not it did is worse than no demo, and the sandbox gives no way to tell.',
+  temporal:
+    "Temporal is not in this browser yet unless it is Chromium, so the frame would show a broken demo to most readers and a working one to a few.",
+  "speculation-rules":
+    "Prerendering a second page needs a real site to prerender, and the win is a navigation that never happens in a frame.",
+  "cookie-store":
+    "The frame has an opaque origin, so it cannot set a cookie at all and the API would throw rather than demonstrate anything.",
+  passkeys:
+    "A passkey ceremony needs a real authenticator and a server to issue the challenge. A fake one would teach the wrong shape.",
+  jquery:
+    "The swap is a syntax change with identical output, so there is nothing to see that the snippet does not already show.",
+  "font-loading":
+    "The frame would have to download a webfont over a throttled connection for the swap to be visible, and it cannot.",
 };

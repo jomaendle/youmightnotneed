@@ -11,6 +11,8 @@ export const inert: Rule = {
     "focus-lock",
     "vue-focus-lock",
     "wicg-inert",
+    "aria-hidden",
+    "@a11y/focus-trap",
   ],
   featureIds: ["inert"],
   native: "the inert attribute",

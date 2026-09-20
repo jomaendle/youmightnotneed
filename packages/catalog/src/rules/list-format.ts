@@ -36,5 +36,8 @@ new Intl.ListFormat("en", { type: "disjunction" }).format(["red", "blue"]);
   "pears",
   "plums",
 ]);`,
+    handRolled: [
+      'slice(0, -1).join(", ") joined to the last item with " and ", plus length checks for the one and two item cases',
+    ],
   },
 };

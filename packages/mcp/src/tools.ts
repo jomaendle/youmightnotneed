@@ -2,6 +2,7 @@ import {
   analyze,
   BASELINE_DATA_DATE,
   type BaselineInfo,
+  baselineSince,
   type Finding,
   GUIDE_SOURCE,
   type PackageJsonLike,
@@ -34,6 +35,15 @@ interface Provenance {
  */
 interface GuidedFinding extends Finding {
   guides: ResolvedGuide[];
+  /**
+   * The date this rule's native replacement reached its current Baseline
+   * status, YYYY-MM-DD, or null when the catalog holds no crossing date.
+   *
+   * Here so an agent can answer "what became replaceable recently" from the
+   * findings it already has, rather than this server growing a fourth tool
+   * for a question that is a filter over a list it just returned.
+   */
+  since: string | null;
 }
 
 export interface AnalyzeDependenciesResult extends Omit<Report, "findings"> {
@@ -55,6 +65,7 @@ export function analyzeDependencies(
     findings: report.findings.map((finding) => ({
       ...finding,
       guides: resolveGuides(finding.rule).filter((g) => g.url !== null),
+      since: baselineSince(finding.baseline),
     })),
     provenance: {
       baselineOn: BASELINE_DATA_DATE,

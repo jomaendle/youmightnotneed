@@ -50,5 +50,9 @@ export const colorFunctions: Rule = {
     snippet: `:root { --brand: oklch(62% 0.19 256); }
 .btn:hover { background: color-mix(in oklch, var(--brand) 85%, black); }
 .ghost { background: oklch(from var(--brand) l c h / 0.15); }`,
+    handRolled: [
+      "a lighten or darken helper doing arithmetic on the six characters of a hex colour",
+      "a second hex value hardcoded next to every colour token, one for the base and one for its hover state",
+    ],
   },
 };

@@ -10,6 +10,7 @@ export const containerQueries: Rule = {
     "react-sizeme",
     "react-container-query",
     "element-resize-detector",
+    "css-element-queries",
     "vue-resize",
   ],
   featureIds: ["container-queries"],

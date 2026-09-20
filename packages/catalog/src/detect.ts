@@ -1,5 +1,6 @@
 import {
   type BaselineInfo,
+  baselineSince,
   compareBaseline,
   resolveBaseline,
 } from "./baseline.ts";
@@ -249,6 +250,46 @@ export function summarize(findings: readonly Finding[]): Summary {
     hasUnknownSizes,
     byStatus,
   };
+}
+
+export interface SinceSplit {
+  /** Findings whose rule reached its current status on or after the date. */
+  since: Finding[];
+  /** Findings that reached their current status before the date. */
+  earlier: Finding[];
+  /**
+   * Findings the catalog holds no crossing date for: a rule still limited or
+   * unverified, or one carrying a manualBaseline. They are neither in nor out,
+   * so a report has to count them out loud rather than let them vanish.
+   */
+  undated: Finding[];
+}
+
+/**
+ * Splits findings by when the rule reached its current Baseline status. Pure.
+ *
+ * `date` is YYYY-MM-DD and the comparison is lexicographic, so this needs no
+ * clock and stays callable from the pure core. The boundary is inclusive: a
+ * rule that crossed exactly on `date` is in the `since` bucket, because a
+ * reader asking "what changed since March 1" means that day included.
+ *
+ * A `since` bucket can only ever hold widely and newly available findings,
+ * since those are the only statuses that carry a crossing date. That is a
+ * property worth keeping: a date-filtered view cannot surface something that
+ * still needs a fallback written first.
+ */
+export function splitSince(
+  findings: readonly Finding[],
+  date: string,
+): SinceSplit {
+  const split: SinceSplit = { since: [], earlier: [], undated: [] };
+  for (const finding of findings) {
+    const crossed = baselineSince(finding.baseline);
+    if (crossed === null) split.undated.push(finding);
+    else if (crossed >= date) split.since.push(finding);
+    else split.earlier.push(finding);
+  }
+  return split;
 }
 
 export interface Report {

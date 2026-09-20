@@ -46,5 +46,9 @@ el.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/plain", id)
 // dragover must preventDefault or drop never fires.
 list.addEventListener("dragover", (e) => e.preventDefault());
 list.addEventListener("drop", (e) => { e.preventDefault(); /* reorder */ });`,
+    handRolled: [
+      "mousedown, mousemove and mouseup listeners tracking a pointer offset to move an element, with its original position held in state",
+      "an index swapped in an array when the pointer crosses a sibling, to reorder a list while a drag is in progress",
+    ],
   },
 };

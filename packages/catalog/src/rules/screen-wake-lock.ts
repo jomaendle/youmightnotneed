@@ -24,5 +24,9 @@ await lock.release();`,
       "You need this in a non-secure (non-HTTPS) context, where the API isn't available at all.",
     ],
     snippet: `const lock = await navigator.wakeLock.request("screen");`,
+    handRolled: [
+      "a muted looping video kept playing off-screen so the display does not sleep",
+      "a no-op setInterval added in the hope the page keeps counting as active",
+    ],
   },
 };

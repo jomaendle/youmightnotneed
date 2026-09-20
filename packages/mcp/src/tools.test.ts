@@ -34,6 +34,25 @@ describe("analyzeDependencies", () => {
     const result = analyzeDependencies({});
     expect(result.findings).toHaveLength(0);
   });
+
+  // The date is on every finding so "what became replaceable recently" is a
+  // filter over what the agent already holds, rather than a fourth tool.
+  it("carries the Baseline crossing date on each finding", () => {
+    const result = analyzeDependencies({
+      dependencies: { axios: "^1.6.0" },
+    });
+
+    expect(result.findings[0]?.since).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("reports a null crossing date rather than omitting the field", () => {
+    const withoutDate = analyzeDependencies({
+      dependencies: { swiper: "^11.0.0" },
+    }).findings[0];
+
+    expect(withoutDate).toBeDefined();
+    expect(withoutDate).toHaveProperty("since");
+  });
 });
 
 describe("listRules", () => {

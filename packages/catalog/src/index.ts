@@ -11,8 +11,10 @@ export {
   baselineLabel,
   baselineRank,
   baselineShortLabel,
+  baselineSince,
   combinedSupport,
   compareBaseline,
+  featureSince,
   hasNoVersions,
   type ResolvedFeature,
   resolveBaseline,
@@ -38,8 +40,10 @@ export {
   type MatchedPackage,
   type PackageJsonLike,
   type Report,
+  type SinceSplit,
   type Summary,
   sortFindings,
+  splitSince,
   summarize,
 } from "./detect.ts";
 export {
@@ -99,3 +103,11 @@ export {
   type SearchResult,
   searchRules,
 } from "./search.ts";
+export {
+  diffTiers,
+  type LiveFeatures,
+  type TierChange,
+  type TierDirection,
+  type TierEntry,
+  tierOf,
+} from "./tier-diff.ts";

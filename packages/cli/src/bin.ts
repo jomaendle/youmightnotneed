@@ -13,12 +13,15 @@ import {
   BASELINE_DATA_DATE,
   type PackageJsonLike,
   packageSizes,
+  type Report,
   renderRuleMarkdown,
   rulesById,
+  splitSince,
+  summarize,
   WEB_FEATURES_VERSION,
 } from "@jomae/catalog";
 import { createPalette } from "./colors.ts";
-import { renderJson, renderReport } from "./render.ts";
+import { renderJson, renderReport, type SinceView } from "./render.ts";
 
 const HELP = `
 youmightnotneed  ·  is it CSS yet?
@@ -40,6 +43,11 @@ Options
                   holding code rather than a package name.
   -v, --verbose   Print every condition under which the dependency is still
                   the right call. Recommended before you change anything.
+      --since     Show only the findings whose native replacement reached its
+                  current Baseline status on or after a YYYY-MM-DD date. Put
+                  the date in a package.json script and bump it when you read
+                  the report, and each run covers the platform's moves since
+                  the last one.
       --json      Machine-readable output.
       --no-color  Disable colour. Also respects the NO_COLOR variable.
   -h, --help      Show this.
@@ -62,6 +70,11 @@ export interface Args {
    * no package to look up, so --package cannot answer it.
    */
   rule: string | undefined;
+  /**
+   * A YYYY-MM-DD date. Narrows the report to rules whose native replacement
+   * reached its current Baseline status on or after it.
+   */
+  since: string | undefined;
   verbose: boolean;
   json: boolean;
   color: boolean;
@@ -117,6 +130,35 @@ function printRule(id: string): void {
 }
 
 /**
+ * Accepts only a real YYYY-MM-DD calendar date.
+ *
+ * Guessing is the thing to avoid here. `--since 2026` could mean the start of
+ * the year and `--since yesterday` could mean anything, and a report built on
+ * a guessed date is worse than one that refused to run, because nothing in
+ * the output says which date it used.
+ */
+function readDate(value: string, flag: string): string {
+  const parts = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (parts) {
+    // Round-tripping through Date rejects a well-formed impossible date such
+    // as 2026-02-30, which the pattern alone accepts. UTC so the answer does
+    // not change with the machine's timezone.
+    const parsed = new Date(`${value}T00:00:00Z`);
+    if (
+      !Number.isNaN(parsed.getTime()) &&
+      parsed.toISOString().startsWith(value)
+    ) {
+      return value;
+    }
+  }
+  console.error(
+    `${flag} needs a YYYY-MM-DD date, for example: ${flag} 2026-03-01`,
+  );
+  console.error(`Received: ${value}`);
+  process.exit(2);
+}
+
+/**
  * Handles a bare positional argument: an unknown flag, or the scan path.
  *
  * A second path used to silently overwrite the first, so the reader asked to
@@ -143,6 +185,7 @@ export function parseArgs(argv: readonly string[]): Args {
     path: undefined,
     package: undefined,
     rule: undefined,
+    since: undefined,
     verbose: false,
     json: false,
     color: !process.env.NO_COLOR,
@@ -174,6 +217,17 @@ export function parseArgs(argv: readonly string[]): Args {
     if (ruleFlag) {
       args.rule = ruleFlag.value;
       i += ruleFlag.consumed - 1;
+      continue;
+    }
+
+    const sinceFlag = readValueFlag(argv, i, {
+      long: "--since",
+      noun: "date",
+      example: "--since 2026-03-01",
+    });
+    if (sinceFlag) {
+      args.since = readDate(sinceFlag.value, "--since");
+      i += sinceFlag.consumed - 1;
       continue;
     }
 
@@ -349,6 +403,9 @@ function ruleConflict(args: Args): string | null {
   if (args.package !== undefined) return "--package";
   if (args.path !== undefined) return "a path";
   if (args.json) return "--json";
+  // --since narrows a report and --rule produces none, so combining them asks
+  // for a filter over nothing.
+  if (args.since !== undefined) return "--since";
   return null;
 }
 
@@ -382,6 +439,29 @@ function runDirectMode(args: Args): boolean {
   return false;
 }
 
+/**
+ * Applies --since, or passes the report through untouched when it is absent.
+ *
+ * The filter narrows rather than annotates, and the headline is recomputed
+ * from what survives: leaving the full total above a filtered list would
+ * attribute kilobytes to findings the reader can no longer see.
+ */
+function narrow(
+  full: Report,
+  since: string | undefined,
+): { report: Report; sinceView: SinceView | undefined } {
+  if (since === undefined) return { report: full, sinceView: undefined };
+  const window = splitSince(full.findings, since);
+  return {
+    report: { findings: window.since, summary: summarize(window.since) },
+    sinceView: {
+      date: since,
+      earlier: window.earlier.length,
+      undated: window.undated.length,
+    },
+  };
+}
+
 function main(): void {
   const args = parseArgs(process.argv.slice(2));
 
@@ -406,15 +486,17 @@ function main(): void {
     single === undefined
       ? readPackageJson(target as string)
       : { name: single, dependencies: { [single]: "*" } };
-  const report = analyze(pkg);
+  const full = analyze(pkg);
   const provenance = {
     baselineOn: BASELINE_DATA_DATE,
     webFeaturesVersion: WEB_FEATURES_VERSION,
     sizesOn: packageSizes.fetchedOn,
   };
 
+  const { report, sinceView } = narrow(full, args.since);
+
   if (args.json) {
-    console.info(renderJson(report, provenance));
+    console.info(renderJson(report, provenance, sinceView));
   } else {
     const useColor = args.color && process.stdout.isTTY === true;
     console.info(
@@ -424,6 +506,7 @@ function main(): void {
         projectName: single ?? pkg.name ?? basename(dirname(target as string)),
         provenance,
         verbose: args.verbose,
+        since: sinceView,
       }),
     );
   }

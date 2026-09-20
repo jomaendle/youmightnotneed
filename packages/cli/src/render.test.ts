@@ -221,3 +221,180 @@ describe("--json carries what the other surfaces carry", () => {
     expect(parsed.findings[0]?.category).toBe("scrolling");
   });
 });
+
+describe("renderReport with a --since window", () => {
+  function sinceRender(
+    pkg: Parameters<typeof analyze>[0],
+    since: { date: string; earlier: number; undated: number },
+  ) {
+    const report = analyze(pkg);
+    return renderReport(report, {
+      palette: createPalette(false),
+      projectName: "test-project",
+      provenance,
+      verbose: false,
+      since,
+    });
+  }
+
+  it("names the window under the headline", () => {
+    const output = sinceRender(
+      { dependencies: { axios: "^1.6.0" } },
+      { date: "2020-01-01", earlier: 0, undated: 0 },
+    );
+    expect(output).toContain("on or after 2020-01-01");
+  });
+
+  it("accounts for findings held back, in the plural", () => {
+    const output = sinceRender(
+      { dependencies: { axios: "^1.6.0" } },
+      { date: "2020-01-01", earlier: 3, undated: 2 },
+    );
+    expect(output).toContain("5 other findings are outside this view");
+    expect(output).toContain("3 reached their current status earlier");
+    expect(output).toContain("2 have no crossing date");
+  });
+
+  it("uses the singular when exactly one finding is held back", () => {
+    const output = sinceRender(
+      { dependencies: { axios: "^1.6.0" } },
+      { date: "2020-01-01", earlier: 1, undated: 0 },
+    );
+    expect(output).toContain("1 other finding is outside this view");
+    expect(output).toContain("1 reached its current status earlier");
+  });
+
+  it("names only the undated bucket when nothing crossed earlier", () => {
+    const output = sinceRender(
+      { dependencies: { axios: "^1.6.0" } },
+      { date: "2020-01-01", earlier: 0, undated: 4 },
+    );
+    expect(output).toContain("4 have no crossing date");
+    expect(output).not.toContain("current status earlier");
+  });
+
+  // A window that happens to cover everything held nothing back, so a
+  // sentence about zero other findings would be noise.
+  it("says nothing about other findings when none were held back", () => {
+    const output = sinceRender(
+      { dependencies: { axios: "^1.6.0" } },
+      { date: "2020-01-01", earlier: 0, undated: 0 },
+    );
+    expect(output).not.toContain("outside this view");
+  });
+
+  // An empty window is a different answer from "the catalog has no rule for
+  // this", and giving the latter would misstate the catalog's coverage.
+  it("distinguishes an empty window from an uncovered project", () => {
+    const output = renderReport(
+      { findings: [], summary: analyze({}).summary },
+      {
+        palette: createPalette(false),
+        projectName: "test-project",
+        provenance,
+        verbose: false,
+        since: { date: "2099-01-01", earlier: 6, undated: 2 },
+      },
+    );
+    expect(output).toContain("on or after 2099-01-01");
+    expect(output).not.toContain("no native equivalent in the catalog");
+    expect(output).toContain("8 other findings are outside this view");
+  });
+
+  it("falls back to the coverage note when an empty window held nothing back", () => {
+    const output = renderReport(
+      { findings: [], summary: analyze({}).summary },
+      {
+        palette: createPalette(false),
+        projectName: "test-project",
+        provenance,
+        verbose: false,
+        since: { date: "2099-01-01", earlier: 0, undated: 0 },
+      },
+    );
+    expect(output).toContain("The catalog only covers cases");
+  });
+
+  it("still says the catalog has no rule for an unmatched single package", () => {
+    const output = renderReport(
+      { findings: [], summary: analyze({}).summary },
+      {
+        palette: createPalette(false),
+        projectName: "left-pad",
+        subject: "package",
+        provenance,
+        verbose: false,
+      },
+    );
+    expect(output).toContain("The catalog has no rule for left-pad");
+  });
+});
+
+describe("renderJson carries the crossing date", () => {
+  it("includes the since block only when a window was applied", () => {
+    const report = analyze({ dependencies: { axios: "^1.6.0" } });
+    const withWindow = JSON.parse(
+      renderJson(report, provenance, {
+        date: "2020-01-01",
+        earlier: 2,
+        undated: 1,
+      }),
+    ) as { since?: { date: string; earlier: number; undated: number } };
+    const without = JSON.parse(renderJson(report, provenance)) as {
+      since?: unknown;
+    };
+
+    expect(withWindow.since).toEqual({
+      date: "2020-01-01",
+      earlier: 2,
+      undated: 1,
+    });
+    expect(without.since).toBeUndefined();
+  });
+
+  it("puts a date on every finding regardless of the window", () => {
+    const parsed = JSON.parse(
+      renderJson(analyze({ dependencies: { axios: "^1.6.0" } }), provenance),
+    ) as { findings: Array<{ baseline: { since: string | null } }> };
+
+    expect(parsed.findings[0]?.baseline.since).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+});
+
+describe("an empty --since view does not overclaim", () => {
+  const empty = (since: { date: string; earlier: number; undated: number }) =>
+    renderReport(
+      { findings: [], summary: analyze({}).summary },
+      {
+        palette: createPalette(false),
+        projectName: "left-pad",
+        subject: "package",
+        provenance,
+        verbose: false,
+        since,
+      },
+    );
+
+  // Saying "nothing reached that status" implies a rule exists and crossed
+  // earlier. For a package the catalog has no rule for, that is a different
+  // and wrong answer, and the window did no filtering to speak of.
+  it("says the catalog has no rule when the window held nothing back", () => {
+    const output = empty({ date: "2026-01-01", earlier: 0, undated: 0 });
+
+    expect(output).toContain("The catalog has no rule for left-pad");
+    expect(output).not.toContain("reached its current Baseline status");
+  });
+
+  it("blames the window only when the window actually excluded something", () => {
+    const output = empty({ date: "2026-01-01", earlier: 3, undated: 0 });
+
+    expect(output).toContain("on or after 2026-01-01");
+    expect(output).not.toContain("The catalog has no rule");
+  });
+
+  it("uses the singular for a single undated finding", () => {
+    const output = empty({ date: "2026-01-01", earlier: 0, undated: 1 });
+
+    expect(output).toContain("1 has no crossing date");
+  });
+});
