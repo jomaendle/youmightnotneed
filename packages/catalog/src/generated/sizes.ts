@@ -20,7 +20,7 @@ export interface SizeSnapshot {
 }
 
 export const packageSizes: SizeSnapshot = {
-  "fetchedOn": "2026-09-12",
+  "fetchedOn": "2026-09-20",
   "source": "bundlephobia.com",
   "sizes": {
     "@capacitor-community/bluetooth-le": {
@@ -34,9 +34,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "4.1.3"
     },
     "@capsizecss/metrics": {
-      "gzip": 269,
-      "raw": 342,
-      "version": "4.2.0"
+      "gzip": 275,
+      "raw": 363,
+      "version": "4.3.0"
     },
     "@floating-ui/dom": {
       "gzip": 8209,
@@ -64,14 +64,14 @@ export const packageSizes: SizeSnapshot = {
       "version": "2.0.1"
     },
     "@mui/x-date-pickers": {
-      "gzip": 58100,
-      "raw": 206963,
-      "version": "9.13.0"
+      "gzip": 58099,
+      "raw": 206961,
+      "version": "9.14.0"
     },
     "@ng-select/ng-select": {
-      "gzip": 33247,
-      "raw": 155163,
-      "version": "24.1.1"
+      "gzip": 33244,
+      "raw": 155121,
+      "version": "24.1.2"
     },
     "@oddbird/popover-polyfill": {
       "gzip": 3737,
@@ -268,6 +268,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 63937,
       "version": "4.2.0"
     },
+    "css-element-queries": {
+      "gzip": 3709,
+      "raw": 10519,
+      "version": "1.2.3"
+    },
     "currency.js": {
       "gzip": 1068,
       "raw": 2250,
@@ -369,9 +374,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "3.0.0"
     },
     "framer-motion": {
-      "gzip": 62291,
-      "raw": 185909,
-      "version": "13.2.0"
+      "gzip": 64517,
+      "raw": 192316,
+      "version": "13.4.0"
     },
     "grapheme-splitter": {
       "gzip": 7368,
@@ -426,7 +431,7 @@ export const packageSizes: SizeSnapshot = {
     "js-base64": {
       "gzip": 1789,
       "raw": 4151,
-      "version": "3.9.3"
+      "version": "3.9.4"
     },
     "js-sha256": {
       "gzip": 3054,
@@ -514,9 +519,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "3.0.1"
     },
     "motion": {
-      "gzip": 45560,
-      "raw": 136288,
-      "version": "13.2.0"
+      "gzip": 47708,
+      "raw": 142673,
+      "version": "13.4.0"
     },
     "mutexify": {
       "gzip": 288,
@@ -554,9 +559,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "0.3.5"
     },
     "ng2-date-picker": {
-      "gzip": 14719,
-      "raw": 102826,
-      "version": "21.0.1"
+      "gzip": 38159,
+      "raw": 216677,
+      "version": "22.0.0"
     },
     "ngx-autosize": {
       "gzip": 1817,
@@ -634,9 +639,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "7.0.1"
     },
     "pako": {
-      "gzip": 13113,
-      "raw": 43085,
-      "version": "3.0.1"
+      "gzip": 13463,
+      "raw": 43818,
+      "version": "3.0.2"
     },
     "path-to-regexp": {
       "gzip": 2133,
@@ -1019,9 +1024,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "3.3.2"
     },
     "slick-carousel": {
-      "gzip": 10356,
-      "raw": 45614,
-      "version": "1.8.1"
+      "gzip": 10534,
+      "raw": 43237,
+      "version": "2.0.0"
     },
     "smooth-scroll": {
       "gzip": 2669,

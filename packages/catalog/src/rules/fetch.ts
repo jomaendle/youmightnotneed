@@ -44,5 +44,9 @@ const items = await res.json();`,
     snippet: `const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
 if (!res.ok) throw new Error(String(res.status));
 const data = await res.json();`,
+    handRolled: [
+      "an XMLHttpRequest with an onreadystatechange handler checking readyState === 4, often wrapped in a hand-made Promise",
+      "a request helper that sets Content-Type and stringifies the body on every call, written once per project and imported everywhere",
+    ],
   },
 };

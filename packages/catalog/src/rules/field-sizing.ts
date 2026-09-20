@@ -43,6 +43,10 @@ input[type="text"] {
   min-height: 3lh;
   max-height: 12lh;
 }`,
+    handRolled: [
+      "an input handler setting style.height to auto and then to scrollHeight in pixels, so the textarea remeasures on every keystroke",
+      "a hidden mirror div kept in sync with the textarea's value, measured to decide how tall the real field should be",
+    ],
   },
   guides: ["form-fields-automatically-fit-contents"],
 };

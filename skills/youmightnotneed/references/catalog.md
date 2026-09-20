@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 64 of them, covering 264 npm packages.
+Every rule, 64 of them, covering 265 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
@@ -115,7 +115,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `carousel-scroll-markers`: swiper, embla-carousel, embla-carousel-react, react-slick, slick-carousel, keen-slider, flickity, vue3-carousel, ngx-owl-carousel-o, vue-awesome-swiper
 - `clipboard`: copy-to-clipboard, clipboard-copy, clipboard.js, react-copy-to-clipboard, vue-clipboard3, vue-clipboard2, ngx-clipboard, clipboard-polyfill
 - `compression-streams`: pako, lz-string
-- `container-queries`: react-resize-detector, react-use-measure, react-sizeme, react-container-query, element-resize-detector, vue-resize
+- `container-queries`: react-resize-detector, react-use-measure, react-sizeme, react-container-query, element-resize-detector, css-element-queries, vue-resize
 - `content-visibility`: react-window, react-virtualized, vue-virtual-scroller, vue-virtual-scroll-list, ngx-virtual-scroller, svelte-virtual-list
 - `css-color-functions`: polished, color2k, chroma-js, tinycolor2, color, colord
 - `css-masonry`: react-masonry-css, masonry-layout, react-masonry-component, muuri, react-photo-gallery, vue-masonry, vue-masonry-css
@@ -184,6 +184,7 @@ and read its conditions before changing anything.
 | --- | --- | --- | --- |
 | Date.now() joined to Math.random().toString(36) to make something unique enough | `random-uuid` | crypto.randomUUID() | widely available |
 | a ResizeObserver toggling size classes on an element so it can style itself by its own width | `container-queries` | Container queries | widely available |
+| a SHA-256 or HMAC implementation pasted into the project as a single file of bit-shifting helpers | `web-crypto` | crypto.subtle | widely available |
 | a blur handler standing in for the tab being backgrounded, pausing a poll that a focus handler resumes | `page-visibility` | document.visibilityState and the visibilitychange event | widely available |
 | a chain of millisecond thresholds turning a date difference into minutes, hours or days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
 | a chain of vendor-prefixed calls such as webkitRequestFullscreen and msRequestFullscreen | `fullscreen` | Element.requestFullscreen() | limited |
@@ -191,16 +192,19 @@ and read its conditions before changing anything.
 | a div with role=dialog and aria-modal, placed with position fixed and a z-index over the page | `dialog-element` | <dialog> with showModal() | widely available |
 | a div with role=listbox and children with role=option, wired to arrow keys and Enter by hand | `customizable-select` | appearance: base-select on <select> | limited |
 | a document keydown listener added when an overlay opens and removed when it closes, only to catch Escape | `dialog-element` | <dialog> with showModal() | widely available |
+| a hidden mirror div kept in sync with the textarea's value, measured to decide how tall the real field should be | `field-sizing` | field-sizing: content | newly available |
 | a keydown handler watching for Tab and calling preventDefault so focus cannot leave an overlay | `inert` | the inert attribute | widely available |
 | a mousedown on one panel's edge with mousemove handlers writing a width onto that same panel | `resizable-panels` | resize | limited |
 | a padding-bottom percentage on a wrapper with the real content positioned absolutely inside it | `aspect-ratio` | aspect-ratio | widely available |
 | a querySelectorAll over a list of focusable selectors, used to decide where focus is allowed to go | `inert` | the inert attribute | widely available |
 | a regex inserting thousands separators into a number's string form | `number-format` | Intl.NumberFormat | widely available |
+| a request helper that sets Content-Type and stringifies the body on every call, written once per project and imported everywhere | `fetch` | fetch() | widely available |
 | a requestAnimationFrame loop easing scrollTop from where it is toward a target | `smooth-scroll` | scroll-behavior: smooth with scroll-margin-top | widely available |
 | a scroll listener deciding which images are close enough to start loading | `lazy-loading` | loading="lazy" | widely available |
 | a scroll listener on a horizontal strip dividing scrollLeft by item width to work out the active index | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
 | a scroll listener setting a progress bar's width from scrollY over scrollHeight | `scroll-driven-animations` | animation-timeline: view() and scroll() | limited |
 | a scroll listener toggling a fixed class once an element passes an offset | `sticky-positioning` | position: sticky | widely available |
+| a session token, nonce or password-reset key built from Math.random(), which is not a cryptographic source and is predictable from earlier outputs | `web-crypto` | crypto.subtle | widely available |
 | a setTimeout matching the CSS duration, so an element stays mounted long enough to animate out | `discrete-transitions` | @starting-style with transition-behavior: allow-discrete | newly available |
 | a share menu built from hardcoded intent URLs for each network, opened with window.open | `web-share` | navigator.share() | limited |
 | a table of singular and plural unit names written out to build phrases like 3 days ago | `relative-time` | Intl.RelativeTimeFormat | widely available |
@@ -210,8 +214,10 @@ and read its conditions before changing anything.
 | absolutely positioning items after measuring them so the gaps between rows close up | `css-masonry` | CSS masonry item placement | limited |
 | already-split hours, minutes and seconds joined with hardcoded unit labels and plural rules | `duration-format` | Intl.DurationFormat | newly available |
 | an IntersectionObserver that swaps a data-src attribute into src when an image nears the viewport | `lazy-loading` | loading="lazy" | widely available |
+| an XMLHttpRequest with an onreadystatechange handler checking readyState === 4, often wrapped in a hand-made Promise | `fetch` | fetch() | widely available |
 | an easing function like easeInOutQuad written next to a scroll routine | `smooth-scroll` | scroll-behavior: smooth with scroll-margin-top | widely available |
 | an ignore or isMounted flag set in a cleanup function, guarding the result of a fetch given no signal | `abort-controller` | AbortController and AbortSignal | widely available |
+| an input handler setting style.height to auto and then to scrollHeight in pixels, so the textarea remeasures on every keystroke | `field-sizing` | field-sizing: content | newly available |
 | an isClosing or isLeaving flag held only to keep something rendered while its exit animation runs | `discrete-transitions` | @starting-style with transition-behavior: allow-discrete | newly available |
 | an off-screen textarea or contenteditable element created only so text can be selected and execCommand'd | `clipboard` | navigator.clipboard.writeText() | newly available |
 | an open id over a list of collapsible panels, where opening one sets every other closed | `exclusive-accordion` | <details name> for an exclusive accordion | newly available |
