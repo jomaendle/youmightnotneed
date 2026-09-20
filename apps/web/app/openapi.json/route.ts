@@ -2,9 +2,9 @@ import { rules } from "@jomae/catalog";
 import { site } from "@/lib/site";
 
 /**
- * The read-only HTTP surface, described for tools that look for a spec. There
- * is no authentication and no write endpoint: the catalog is public data and
- * nothing a caller sends is stored.
+ * The read-only, agent-facing endpoints, described for tools that look for a
+ * spec. No authentication, and none of these stores anything a caller sends.
+ * The scan form and the OG image route are not part of it.
  */
 export const dynamic = "force-static";
 
@@ -55,7 +55,7 @@ export function GET() {
           ],
           responses: {
             ...markdown("Markdown for the rule."),
-            404: { description: "No rule with that id." },
+            404: { description: "No rule with that id. Plain text body." },
           },
         },
       },

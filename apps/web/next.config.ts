@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
   experimental: {
     typedRoutes: true,
   },
-  // Points an agent that only made a HEAD or GET on the home page at the
-  // machine-readable surfaces, without it having to guess /llms.txt.
+  // Advertises the machine-readable surfaces on the home page response, so an
+  // agent that only fetched / does not have to guess /llms.txt.
   async headers() {
     return [
       {
@@ -20,7 +20,6 @@ const nextConfig: NextConfig = {
               '</llms.txt>; rel="alternate"; type="text/markdown"',
               '</llms-full.txt>; rel="alternate"; type="text/markdown"',
               '</openapi.json>; rel="service-desc"; type="application/json"',
-              '</.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
             ].join(", "),
           },
         ],

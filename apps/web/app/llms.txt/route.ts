@@ -50,8 +50,7 @@ The rule page itself answers with the same markdown when the request sends
 ## Machine-readable
 
 - ${site.url}/llms-full.txt: every rule in one document.
-- ${site.url}/openapi.json: the read-only HTTP surface. No authentication.
-- ${site.url}/.well-known/agent-skills/index.json: the agent skill.
+- ${site.url}/openapi.json: the read-only endpoints. No authentication.
 
 ## By use case
 

@@ -76,11 +76,6 @@ export default function HomePage() {
               name: site.name,
               url: site.url,
               description: site.description,
-              potentialAction: {
-                "@type": "SearchAction",
-                target: `${site.url}/search?q={search_term_string}`,
-                "query-input": "required name=search_term_string",
-              },
             },
             {
               "@type": "SoftwareApplication",
