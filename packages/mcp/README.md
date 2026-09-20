@@ -7,8 +7,12 @@ that replacement looks like. The catalog is browsable at
 
 ## Install
 
-Pick your client. The server needs one: run it bare in a terminal and it
-prints nothing, because a stdio server waits for a client to speak first.
+On Claude Code, `/plugin marketplace add jomaendle/youmightnotneed` installs
+this server together with the skill in one step.
+
+For another client, pick it below. The server needs one: run it bare in a
+terminal and it prints nothing, because a stdio server waits for a client to
+speak first.
 
 | Client | Command |
 |---|---|

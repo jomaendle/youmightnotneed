@@ -10,8 +10,8 @@ feature that covers it. Matching is exact and there is no model in the loop,
 so it never guesses what a package does.
 
 If `analyze_dependencies`, `get_rule` and `list_rules` are available as tools,
-this plugin registered them. Use those instead of the `curl`/`npx` commands
-below; they read the same catalog.
+use those instead of the `curl`/`npx` commands below; they read the same
+catalog.
 
 Two directions, and the first is the one that saves the most.
 

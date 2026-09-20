@@ -29,7 +29,8 @@ npx youmightnotneed-mcp                         # MCP server, over stdio
 npx skills add jomaendle/youmightnotneed        # the skill
 ```
 
-The skill also installs with `/plugin marketplace add jomaendle/youmightnotneed`.
+`/plugin marketplace add jomaendle/youmightnotneed` installs the skill and
+registers the MCP server in one step.
 
 ## What a finding claims
 
