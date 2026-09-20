@@ -110,10 +110,10 @@ export function createServer(): McpServer {
       },
     },
     (input: { id?: string; package?: string }) => {
-      if (input.id) {
+      if (input.id !== undefined) {
         return toolResponse(getRule({ id: input.id }));
       }
-      if (input.package) {
+      if (input.package !== undefined) {
         return toolResponse(getRule({ package: input.package }));
       }
       return {

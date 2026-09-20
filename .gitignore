@@ -6,6 +6,10 @@ out/
 .env
 .env.local
 .DS_Store
+
+# Written by Claude Code per machine (e.g. declining the .mcp.json trust
+# prompt this repo's own plugin triggers). Personal, never ours to commit.
+.claude/settings.local.json
 coverage/
 .vercel
 

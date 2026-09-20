@@ -267,6 +267,24 @@ describe("tool routing", () => {
     expect(response.result?.structuredContent?.rule?.id).toBe("css-masonry");
   });
 
+  // An empty string is a valid zod input, not an absent one. A truthy check
+  // on input.id would treat "" as absent and silently fall through to
+  // package, contradicting the tool's own "if both id and package are given,
+  // id wins" description.
+  it("still lets an empty id win over package, rather than falling through", async () => {
+    const { extra } = await callThrough(binPath, {
+      method: "tools/call",
+      params: {
+        name: "get_rule",
+        arguments: { id: "", package: "left-pad" },
+      },
+    });
+    const response = extra as {
+      result?: { structuredContent?: { found?: boolean } };
+    };
+    expect(response.result?.structuredContent?.found).toBe(false);
+  });
+
   it("routes list_rules to the actual catalog handler", async () => {
     const { extra } = await callThrough(binPath, {
       method: "tools/call",

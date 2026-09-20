@@ -116,6 +116,28 @@ function printRule(id: string): void {
   console.info(renderRuleMarkdown(rule));
 }
 
+/**
+ * Handles a bare positional argument: an unknown flag, or the scan path.
+ *
+ * A second path used to silently overwrite the first, so the reader asked to
+ * scan one project, got a different one, and the exit code said it worked.
+ * That is the same silent-conflict shape ruleConflict() below refuses for
+ * --rule, applied to the one case parseArgs handles inline rather than via
+ * a flag.
+ */
+function readPositional(args: Args, arg: string): void {
+  if (arg.startsWith("-")) {
+    console.error(`Unknown option: ${arg}`);
+    console.error("Run with --help to see the available options.");
+    process.exit(2);
+  }
+  if (args.path !== undefined) {
+    console.error(`Pass one path, not several: ${args.path} and ${arg}`);
+    process.exit(2);
+  }
+  args.path = arg;
+}
+
 export function parseArgs(argv: readonly string[]): Args {
   const args: Args = {
     path: undefined,
@@ -174,12 +196,7 @@ export function parseArgs(argv: readonly string[]): Args {
         args.version = true;
         break;
       default:
-        if (arg.startsWith("-")) {
-          console.error(`Unknown option: ${arg}`);
-          console.error("Run with --help to see the available options.");
-          process.exit(2);
-        }
-        args.path = arg;
+        readPositional(args, arg);
         break;
     }
   }

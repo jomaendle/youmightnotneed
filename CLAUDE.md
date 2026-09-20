@@ -59,6 +59,13 @@ claims) and `skills/youmightnotneed/references/catalog.md` are written by the
 refresh scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
 patching numbers.
 
+`.mcp.json` at the repo root is the plugin's bundled MCP server, but Claude
+Code also reads it as this repo's own project-scoped MCP config. It runs
+`npx -y youmightnotneed-mcp`, the published package, not `packages/mcp`. A
+rule added locally will not show up in those tools until it ships. Declining
+the trust prompt writes `.claude/settings.local.json`, which is gitignored
+and personal per machine, never commit it.
+
 ## Conventions
 
 - pnpm workspaces, TypeScript 7 strict, Biome for lint and format. Not
