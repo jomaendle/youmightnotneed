@@ -153,6 +153,24 @@ describe("parseArgs", () => {
   });
 });
 
+describe("a second positional path is refused, not silently swapped", () => {
+  const binPath = resolve(import.meta.dirname, "bin.ts");
+
+  // A second bare path used to overwrite the first with no error, so the
+  // reader asked to scan one project, got told about a different one, and
+  // the exit code said it worked. That is the exact failure --rule and
+  // --package conflicts above are already refused for.
+  it("exits 2 naming both paths", () => {
+    const result = spawnSync(process.execPath, [binPath, "./one", "./two"], {
+      encoding: "utf8",
+    });
+
+    expect(result.status).toBe(2);
+    expect(result.stderr).toContain("./one");
+    expect(result.stderr).toContain("./two");
+  });
+});
+
 describe("--rule prints one rule", () => {
   const binPath = resolve(import.meta.dirname, "bin.ts");
 
