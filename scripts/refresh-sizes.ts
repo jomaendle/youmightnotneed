@@ -98,6 +98,14 @@ const packages = [...new Set(rules.flatMap((r) => r.replaces))].sort();
 const existing = readExisting();
 const sizes: Record<string, SizeEntry> = {};
 const failed: string[] = [];
+/**
+ * Claimed packages that had a size and could not fetch one now, so their old
+ * value was carried forward. This, not the shape of `sizes`, is the signal a
+ * run should not be committed: every one of these is already written into
+ * `sizes` from `existing`, which is exactly why looking at `sizes` cannot
+ * find them.
+ */
+const fellBack: string[] = [];
 
 console.info(`Fetching sizes for ${packages.length} packages...`);
 
@@ -112,6 +120,7 @@ for (let i = 0; i < packages.length; i += CONCURRENCY) {
       sizes[pkg] = entry;
     } else if (previous) {
       sizes[pkg] = previous;
+      fellBack.push(pkg);
       failed.push(`${pkg} (kept previous value)`);
     } else {
       failed.push(pkg);
@@ -140,17 +149,16 @@ if (fetched === 0 && packages.length > 0) {
 // produces: 1-of-N succeeds, the other 122 fall back to their old values, and
 // the file is stamped fresh anyway. A package that had a size and no longer
 // fetches one is the signal that this run should not be committed.
-// Only packages a rule still claims. A package dropped from `replaces` is
-// absent from `sizes` for a reason that has nothing to do with bundlephobia,
-// and counting it here made removing a rule permanently block the refresh.
-// The write below is built from `sizes`, so those keys prune themselves.
-const claimed = new Set(packages);
-const regressed = Object.keys(existing).filter(
-  (pkg) => claimed.has(pkg) && !sizes[pkg],
-);
-if (regressed.length > 0) {
+// This used to read `Object.keys(existing).filter((pkg) => !sizes[pkg])`,
+// which had two problems. It counted packages dropped from a rule's
+// `replaces`, so removing a rule blocked every later refresh. And narrowing
+// it to still-claimed packages made it match nothing at all: a claimed
+// package that fails to fetch has its old value copied into `sizes` four
+// lines above, so `!sizes[pkg]` can never be true for one. `fellBack` is the
+// same question asked where the answer survives.
+if (fellBack.length > 0) {
   console.error(
-    `\n${regressed.length} package(s) had a size and no longer fetch one: ${regressed.slice(0, 5).join(", ")}. Leaving the committed snapshot alone.`,
+    `\n${fellBack.length} package(s) had a size and no longer fetch one: ${fellBack.slice(0, 5).join(", ")}. Leaving the committed snapshot alone.`,
   );
   process.exit(1);
 }

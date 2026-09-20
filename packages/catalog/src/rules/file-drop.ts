@@ -4,7 +4,7 @@ export const fileDrop: Rule = {
   id: "file-drop",
   title: "File pickers and drop zones",
   category: "forms",
-  replaces: ["react-dropzone", "dropzone"],
+  replaces: ["react-dropzone"],
   featureIds: ["input-file", "input-file-multiple", "draganddrop"],
   native: '<input type="file"> with drop events',
   human: {

@@ -23,8 +23,9 @@ el.addEventListener("pointerup", (event) => {
   if (Math.abs(dx) > 50) onSwipe(dx > 0 ? "right" : "left");
 });
 
-/* Tell the browser which direction you are handling. */
-el { touch-action: pan-y; }`,
+// Tell the browser which direction you are handling, so it keeps
+// vertical scrolling for itself. In CSS: touch-action: pan-y.
+el.style.touchAction = "pan-y";`,
     mdnUrl: "https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events",
   },
   agent: {

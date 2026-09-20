@@ -10,8 +10,6 @@ export const progressIndicator: Rule = {
     "react-loader-spinner",
     "ldrs",
     "rc-progress",
-    "react-circular-progressbar",
-    "nprogress",
   ],
   featureIds: ["progress"],
   native: "<progress>",

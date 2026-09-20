@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 81 of them, covering 316 npm packages.
+Every rule, 81 of them, covering 313 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
@@ -151,7 +151,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `fetch`: axios, superagent, redaxios, whatwg-fetch, unfetch, isomorphic-fetch, cross-fetch
 - `field-sizing`: react-textarea-autosize, autosize, react-autosize-textarea, vue-textarea-autosize, ngx-autosize
 - `file-download`: file-saver, downloadjs, js-file-download
-- `file-drop`: react-dropzone, dropzone
+- `file-drop`: react-dropzone
 - `fluid-type-clamp`: fittext.js
 - `focus-visible`: focus-visible
 - `font-loading`: fontfaceobserver, webfontloader
@@ -176,7 +176,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `plural-rules`: pluralize
 - `pointer-events`: hammerjs, react-swipeable, swiped-events
 - `popover-anchor-positioning`: @floating-ui/react, @floating-ui/react-dom, @floating-ui/dom, @popperjs/core, popper.js, tippy.js, @tippyjs/react, react-popper, react-tooltip, floating-vue, v-tooltip, @oddbird/popover-polyfill
-- `progress-indicator`: react-spinners, spinkit, react-loader-spinner, ldrs, rc-progress, react-circular-progressbar, nprogress
+- `progress-indicator`: react-spinners, spinkit, react-loader-spinner, ldrs, rc-progress
 - `promise-withresolvers`: p-defer, defer-promise
 - `random-uuid`: uuid, uuidv4, @lukeed/uuid, uuid-random
 - `relative-time`: javascript-time-ago, timeago.js, react-timeago

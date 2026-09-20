@@ -25,8 +25,9 @@ report can fire on it rather than lecturing. There are three.
 
 **A hand-rolled shape.** Code someone wrote instead of installing something,
 described in prose in `agent.handRolled`. This is the larger half of what
-agents actually write, and no package.json scan can ever see it. A rule can
-have shapes and no meaningful packages.
+agents actually write, and no package.json scan can ever see it. Shapes never
+stand alone though: `replaces` is `min(1)`, so a rule still has to name the
+library someone would otherwise have reached for.
 
 **A practice worth naming.** "Use `<dialog>`", "use `light-dark()`". Note
 these are usually *the same rules read from the other end*: the `dialog` rule
@@ -44,8 +45,9 @@ Whatever the entry point, two things are non-negotiable:
 
 ### Limited availability is a tier, not a rejection
 
-The catalog ships limited rules on purpose and renders them under "not in
-every engine yet, so it needs a fallback". A feature one engine has shipped
+The catalog ships limited rules on purpose. The CLI renders them under "not
+in every engine yet, so it needs a fallback" and the site under "Missing from
+at least one engine. These need a fallback." A feature one engine has shipped
 is worth a rule: someone choosing a library today should know the platform
 is coming, and the day it crosses, the rule is already written and the
 `--since` view picks it up.

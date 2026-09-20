@@ -5,7 +5,7 @@ export const passkeys: Rule = {
   title: "Passkeys in the browser",
   category: "device-apis",
   replaces: ["@simplewebauthn/browser"],
-  featureIds: ["webauthn", "webauthn-public-key-easy"],
+  featureIds: ["webauthn"],
   native: "navigator.credentials with PublicKeyCredential",
   human: {
     explainer:
@@ -28,7 +28,7 @@ await fetch("/register", {
   agent: {
     when: "registering or authenticating a passkey from the browser",
     unless: [
-      "Your support target reaches below Chrome {{chrome:webauthn-public-key-easy}}, Firefox {{firefox:webauthn-public-key-easy}} or Safari {{safari:webauthn-public-key-easy}}. The ceremony has worked for years, but the JSON helpers that make the wrapper unnecessary are recent, and without them the base64url conversion comes back.",
+      "Your support target reaches below Chrome {{chrome:api.PublicKeyCredential.parseCreationOptionsFromJSON_static}}, Firefox {{firefox:api.PublicKeyCredential.parseCreationOptionsFromJSON_static}} or Safari {{safari:api.PublicKeyCredential.parseCreationOptionsFromJSON_static}}. The ceremony itself is years older than those, so the credential calls work while the JSON helpers that make the wrapper unnecessary do not, and the base64url conversion comes back.",
       "You use the library's server package as well. @simplewebauthn/server generates and verifies the challenge, and the platform has no counterpart for that: this covers the browser side only.",
       "You rely on the library's browser-capability helpers, such as its checks for a platform authenticator or for conditional UI, which are feature detection it has already written.",
       "You need the same code path on a browser where conditional mediation behaves differently, which the library smooths over and the raw call does not.",

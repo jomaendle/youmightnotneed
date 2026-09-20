@@ -1346,20 +1346,6 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "13"
       },
       "partialSupport": null
-    },
-    "webauthn-public-key-easy": {
-      "name": "Web authentication easy public key access",
-      "baseline": "high",
-      "lowDate": "2023-10-24",
-      "highDate": "2026-04-24",
-      "spec": "https://w3c.github.io/webauthn/#sctn-public-key-easy",
-      "support": {
-        "chrome": "85",
-        "edge": "85",
-        "firefox": "119",
-        "safari": "16"
-      },
-      "partialSupport": null
     }
   }
 };

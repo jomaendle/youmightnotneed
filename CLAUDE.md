@@ -93,8 +93,8 @@ check fails if it drifts. Do not put counts or rule names in its hand-written
 SKILL.md: the generated `references/catalog.md` carries those, and the
 freshness check rejects a hardcoded count.
 
-`packages/catalog/src/generated/` (Baseline, sizes, guide index, support
-claims) and `skills/youmightnotneed/references/catalog.md` are written by the
+`packages/catalog/src/generated/` (Baseline, Baseline history, sizes, guide
+index, lint rules, support claims) and `skills/youmightnotneed/references/catalog.md` are written by the
 refresh scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
 patching numbers.
 
@@ -113,8 +113,8 @@ and personal per machine, never commit it.
   turns them into `.js` on emit, so Node can also run the sources directly.
 - Before writing any user-visible text, including rule explainers, CLI output
   and the README, load `.claude/skills/writing-voice/SKILL.md`. No em dashes.
-- `pnpm verify` runs lint, typecheck, tests and the freshness check. Run it
-  before you call anything done.
+- `pnpm verify` runs lint, typecheck, tests with coverage, knip, the
+  freshness check and the copy check. Run it before you call anything done.
 
 ## Guardrails the machinery enforces
 

@@ -39,10 +39,15 @@ jobs:
         # A report, never a gate. If this crashes the refresh PR should still
         # open; a missing summary is worth far less than a blocked refresh.
         continue-on-error: true
+        # Captured first, then written. Writing the heredoc inline meant a
+        # non-zero exit aborted between the opening delimiter and the closing
+        # one, so the failure surfaced as a malformed-output parse error
+        # instead of whatever the script actually said.
         run: |
+          report="$(pnpm --silent check:tiers)"
           {
             echo 'report<<TIERS_EOF'
-            pnpm --silent check:tiers
+            echo "$report"
             echo TIERS_EOF
           } >> "$GITHUB_OUTPUT"
 

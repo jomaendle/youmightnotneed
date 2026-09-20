@@ -21,7 +21,7 @@ export const fontLoading: Rule = {
   agent: {
     when: "waiting on a webfont before doing something, or swapping a class once it loads",
     unless: [
-      "You correct the layout shift the swap causes by matching the fallback's metrics to the webfont. size-adjust, ascent-override and descent-override are the properties for that, and they are not Baseline, so a project doing that carefully is not a candidate.",
+      "You correct the layout shift the swap causes by matching the fallback's metrics to the webfont. size-adjust does that and is Baseline. Its companions ascent-override and descent-override have not shipped in Safari at all, so a project tuning all three carefully is not a candidate.",
       "You measure text and need the exact moment the family is usable for that measurement. document.fonts.load resolves for a family and size, and a canvas or a truncation measurement taken a frame early is silently wrong rather than visibly broken.",
       "You load fonts from a provider through webfontloader's module system, such as Typekit or Fonts.com, where the library is fetching the stylesheet as well as watching it.",
       "You depend on the per-stage classes these libraries add to the html element, wf-loading and wf-active among them, which stylesheets across the project may be keyed to.",
