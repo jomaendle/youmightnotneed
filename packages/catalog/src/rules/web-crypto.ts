@@ -30,5 +30,9 @@ export const webCrypto: Rule = {
     ],
     snippet: `const bytes = new TextEncoder().encode(text);
 const digest = await crypto.subtle.digest("SHA-256", bytes);`,
+    handRolled: [
+      "a session token, nonce or password-reset key built from Math.random(), which is not a cryptographic source and is predictable from earlier outputs",
+      "a SHA-256 or HMAC implementation pasted into the project as a single file of bit-shifting helpers",
+    ],
   },
 };

@@ -32,5 +32,9 @@ new Intl.DisplayNames(["en"], { type: "currency" }).of("EUR");
       "The same code runs on a Node build compiled with small-icu, where only English data is present and every other locale silently falls back.",
     ],
     snippet: `new Intl.DisplayNames(["en"], { type: "region" }).of("DE"); // "Germany"`,
+    handRolled: [
+      "an object literal mapping country or language codes to English names, pasted in and extended as gaps turn up",
+      "a switch over locale codes returning a display string per case",
+    ],
   },
 };

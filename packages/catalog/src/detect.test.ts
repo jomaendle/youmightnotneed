@@ -4,6 +4,7 @@ import {
   detect,
   type Finding,
   sortFindings,
+  splitSince,
   summarize,
 } from "./detect.ts";
 import type { Rule } from "./schema.ts";
@@ -299,5 +300,108 @@ describe("sortFindings tie-breaking", () => {
   it("keeps identical titles adjacent rather than throwing", () => {
     const sorted = sortFindings([finding("Same"), finding("Same")]);
     expect(sorted).toHaveLength(2);
+  });
+});
+
+describe("splitSince", () => {
+  function dated(
+    id: string,
+    since: Array<string | null>,
+    status: "widely" | "newly" | "limited" = "widely",
+  ): Finding {
+    return {
+      rule: { ...(testRules[0] as Rule), id, title: id },
+      baseline: {
+        status,
+        features: since.map((date, index) => ({
+          id: `${id}-${index}`,
+          name: id,
+          status,
+          lowDate: status === "widely" ? "2000-01-01" : date,
+          highDate: status === "widely" ? date : null,
+          spec: null,
+          support: {},
+          partialSupport: null,
+        })),
+        limitedBy: null,
+        source: "web-features",
+        dataDate: "2026-09-12",
+        note: null,
+      },
+      matched: [],
+      replaceableBytes: 0,
+      hasUnknownSizes: false,
+    };
+  }
+
+  it("puts a rule that crossed after the date in since", () => {
+    const split = splitSince([dated("late", ["2026-03-02"])], "2026-03-01");
+    expect(split.since.map((f) => f.rule.id)).toEqual(["late"]);
+    expect(split.earlier).toHaveLength(0);
+  });
+
+  it("puts a rule that crossed before the date in earlier", () => {
+    const split = splitSince([dated("old", ["2019-01-01"])], "2026-03-01");
+    expect(split.earlier.map((f) => f.rule.id)).toEqual(["old"]);
+    expect(split.since).toHaveLength(0);
+  });
+
+  // A reader asking what changed since March 1 means that day included.
+  it("treats the boundary date itself as inside the window", () => {
+    const split = splitSince([dated("exact", ["2026-03-01"])], "2026-03-01");
+    expect(split.since.map((f) => f.rule.id)).toEqual(["exact"]);
+  });
+
+  // The rule is gated by its weakest feature, so the rule crossed when the
+  // last of them did, not when the first did.
+  it("dates a multi-feature rule by its latest feature", () => {
+    const split = splitSince(
+      [dated("multi", ["2019-01-01", "2026-06-01"])],
+      "2026-03-01",
+    );
+    expect(split.since.map((f) => f.rule.id)).toEqual(["multi"]);
+  });
+
+  it("calls a rule undated when any one of its features has no date", () => {
+    const split = splitSince(
+      [dated("partial", ["2026-06-01", null])],
+      "2026-03-01",
+    );
+    expect(split.undated.map((f) => f.rule.id)).toEqual(["partial"]);
+    expect(split.since).toHaveLength(0);
+  });
+
+  // A manualBaseline rule resolves to no features at all. Its verifiedOn
+  // records a person checking, not a feature landing, so it has no crossing.
+  it("calls a rule with no features undated rather than current", () => {
+    const split = splitSince([dated("manual", [])], "2026-03-01");
+    expect(split.undated.map((f) => f.rule.id)).toEqual(["manual"]);
+  });
+
+  it("loses no finding across the three buckets", () => {
+    const split = splitSince(
+      [dated("a", ["2026-06-01"]), dated("b", ["2019-01-01"]), dated("c", [])],
+      "2026-03-01",
+    );
+    const total =
+      split.since.length + split.earlier.length + split.undated.length;
+    expect(total).toBe(3);
+  });
+
+  // The property that makes this view safe to act on: only widely and newly
+  // available statuses carry a crossing date, so a since view can never
+  // surface something that still needs a fallback written first.
+  it("never puts a limited finding in the since bucket", () => {
+    const split = splitSince(
+      [dated("limited", [null], "limited")],
+      "1970-01-01",
+    );
+    expect(split.since).toHaveLength(0);
+    expect(split.undated.map((f) => f.rule.id)).toEqual(["limited"]);
+  });
+
+  it("returns everything as earlier for a date past the whole catalog", () => {
+    const split = splitSince([dated("any", ["2026-06-01"])], "2099-01-01");
+    expect(split.earlier.map((f) => f.rule.id)).toEqual(["any"]);
   });
 });

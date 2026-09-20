@@ -40,5 +40,9 @@ const words = new Intl.Segmenter("en", { granularity: "word" });
     ],
     snippet: `const seg = new Intl.Segmenter("en", { granularity: "grapheme" });
 const count = [...seg.segment(text)].length;`,
+    handRolled: [
+      'str.length or split("") used to count characters, which counts an emoji or a combining accent as several',
+      "a regex over surrogate pairs to split a string into what the author is calling characters",
+    ],
   },
 };

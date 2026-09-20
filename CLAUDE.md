@@ -4,6 +4,27 @@ Tells developers which JavaScript dependencies can go because the platform
 now does the job: CSS, HTML, or a Web API. The product is the rule catalog.
 Every surface is a thin adapter over it.
 
+## The vision
+
+**One tool to identify and apply modern web best practices.** *Identify* is
+the catalog. *Apply* is the hand-off: the skill, the MCP server and the
+guides.
+
+Every other tool compares a codebase against itself (knip: unreferenced,
+Renovate: out of date) or against a ceiling (`eslint-plugin-compat`: too new
+for your targets). Nothing compares it against the platform's moving floor, so
+a dependency that is imported, current, maintained and redundant is invisible
+to all of them. The join nobody else computes is `package.json × Baseline
+date`: the timeline is a commodity, the mapping is not.
+
+Coverage is the goal, and reach is worth pursuing hard. **Package-keyed is how
+we enter, not the limit of what we cover.** A rule starts from something
+findable in a real project, a package name or a hand-rolled shape, because
+that is what makes a finding checkable and keeps the tool from lecturing.
+Growing toward best practices means more entry points, not untethered advice:
+a claim that cannot be checked against committed data does not belong here
+yet.
+
 ## Decisions that are settled
 
 Do not relitigate these. If one looks wrong, say so in a sentence and carry on.
@@ -28,10 +49,17 @@ Do not relitigate these. If one looks wrong, say so in a sentence and carry on.
   Z covers that case", not "delete X". Sizes are "up to", never "you will
   save". Tests enforce the phrasing.
 - **Headline number is replaceable kilobytes**, minified and gzipped.
+- **Baseline dates are queryable.** `baselineSince(info)` gives the date a
+  rule reached its current tier, `splitSince(findings, date)` partitions a
+  report, and `--since` narrows the CLI. Dates are `YYYY-MM-DD` and compare
+  lexicographically, never through `Date`, which keeps them usable from the
+  pure core.
 - **Permalinks encode the report in the URL.** No database. Nobody's
   `package.json` is stored.
-- **Dark mode is the only theme.** Tailwind 4, CSS-first `@theme` in
-  `globals.css`, no `tailwind.config` file.
+- **Dark is the default, not the only theme.** `color-scheme: dark light`, so
+  a reader whose OS asks for light gets light. Colours are `light-dark()`
+  pairs on one token. Tailwind 4, CSS-first `@theme` in `globals.css`, no
+  `tailwind.config` file.
 
 ## Layout
 
@@ -44,15 +72,13 @@ skills             the distributable agent skill, for people using the catalog
 scripts            snapshot generators, freshness check
 ```
 
-There are two kinds of skill here and they point in opposite directions.
-`.claude/skills/` is for working *on* this repo: `adding-a-rule` and
-`writing-voice`, never published. `skills/youmightnotneed/` is for agents
-*using* the catalog in someone else's codebase, installed through
-`.claude-plugin/`. A change to the rules affects the second one, so
-`pnpm refresh:skill` regenerates its catalog reference and the freshness
-check fails if it drifts. Do not put counts or rule names in its hand-written
-SKILL.md: the generated `references/catalog.md` carries those, and the
-freshness check rejects a hardcoded count.
+Two kinds of skill, pointing opposite ways. `.claude/skills/` is for working
+*on* this repo (`finding-rules`, `adding-a-rule`, `writing-voice`), never
+published. `skills/youmightnotneed/` is for agents *using* the catalog
+elsewhere, shipped through `.claude-plugin/`. A rule change affects the
+second, so `pnpm refresh:skill` regenerates its reference and the freshness
+check fails on drift. Keep counts and rule names out of its hand-written
+SKILL.md: the generated `references/catalog.md` carries those.
 
 The site also serves the skill as an archive, for agents that discover skills
 through `/.well-known/agent-skills/index.json`. `pnpm refresh:skill-archive`
@@ -60,8 +86,9 @@ rebuilds `apps/web/public/.well-known/agent-skills/` from the skill directory,
 byte for byte reproducible, and the freshness check compares against it. Run
 it after any edit under `skills/youmightnotneed/`, and after `refresh:skill`.
 
-`packages/catalog/src/generated/` (Baseline, sizes, guide index, support
-claims) and `skills/youmightnotneed/references/catalog.md` are written by the
+`packages/catalog/src/generated/` (Baseline, Baseline history, sizes, guide
+index, lint rules, support claims) and
+`skills/youmightnotneed/references/catalog.md` are written by the
 refresh scripts. Do not edit them by hand, and do run `pnpm refresh` rather than
 patching numbers.
 
@@ -80,22 +107,46 @@ and personal per machine, never commit it.
   turns them into `.js` on emit, so Node can also run the sources directly.
 - Before writing any user-visible text, including rule explainers, CLI output
   and the README, load `.claude/skills/writing-voice/SKILL.md`. No em dashes.
-- `pnpm verify` runs lint, typecheck, tests and the freshness check. Run it
-  before you call anything done.
+- `pnpm verify` runs lint, typecheck, tests with coverage, knip, the
+  freshness check and the copy check. Run it before you call anything done.
+
+## Guardrails
+
+`pnpm verify` catches more than the schema. `catalog.test.ts` walks imports
+from `PURE_ROOTS` and bans fs, network, `process` and clock.
+`handrolled.test.ts` rejects a shape whose words overlap an `unless` saying
+the feature does not cover it, because a shape like that tells an agent to
+delete code the rule cannot replace. `demos.test.ts` wants a demo or a written
+reason there is none. `check:freshness` rejects a `replaces` entry with no
+size, and `scripts/unsizeable.ts` is the escape hatch for a package
+bundlephobia genuinely cannot build.
+
+What no script checks is whether a sentence is true:
+
+- **Execute a claim rather than recalling it.** `Intl.PluralRules` returns a
+  category and never a word; NFD leaves the stroke on `Ł` alone; `kibibyte`
+  throws a `RangeError`. All three would have been written wrong from memory.
+- **Exercise the real binaries.** Build and run `packages/cli/dist/bin.js`,
+  drive the MCP server over stdio, and for the website `pnpm dev` and look at
+  it. A clipped card and a hover that promised a click were invisible to both
+  types and tests.
+- **A rule has a `lintRule` or `handRolled` shapes, rarely both.** `lint.ts`
+  publishes that split as a feature. `resize-observer` is the one exception.
+- **Build-time packages do not belong in a page-weight headline.** A PostCSS
+  plugin ships nothing, so counting it inflates the number.
 
 ## Guides are references, never copies
 
-A rule may carry `guides`, which are IDs from GoogleChrome/modern-web-guidance
-(Apache-2.0). Their guides are keyed by use case, ours by package name, so
-they cover the implementation this catalog deliberately leaves out. Store IDs
-only. `scripts/refresh-guides.ts` snapshots their index from the published npm
-package and the freshness check rejects an ID that no longer exists. Do not
-vendor their prose: the catalog is a lookup table, not a documentation mirror.
+A rule may carry `guides`, IDs from GoogleChrome/modern-web-guidance
+(Apache-2.0). Theirs are keyed by use case, ours by package name, so they
+cover the implementation this catalog leaves out. Store IDs only; the
+freshness check rejects one that disappears upstream. Do not vendor their
+prose.
 
 Read a guide before linking it. A plausible ID is not evidence: a review found
-three links wrong, each one pointing at an adjacent topic rather than the
-rule's own. `.claude/skills/adding-a-rule/SKILL.md` has the method and the
-three worked examples. Most rules have no guide, which is fine.
+three links wrong, each pointing at an adjacent topic.
+`.claude/skills/adding-a-rule/SKILL.md` has the method. Most rules have no
+guide, which is fine.
 
 ## Categories
 
@@ -114,5 +165,13 @@ and the schema rejects an empty list. When adding a rule, write `unless` first.
 
 ## Not building
 
-VS Code extension, hosted playground, accounts, auth. The `modern-css`
-skill is Launch 2, and only if Launch 1 lands.
+VS Code extension, hosted playground, accounts, auth, ESLint plugin.
+
+Not a documentation mirror. `docs/guidance-design.md` argued against vendoring
+prose advice and that part still holds: guidance goes stale on a different
+clock than Baseline, and Chrome's Modern Web Guidance already covers the
+use-case-keyed ground with more maintenance behind it. Reference it, do not
+rewrite it. The same reasoning is why `lintRule` points at a linter that
+already does the job instead of this project growing a second implementation
+of the same check. Broadening what counts as a finding is on the table;
+shipping unverifiable advice is not.

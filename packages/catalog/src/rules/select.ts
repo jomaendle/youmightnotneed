@@ -71,6 +71,7 @@ export const select: Rule = {
     "animated-select-picker",
     "branded-select-styling",
     "custom-select-picker-layouts",
+    "rich-media-picker",
     "select-menu-interaction",
   ],
 };

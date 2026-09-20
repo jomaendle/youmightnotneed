@@ -34,5 +34,9 @@ new URLPattern({ hostname: ":tenant.example.com" })
     snippet: `const pattern = new URLPattern({ pathname: "/users/:id" });
 const match = pattern.exec(url);
 const id = match?.pathname.groups.id;`,
+    handRolled: [
+      "a hand-written regex per route with named capture groups, and a loop testing each against the path",
+      'pathname.split("/") compared segment by segment to work out which route matched and pull out an id',
+    ],
   },
 };

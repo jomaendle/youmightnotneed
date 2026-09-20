@@ -1,7 +1,27 @@
 # Best-practice guidance: where it goes, and why not in the catalog
 
-Status: proposal. Nothing here is built. Written so the decision is made once,
-before anyone starts.
+Status: this shape was not built. The goal it serves is live.
+
+The product vision is one tool to identify and apply modern web best
+practices, so the question this document asks is the right one. What it got
+wrong was the form: a parallel skill full of hand-written advice, sitting
+beside a catalog whose whole credibility comes from every claim tracing to a
+committed snapshot.
+
+Two things settled it against. The argument below about the catalog's
+invariants turned out to apply to shipping the advice at all under this name,
+because it goes stale on a different clock than Baseline and no script can
+check it. And Chrome shipped Modern Web Guidance in 2026 covering the same
+use-case-keyed ground, maintained and versioned on npm, which is why the
+catalog references those guides rather than rewriting them.
+
+**The bar for a second attempt is at the bottom of this document**, and it is
+higher than the one for a rule, not lower. Anything that broadens what counts
+as a finding has to clear it: a primary source someone has actually read, a
+stated condition under which it does not apply, and something a script can
+verify. Widening `replaces` and `featureIds` into optionality to let advice
+in is the specific move to avoid, because those constraints are what make a
+finding falsifiable.
 
 ## What is being asked for
 
@@ -17,10 +37,12 @@ the body, topic encoded as a filename prefix (`async-`, `bundle-`, `rerender-`),
 compiled into a single `AGENTS.md`, with a `test-cases.json` of eval cases
 alongside.
 
-## Recommendation
+## Recommendation as it stood (not taken)
 
-Build it as `skills/web-best-practices/`, a sibling of
-`skills/youmightnotneed/`. Do not put it in `packages/catalog`.
+The proposal was to build it as `skills/web-best-practices/`, a sibling of
+`skills/youmightnotneed/`, and to keep it out of `packages/catalog`. The
+second half of that still holds and is why the catalog stayed narrow. The
+first half was never built.
 
 ## Why not in the catalog
 
@@ -44,7 +66,7 @@ script. `replaces` min(1) and `unless` min(1) exist to force a rule to be
 falsifiable. Guidance needs its own discipline, a cited source and a stated
 impact, rather than a weakened version of this one.
 
-## Proposed shape
+## Proposed shape, for the record
 
 ```
 skills/web-best-practices/
@@ -71,8 +93,9 @@ skills/web-best-practices/
   "do not install a carousel library" hands off to `carousel-scroll-markers`.
   The catalog does not need to know practices exist.
 
-CLAUDE.md already reserves the slot: "The `modern-css` skill is Launch 2, and
-only if Launch 1 lands." This is that slot, widened past CSS.
+CLAUDE.md reserved a slot for this at the time: "The `modern-css` skill is
+Launch 2, and only if Launch 1 lands." This was that slot, widened past CSS.
+That sentence has since been removed, and the section below is why.
 
 ## The argument against, stated plainly
 

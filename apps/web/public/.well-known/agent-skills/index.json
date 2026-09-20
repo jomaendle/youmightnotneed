@@ -6,7 +6,7 @@
       "type": "archive",
       "description": "Find the CSS, HTML or Web API that covers a case before reaching for a library, check what an existing package.json could drop, and spot hand-written code the platform now does on its own. Use when about to install a frontend package, when building a UI behaviour that might already be native, when about to hand-write a focus trap, carousel, scroll lock, tooltip positioner or similar, when reviewing code for reimplementations of platform features, when asked whether a library is still needed, or when reviewing dependencies for weight. Covers carousels, dialogs, tooltips, popovers, scroll effects, transitions, date pickers, drag and drop, clipboard, text truncation, HTTP requests, UUIDs, query strings, hashing, event emitters, and date and number formatting.",
       "url": "https://youmightnotneed.dev/.well-known/agent-skills/youmightnotneed.tar.gz",
-      "digest": "sha256:6389d784340470a2106bc4a42af570e5dc2851305a4de91a55d7c48a07847c76"
+      "digest": "sha256:ad91ab257ebc670b1c32941777b87f74b3845fc92c072205ef74e20565c2ef1d"
     }
   ]
 }

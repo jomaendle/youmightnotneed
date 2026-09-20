@@ -1,5 +1,144 @@
 # @jomae/catalog
 
+## 0.10.0
+
+### Minor Changes
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add eleven rules
+  
+  Passkeys, spinners and progress bars, form validation, jQuery, file pickers
+  and drop zones, saving a generated file, scrolling an element into view,
+  breakpoint matching, light and dark theming, plural selection, and stripping
+  accents. Plus pretty-bytes and filesize on the existing number rule.
+  
+  65 rules to 76, covering 301 packages.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add three limited-availability rules and report tier changes on the cron
+  
+  Temporal against moment-timezone and spacetime, cookieStore against
+  js-cookie, and speculation rules against quicklink. All three are limited, so
+  each leads with the condition saying it needs a fallback today.
+  
+  The monthly refresh now names which rules changed tier in the PR body,
+  instead of asking a human to spot it in a generated diff.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add a rule for locale-aware date and time formatting
+  
+  moment, dayjs, date-fns, luxon and date-fns-tz were the largest gap left in
+  the catalog, around 177M weekly downloads with nothing covering them. The
+  existing date rules cover relative phrasing and the date input, not plain
+  formatting, which is the usual reason one of these ends up in a bundle.
+  
+  Intl.DateTimeFormat formats only, so the rule says so plainly: date
+  arithmetic is the first `unless`, and Temporal is not Baseline yet.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Answer "what became replaceable recently" with `--since`
+  
+  The catalog already knew when each native replacement reached its current
+  Baseline status, but nothing exposed it. `youmightnotneed --since 2026-03-01`
+  now narrows a report to the rules that crossed on or after a date, and names
+  what it held back rather than letting it vanish.
+  
+  Put the date in a package.json script and bump it when you read the report,
+  and each run covers the platform's moves since the last one.
+  
+  The catalog gains `baselineSince()` and `splitSince()`, both pure. CLI `--json`
+  carries `baseline.since` on every finding, and the MCP server carries `since`
+  on each finding from `analyze_dependencies`, so an agent can answer the same
+  question by filtering what it already has.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Give ten more rules something an agent can match on
+  
+  Colour functions, drag and drop, wake lock, server-sent events, web locks,
+  display names, list format, Web Animations, segmenter and URLPattern each
+  only fired on an exact package name. Each now names the shapes people write
+  instead, which is the half no package.json scan can see.
+  
+  56 shapes to 84, across 65 of 81 rules.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Give three rules something an agent can match on
+  
+  fetch, web-crypto and field-sizing carried no handRolled shapes, so they only
+  fired when the exact package name appeared in a package.json. Hand-written
+  code installs nothing, which is the half `replaces` cannot see.
+  
+  Also adds css-element-queries to container-queries, alongside the
+  element-resize-detector entry it sits next to.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Make the tier comparison testable, and stop it dropping renamed features
+  
+  The tier-change report skipped any feature present in the committed snapshot
+  but absent upstream, which is exactly what a rename looks like and the one
+  case most needing a person. It now reports those separately.
+  
+  The comparison moved to `packages/catalog/src/tier-diff.ts` as a pure
+  `diffTiers`, where the test machinery reaches.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add font loading and pointer gesture rules
+  
+  fontfaceobserver and webfontloader against document.fonts and font-display.
+  hammerjs, react-swipeable and swiped-events against pointer events. Also two
+  modern-web-guidance guides on the new form validation rule, both verified by
+  reading them.
+  
+  Fixes a bug in refresh:sizes where removing a rule permanently blocked the
+  next size refresh.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Remove the collapsed `since` field and make `TierChange` a discriminated union
+  
+  `ResolvedFeature` carried `since` alongside the `lowDate`/`highDate` it was
+  derived from, so a hand-built one could hold three fields that disagreed.
+  Reading the collapsed field instead of the raw dates is the bug that had
+  light-dark four months late. `featureSince(feature)` is now the one
+  derivation.
+  
+  `TierChange.to` was null only when `direction === "missing"`, an invariant
+  the type did not express, so the only consumer carried a null branch it
+  could never reach.
+
+### Patch Changes
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add a finding-rules skill
+  
+  Covers deciding there is a rule to write, which adding-a-rule assumes you
+  have already done: what counts as an entry point, where to look, what to
+  extract, and seven worked rejections.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Add the rich-media-picker guide to the customizable select rule
+  
+  It teaches `appearance: base-select` for rich content inside `<option>`, and
+  frames itself as replacing heavy custom select components, which is what the
+  rule is for. Verified by reading the guide, not by the ID looking right.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Stop passkeys badging itself widely available
+  
+  It derived its tier from `webauthn`, Baseline since 2021, while the JSON
+  helpers the rule is actually about arrived in Safari 18.4. The badge and the
+  condition below it pointed in different directions. It now carries a
+  manualBaseline of newly available, on the helpers' own dates.
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Fix the crossing date a rule reports
+  
+  baselineSince dated each feature against that feature's own tier, so a newly
+  available rule that also needed an already-widely feature was dated by when
+  that feature reached widely. light-dark read 2024-08-03 instead of
+  2024-05-13, and a --since window in between listed it wrongly. The wrong date
+  also shipped in CLI --json and the MCP since field.
+  
+  Also: an empty --since view no longer claims the window did the filtering
+  when the package had no rule at all, and a single undated finding reads "1
+  has" rather than "1 have".
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Close a snapshot-erasing path in refresh:sizes, and two more wrong claims
+  
+  An unreadable sizes snapshot made `readExisting` return `{}` silently, which
+  disabled the fall-back guard and let one successful fetch overwrite three
+  hundred committed sizes with a fresh date. It now refuses to run.
+  
+  cookie-store said the service worker half is "still missing" when only Safari
+  lacks it, and progress-indicator still claimed rc-progress, whose Circle
+  export is what the rule's own condition says is not covered.
+
 ## 0.9.0
 
 ### Minor Changes

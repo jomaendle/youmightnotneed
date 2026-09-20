@@ -10,8 +10,17 @@ export interface ResolvedFeature {
   /** Human-readable name, e.g. "Scroll snap". */
   name: string;
   status: BaselineStatus;
-  /** Date the feature reached its current status, when known. */
-  since: string | null;
+  /**
+   * When this feature crossed each threshold, as published. Null means it has
+   * not crossed that one.
+   *
+   * Deliberately raw. A single collapsed "since" used to live here too, dated
+   * against the feature's own tier, and `baselineSince` reading it instead of
+   * these is the bug that had light-dark four months late. One derivation, in
+   * `featureSince` and `baselineSince`, and nothing to disagree with.
+   */
+  lowDate: string | null;
+  highDate: string | null;
   spec: string | null;
   /** Minimum version each tracked browser needs. Null means no data (commonly: never shipped there). */
   support: Record<string, string | null>;
@@ -95,16 +104,21 @@ function toStatus(baseline: "high" | "low" | false): BaselineStatus {
 }
 
 /**
- * The date a feature reached its current tier. Widely available features report
- * when they crossed into widely; newly available ones when they crossed into
- * newly. A limited feature has not reached either, so it has no date.
+ * The date a feature reached its own current tier. Widely available features
+ * report when they crossed into widely; newly available ones when they crossed
+ * into newly. A limited feature has reached neither, so it has no date.
+ *
+ * For a RULE, use `baselineSince`. A rule is only as available as its weakest
+ * feature, so it has to ask every feature when it reached the rule's tier,
+ * which is a different question from this one whenever the two differ.
  */
-function sinceDate(
-  status: BaselineStatus,
-  entry: { lowDate: string | null; highDate: string | null },
-): string | null {
-  if (status === "widely") return entry.highDate;
-  if (status === "newly") return entry.lowDate;
+export function featureSince(feature: {
+  status: BaselineStatus;
+  lowDate: string | null;
+  highDate: string | null;
+}): string | null {
+  if (feature.status === "widely") return feature.highDate;
+  if (feature.status === "newly") return feature.lowDate;
   return null;
 }
 
@@ -126,7 +140,8 @@ export function resolveFeature(id: string): ResolvedFeature {
       id,
       name: id,
       status: "unknown",
-      since: null,
+      lowDate: null,
+      highDate: null,
       spec: null,
       support: {},
       partialSupport: null,
@@ -137,7 +152,8 @@ export function resolveFeature(id: string): ResolvedFeature {
     id,
     name: entry.name,
     status,
-    since: sinceDate(status, entry),
+    lowDate: entry.lowDate,
+    highDate: entry.highDate,
     spec: entry.spec,
     support: entry.support,
     partialSupport: entry.partialSupport,
@@ -191,6 +207,42 @@ export function combinedSupport(
     );
   }
   return result;
+}
+
+/**
+ * When a rule as a whole reached its current Baseline status, or null when the
+ * catalog cannot say.
+ *
+ * A rule is only as available as its weakest required feature, so the rule
+ * crossed on the date the *last* of its features crossed. Dates are
+ * YYYY-MM-DD, so the latest one is the largest string and no clock is needed
+ * to compare them, which is what keeps this callable from a pure module.
+ *
+ * Null covers two cases that both mean "no crossing to report": a feature that
+ * has not crossed at all (limited or unverified), and a manualBaseline rule,
+ * whose `verifiedOn` records a human checking rather than a feature landing.
+ * A caller that filters on a date has to name those separately instead of
+ * dropping them silently.
+ */
+export function baselineSince(info: BaselineInfo): string | null {
+  if (info.status === "limited" || info.status === "unknown") return null;
+  if (info.features.length === 0) return null;
+
+  let latest: string | null = null;
+  for (const feature of info.features) {
+    // Against the RULE's tier, never the feature's own: a newly available
+    // rule that also needs an already-widely feature must be dated by when
+    // that feature reached NEWLY, not widely.
+    const crossed =
+      info.status === "widely" ? feature.highDate : feature.lowDate;
+
+    // One undated feature means the rule has no date: the rule is gated by
+    // that feature, so a date drawn from its siblings would claim the rule
+    // crossed on a day it demonstrably had not.
+    if (crossed === null) return null;
+    if (latest === null || crossed > latest) latest = crossed;
+  }
+  return latest;
 }
 
 /**
