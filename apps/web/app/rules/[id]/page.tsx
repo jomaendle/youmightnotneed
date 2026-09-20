@@ -164,11 +164,11 @@ export default async function RulePage({ params }: PageProps) {
           </ul>
         </section>
 
+        <GuideList guides={resolveGuides(rule)} />
+
         <HandRolled shapes={rule.agent.handRolled ?? []} />
 
         <LintRule rule={rule} />
-
-        <GuideList guides={resolveGuides(rule)} />
 
         <PackageTable replaces={rule.replaces} />
       </article>
@@ -280,8 +280,54 @@ const UPPERCASE_GUIDE_IDS: Record<string, string> = {
 };
 
 /**
+ * Provenance for the guide set, stated rather than implied.
+ *
+ * The trust here is not a logo. It is that every field is checkable: a named
+ * owner, a licence, a pinned version and the date this project snapshotted
+ * the index. `pnpm refresh:guides` moves the last two and the freshness check
+ * rejects an ID that stopped existing upstream, so a dead link fails CI
+ * instead of shipping.
+ */
+function GuideSource() {
+  const facts = [
+    GUIDE_SOURCE.licence,
+    `v${GUIDE_SOURCE.version}`,
+    `indexed ${GUIDE_SOURCE.fetchedOn}`,
+  ];
+
+  return (
+    <div className="mb-5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-metadata">
+      <span className="text-fg-muted">From</span>
+      <a
+        href={GUIDE_SOURCE.repo}
+        target="_blank"
+        rel="noreferrer"
+        className="plain font-medium text-fg no-underline hover:text-accent"
+      >
+        {GUIDE_SOURCE.owner}
+        <span className="text-fg-faint"> / </span>
+        <span className="font-mono">{GUIDE_SOURCE.name}</span>
+      </a>
+      {facts.map((fact) => (
+        <span key={fact} className="text-fg-faint">
+          <span aria-hidden="true" className="pr-2.5">
+            ·
+          </span>
+          {fact}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/**
  * The long-form guides for this rule. The catalog answers which dependency has
  * a native equivalent and stops there, so the implementation is a link out.
+ *
+ * Sits above the hand-rolled shapes and the package table because it is the
+ * next thing a reader who has accepted the swap actually needs, and below the
+ * conditions because recommending an implementation before stating the limits
+ * would invert the point of the conditions.
  */
 function GuideList({ guides }: { guides: readonly ResolvedGuide[] }) {
   const linkable = guides.filter((guide) => guide.url !== null);
@@ -292,27 +338,51 @@ function GuideList({ guides }: { guides: readonly ResolvedGuide[] }) {
       <h2 className="mb-2 text-section">Building it</h2>
       <p className="mb-4 max-w-[62ch] text-compact text-fg-muted">
         This catalog stops at the swap. These guides go through the
-        implementation and the fallbacks. They come from Google Chrome's{" "}
-        <a href={GUIDE_SOURCE.repo} target="_blank" rel="noreferrer">
-          modern-web-guidance
-        </a>
-        , Apache-2.0.
+        implementation and the fallbacks, and each one reads offline through its
+        own command.
       </p>
-      <ul className="max-w-[68ch] space-y-2">
+
+      <GuideSource />
+
+      <ul className="grid gap-3 sm:grid-cols-2">
         {linkable.map((guide) => (
-          <li key={guide.id} className="flex flex-wrap items-baseline gap-x-3">
-            <a href={guide.url ?? undefined} target="_blank" rel="noreferrer">
-              {guideTitle(guide.id)}
-            </a>
-            {guide.category === guide.id ? null : (
-              <span className="text-compact text-fg-muted">
-                {guide.category}
-              </span>
-            )}
+          <li key={guide.id}>
+            <GuideCard guide={guide} />
           </li>
         ))}
       </ul>
     </section>
+  );
+}
+
+/**
+ * One guide. The command is the reason this is a card rather than a link: it
+ * is already in the catalog data, it is how an agent reads the guide without
+ * a browser, and the old list threw it away.
+ */
+function GuideCard({ guide }: { guide: ResolvedGuide }) {
+  return (
+    <div className="group flex h-full flex-col gap-2 rounded-lg border border-border bg-bg-subtle p-4 transition-colors hover:border-border-strong">
+      {guide.category === guide.id ? null : (
+        <span className="font-mono text-fg-faint text-metadata uppercase tracking-wider">
+          {guide.category}
+        </span>
+      )}
+      <a
+        href={guide.url ?? undefined}
+        target="_blank"
+        rel="noreferrer"
+        className="plain text-subsection no-underline transition-colors group-hover:text-accent"
+      >
+        {guideTitle(guide.id)}
+      </a>
+      {/* Wraps rather than scrolling. These commands are longer than a card is
+          wide, and a horizontal scrollbar inside a small card hides the end of
+          the string behind a gesture most people will not try. */}
+      <code className="mt-auto break-all pt-2 font-mono text-fg-muted text-metadata">
+        {guide.command}
+      </code>
+    </div>
   );
 }
 
