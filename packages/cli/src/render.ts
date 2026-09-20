@@ -106,7 +106,9 @@ function sinceNote(view: SinceView): string | null {
     );
   }
   if (view.undated > 0) {
-    parts.push(`${view.undated} have no crossing date in the catalog's data`);
+    parts.push(
+      `${view.undated} ${view.undated === 1 ? "has" : "have"} no crossing date in the catalog's data`,
+    );
   }
   if (parts.length === 0) return null;
   const total = view.earlier + view.undated;
@@ -217,8 +219,14 @@ function footer(options: RenderOptions, hasGuides: boolean): string {
  */
 function emptyBody(options: RenderOptions): string[] {
   const { palette, since } = options;
+  // Only claim the window did the filtering when it actually held something
+  // back. `--package lodash --since 2026-01-01` matches no rule at all, and
+  // saying "nothing reached that status" implies a rule exists that crossed
+  // earlier, which is a different and wrong answer.
+  const windowHeldSomething =
+    since !== undefined && since.earlier + since.undated > 0;
   let headline: string;
-  if (since) {
+  if (windowHeldSomething && since) {
     headline = `Nothing here reached its current Baseline status on or after ${since.date}.`;
   } else if (options.subject === "package") {
     headline = `The catalog has no rule for ${options.projectName ?? "that package"}.`;

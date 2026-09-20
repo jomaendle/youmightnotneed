@@ -16,8 +16,10 @@ export const fileDownload: Rule = {
   link.href = url;
   link.download = filename;
   link.click();
-  // Without this the blob is held in memory until the document goes.
-  URL.revokeObjectURL(url);
+  // Revoke, or the blob is held in memory until the document goes. Deferred
+  // rather than immediate: revoking in the same task cancels the save in
+  // some engines, because the fetch behind the download has not started.
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 save(new Blob([csv], { type: "text/csv" }), "report.csv");`,
@@ -33,7 +35,7 @@ save(new Blob([csv], { type: "text/csv" }), "report.csv");`,
       "You support browsers below Chrome {{chrome:download}}, Firefox {{firefox:download}} or Safari {{safari:download}}. Safari supported the attribute considerably later than the others.",
     ],
     snippet:
-      'const url = URL.createObjectURL(blob);\nObject.assign(document.createElement("a"), { href: url, download: name }).click();\nURL.revokeObjectURL(url);',
+      'const url = URL.createObjectURL(blob);\nObject.assign(document.createElement("a"), { href: url, download: name }).click();\nsetTimeout(() => URL.revokeObjectURL(url), 0);',
     handRolled: [
       "a data: URI assigned to window.location to trigger a save, which truncates on larger files",
       "a hidden iframe or form submitted to make the browser treat a response as a download",

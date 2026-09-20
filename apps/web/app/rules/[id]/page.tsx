@@ -338,8 +338,8 @@ function GuideList({ guides }: { guides: readonly ResolvedGuide[] }) {
       <h2 className="mb-2 text-section">Building it</h2>
       <p className="mb-4 max-w-[62ch] text-compact text-fg-muted">
         This catalog stops at the swap. These guides go through the
-        implementation and the fallbacks, and each one reads offline through its
-        own command.
+        implementation and the fallbacks, and each one reads in the terminal
+        through its own command.
       </p>
 
       <GuideSource />

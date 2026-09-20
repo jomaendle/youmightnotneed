@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   BASELINE_DATA_DATE,
+  type BaselineInfo,
   baselineLabel,
   baselineRank,
   baselineShortLabel,
+  baselineSince,
   combinedSupport,
   compareBaseline,
   hasNoVersions,
@@ -13,6 +15,7 @@ import {
   unpublishedSupport,
   WEB_FEATURES_VERSION,
 } from "./baseline.ts";
+import { rules } from "./rules/index.ts";
 import type { Rule } from "./schema.ts";
 
 function ruleWith(overrides: Partial<Rule>): Rule {
@@ -285,4 +288,119 @@ describe("features web-features publishes no aggregate for", () => {
       true,
     );
   });
+});
+
+describe("baselineSince dates a rule against the rule's own tier", () => {
+  function info(
+    status: "widely" | "newly" | "limited",
+    features: Array<{
+      status: "widely" | "newly" | "limited";
+      lowDate: string | null;
+      highDate: string | null;
+    }>,
+  ): BaselineInfo {
+    return {
+      status,
+      features: features.map((f, i) => ({
+        id: `f${i}`,
+        name: `f${i}`,
+        status: f.status,
+        since: f.status === "widely" ? f.highDate : f.lowDate,
+        lowDate: f.lowDate,
+        highDate: f.highDate,
+        spec: null,
+        support: {},
+        partialSupport: null,
+      })),
+      limitedBy: null,
+      source: "web-features",
+      dataDate: "2026-09-20",
+      note: null,
+    };
+  }
+
+  // The bug this exists for. A newly available rule that also requires an
+  // already-widely feature was dated by when that feature reached WIDELY,
+  // a later date and an entirely different threshold. light-dark read four
+  // months late, so a --since window in between listed it wrongly.
+  it("dates a newly rule by low dates, even where a feature went on to widely", () => {
+    const since = baselineSince(
+      info("newly", [
+        { status: "newly", lowDate: "2024-05-13", highDate: null },
+        { status: "widely", lowDate: "2022-02-03", highDate: "2024-08-03" },
+      ]),
+    );
+
+    expect(since).toBe("2024-05-13");
+  });
+
+  it("dates a widely rule by the latest high date", () => {
+    const since = baselineSince(
+      info("widely", [
+        { status: "widely", lowDate: "2019-01-01", highDate: "2021-06-01" },
+        { status: "widely", lowDate: "2020-01-01", highDate: "2022-09-01" },
+      ]),
+    );
+
+    expect(since).toBe("2022-09-01");
+  });
+
+  it("gives a limited rule no date even when its features carry dates", () => {
+    const since = baselineSince(
+      info("limited", [
+        { status: "widely", lowDate: "2019-01-01", highDate: "2021-06-01" },
+        { status: "limited", lowDate: null, highDate: null },
+      ]),
+    );
+
+    expect(since).toBe(null);
+  });
+
+  it("returns null when a feature has no date at the rule's tier", () => {
+    const since = baselineSince(
+      info("newly", [
+        { status: "newly", lowDate: "2024-05-13", highDate: null },
+        { status: "newly", lowDate: null, highDate: null },
+      ]),
+    );
+
+    expect(since).toBe(null);
+  });
+});
+
+describe("the real catalog keeps tier and crossing date in step", () => {
+  it.each(rules.map((rule) => [rule.id, rule] as const))(
+    "%s reports a date if and only if it has reached a tier",
+    (_id, rule) => {
+      const info = resolveBaseline(rule);
+      const since = baselineSince(info);
+
+      if (info.status === "limited" || info.status === "unknown") {
+        expect(since).toBe(null);
+        return;
+      }
+      // A derived rule that has crossed must be able to say when. A
+      // manualBaseline has no features, so it legitimately cannot.
+      if (info.source === "web-features" && info.features.length > 0) {
+        expect(since).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      }
+    },
+  );
+
+  // Guards the shape the --since filter depends on: no rule may claim a
+  // crossing date earlier than one of its own features reached that tier.
+  it.each(rules.map((rule) => [rule.id, rule] as const))(
+    "%s is never dated before its slowest feature",
+    (_id, rule) => {
+      const info = resolveBaseline(rule);
+      const since = baselineSince(info);
+      if (since === null) return;
+
+      const tierDates = info.features
+        .map((f) => (info.status === "widely" ? f.highDate : f.lowDate))
+        .filter((d): d is string => d !== null);
+
+      for (const crossed of tierDates) expect(since >= crossed).toBe(true);
+    },
+  );
 });

@@ -12,6 +12,15 @@ export interface ResolvedFeature {
   status: BaselineStatus;
   /** Date the feature reached its current status, when known. */
   since: string | null;
+  /**
+   * The crossing dates behind `since`, kept separately because `since`
+   * collapses them against this feature's own tier. A rule is only as
+   * available as its weakest feature, so dating the rule means asking every
+   * feature when it reached *the rule's* tier, which is `lowDate` for a newly
+   * available rule even where the feature itself went on to widely.
+   */
+  lowDate: string | null;
+  highDate: string | null;
   spec: string | null;
   /** Minimum version each tracked browser needs. Null means no data (commonly: never shipped there). */
   support: Record<string, string | null>;
@@ -127,6 +136,8 @@ export function resolveFeature(id: string): ResolvedFeature {
       name: id,
       status: "unknown",
       since: null,
+      lowDate: null,
+      highDate: null,
       spec: null,
       support: {},
       partialSupport: null,
@@ -138,6 +149,8 @@ export function resolveFeature(id: string): ResolvedFeature {
     name: entry.name,
     status,
     since: sinceDate(status, entry),
+    lowDate: entry.lowDate,
+    highDate: entry.highDate,
     spec: entry.spec,
     support: entry.support,
     partialSupport: entry.partialSupport,
@@ -209,14 +222,25 @@ export function combinedSupport(
  * dropping them silently.
  */
 export function baselineSince(info: BaselineInfo): string | null {
+  if (info.status === "limited" || info.status === "unknown") return null;
   if (info.features.length === 0) return null;
+
   let latest: string | null = null;
   for (const feature of info.features) {
+    // Against the RULE's tier, never the feature's own. `feature.since` is
+    // already collapsed against the feature's status, so reading it here
+    // mixes two different questions: a newly available rule that also needs
+    // an already-widely feature would be dated by when that feature reached
+    // widely, which is a later date and a different threshold. light-dark is
+    // the live case, and it read four months late.
+    const crossed =
+      info.status === "widely" ? feature.highDate : feature.lowDate;
+
     // One undated feature means the rule has no date: the rule is gated by
     // that feature, so a date drawn from its siblings would claim the rule
     // crossed on a day it demonstrably had not.
-    if (feature.since === null) return null;
-    if (latest === null || feature.since > latest) latest = feature.since;
+    if (crossed === null) return null;
+    if (latest === null || crossed > latest) latest = crossed;
   }
   return latest;
 }

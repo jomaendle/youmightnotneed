@@ -13,7 +13,7 @@ export const scrollIntoView: Rule = {
   native: 'scrollIntoView({ block: "nearest" })',
   human: {
     explainer:
-      'These packages exist for one behaviour: scroll only if the element is not already visible, and scroll as little as possible when it is not. That is what block: "nearest" does, and it has been in every engine since 2023. The default is block: "start", which always scrolls and is why the native method got a reputation for being too blunt.',
+      'These packages exist for one behaviour: scroll only if the element is not already visible, and scroll as little as possible when it is not. That is what block: "nearest" does, in every engine. The default is block: "start", which always scrolls and is why the native method got a reputation for being too blunt, so the option is the whole difference.',
     snippet: `// Scrolls only as far as it has to, and not at all if the
 // option is already visible. Ideal for keyboard navigation.
 option.scrollIntoView({

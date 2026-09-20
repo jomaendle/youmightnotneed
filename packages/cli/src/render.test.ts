@@ -360,3 +360,41 @@ describe("renderJson carries the crossing date", () => {
     expect(parsed.findings[0]?.baseline.since).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });
+
+describe("an empty --since view does not overclaim", () => {
+  const empty = (since: { date: string; earlier: number; undated: number }) =>
+    renderReport(
+      { findings: [], summary: analyze({}).summary },
+      {
+        palette: createPalette(false),
+        projectName: "left-pad",
+        subject: "package",
+        provenance,
+        verbose: false,
+        since,
+      },
+    );
+
+  // Saying "nothing reached that status" implies a rule exists and crossed
+  // earlier. For a package the catalog has no rule for, that is a different
+  // and wrong answer, and the window did no filtering to speak of.
+  it("says the catalog has no rule when the window held nothing back", () => {
+    const output = empty({ date: "2026-01-01", earlier: 0, undated: 0 });
+
+    expect(output).toContain("The catalog has no rule for left-pad");
+    expect(output).not.toContain("reached its current Baseline status");
+  });
+
+  it("blames the window only when the window actually excluded something", () => {
+    const output = empty({ date: "2026-01-01", earlier: 3, undated: 0 });
+
+    expect(output).toContain("on or after 2026-01-01");
+    expect(output).not.toContain("The catalog has no rule");
+  });
+
+  it("uses the singular for a single undated finding", () => {
+    const output = empty({ date: "2026-01-01", earlier: 0, undated: 1 });
+
+    expect(output).toContain("1 has no crossing date");
+  });
+});

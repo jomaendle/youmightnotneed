@@ -222,6 +222,10 @@ describe("--rule prints one rule", () => {
     [["--rule", "inert", "--package", "uuid"], "--package"],
     [["--rule", "inert", "--json"], "--json"],
     [["--rule", "inert", "."], "a path"],
+    // --since narrows a report and --rule produces none, so this is a filter
+    // over nothing. Untested, the conflict could be deleted and a --rule run
+    // would silently swallow the flag.
+    [["--rule", "inert", "--since", "2025-01-01"], "--since"],
   ])("%s exits 2 rather than quietly ignoring the rest", (args, mention) => {
     const result = run(args);
 
