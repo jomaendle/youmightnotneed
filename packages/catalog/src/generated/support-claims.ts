@@ -16,7 +16,7 @@ export interface SupportClaims {
  * and MDN's browser-compat-data. No rule writes a version number by hand.
  */
 export const supportClaims: SupportClaims = {
-  "generatedOn": "2026-09-12",
+  "generatedOn": "2026-09-20",
   "webFeaturesVersion": "3.36.0",
   "bcdVersion": "8.1.0",
   "claims": {

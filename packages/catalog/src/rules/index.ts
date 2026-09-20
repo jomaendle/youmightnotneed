@@ -13,6 +13,7 @@ import { compressionStreams } from "./compression-streams.ts";
 import { containerQueries } from "./container-queries.ts";
 import { contentVisibility } from "./content-visibility.ts";
 import { customHighlight } from "./custom-highlight.ts";
+import { dateFormat } from "./date-format.ts";
 import { dateTimeInput } from "./date-time-input.ts";
 import { dialog } from "./dialog.ts";
 import { discreteTransitions } from "./discrete-transitions.ts";
@@ -113,6 +114,7 @@ const rawRules: readonly Rule[] = [
   containerQueries,
   contentVisibility,
   customHighlight,
+  dateFormat,
   dateTimeInput,
   dialog,
   discreteTransitions,

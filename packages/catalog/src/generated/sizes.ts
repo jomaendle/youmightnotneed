@@ -278,6 +278,21 @@ export const packageSizes: SizeSnapshot = {
       "raw": 2250,
       "version": "2.0.4"
     },
+    "date-fns": {
+      "gzip": 17488,
+      "raw": 70724,
+      "version": "4.4.0"
+    },
+    "date-fns-tz": {
+      "gzip": 3256,
+      "raw": 8634,
+      "version": "3.2.0"
+    },
+    "dayjs": {
+      "gzip": 3063,
+      "raw": 7172,
+      "version": "1.11.23"
+    },
     "defer-promise": {
       "gzip": 240,
       "raw": 344,
@@ -493,6 +508,11 @@ export const packageSizes: SizeSnapshot = {
       "raw": 2854,
       "version": "1.16.0"
     },
+    "luxon": {
+      "gzip": 21914,
+      "raw": 69777,
+      "version": "3.7.2"
+    },
     "lz-string": {
       "gzip": 1477,
       "raw": 4839,
@@ -517,6 +537,11 @@ export const packageSizes: SizeSnapshot = {
       "gzip": 282,
       "raw": 488,
       "version": "3.0.1"
+    },
+    "moment": {
+      "gzip": 20262,
+      "raw": 62635,
+      "version": "2.31.0"
     },
     "motion": {
       "gzip": 47708,
@@ -634,9 +659,9 @@ export const packageSizes: SizeSnapshot = {
       "version": "1.0.0"
     },
     "p-timeout": {
-      "gzip": 681,
-      "raw": 1128,
-      "version": "7.0.1"
+      "gzip": 690,
+      "raw": 1156,
+      "version": "7.0.2"
     },
     "pako": {
       "gzip": 13463,

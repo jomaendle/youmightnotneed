@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 64 of them, covering 265 npm packages.
+Every rule, 65 of them, covering 270 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
@@ -63,6 +63,7 @@ were about to install.
 | reading or building a query string, or pulling a URL apart | URLSearchParams and the URL constructor | widely available | `url-search-params` |
 | reading text aloud with the browser's own text-to-speech engine | SpeechSynthesis and SpeechSynthesisUtterance | widely available | `speech-synthesis` |
 | removing a font's built-in leading so text sits flush in its box | text-box-trim and text-box-edge | limited | `text-box-trim` |
+| rendering a date or time for a person to read | Intl.DateTimeFormat | widely available | `date-format` |
 | rendering a length of time as text, such as "1 hour, 30 minutes" | Intl.DurationFormat | newly available | `duration-format` |
 | rendering a long list where only the rows near the viewport need to cost anything | content-visibility: auto | newly available | `content-visibility` |
 | restyling a scrollbar to match a dark theme, or stopping layout shift when a scrollbar appears | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available | `styled-scrollbars` |
@@ -121,6 +122,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `css-masonry`: react-masonry-css, masonry-layout, react-masonry-component, muuri, react-photo-gallery, vue-masonry, vue-masonry-css
 - `custom-highlight`: mark.js, react-highlight-words, react-highlighter
 - `customizable-select`: react-select, choices.js, select2, tom-select, vue-select, vue-multiselect, @ng-select/ng-select, svelte-select
+- `date-format`: moment, dayjs, date-fns, luxon, date-fns-tz
 - `date-time-input`: react-datepicker, flatpickr, react-flatpickr, react-day-picker, @mui/x-date-pickers, ng2-date-picker
 - `dialog-element`: react-modal, react-responsive-modal, react-aria-modal, @reach/dialog, micromodal, a11y-dialog, vue-js-modal, vue-final-modal, svelte-modals, dialog-polyfill
 - `discrete-transitions`: framer-motion, motion, react-transition-group, react-spring
@@ -215,6 +217,7 @@ and read its conditions before changing anything.
 | already-split hours, minutes and seconds joined with hardcoded unit labels and plural rules | `duration-format` | Intl.DurationFormat | newly available |
 | an IntersectionObserver that swaps a data-src attribute into src when an image nears the viewport | `lazy-loading` | loading="lazy" | widely available |
 | an XMLHttpRequest with an onreadystatechange handler checking readyState === 4, often wrapped in a hand-made Promise | `fetch` | fetch() | widely available |
+| an array of month names indexed by getMonth(), joined with getDate() and getFullYear() to build a display string | `date-format` | Intl.DateTimeFormat | widely available |
 | an easing function like easeInOutQuad written next to a scroll routine | `smooth-scroll` | scroll-behavior: smooth with scroll-margin-top | widely available |
 | an ignore or isMounted flag set in a cleanup function, guarding the result of a fetch given no signal | `abort-controller` | AbortController and AbortSignal | widely available |
 | an input handler setting style.height to auto and then to scrollHeight in pixels, so the textarea remeasures on every keystroke | `field-sizing` | field-sizing: content | newly available |
@@ -231,6 +234,7 @@ and read its conditions before changing anything.
 | mapping scroll position to a transform or an opacity on every scroll event | `scroll-driven-animations` | animation-timeline: view() and scroll() | limited |
 | measuring rendered text in a hidden element or on a canvas to decide where a line should visually end | `line-clamp` | -webkit-line-clamp | widely available |
 | measuring the scrollbar width from innerWidth minus documentElement.clientWidth and padding the body by it | `styled-scrollbars` | scrollbar-width, scrollbar-color and scrollbar-gutter | newly available |
+| padStart on getHours() and getMinutes() to assemble a HH:MM clock, usually next to a hand-written AM and PM branch | `date-format` | Intl.DateTimeFormat | widely available |
 | polling an element's dimensions on an interval to notice when they change | `resize-observer` | ResizeObserver | widely available |
 | prev and next buttons calling scrollBy, each with its own disabled state recomputed on every scroll | `carousel-scroll-markers` | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited |
 | reading offsetWidth and setting height from it to keep a box in proportion | `aspect-ratio` | aspect-ratio | widely available |

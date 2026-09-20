@@ -1676,6 +1676,37 @@ button:disabled { opacity: 0.4; cursor: default; border-color: var(--c-border); 
 `,
     ),
   },
+  "date-format": {
+    height: 230,
+    html: wrapDemo(
+      `
+<div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+  <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:center;">
+    <button data-locale="en-US">en-US</button>
+    <button data-locale="en-GB">en-GB</button>
+    <button data-locale="de-DE">de-DE</button>
+    <button data-locale="ja-JP">ja-JP</button>
+  </div>
+  <p id="result" class="demo-hint" style="font-family:var(--font-mono, monospace); font-size:0.9375rem; color:var(--c-fg); text-align:center;">pick a locale</p>
+</div>
+<script>
+  const result = document.getElementById("result");
+  // Fixed instant, so every locale formats the same moment and the only
+  // thing that changes between buttons is the locale's own convention.
+  const when = new Date("2026-09-20T13:20:00Z");
+  document.querySelectorAll("button[data-locale]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      result.textContent = new Intl.DateTimeFormat(btn.dataset.locale, {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZone: "Europe/Berlin",
+      }).format(when);
+    });
+  });
+</script>
+`,
+    ),
+  },
   "intl-list-format": {
     height: 230,
     html: wrapDemo(
