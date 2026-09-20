@@ -2,6 +2,7 @@ import {
   baselineLabel,
   CATEGORIES_BY_ID,
   combinedSupport,
+  featureSince,
   formatBytes,
   GUIDE_SOURCE,
   hasNoVersions,
@@ -501,9 +502,9 @@ function FeatureTable({
                   {feature.name}
                 </a>
               )}
-              {feature.since === null ? null : (
+              {featureSince(feature) === null ? null : (
                 <span className="ml-2 text-fg-faint text-metadata">
-                  since {feature.since}
+                  since {featureSince(feature)}
                 </span>
               )}
             </span>

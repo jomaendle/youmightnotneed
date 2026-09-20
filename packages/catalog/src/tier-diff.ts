@@ -17,14 +17,24 @@ export interface TierEntry {
 
 export type TierDirection = "promotion" | "regression" | "missing";
 
-export interface TierChange {
+interface TierChangeBase {
   ruleId: string;
   featureId: string;
-  direction: TierDirection;
-  /** Null when the feature is gone from the live data entirely. */
   from: BaselineStatus;
-  to: BaselineStatus | null;
 }
+
+/**
+ * A discriminated union rather than a nullable `to`, because "gone from the
+ * live data" has no destination tier and a shared shape forces every consumer
+ * to write a null branch it can never reach. Narrowing on `direction` hands
+ * the report builder a `to` it can print without checking.
+ */
+export type TierChange =
+  | (TierChangeBase & {
+      direction: "promotion" | "regression";
+      to: BaselineStatus;
+    })
+  | (TierChangeBase & { direction: "missing" });
 
 /** Higher is better supported, so a rise in rank is a promotion. */
 const RANK: Record<BaselineStatus, number> = {
@@ -80,7 +90,7 @@ function compare(
   const from = tierOf((committed[featureId] as TierEntry).baseline);
 
   if (!Object.hasOwn(live, featureId)) {
-    return { ruleId, featureId, direction: "missing", from, to: null };
+    return { ruleId, featureId, direction: "missing", from };
   }
 
   const to = tierOf(live[featureId]?.status?.baseline);

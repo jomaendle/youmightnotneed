@@ -74,14 +74,11 @@ describe("diffTiers", () => {
     );
 
     expect(changes).toEqual([
-      {
-        ruleId: "r1",
-        featureId: "f1",
-        direction: "missing",
-        from: "newly",
-        to: null,
-      },
+      { ruleId: "r1", featureId: "f1", direction: "missing", from: "newly" },
     ]);
+    // Absent, not null. The union has no `to` on this branch, so a consumer
+    // cannot write a null check that never fires.
+    expect(changes[0]).not.toHaveProperty("to");
   });
 
   // Missing status means missing data rather than a downgrade. It still gets

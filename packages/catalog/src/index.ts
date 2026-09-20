@@ -14,6 +14,7 @@ export {
   baselineSince,
   combinedSupport,
   compareBaseline,
+  featureSince,
   hasNoVersions,
   type ResolvedFeature,
   resolveBaseline,

@@ -8,6 +8,7 @@ import {
   baselineSince,
   combinedSupport,
   compareBaseline,
+  featureSince,
   hasNoVersions,
   resolveBaseline,
   resolveFeature,
@@ -41,19 +42,19 @@ describe("resolveFeature", () => {
     const feature = resolveFeature("dialog");
     expect(feature.status).toBe("widely");
     expect(feature.name).toBe("<dialog>");
-    expect(feature.since).toBe("2024-09-14");
+    expect(featureSince(feature)).toBe("2024-09-14");
   });
 
   it("maps low to newly, dated from when it became newly available", () => {
     const feature = resolveFeature("popover");
     expect(feature.status).toBe("newly");
-    expect(feature.since).toBe("2025-01-27");
+    expect(featureSince(feature)).toBe("2025-01-27");
   });
 
   it("maps false to limited, with no date", () => {
     const feature = resolveFeature("anchor-positioning");
     expect(feature.status).toBe("limited");
-    expect(feature.since).toBeNull();
+    expect(featureSince(feature)).toBeNull();
   });
 
   it("degrades to unknown for an ID the snapshot lacks", () => {
@@ -305,7 +306,6 @@ describe("baselineSince dates a rule against the rule's own tier", () => {
         id: `f${i}`,
         name: `f${i}`,
         status: f.status,
-        since: f.status === "widely" ? f.highDate : f.lowDate,
         lowDate: f.lowDate,
         highDate: f.highDate,
         spec: null,

@@ -25,6 +25,7 @@ import type { BaselineStatus } from "../packages/catalog/src/schema.ts";
 import {
   diffTiers,
   type TierChange,
+  type TierDirection,
 } from "../packages/catalog/src/tier-diff.ts";
 
 const LABEL: Record<BaselineStatus, string> = {
@@ -40,13 +41,18 @@ const changes = diffTiers(
   liveFeatures as Parameters<typeof diffTiers>[2],
 );
 
-const promotions = changes.filter((c) => c.direction === "promotion");
-const regressions = changes.filter((c) => c.direction === "regression");
+/** Both directions that carry a destination tier, narrowed for `describe`. */
+type Moved = Extract<TierChange, { to: BaselineStatus }>;
+const isMoved = (c: TierChange, d: TierDirection): c is Moved =>
+  c.direction === d;
+
+const promotions = changes.filter((c): c is Moved => isMoved(c, "promotion"));
+const regressions = changes.filter((c): c is Moved => isMoved(c, "regression"));
 const missing = changes.filter((c) => c.direction === "missing");
 
-function describe(change: TierChange): string {
-  const to = change.to === null ? "" : ` to ${LABEL[change.to]}`;
-  return `- \`${change.ruleId}\`: \`${change.featureId}\` moves from ${LABEL[change.from]}${to}`;
+/** Narrowed to the two directions that have a destination tier. */
+function describe(change: Moved): string {
+  return `- \`${change.ruleId}\`: \`${change.featureId}\` moves from ${LABEL[change.from]} to ${LABEL[change.to]}`;
 }
 
 const lines: string[] = [];

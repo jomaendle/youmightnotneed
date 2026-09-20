@@ -317,9 +317,6 @@ describe("splitSince", () => {
           id: `${id}-${index}`,
           name: id,
           status,
-          since: date,
-          // baselineSince reads the tier's own date, so these have to agree
-          // with `status` or the helper would describe an impossible feature.
           lowDate: status === "widely" ? "2000-01-01" : date,
           highDate: status === "widely" ? date : null,
           spec: null,
