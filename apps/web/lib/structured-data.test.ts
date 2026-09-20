@@ -35,10 +35,7 @@ describe("rules graph", () => {
   it("describes the catalog as an MIT dataset with both documents", () => {
     expect(dataset.license).toBe("https://opensource.org/license/mit");
     const urls = (dataset.distribution as Node[]).map((d) => d.contentUrl);
-    expect(urls).toEqual([
-      `${site.url}/llms-full.txt`,
-      `${site.url}/openapi.json`,
-    ]);
+    expect(urls).toEqual([`${site.url}/llms-full.txt`, `${site.url}/llms.txt`]);
   });
 
   it("lists every rule once, in order, at its page", () => {

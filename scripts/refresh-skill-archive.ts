@@ -43,6 +43,8 @@ const ORIGIN = "https://youmightnotneed.dev";
 function listFiles(dir: string): string[] {
   const found: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    // Editor and OS droppings do not belong in a published archive.
+    if (entry.name.startsWith(".")) continue;
     const full = join(dir, entry.name);
     if (entry.isDirectory()) found.push(...listFiles(full));
     else found.push(relative(SKILL_DIR, full).split("\\").join("/"));

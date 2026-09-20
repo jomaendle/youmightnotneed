@@ -47,7 +47,7 @@ export function buildHomeGraph() {
   };
 }
 
-/** The catalog as a dataset, with the two documents that carry all of it. */
+/** The catalog as a dataset. Both distributions carry rules; openapi.json only describes endpoints, so it is not one. */
 export function buildRulesGraph() {
   return {
     "@context": SCHEMA,
@@ -69,8 +69,8 @@ export function buildRulesGraph() {
           },
           {
             "@type": "DataDownload",
-            encodingFormat: "application/json",
-            contentUrl: `${site.url}/openapi.json`,
+            encodingFormat: "text/markdown",
+            contentUrl: `${site.url}/llms.txt`,
           },
         ],
       },
