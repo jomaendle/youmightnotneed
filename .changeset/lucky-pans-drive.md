@@ -1,6 +1,5 @@
 ---
 "@jomae/catalog": minor
-"@youmightnotneed/web": minor
 ---
 
 Add a rule for locale-aware date and time formatting

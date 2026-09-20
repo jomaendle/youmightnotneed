@@ -1,6 +1,5 @@
 ---
 "@jomae/catalog": minor
-"@youmightnotneed/web": patch
 ---
 
 Remove the collapsed `since` field and make `TierChange` a discriminated union

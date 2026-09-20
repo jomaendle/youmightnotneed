@@ -1,6 +1,5 @@
 ---
 "@jomae/catalog": minor
-"@youmightnotneed/web": patch
 ---
 
 Add three limited-availability rules and report tier changes on the cron

@@ -26,9 +26,13 @@
  *       current catalog is a warning: the homepage prints live rule counts
  *       beside percentages taken from it.
  *
+ *   11. A changeset naming both an ignored package and a released one is an
+ *       error: changesets rejects the mix and the Release workflow fails on
+ *       main rather than on the PR that caused it.
+ *
  * Run: pnpm check:freshness
  */
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -111,6 +115,33 @@ for (const rule of rules) {
     if (Object.hasOwn(packageSizes.sizes, pkg) || UNSIZEABLE.has(pkg)) continue;
     errors.push(
       `Rule "${rule.id}" claims "${pkg}", which has no size measurement. Run \`pnpm refresh:sizes\`; if the name is right and bundlephobia simply cannot build it, add it to UNSIZEABLE in scripts/unsizeable.ts.`,
+    );
+  }
+}
+
+// 4b. A changeset may not mix an ignored package with a released one.
+// changesets refuses those outright, so the whole Release workflow fails on
+// push to main, long after the PR that introduced it went green. apps/web is
+// unversioned and deploys through Vercel, so naming it in a changeset buys
+// nothing and costs the release.
+const changesetDir = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "../.changeset",
+);
+const ignored: string[] =
+  JSON.parse(readFileSync(join(changesetDir, "config.json"), "utf8")).ignore ??
+  [];
+for (const file of readdirSync(changesetDir)) {
+  if (!file.endsWith(".md") || file === "README.md") continue;
+  const front = /^---\n([\s\S]*?)\n---/.exec(
+    readFileSync(join(changesetDir, file), "utf8"),
+  )?.[1];
+  if (!front) continue;
+  const named = [...front.matchAll(/^"([^"]+)":/gm)].map((m) => m[1] as string);
+  const blocked = named.filter((name) => ignored.includes(name));
+  if (blocked.length > 0 && blocked.length < named.length) {
+    errors.push(
+      `Changeset ".changeset/${file}" names both ignored (${blocked.join(", ")}) and released packages. changesets rejects that and the Release workflow fails on main. Drop the ignored entries.`,
     );
   }
 }

@@ -2,7 +2,6 @@
 "@jomae/catalog": patch
 "youmightnotneed": patch
 "youmightnotneed-mcp": patch
-"@youmightnotneed/web": patch
 ---
 
 Fix the crossing date a rule reports

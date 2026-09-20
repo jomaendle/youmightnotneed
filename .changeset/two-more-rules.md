@@ -1,6 +1,5 @@
 ---
 "@jomae/catalog": minor
-"@youmightnotneed/web": minor
 ---
 
 Add font loading and pointer gesture rules
