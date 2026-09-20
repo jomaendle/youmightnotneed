@@ -2285,7 +2285,7 @@ export const demosNotWorthIt: Record<string, string> = {
   "server-sent-events":
     "EventSource needs a real streaming endpoint. Nothing in a srcdoc frame can serve one.",
   "file-download":
-    "The sandboxed frame blocks the download it would start, so the demo would look broken while the code was right.",
+    'allow-downloads might let the frame save a real file, but a button that reports "Saved" whether or not it did is worse than no demo, and the sandbox gives no way to tell.',
   passkeys:
     "A passkey ceremony needs a real authenticator and a server to issue the challenge. A fake one would teach the wrong shape.",
   jquery:

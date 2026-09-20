@@ -83,8 +83,9 @@ scripts            snapshot generators, freshness check
 ```
 
 There are two kinds of skill here and they point in opposite directions.
-`.claude/skills/` is for working *on* this repo: `adding-a-rule` and
-`writing-voice`, never published. `skills/youmightnotneed/` is for agents
+`.claude/skills/` is for working *on* this repo: `finding-rules` (deciding
+there is a rule to write, and what to reject), `adding-a-rule` (writing it)
+and `writing-voice`, never published. `skills/youmightnotneed/` is for agents
 *using* the catalog in someone else's codebase, installed through
 `.claude-plugin/`. A change to the rules affects the second one, so
 `pnpm refresh:skill` regenerates its catalog reference and the freshness
