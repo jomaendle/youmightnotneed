@@ -1,5 +1,40 @@
 # youmightnotneed-mcp
 
+## 0.5.0
+
+### Minor Changes
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Answer "what became replaceable recently" with `--since`
+  
+  The catalog already knew when each native replacement reached its current
+  Baseline status, but nothing exposed it. `youmightnotneed --since 2026-03-01`
+  now narrows a report to the rules that crossed on or after a date, and names
+  what it held back rather than letting it vanish.
+  
+  Put the date in a package.json script and bump it when you read the report,
+  and each run covers the platform's moves since the last one.
+  
+  The catalog gains `baselineSince()` and `splitSince()`, both pure. CLI `--json`
+  carries `baseline.since` on every finding, and the MCP server carries `since`
+  on each finding from `analyze_dependencies`, so an agent can answer the same
+  question by filtering what it already has.
+
+### Patch Changes
+
+- [#60](https://github.com/jomaendle/youmightnotneed/pull/60) [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e) Thanks [@jomaendle2](https://github.com/jomaendle2)! - Fix the crossing date a rule reports
+  
+  baselineSince dated each feature against that feature's own tier, so a newly
+  available rule that also needed an already-widely feature was dated by when
+  that feature reached widely. light-dark read 2024-08-03 instead of
+  2024-05-13, and a --since window in between listed it wrongly. The wrong date
+  also shipped in CLI --json and the MCP since field.
+  
+  Also: an empty --since view no longer claims the window did the filtering
+  when the package had no rule at all, and a single undated finding reads "1
+  has" rather than "1 have".
+- Updated dependencies [[`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e), [`880a660`](https://github.com/jomaendle/youmightnotneed/commit/880a660ead93656edde2a5fc5c0e79a8a86cdb7e)]:
+  - @jomae/catalog@0.10.0
+
 ## 0.4.0
 
 ### Minor Changes
