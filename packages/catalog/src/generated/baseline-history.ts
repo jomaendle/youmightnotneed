@@ -26,8 +26,8 @@ export const baselineHistory: BaselineHistory = {
       "webFeaturesVersion": "3.36.0",
       "ruleCount": 81,
       "tally": {
-        "widely": 49,
-        "newly": 17,
+        "widely": 48,
+        "newly": 18,
         "limited": 15,
         "unknown": 0
       }

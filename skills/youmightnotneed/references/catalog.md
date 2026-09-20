@@ -73,7 +73,7 @@ were about to install.
 | reading or building a query string, or pulling a URL apart | URLSearchParams and the URL constructor | widely available | `url-search-params` |
 | reading or writing cookies from the browser | cookieStore | limited | `cookie-store` |
 | reading text aloud with the browser's own text-to-speech engine | SpeechSynthesis and SpeechSynthesisUtterance | widely available | `speech-synthesis` |
-| registering or authenticating a passkey from the browser | navigator.credentials with PublicKeyCredential | widely available | `passkeys` |
+| registering or authenticating a passkey from the browser | navigator.credentials with PublicKeyCredential | newly available | `passkeys` |
 | removing a font's built-in leading so text sits flush in its box | text-box-trim and text-box-edge | limited | `text-box-trim` |
 | removing accents from text so a comparison or a search ignores them | String.prototype.normalize("NFD") | widely available | `diacritics` |
 | rendering a date or time for a person to read | Intl.DateTimeFormat | widely available | `date-format` |
@@ -220,7 +220,7 @@ and read its conditions before changing anything.
 | a $ or qs helper wrapping querySelectorAll to get chaining back after the library was removed | `jquery` | querySelectorAll(), classList and addEventListener() | widely available |
 | a ResizeObserver toggling size classes on an element so it can style itself by its own width | `container-queries` | Container queries | widely available |
 | a SHA-256 or HMAC implementation pasted into the project as a single file of bit-shifting helpers | `web-crypto` | crypto.subtle | widely available |
-| a Uint8Array built by looping over atob output to turn a server challenge into bytes | `passkeys` | navigator.credentials with PublicKeyCredential | widely available |
+| a Uint8Array built by looping over atob output to turn a server challenge into bytes | `passkeys` | navigator.credentials with PublicKeyCredential | newly available |
 | a blur handler standing in for the tab being backgrounded, pausing a poll that a focus handler resumes | `page-visibility` | document.visibilityState and the visibilitychange event | widely available |
 | a boolean flag guarding an async section, set before the work and cleared in a finally | `web-locks` | navigator.locks.request() | widely available |
 | a canvas or offscreen span whose width is measured repeatedly to work out whether a webfont has replaced the fallback | `font-loading` | document.fonts with font-display | widely available |
@@ -296,7 +296,7 @@ and read its conditions before changing anything.
 | an object literal mapping country or language codes to English names, pasted in and extended as gaps turn up | `intl-display-names` | Intl.DisplayNames | widely available |
 | an off-screen textarea or contenteditable element created only so text can be selected and execCommand'd | `clipboard` | navigator.clipboard.writeText() | newly available |
 | an open id over a list of collapsible panels, where opening one sets every other closed | `exclusive-accordion` | <details name> for an exclusive accordion | newly available |
-| base64url encode and decode helpers written next to a credentials.create call to convert challenge and id fields | `passkeys` | navigator.credentials with PublicKeyCredential | widely available |
+| base64url encode and decode helpers written next to a credentials.create call to convert challenge and id fields | `passkeys` | navigator.credentials with PublicKeyCredential | newly available |
 | btoa wrapped in unescape and encodeURIComponent to survive characters outside Latin-1 | `base64` | btoa() and atob(), with TextEncoder for text | widely available |
 | building a month grid from Date arithmetic, with the leading blanks worked out from getDay | `date-time-input` | <input type="date"> and <input type="time"> | widely available |
 | calling getBoundingClientRect on a trigger inside scroll and resize listeners to place a floating panel | `popover-anchor-positioning` | The Popover API with CSS anchor positioning | limited |

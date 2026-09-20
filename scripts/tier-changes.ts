@@ -58,43 +58,53 @@ function describe(change: Moved): string {
 
 const lines: string[] = [];
 
+/** A heading, its rows, and the blank line every section ends with. */
+function section(heading: string, rows: readonly string[]): string[] {
+  return rows.length === 0 ? [] : [heading, "", ...rows, ""];
+}
+
 if (changes.length === 0) {
   lines.push(
     `No rule changes tier. Snapshot is web-features@${baselineSnapshot.webFeaturesVersion}, captured ${baselineSnapshot.generatedOn}.`,
   );
 }
 
-if (promotions.length > 0) {
-  lines.push("**Better supported than the committed snapshot says:**", "");
-  for (const change of promotions) lines.push(describe(change));
-  lines.push("");
-  // The whole reason limited rules are worth writing before they land.
-  const landed = promotions.filter((c) => c.from === "limited");
-  if (landed.length > 0) {
-    lines.push(
-      `${landed.length} of these left limited availability, so ${landed.length === 1 ? "its rule no longer needs" : "their rules no longer need"} to lead with a fallback. Worth a post.`,
-      "",
-    );
-  }
-}
+lines.push(
+  ...section(
+    "**Better supported than the committed snapshot says:**",
+    promotions.map(describe),
+  ),
+);
 
-if (regressions.length > 0) {
-  lines.push("**Worse supported than the committed snapshot says:**", "");
-  for (const change of regressions) lines.push(describe(change));
-  lines.push("");
-}
-
-if (missing.length > 0) {
-  // The loudest case, and the one a silent skip used to swallow: the rule
-  // still renders a tier from an ID upstream no longer publishes.
-  lines.push("**Gone from web-features entirely, probably renamed:**", "");
-  for (const change of missing) {
-    lines.push(
-      `- \`${change.ruleId}\`: \`${change.featureId}\` is in the snapshot but not in web-features@latest`,
-    );
-  }
+// The whole reason limited rules are worth writing before they land.
+const landed = promotions.filter((c) => c.from === "limited");
+if (landed.length > 0) {
   lines.push(
+    `${landed.length} of these left limited availability, so ${landed.length === 1 ? "its rule no longer needs" : "their rules no longer need"} to lead with a fallback. Worth a post.`,
     "",
+  );
+}
+
+lines.push(
+  ...section(
+    "**Worse supported than the committed snapshot says:**",
+    regressions.map(describe),
+  ),
+);
+
+// The loudest case, and the one a silent skip used to swallow: the rule still
+// renders a tier from an ID upstream no longer publishes.
+lines.push(
+  ...section(
+    "**Gone from web-features entirely, probably renamed:**",
+    missing.map(
+      (change) =>
+        `- \`${change.ruleId}\`: \`${change.featureId}\` is in the snapshot but not in web-features@latest`,
+    ),
+  ),
+);
+if (missing.length > 0) {
+  lines.push(
     "Repoint or drop these before the refresh lands, or the rule loses its derived tier.",
     "",
   );

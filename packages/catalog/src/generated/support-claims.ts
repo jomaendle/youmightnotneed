@@ -104,6 +104,7 @@ export const supportClaims: SupportClaims = {
     "safari:user-pseudos": "16.5",
     "safari:web-cryptography": "11",
     "safari:web-locks": "15.4",
+    "safari:webauthn": "13",
     "safari_ios:api.WakeLock": "18.4"
   }
 };

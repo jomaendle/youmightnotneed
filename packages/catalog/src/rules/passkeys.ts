@@ -5,7 +5,12 @@ export const passkeys: Rule = {
   title: "Passkeys in the browser",
   category: "device-apis",
   replaces: ["@simplewebauthn/browser"],
-  featureIds: ["webauthn"],
+  featureIds: [],
+  manualBaseline: {
+    status: "newly",
+    verifiedOn: "2026-09-20",
+    note: "web-features has no ID for the JSON helpers this rule turns on, and they sit inside the 'webauthn' feature's own compat data rather than beside it. Deriving from that ID would badge this widely available on the ceremony's dates, Safari {{safari:webauthn}}, while the parseCreationOptionsFromJSON and toJSON calls that remove the need for a wrapper arrived in Safari {{safari:api.PublicKeyCredential.parseCreationOptionsFromJSON_static}}, Chrome {{chrome:api.PublicKeyCredential.parseCreationOptionsFromJSON_static}} and Firefox {{firefox:api.PublicKeyCredential.parseCreationOptionsFromJSON_static}}. Newly available on the helpers' own dates: the last engine shipped them in March 2025.",
+  },
   native: "navigator.credentials with PublicKeyCredential",
   human: {
     explainer:

@@ -1332,20 +1332,6 @@ export const baselineSnapshot: BaselineSnapshot = {
         "safari": "15.4"
       },
       "partialSupport": null
-    },
-    "webauthn": {
-      "name": "Web authentication",
-      "baseline": "high",
-      "lowDate": "2021-09-07",
-      "highDate": "2024-03-07",
-      "spec": "https://w3c.github.io/webauthn/",
-      "support": {
-        "chrome": "67",
-        "edge": "18",
-        "firefox": "60",
-        "safari": "13"
-      },
-      "partialSupport": null
     }
   }
 };
