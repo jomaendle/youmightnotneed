@@ -24,6 +24,7 @@ import { rules } from "../packages/catalog/src/rules/index.ts";
 import type { BaselineStatus } from "../packages/catalog/src/schema.ts";
 import {
   diffTiers,
+  type LiveFeatures,
   type TierChange,
   type TierDirection,
 } from "../packages/catalog/src/tier-diff.ts";
@@ -38,7 +39,7 @@ const LABEL: Record<BaselineStatus, string> = {
 const changes = diffTiers(
   rules,
   baselineSnapshot.features,
-  liveFeatures as Parameters<typeof diffTiers>[2],
+  liveFeatures as LiveFeatures,
 );
 
 /** Both directions that carry a destination tier, narrowed for `describe`. */
@@ -95,6 +96,20 @@ if (missing.length > 0) {
   lines.push(
     "",
     "Repoint or drop these before the refresh lands, or the rule loses its derived tier.",
+    "",
+  );
+}
+
+// The diff walks featureIds, so a manualBaseline rule has nothing to compare
+// and can never appear above. Saying so keeps the report from reading as a
+// complete sweep when it structurally is not: those tiers are a person's
+// assertion, and check:freshness expires them at 90 days instead.
+const manual = rules.filter((rule) => rule.featureIds.length === 0);
+if (manual.length > 0) {
+  lines.push(
+    `${manual.length} rule${manual.length === 1 ? "" : "s"} carry a hand-verified tier and are not covered above: ${manual
+      .map((rule) => `\`${rule.id}\``)
+      .join(", ")}. check:freshness expires those separately.`,
     "",
   );
 }

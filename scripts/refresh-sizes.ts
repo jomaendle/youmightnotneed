@@ -15,6 +15,7 @@ import { existsSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { rules } from "../packages/catalog/src/rules/index.ts";
+import { UNSIZEABLE } from "./unsizeable.ts";
 
 /**
  * This script writes committed snapshots at module scope. Importing it would
@@ -48,20 +49,36 @@ interface SizeEntry {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** Reads the previous snapshot so a failed fetch keeps its old value. */
+/**
+ * Reads the previous snapshot so a failed fetch keeps its old value.
+ *
+ * An unreadable file is fatal rather than an empty object. Returning `{}`
+ * looks harmless and is not: with no previous values nothing can fall back,
+ * so the guard below sees a clean run, and a single successful fetch is
+ * enough to write a one-package snapshot stamped today over three hundred
+ * committed sizes. A missing file is different and genuinely fine, because
+ * there is nothing to lose.
+ */
 function readExisting(): Record<string, SizeEntry> {
   if (!existsSync(outFile)) return {};
   const source = readFileSync(outFile, "utf8");
   const start = source.indexOf("{", source.indexOf("packageSizes"));
-  if (start === -1) return {};
   const end = source.lastIndexOf("}");
   try {
+    if (start === -1) throw new Error("no packageSizes object found");
     const parsed = JSON.parse(source.slice(start, end + 1)) as {
       sizes?: Record<string, SizeEntry>;
     };
-    return parsed.sizes ?? {};
-  } catch {
-    return {};
+    if (!parsed.sizes) throw new Error("no sizes map in packageSizes");
+    return parsed.sizes;
+  } catch (error) {
+    console.error(
+      `\nCould not read the committed snapshot at ${outFile}: ${error instanceof Error ? error.message : error}.`,
+    );
+    console.error(
+      "Refusing to run: with no previous values every fetch failure looks like a clean result, and this would overwrite the file with whatever happened to succeed.",
+    );
+    process.exit(1);
   }
 }
 
@@ -120,7 +137,10 @@ for (let i = 0; i < packages.length; i += CONCURRENCY) {
       sizes[pkg] = entry;
     } else if (previous) {
       sizes[pkg] = previous;
-      fellBack.push(pkg);
+      // A package known to be unbuildable keeps its old number without
+      // tripping the guard. Otherwise the first time a sized package joins
+      // UNSIZEABLE, every later refresh bails and the snapshot freezes.
+      if (!UNSIZEABLE.has(pkg)) fellBack.push(pkg);
       failed.push(`${pkg} (kept previous value)`);
     } else {
       failed.push(pkg);

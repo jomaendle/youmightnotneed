@@ -15,6 +15,11 @@ export interface TierEntry {
   baseline: "high" | "low" | false;
 }
 
+/** web-features' own shape, named so callers need no positional cast. */
+export type LiveFeatures = Readonly<
+  Record<string, { status?: { baseline?: "high" | "low" | false } }>
+>;
+
 export type TierDirection = "promotion" | "regression" | "missing";
 
 interface TierChangeBase {
@@ -66,9 +71,7 @@ export function tierOf(
 export function diffTiers(
   rules: readonly { id: string; featureIds: readonly string[] }[],
   committed: Readonly<Record<string, TierEntry>>,
-  live: Readonly<
-    Record<string, { status?: { baseline?: "high" | "low" | false } }>
-  >,
+  live: LiveFeatures,
 ): TierChange[] {
   return rules.flatMap((rule) =>
     rule.featureIds
@@ -82,18 +85,21 @@ function compare(
   ruleId: string,
   featureId: string,
   committed: Readonly<Record<string, TierEntry>>,
-  live: Readonly<
-    Record<string, { status?: { baseline?: "high" | "low" | false } }>
-  >,
+  live: LiveFeatures,
 ): TierChange | null {
-  if (!Object.hasOwn(committed, featureId)) return null;
-  const from = tierOf((committed[featureId] as TierEntry).baseline);
+  // One lookup each, rather than a presence check plus a cast undoing what
+  // the check established. Neither the generated snapshot nor web-features
+  // sets a key to an explicit undefined, so the two read the same.
+  const entry = committed[featureId];
+  if (entry === undefined) return null;
+  const from = tierOf(entry.baseline);
 
-  if (!Object.hasOwn(live, featureId)) {
+  const liveEntry = live[featureId];
+  if (liveEntry === undefined) {
     return { ruleId, featureId, direction: "missing", from };
   }
 
-  const to = tierOf(live[featureId]?.status?.baseline);
+  const to = tierOf(liveEntry.status?.baseline);
   if (to === from) return null;
 
   return {

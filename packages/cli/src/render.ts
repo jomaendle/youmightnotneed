@@ -219,14 +219,15 @@ function footer(options: RenderOptions, hasGuides: boolean): string {
  */
 function emptyBody(options: RenderOptions): string[] {
   const { palette, since } = options;
-  // Only claim the window did the filtering when it actually held something
-  // back. `--package lodash --since 2026-01-01` matches no rule at all, and
-  // saying "nothing reached that status" implies a rule exists that crossed
+  // The note is non-null on exactly the runs where the window held something
+  // back, so it doubles as the test for whether the window did the filtering.
+  // `--package lodash --since 2026-01-01` matches no rule at all, and saying
+  // "nothing reached that status" would imply a rule exists that crossed
   // earlier, which is a different and wrong answer.
-  const windowHeldSomething =
-    since !== undefined && since.earlier + since.undated > 0;
+  const note = since ? sinceNote(since) : null;
+
   let headline: string;
-  if (windowHeldSomething && since) {
+  if (since && note) {
     headline = `Nothing here reached its current Baseline status on or after ${since.date}.`;
   } else if (options.subject === "package") {
     headline = `The catalog has no rule for ${options.projectName ?? "that package"}.`;
@@ -235,7 +236,6 @@ function emptyBody(options: RenderOptions): string[] {
       "Nothing in this package.json has a native equivalent in the catalog.";
   }
 
-  const note = since ? sinceNote(since) : null;
   return [
     `  ${palette("green", headline)}`,
     `  ${palette(

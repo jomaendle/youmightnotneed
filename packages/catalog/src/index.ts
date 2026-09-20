@@ -105,6 +105,7 @@ export {
 } from "./search.ts";
 export {
   diffTiers,
+  type LiveFeatures,
   type TierChange,
   type TierDirection,
   type TierEntry,

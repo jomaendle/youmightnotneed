@@ -4,13 +4,7 @@ export const progressIndicator: Rule = {
   id: "progress-indicator",
   title: "Spinners and progress bars",
   category: "forms",
-  replaces: [
-    "react-spinners",
-    "spinkit",
-    "react-loader-spinner",
-    "ldrs",
-    "rc-progress",
-  ],
+  replaces: ["react-spinners", "spinkit", "react-loader-spinner", "ldrs"],
   featureIds: ["progress"],
   native: "<progress>",
   human: {

@@ -3,7 +3,7 @@
 
 # The catalog
 
-Every rule, 81 of them, covering 313 npm packages.
+Every rule, 81 of them, covering 312 npm packages.
 Support is the Baseline tier of the least-supported feature the replacement
 needs, so a rule reads as limited if any one part of it is.
 
@@ -176,7 +176,7 @@ for keeping the dependency come from the URL or the CLI above.
 - `plural-rules`: pluralize
 - `pointer-events`: hammerjs, react-swipeable, swiped-events
 - `popover-anchor-positioning`: @floating-ui/react, @floating-ui/react-dom, @floating-ui/dom, @popperjs/core, popper.js, tippy.js, @tippyjs/react, react-popper, react-tooltip, floating-vue, v-tooltip, @oddbird/popover-polyfill
-- `progress-indicator`: react-spinners, spinkit, react-loader-spinner, ldrs, rc-progress
+- `progress-indicator`: react-spinners, spinkit, react-loader-spinner, ldrs
 - `promise-withresolvers`: p-defer, defer-promise
 - `random-uuid`: uuid, uuidv4, @lukeed/uuid, uuid-random
 - `relative-time`: javascript-time-ago, timeago.js, react-timeago

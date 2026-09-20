@@ -44,7 +44,10 @@ jobs:
         # one, so the failure surfaced as a malformed-output parse error
         # instead of whatever the script actually said.
         run: |
-          report="$(pnpm --silent check:tiers)"
+          report="$(pnpm --silent check:tiers)" || true
+          # Say so rather than interpolating nothing. An empty gap in the PR
+          # body is indistinguishable from the script reporting no changes.
+          report="${report:-_Tier report failed. See this step's log._}"
           {
             echo 'report<<TIERS_EOF'
             echo "$report"

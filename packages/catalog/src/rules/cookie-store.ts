@@ -9,7 +9,7 @@ export const cookieStore: Rule = {
   native: "cookieStore",
   human: {
     explainer:
-      "document.cookie is a single string holding every cookie for the origin, so reading one means splitting and decoding, and writing one means formatting attributes by hand. That parsing is what js-cookie is. The Cookie Store API gives get and set as promises over real objects, plus a change event, and never touches the document string. Every engine has the page-facing half now, Firefox and Safari only recently; the service worker half is what is still missing.",
+      "document.cookie is a single string holding every cookie for the origin, so reading one means splitting and decoding, and writing one means formatting attributes by hand. That parsing is what js-cookie is. The Cookie Store API gives get and set as promises over real objects, plus a change event, and never touches the document string. Every engine has the page-facing half now, Firefox and Safari only recently. What Safari alone is missing is the service worker half, which is what keeps this short of Baseline.",
     snippet: `await cookieStore.set({
   name: "theme",
   value: "dark",

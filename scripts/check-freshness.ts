@@ -43,6 +43,7 @@ import { supportClaims } from "../packages/catalog/src/generated/support-claims.
 import { rules } from "../packages/catalog/src/rules/index.ts";
 import { renderCatalogReference, SKILL_CATALOG_FILE } from "./build-skill.ts";
 import { resolveAllClaims, sourceVersions } from "./refresh-support.ts";
+import { UNSIZEABLE } from "./unsizeable.ts";
 
 const MANUAL_BASELINE_MAX_AGE_DAYS = 90;
 const SNAPSHOT_WARN_AGE_DAYS = 45;
@@ -104,23 +105,12 @@ for (const id of NATIVE_FEATURE_IDS) {
 
 // 4. Every claimed package needs a measurement, or a typo in `replaces` just
 // contributes 0 to the headline kilobytes and nothing ever says so.
-const UNSIZEABLE = new Set([
-  // Real packages bundlephobia cannot build, checked by hand. Not typos.
-  "cordova-plugin-ble-central",
-  "react-page-transition",
-  // Ships CSS only, with no main entry, so there is no module to bundle.
-  "spinkit",
-  "sticky-kit",
-  "svelte-intersection-observer",
-  "svelte-modals",
-  "svelte-select",
-]);
 
 for (const rule of rules) {
   for (const pkg of rule.replaces) {
     if (Object.hasOwn(packageSizes.sizes, pkg) || UNSIZEABLE.has(pkg)) continue;
     errors.push(
-      `Rule "${rule.id}" claims "${pkg}", which has no size measurement. Run \`pnpm refresh:sizes\`; if the name is right and bundlephobia simply cannot build it, add it to UNSIZEABLE in this script.`,
+      `Rule "${rule.id}" claims "${pkg}", which has no size measurement. Run \`pnpm refresh:sizes\`; if the name is right and bundlephobia simply cannot build it, add it to UNSIZEABLE in scripts/unsizeable.ts.`,
     );
   }
 }
