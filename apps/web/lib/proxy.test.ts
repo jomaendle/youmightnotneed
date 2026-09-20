@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
-import { proxy } from "../proxy";
+import { config, proxy } from "../proxy";
 
 function request(path: string, accept?: string) {
   return new NextRequest(`https://youmightnotneed.dev${path}`, {
@@ -111,5 +111,56 @@ describe("proxy", () => {
     expect(rewrittenTo(proxy(request("/rules/nope.md")))).toBe(
       "/api/md/rules/nope",
     );
+  });
+
+  describe("an unknown path", () => {
+    it("is rewritten to the markdown 404 for a client that asks for markdown", () => {
+      const response = proxy(request("/no-such-page", "text/markdown"));
+      expect(rewrittenTo(response)).toBe("/api/md/not-found");
+      // Same cache constraints as the negotiated rule page.
+      expect(response.headers.get("Vary")).toBe("Accept");
+      expect(response.headers.get("Cache-Control")).toBe("private, no-store");
+    });
+
+    it("ignores a trailing slash", () => {
+      expect(rewrittenTo(proxy(request("/nope/", "text/markdown")))).toMatch(
+        /^\/api\/md\/not-found\/?$/,
+      );
+      expect(
+        rewrittenTo(proxy(request("/about/", "text/markdown"))),
+      ).toBeNull();
+    });
+
+    it("is left to the HTML not-found page for a browser", () => {
+      const response = proxy(
+        request("/no-such-page", "text/html,application/xhtml+xml,*/*;q=0.8"),
+      );
+      expect(rewrittenTo(response)).toBeNull();
+      expect(response.headers.get("Cache-Control")).toBeNull();
+    });
+
+    it("is left alone when nothing was said", () => {
+      expect(rewrittenTo(proxy(request("/no-such-page")))).toBeNull();
+    });
+
+    it("does not touch a page that exists", () => {
+      for (const path of ["/", "/about", "/rules", "/rules/a/b"]) {
+        expect(
+          rewrittenTo(proxy(request(path, "text/markdown"))),
+          path,
+        ).toBeNull();
+      }
+    });
+  });
+
+  it("matches every path but _next, api and dotted ones", () => {
+    const [, catchAll] = config.matcher;
+    const regex = new RegExp(`^${catchAll}$`);
+    expect(regex.test("/no-such-page")).toBe(true);
+    expect(regex.test("/")).toBe(true);
+    expect(regex.test("/_next/static/x.js")).toBe(false);
+    expect(regex.test("/api/og")).toBe(false);
+    expect(regex.test("/llms.txt")).toBe(false);
+    expect(regex.test("/.well-known/ard.json")).toBe(false);
   });
 });

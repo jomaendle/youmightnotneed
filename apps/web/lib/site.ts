@@ -13,4 +13,9 @@ export const site = {
   repo: "https://github.com/jomaendle/youmightnotneed",
   author: "Johannes Maendle",
   authorUrl: "https://www.jomaendle.com",
+  authorGithub: "https://github.com/jomaendle",
+  npm: {
+    cli: "https://www.npmjs.com/package/youmightnotneed",
+    mcp: "https://www.npmjs.com/package/youmightnotneed-mcp",
+  },
 } as const;

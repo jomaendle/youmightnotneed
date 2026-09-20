@@ -49,8 +49,17 @@ The rule page itself answers with the same markdown when the request sends
 
 ## Machine-readable
 
-- ${site.url}/llms-full.txt: every rule in one document.
-- ${site.url}/openapi.json: the read-only endpoints. No authentication.
+- [Full catalog](${site.url}/llms-full.txt): every rule in one document.
+- [OpenAPI](${site.url}/openapi.json): the read-only endpoints. No authentication.
+- [For agents](${site.url}/agents.md): what this is and what to fetch, in one page.
+- [Skill index](${site.url}/.well-known/agent-skills/index.json): the agent skill, as an archive.
+
+## Rules
+
+One link per rule, each answering with the native approach and the conditions
+for keeping the dependency.
+
+${rules.map((rule) => `- [${rule.title}](${site.url}/rules/${rule.id}.md): ${rule.native}`).join("\n")}
 
 ## By use case
 

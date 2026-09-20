@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Mark } from "@/components/logo";
 import { PackageDatalist } from "@/components/package-datalist";
 import { SearchField } from "@/components/search-field";
+import { WebMcpTools } from "@/components/web-mcp-tools";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -175,9 +176,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </a>
               .
             </p>
+            <p className="flex gap-4">
+              <Link href="/about">About</Link>
+              <Link href="/privacy">Privacy</Link>
+              <Link href="/contact">Contact</Link>
+            </p>
           </div>
         </footer>
 
+        <WebMcpTools />
         <Analytics />
         <SpeedInsights />
       </body>

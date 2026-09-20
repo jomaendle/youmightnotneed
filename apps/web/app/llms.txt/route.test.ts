@@ -17,6 +17,17 @@ describe("llms.txt", () => {
     }
   });
 
+  it("links every rule in llmstxt.org form", async () => {
+    const body = await GET().text();
+    for (const rule of rules) {
+      const link = new RegExp(
+        `^- \\[[^\\]]+\\]\\(https://youmightnotneed\\.dev/rules/${rule.id}\\.md\\): .+$`,
+        "m",
+      );
+      expect(body, `${rule.id} has no link`).toMatch(link);
+    }
+  });
+
   it("is cacheable at the edge", () => {
     // It is a compile-time constant, so serving it from the origin on every
     // agent request would be waste.

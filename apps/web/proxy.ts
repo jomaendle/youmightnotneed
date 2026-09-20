@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { prefersMarkdown } from "@/lib/accept";
+import { PAGE_PATHS } from "@/lib/page-paths";
 
 /**
  * Two ways to ask a rule page for markdown.
@@ -8,12 +9,21 @@ import { prefersMarkdown } from "@/lib/accept";
  * `Accept: text/markdown` on the page URL is the correct way to ask. Both
  * rewrite to the same handler, so there is one renderer and one body.
  *
+ * A third job: an unknown path asked for as markdown gets a markdown 404,
+ * not the HTML not-found page. See the branch below the rules handling.
+ *
  * Next 16 renamed middleware.ts to proxy.ts, and a proxy always runs on the
  * Node.js runtime where middleware defaulted to the edge. Route segment
  * config is rejected in this file for that reason.
  */
 export const config = {
-  matcher: "/rules/:path*",
+  // The second entry is every path except _next, api and anything with a dot.
+  // A dot means a file or a route handler (llms.txt, openapi.json, agents.md,
+  // .well-known/...), all of which exist or 404 on their own. /rules/x.md has
+  // a dot and is what the first entry is for. Widening this makes the proxy
+  // run on every page request, and it does nothing but read one header on
+  // any request that does not ask for markdown.
+  matcher: ["/rules/:path*", "/((?!_next/|api/|.*\\..*).*)"],
 };
 
 // The i applies to the whole pattern, not just the suffix, so this also
@@ -26,8 +36,7 @@ const RULE_PATH = /^\/rules\/([^/]+?)(\.md)?$/i;
 export function proxy(request: NextRequest) {
   const match = RULE_PATH.exec(request.nextUrl.pathname);
 
-  // /rules itself, or something nested. Nothing to negotiate.
-  if (!match) return NextResponse.next();
+  if (!match) return unknownPathAsMarkdown(request);
 
   const id = match[1] as string;
   const url = request.nextUrl.clone();
@@ -72,6 +81,34 @@ export function proxy(request: NextRequest) {
   // cacheable and cannot say it varies. Such an agent gets the answer it
   // would have got by not asking, and /rules/<id>.md is the URL that is
   // never ambiguous. That is why the alias exists.
+  response.headers.set("Vary", "Accept");
+  response.headers.set("Cache-Control", "private, no-store");
+  return response;
+}
+
+/**
+ * `/rules` itself and anything nested reach here as well as every other path.
+ * A known page, or a rules path, has nothing to negotiate. An unknown path
+ * from a client that prefers markdown is rewritten to a handler that answers
+ * 404 with a markdown body, under the same cache constraints as the
+ * negotiated rule page above: Vary for correctness, no-store because the
+ * same URL answers a browser with the HTML not-found page.
+ *
+ * Trailing slashes are stripped because Next redirects /about/ to /about.
+ */
+const TRAILING_SLASHES = /\/+$/;
+
+function unknownPathAsMarkdown(request: NextRequest) {
+  const path = request.nextUrl.pathname.replace(TRAILING_SLASHES, "") || "/";
+  const isKnown = PAGE_PATHS.has(path) || path.startsWith("/rules/");
+
+  if (isKnown || !prefersMarkdown(request.headers.get("accept"))) {
+    return NextResponse.next();
+  }
+
+  const url = request.nextUrl.clone();
+  url.pathname = "/api/md/not-found";
+  const response = NextResponse.rewrite(url);
   response.headers.set("Vary", "Accept");
   response.headers.set("Cache-Control", "private, no-store");
   return response;

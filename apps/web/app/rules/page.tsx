@@ -9,6 +9,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BaselineBadge } from "@/components/baseline-badge";
+import { JsonLd } from "@/components/json-ld";
 import { TierHelp } from "@/components/tier-help";
 import { ALL_PACKAGES } from "@/lib/packages";
 import {
@@ -17,6 +18,7 @@ import {
   type FilterEntry,
   GUIDE_STATES,
 } from "@/lib/rules-filter";
+import { buildRulesGraph } from "@/lib/structured-data";
 import { TIERS, TIERS_BY_STATUS } from "@/lib/tiers";
 
 export const metadata: Metadata = {
@@ -147,6 +149,7 @@ export default function RulesPage() {
 
   return (
     <div className="space-y-10">
+      <JsonLd data={buildRulesGraph()} />
       <header>
         <h1 className="mb-4 text-page-title">The rule catalog</h1>
         <p className="max-w-[60ch] text-fg-muted text-lede">

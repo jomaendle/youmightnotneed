@@ -55,7 +55,11 @@ export function GET() {
           ],
           responses: {
             ...markdown("Markdown for the rule."),
-            404: { description: "No rule with that id. Plain text body." },
+            404: {
+              description:
+                "No rule with that id. A short markdown body linking /llms.txt and /rules.",
+              content: { "text/markdown": { schema: { type: "string" } } },
+            },
           },
         },
       },

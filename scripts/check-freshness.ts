@@ -42,6 +42,12 @@ import { packageSizes } from "../packages/catalog/src/generated/sizes.ts";
 import { supportClaims } from "../packages/catalog/src/generated/support-claims.ts";
 import { rules } from "../packages/catalog/src/rules/index.ts";
 import { renderCatalogReference, SKILL_CATALOG_FILE } from "./build-skill.ts";
+import {
+  ARCHIVE_FILE,
+  buildSkillArchive,
+  buildSkillIndex,
+  INDEX_FILE,
+} from "./refresh-skill-archive.ts";
 import { resolveAllClaims, sourceVersions } from "./refresh-support.ts";
 
 const MANUAL_BASELINE_MAX_AGE_DAYS = 90;
@@ -271,6 +277,27 @@ try {
   }
 } catch {
   errors.push("skills/youmightnotneed/SKILL.md is missing.");
+}
+
+// 8b. The published skill archive and its discovery index must be what the
+// skill directory produces now. The build is reproducible, so comparing bytes
+// is exact, and the digest in index.json is checked by the same comparison.
+try {
+  const fresh = buildSkillArchive();
+  if (!readFileSync(ARCHIVE_FILE).equals(fresh)) {
+    errors.push(
+      "apps/web/public/.well-known/agent-skills/youmightnotneed.tar.gz does not match skills/youmightnotneed. Run `pnpm refresh:skill-archive`.",
+    );
+  }
+  if (readFileSync(INDEX_FILE, "utf8") !== buildSkillIndex(fresh)) {
+    errors.push(
+      "apps/web/public/.well-known/agent-skills/index.json does not match the archive digest. Run `pnpm refresh:skill-archive`.",
+    );
+  }
+} catch {
+  errors.push(
+    "The skill archive or its index.json is missing. Run `pnpm refresh:skill-archive`.",
+  );
 }
 
 // 9. Snapshot age is a warning. A version mismatch is not: it means the

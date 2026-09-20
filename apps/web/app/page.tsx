@@ -19,7 +19,7 @@ import { TierHistorySparkline } from "@/components/tier-history-sparkline";
 import { AGENT_PROMPT, AGENT_PROMPT_SUMMARY } from "@/lib/agent-prompt";
 import { demos } from "@/lib/demos";
 import { EXAMPLE_REPORT_PAYLOAD } from "@/lib/example-report";
-import { site } from "@/lib/site";
+import { buildHomeGraph } from "@/lib/structured-data";
 import { CLI_VERSION, MCP_VERSION } from "@/lib/versions";
 
 /*
@@ -67,35 +67,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-14">
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "WebSite",
-              name: site.name,
-              url: site.url,
-              description: site.description,
-            },
-            {
-              "@type": "SoftwareApplication",
-              name: site.name,
-              applicationCategory: "DeveloperApplication",
-              operatingSystem: "Any",
-              description: site.description,
-              url: site.url,
-              codeRepository: site.repo,
-              license: "https://opensource.org/license/mit",
-              offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-              author: {
-                "@type": "Person",
-                name: site.author,
-                url: site.authorUrl,
-              },
-            },
-          ],
-        }}
-      />
+      <JsonLd data={buildHomeGraph()} />
       {/*
         The hero is a diff because the product is a deletion, and this
         audience reads diffs without needing a caption. The panel on the right
