@@ -47,7 +47,10 @@ jobs:
           report="$(pnpm --silent check:tiers)" || true
           # Say so rather than interpolating nothing. An empty gap in the PR
           # body is indistinguishable from the script reporting no changes.
-          report="${report:-_Tier report failed. See this step's log._}"
+          # No apostrophes in here: one inside the :- default is read as an
+          # opening quote and kills the step with "unexpected EOF", which is
+          # how the first real run produced the blank gap this line prevents.
+          report="${report:-_Tier report failed. See the step log._}"
           {
             echo 'report<<TIERS_EOF'
             echo "$report"
