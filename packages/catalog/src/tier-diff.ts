@@ -99,7 +99,12 @@ function compare(
     return { ruleId, featureId, direction: "missing", from };
   }
 
-  const to = tierOf(liveEntry.status?.baseline);
+  // `?? false` to match how refresh-baseline.ts writes the snapshot. A
+  // feature web-features publishes with no status at all, masonry today,
+  // becomes `false` there and would read as `unknown` here, so the two
+  // disagreed by construction and the report opened with a regression that
+  // was never real. Read it the same way the writer does.
+  const to = tierOf(liveEntry.status?.baseline ?? false);
   if (to === from) return null;
 
   return {

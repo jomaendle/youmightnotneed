@@ -81,9 +81,22 @@ describe("diffTiers", () => {
     expect(changes[0]).not.toHaveProperty("to");
   });
 
-  // Missing status means missing data rather than a downgrade. It still gets
-  // surfaced, because swallowing it would hide a broken upstream entry.
-  it("treats a live entry with no status as unverified", () => {
+  // web-features publishes some features with no status at all, masonry
+  // among them. refresh-baseline writes those into the snapshot as `false`,
+  // so reading them as anything else here makes the two disagree by
+  // construction and every report opens with a regression that never
+  // happened.
+  it("reads a live entry with no status the way the snapshot writer does", () => {
+    const changes = diffTiers(
+      rules,
+      { f1: { baseline: false }, f2: { baseline: "high" } },
+      { f1: {}, f2: { status: { baseline: "high" } } },
+    );
+
+    expect(changes).toEqual([]);
+  });
+
+  it("still reports a real fall to limited", () => {
     const changes = diffTiers(
       rules,
       { f1: { baseline: "high" }, f2: { baseline: "high" } },
@@ -91,7 +104,7 @@ describe("diffTiers", () => {
     );
 
     expect(changes[0]).toMatchObject({
-      to: "unknown",
+      to: "limited",
       direction: "regression",
     });
   });
