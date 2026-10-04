@@ -10,6 +10,7 @@ import {
   compareBaseline,
   featureSince,
   hasNoVersions,
+  type ResolvedFeature,
   resolveBaseline,
   resolveFeature,
   TRACKED_BROWSERS,
@@ -243,45 +244,95 @@ describe("prototype keys are not features", () => {
 });
 
 describe("features web-features publishes no aggregate for", () => {
-  // Anchor positioning is the case this exists for: 319 of its 325 compat
-  // keys are Baseline, six are not, so the feature reports support: {} and a
-  // version row would render as four dashes meaning "no engine has this".
-  const anchor = resolveFeature("anchor-positioning");
+  // Some features report `support: {}` because one small part of them has not
+  // shipped anywhere, and a version row would then render as four dashes
+  // meaning "no engine has this". These tests used to name anchor-positioning
+  // as the example. Upstream published an aggregate for it in web-features
+  // 3.40 and all three went red, taking the monthly refresh with them. Which
+  // features sit in this class is upstream's business and changes most
+  // releases, so nothing here names one.
 
-  it("has no aggregate versions", () => {
-    expect(hasNoVersions(anchor.support)).toBe(true);
+  /** A feature shaped the way the snapshot shapes them, built by hand. */
+  function feature(
+    id: string,
+    support: Record<string, string | null>,
+    partialSupport: ResolvedFeature["partialSupport"] = null,
+  ): ResolvedFeature {
+    return {
+      id,
+      name: id,
+      status: "limited",
+      lowDate: null,
+      highDate: null,
+      spec: null,
+      support,
+      partialSupport,
+    };
+  }
+
+  const everywhere = Object.fromEntries(
+    TRACKED_BROWSERS.map((b) => [b, "100"]),
+  );
+  const nowhere = Object.fromEntries(TRACKED_BROWSERS.map((b) => [b, null]));
+
+  it("reads an empty support map as having no versions", () => {
+    expect(hasNoVersions({})).toBe(true);
+    expect(hasNoVersions(nowhere)).toBe(true);
+    expect(hasNoVersions(everywhere)).toBe(false);
   });
 
-  it("carries the stand-in part instead, named", () => {
-    expect(anchor.partialSupport?.key).toBe("css.properties.anchor-name");
-    // Not asserted as literals: the point is that the numbers exist and come
-    // from the snapshot, not that they are any particular version today.
-    for (const browser of TRACKED_BROWSERS) {
-      expect(anchor.partialSupport?.support[browser], browser).not.toBeNull();
-    }
-  });
+  it("reports a feature whose only numbers are on a stand-in part", () => {
+    const gapped = feature("gapped", nowhere, {
+      key: "css.properties.something",
+      support: everywhere,
+    });
+    const normal = feature("normal", everywhere);
 
-  it("is reported by unpublishedSupport so a caller can explain the gap", () => {
-    const dialog = resolveFeature("dialog");
-    expect(unpublishedSupport([dialog, anchor]).map((f) => f.id)).toEqual([
-      "anchor-positioning",
+    expect(unpublishedSupport([normal, gapped]).map((f) => f.id)).toEqual([
+      "gapped",
     ]);
   });
 
-  it("leaves a feature with a real support row alone", () => {
-    const dialog = resolveFeature("dialog");
-    expect(hasNoVersions(dialog.support)).toBe(false);
-    expect(unpublishedSupport([dialog])).toEqual([]);
+  // The difference that matters: no data at all is not the same as data
+  // hiding behind a part. Claiming a stand-in for the first would invent a
+  // support row the source never published.
+  it("does not report a feature with no data and no stand-in", () => {
+    const empty = feature("empty", nowhere);
+
+    expect(hasNoVersions(empty.support)).toBe(true);
+    expect(unpublishedSupport([empty])).toEqual([]);
   });
 
-  it("does not claim a stand-in for a feature that has no data at all", () => {
-    // web-features tracks masonry with zero compat keys, so there is no part
-    // to stand in and nothing to show. Saying "no engine has this" would be a
-    // claim the source does not make.
-    const masonry = resolveFeature("masonry");
-    expect(hasNoVersions(masonry.support)).toBe(true);
-    expect(masonry.partialSupport).toBeNull();
-    expect(unpublishedSupport([masonry])).toEqual([]);
+  it("leaves a feature with a real support row alone", () => {
+    const normal = feature("normal", everywhere);
+
+    expect(hasNoVersions(normal.support)).toBe(false);
+    expect(unpublishedSupport([normal])).toEqual([]);
+  });
+
+  // Against the real snapshot, without naming a feature. The class is often
+  // non-empty and sometimes is not; either is a fact about upstream rather
+  // than a defect here, so this asserts the shape holds for whoever is in it.
+  it("holds the same shape for whichever real features are in the class", () => {
+    const resolved = [...new Set(rules.flatMap((r) => r.featureIds))].map(
+      resolveFeature,
+    );
+    const gapped = resolved.filter((f) => hasNoVersions(f.support));
+
+    for (const f of gapped) {
+      // A stand-in, when there is one, names a compat key and carries at
+      // least one real version. Otherwise there is nothing to stand in for.
+      if (f.partialSupport === null) continue;
+      expect(f.partialSupport.key, f.id).toMatch(/\./);
+      expect(
+        Object.values(f.partialSupport.support).some((v) => v !== null),
+        f.id,
+      ).toBe(true);
+    }
+
+    expect(unpublishedSupport(resolved).every((f) => f.partialSupport)).toBe(
+      true,
+    );
   });
 
   it("treats an unknown feature as having no versions", () => {
