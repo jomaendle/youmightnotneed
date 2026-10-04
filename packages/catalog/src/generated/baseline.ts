@@ -40,8 +40,8 @@ export interface BaselineSnapshot {
 }
 
 export const baselineSnapshot: BaselineSnapshot = {
-  "generatedOn": "2026-09-20",
-  "webFeaturesVersion": "3.36.0",
+  "generatedOn": "2026-10-04",
+  "webFeaturesVersion": "3.40.1",
   "features": {
     "aborting": {
       "name": "AbortController and AbortSignal",
@@ -81,23 +81,15 @@ export const baselineSnapshot: BaselineSnapshot = {
         "chrome": null,
         "edge": null,
         "firefox": null,
-        "safari": null
+        "safari": "27"
       },
-      "partialSupport": {
-        "key": "css.properties.anchor-name",
-        "support": {
-          "chrome": "125",
-          "edge": "125",
-          "firefox": "147",
-          "safari": "26"
-        }
-      }
+      "partialSupport": null
     },
     "array-group": {
       "name": "Array grouping",
-      "baseline": "low",
+      "baseline": "high",
       "lowDate": "2024-03-05",
-      "highDate": null,
+      "highDate": "2026-09-05",
       "spec": "https://tc39.es/ecma262/multipage/abstract-operations.html#sec-groupby",
       "support": {
         "chrome": "117",
@@ -234,7 +226,7 @@ export const baselineSnapshot: BaselineSnapshot = {
       "partialSupport": null
     },
     "container-queries": {
-      "name": "Container queries",
+      "name": "Container queries (size)",
       "baseline": "high",
       "lowDate": "2023-02-14",
       "highDate": "2025-08-14",
@@ -270,7 +262,7 @@ export const baselineSnapshot: BaselineSnapshot = {
       "support": {
         "chrome": "87",
         "edge": "87",
-        "firefox": null,
+        "firefox": "140",
         "safari": null
       },
       "partialSupport": null
@@ -285,7 +277,7 @@ export const baselineSnapshot: BaselineSnapshot = {
         "chrome": "135",
         "edge": "135",
         "firefox": null,
-        "safari": null
+        "safari": "27"
       },
       "partialSupport": null
     },
@@ -530,13 +522,13 @@ export const baselineSnapshot: BaselineSnapshot = {
     "input-date-time": {
       "name": "Date and time <input> types",
       "baseline": "high",
-      "lowDate": "2021-04-26",
-      "highDate": "2023-10-26",
+      "lowDate": "2021-10-05",
+      "highDate": "2024-04-05",
       "spec": "https://html.spec.whatwg.org/multipage/input.html#date-state-(type=date)",
       "support": {
         "chrome": "20",
         "edge": "12",
-        "firefox": "57",
+        "firefox": "93",
         "safari": "14.1"
       },
       "partialSupport": null
@@ -738,11 +730,11 @@ export const baselineSnapshot: BaselineSnapshot = {
       "partialSupport": null
     },
     "masonry": {
-      "name": "Masonry",
+      "name": "masonry",
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://drafts.csswg.org/css-grid-3/",
+      "spec": null,
       "support": {
         "chrome": null,
         "edge": null,
@@ -851,9 +843,9 @@ export const baselineSnapshot: BaselineSnapshot = {
     },
     "promise-withresolvers": {
       "name": "Promise.withResolvers()",
-      "baseline": "low",
+      "baseline": "high",
       "lowDate": "2024-03-05",
-      "highDate": null,
+      "highDate": "2026-09-05",
       "spec": "https://tc39.es/ecma262/multipage/control-abstraction-objects.html#sec-promise.withResolvers",
       "support": {
         "chrome": "119",
@@ -926,20 +918,12 @@ export const baselineSnapshot: BaselineSnapshot = {
       "highDate": null,
       "spec": "https://drafts.csswg.org/css-overflow-5/#scroll-buttons",
       "support": {
-        "chrome": null,
-        "edge": null,
+        "chrome": "135",
+        "edge": "135",
         "firefox": null,
         "safari": null
       },
-      "partialSupport": {
-        "key": "css.selectors.scroll-button",
-        "support": {
-          "chrome": "135",
-          "edge": "135",
-          "firefox": null,
-          "safari": null
-        }
-      }
+      "partialSupport": null
     },
     "scroll-driven-animations": {
       "name": "Scroll-driven animations",
@@ -1296,7 +1280,7 @@ export const baselineSnapshot: BaselineSnapshot = {
       "baseline": false,
       "lowDate": null,
       "highDate": null,
-      "spec": "https://webbluetoothcg.github.io/web-bluetooth/",
+      "spec": "https://bluetooth.spec.whatwg.org/",
       "support": {
         "chrome": "70",
         "edge": "79",
@@ -1308,8 +1292,8 @@ export const baselineSnapshot: BaselineSnapshot = {
     "web-cryptography": {
       "name": "Web Cryptography",
       "baseline": "high",
-      "lowDate": "2015-07-29",
-      "highDate": "2018-01-29",
+      "lowDate": "2017-09-19",
+      "highDate": "2020-03-19",
       "spec": "https://w3c.github.io/webcrypto/",
       "support": {
         "chrome": "37",
