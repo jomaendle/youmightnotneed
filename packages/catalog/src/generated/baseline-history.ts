@@ -31,6 +31,18 @@ export const baselineHistory: BaselineHistory = {
         "limited": 15,
         "unknown": 0
       }
+    },
+    {
+      "month": "2026-10",
+      "generatedOn": "2026-10-04",
+      "webFeaturesVersion": "3.40.1",
+      "ruleCount": 81,
+      "tally": {
+        "widely": 50,
+        "newly": 16,
+        "limited": 15,
+        "unknown": 0
+      }
     }
   ]
 };

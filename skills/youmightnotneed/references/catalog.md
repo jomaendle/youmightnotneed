@@ -24,7 +24,7 @@ were about to install.
 | animating a collapsible panel open and closed to its natural height | interpolate-size: allow-keywords, or calc-size() | limited | `height-auto-animation` |
 | animating an element's styles from JavaScript and needing a handle to control it | element.animate() | widely available | `web-animations` |
 | bringing an element into view, typically a highlighted option or a focused row | scrollIntoView({ block: "nearest" }) | widely available | `scroll-into-view` |
-| bucketing an array into groups keyed by a property of each item | Object.groupBy() and Map.groupBy() | newly available | `array-grouping` |
+| bucketing an array into groups keyed by a property of each item | Object.groupBy() and Map.groupBy() | widely available | `array-grouping` |
 | building a horizontal gallery with prev/next buttons and dot indicators | CSS scroll-snap with ::scroll-button() and ::scroll-marker() | limited | `carousel-scroll-markers` |
 | building a modal dialog, confirmation prompt or alert | <dialog> with showModal() | widely available | `dialog-element` |
 | building a tooltip, dropdown menu or popover anchored to a trigger | The Popover API with CSS anchor positioning | limited | `popover-anchor-positioning` |
@@ -37,7 +37,7 @@ were about to install.
 | connecting to a Bluetooth Low Energy device directly from a web page | navigator.bluetooth.requestDevice() | limited | `web-bluetooth` |
 | copying text to the clipboard on a button click or similar user action | navigator.clipboard.writeText() | newly available | `clipboard` |
 | counting, splitting or truncating text by user-perceived character, word or sentence | Intl.Segmenter | newly available | `intl-segmenter` |
-| creating a promise that something else will resolve or reject later | Promise.withResolvers() | newly available | `promise-withresolvers` |
+| creating a promise that something else will resolve or reject later | Promise.withResolvers() | widely available | `promise-withresolvers` |
 | cross-fading between two states, or growing a thumbnail into a hero image across a navigation | The View Transitions API | newly available | `view-transitions` |
 | deep-copying plain data such as arrays, objects, Maps, Sets, and dates | structuredClone() | widely available | `structured-clone` |
 | deferring offscreen images or iframes so they load as the user scrolls to them | loading="lazy" | widely available | `lazy-loading` |

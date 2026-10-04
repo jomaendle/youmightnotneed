@@ -47,10 +47,10 @@
     "@biomejs/biome": "2.5.11",
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.1",
-    "@mdn/browser-compat-data": "^8.1.0",
+    "@mdn/browser-compat-data": "^8.1.4",
     "@types/node": "^24.13.3",
     "knip": "^6.33.0",
     "typescript": "^7.0.2",
-    "web-features": "^3.36.0"
+    "web-features": "^3.40.1"
   }
 }
